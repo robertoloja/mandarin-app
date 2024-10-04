@@ -26,3 +26,8 @@ From here, you can create, edit and delete users.
 To run every test, run the following command:
 
 `docker-compose exec web python manage.py test`
+
+## Documentation
+
+The API documentation is available at [127.0.0.1:8000/api/docs](http://127.0.0.1:8000/api/docs).
+
