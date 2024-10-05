@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -74,7 +74,6 @@ WSGI_APPLICATION = 'mandoBot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-'''
 LOCAL = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -85,18 +84,20 @@ LOCAL = {
         "PORT": 5432,
     }
 }
-import os
 running_on_python_anywhere = os.getenv('PYTHON_ANYWHERE')
-'''
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "mandoBot$default",
-        "USER": "mandoBot",
-        "PASSWORD": "'jP7~Ri6f#*=YYH",
-        "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+
+if running_on_python_anywhere == "TRUE":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": "mandoBot$default",
+            "USER": "mandoBot",
+            "PASSWORD": "'jP7~Ri6f#*=YYH",
+            "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+        }
     }
-}
+else:
+    DATABASES = LOCAL
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
@@ -135,7 +136,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
