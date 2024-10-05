@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-uq_%9=gf-66ap%w9ho^m6&@bxi^ytkzx(q6&7*$qunyufiy5op
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["mandobot.pythonanywhere.com"]
 
 
 # Application definition
@@ -85,15 +85,14 @@ LOCAL = {
     }
 }
 import os
-running_on_python_anywhere = os.getenv('PYTHON_ANYWEHRE')
+running_on_python_anywhere = os.getenv('PYTHON_ANYWHERE')
 DATABASES = LOCAL if not running_on_python_anywhere else {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "mandoBot$default",
         "USER": "mandoBot",
-        "PASSWORD": "jP7~Ri6f#*=YYH",
+        "PASSWORD": "'jP7~Ri6f#*=YYH",
         "HOST": "mandoBot.mysql.pythonanywhere-services.com",
-        "PORT": 3306,
     }
 }
 
