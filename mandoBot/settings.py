@@ -74,6 +74,7 @@ WSGI_APPLICATION = 'mandoBot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+'''
 LOCAL = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -86,7 +87,8 @@ LOCAL = {
 }
 import os
 running_on_python_anywhere = os.getenv('PYTHON_ANYWHERE')
-DATABASES = LOCAL if not running_on_python_anywhere else {
+'''
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "mandoBot$default",
@@ -133,6 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
