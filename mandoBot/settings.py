@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-uq_%9=gf-66ap%w9ho^m6&@bxi^ytkzx(q6&7*$qunyufiy5op
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["mandobot.pythonanywhere.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -74,8 +74,7 @@ WSGI_APPLICATION = 'mandoBot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
+LOCAL = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "postgres",
@@ -83,6 +82,18 @@ DATABASES = {
         "PASSWORD": "postgres",
         "HOST": "db",
         "PORT": 5432,
+    }
+}
+import os
+running_on_python_anywhere = os.getenv('PYTHON_ANYWEHRE')
+DATABASES = LOCAL if not running_on_python_anywhere else {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "mandoBot$default",
+        "USER": "mandoBot",
+        "PASSWORD": "jP7~Ri6f#*=YYH",
+        "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+        "PORT": 3306,
     }
 }
 
