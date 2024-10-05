@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-uq_%9=gf-66ap%w9ho^m6&@bxi^ytkzx(q6&7*$qunyufiy5op
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["mandobot.pythonanywhere.com"]
 
 
 # Application definition
