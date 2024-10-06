@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # local apps
     'corsheaders',
     'accounts.apps.AccountsConfig',
+    'sentences.apps.SentencesConfig'
 ]
 
 MIDDLEWARE = [
