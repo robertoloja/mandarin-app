@@ -25,7 +25,12 @@ SECRET_KEY = 'django-insecure-uq_%9=gf-66ap%w9ho^m6&@bxi^ytkzx(q6&7*$qunyufiy5op
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["mandobot.pythonanywhere.com"]
+ALLOWED_HOSTS = [
+    "mandobot.pythonanywhere.com",
+    "127.0.0.1",
+    "localhost",
+    "0.0.0.0"
+]
 
 CORS_ALLOWED_ORIGINS = [
     "https://robertoloja.github.io",
