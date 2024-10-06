@@ -7,8 +7,8 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - db  # Corrected this line
-  db:  # Corrected indentation
+      - db
+  db:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
