@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-uq_%9=gf-66ap%w9ho^m6&@bxi^ytkzx(q6&7*$qunyufiy5op'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -102,7 +105,7 @@ PYTHON_ANYWHERE = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "mandoBot$default",
         "USER": "mandoBot",
-        "PASSWORD": "'jP7~Ri6f#*=YYH",
+        "PASSWORD": os.getenv('PYTHON_ANYWHERE_MYSQL_PASSWORD'),
         "HOST": "mandoBot.mysql.pythonanywhere-services.com",
     }
 }
