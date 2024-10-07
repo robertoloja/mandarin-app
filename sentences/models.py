@@ -9,3 +9,16 @@ class Sentence(models.Model):
 
     def __str__(self):
         return self.text
+
+class ECDictionary(models.Model):
+    traditional: str = models.TextField()
+    simplified: str = models.TextField()
+    definitions: str = models.TextField()
+    pronunciation: str = models.TextField()
+
+    def save(self, **kwargs) -> None:
+        self.definitions = '/'.join(self.definitions)
+        super().save()
+
+    def __str__(self):
+        return f'{self.traditional} {self.simplified} {self.pronunciation} {[x for x in self.definitions.split('/')]}'
