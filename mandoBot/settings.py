@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # local apps
     'corsheaders',
     'accounts.apps.AccountsConfig',
+    'sentences.apps.SentencesConfig'
 ]
 
 MIDDLEWARE = [
@@ -88,7 +89,7 @@ WSGI_APPLICATION = 'mandoBot.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-LOCAL = {
+DOCKER = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "postgres",
@@ -98,20 +99,28 @@ LOCAL = {
         "PORT": 5432,
     }
 }
-running_on_python_anywhere = os.getenv('PYTHON_ANYWHERE')
 
-if running_on_python_anywhere == "TRUE":
+PYTHON_ANYWHERE = {
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "mandoBot$default",
+        "USER": "mandoBot",
+        "PASSWORD": os.getenv('PYTHON_ANYWHERE_MYSQL_PASSWORD'),
+        "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+    }
+}
+
+if os.getenv('PYTHON_ANYWHERE') == "TRUE":
+    DATABASES = PYTHON_ANYWHERE
+elif os.getenv('DOCKER') == "TRUE":
+    DATABASES = DOCKER
+else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": "mandoBot$default",
-            "USER": "mandoBot",
-            "PASSWORD": os.getenv('PYTHON_ANYWHERE_MYSQL_PASSWORD'),
-            "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
-else:
-    DATABASES = LOCAL
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
