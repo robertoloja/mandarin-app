@@ -1,6 +1,5 @@
 from django.test import TestCase
 from .apps import create_dictionary
-from .cedict_ts import mandarin_dict_unstructured
 from django.apps import apps
 
 mock_file = '''不兒道 不儿道 [bu1 r5 dao4] /(dialect) contracted form of 不知道[bu4 zhi1 dao4]/
