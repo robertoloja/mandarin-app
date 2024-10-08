@@ -1,7 +1,7 @@
 from django.db import models
 
 from accounts.models import CustomUser
-from validators import has_chinese, is_simplified, is_traditional, is_pinyin
+from .validators import has_chinese, is_simplified, is_traditional, is_pinyin
 
 class Sentence(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

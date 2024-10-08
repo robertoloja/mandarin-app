@@ -1,14 +1,9 @@
 from django.test import TestCase
 from .models import ECDictionary
-
-mock_file = '''不兒道 不儿道 [bu1 r5 dao4] /(dialect) contracted form of 不知道[bu4 zhi1 dao4]/
-不列顛保衛戰 不列颠保卫战 [Bu4 lie4 dian1 Bao3 wei4 zhan4] /see 不列顛戰役|不列颠战役[Bu4 lie4 dian1 Zhan4 yi4]/
-好 好 [hao3] /good/appropriate; proper/all right!/(before a verb) easy to/(before a verb) good to/(before an adjective for exclamatory effect) so/(verb complement indicating completion)/(of two people) close; on intimate terms/(after a personal pronoun) hello/
-好 好 [hao4] /to be fond of; to have a tendency to; to be prone to/
-'''
+from .segmenters import JiebaSegmenter
 
 class TestDictionary(TestCase):
-    def test_dictionary_creeation(self):
+    def test_dictionary_creation(self):
         result = ECDictionary.objects.filter(traditional='不兒道')
 
         self.assertNotEqual(0, len(result))
@@ -20,3 +15,19 @@ class TestDictionary(TestCase):
     def test_words_written_the_same(self):
         result = ECDictionary.objects.filter(traditional='好')
         self.assertEqual(2, len(result))
+
+class TestSegmentation(TestCase):
+    def test_jieba_loads_dict(self):
+        JiebaSegmenter.segment('不列顛保衛戰')
+    
+    def test_easy_segmentation(self):
+        segments = JiebaSegmenter.segment('我来到北京清华大学')
+        self.assertEqual(segments, ['我', '来到', '北京', '清华大学'])
+    
+    def test_medium_segmentation(self):
+        phrase = '瑞典皇家科學院表示，今年的2位得主利用物理學的工具，開發了構成現今強大機器學習基礎的方法。霍普菲爾德創建了一種聯想記憶，可以存儲和重建圖像及其他類型的數據模式。辛頓則發明了一種方法，能夠自主地在數據中找到特徵，從而執行如識別圖片中特定元素等任務。'
+        
+        gpt_segmented_phrase = '瑞典|皇家|科學院|表示|，|今年|的|2|位|得主|利用|物理學|的|工具|，|開發|了|構成|現今|強大|機器|學習|基礎|的|方法|。|霍普菲|爾德|創建|了|一種|聯想|記憶|，|可以|存儲|和|重建|圖像|及|其他|類型|的|數據|模式|。|辛頓|則|發明|了|一|種|方法|，|能夠|自主|地|在|數據|中|找到|特徵|，|從而|執行|如|識別|圖片|中|特定|元素|等|任務|。'.split('|')
+
+        segments = JiebaSegmenter.segment(phrase)
+        self.assertEqual(segments, gpt_segmented_phrase)
