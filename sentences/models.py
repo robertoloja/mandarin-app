@@ -44,9 +44,12 @@ class Sentence(models.Model):
                 WordsInSentence.objects.get_or_create(sentence=self, order=index, punctuation=segmented[index])[0].save()
                 continue
 
-            if len(word) >= 1:
-                for i in range(len(word)):
-                    WordsInSentence.objects.get_or_create(word=word[i], sentence=self, order=index)
+            if len(word) == 1:
+                WordsInSentence.objects.get_or_create(word=word[0], sentence=self, order=index)
+                continue
+
+            #TODO: Figure out how to really solve this: For now, assume the second word is correct (since the first is often an archaic version, like 咊).
+            WordsInSentence.objects.get_or_create(word=word[1], sentence=self, order=index)
 
 class WordsInSentence(models.Model):
     sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)

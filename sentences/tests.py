@@ -38,7 +38,6 @@ class SegmentationTests(TestCase):
         self.assertEqual(segments, gpt_segmented_phrase)
 
     def test_segments_and_saves(self):
-        return
         User = get_user_model()
         user = User.objects.create_user(
             username="will",
