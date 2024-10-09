@@ -1,3 +1,5 @@
+from django import setup
+setup() #this is here for VSCode test discovery
 from django.test import TestCase
 from .models import ECDictionary, Sentence
 from django.contrib.auth import get_user_model 
