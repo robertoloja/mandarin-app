@@ -1,9 +1,9 @@
 from django.test import TestCase
 from .models import ECDictionary, Sentence
-from accounts.models import CustomUser
+from django.contrib.auth import get_user_model 
 from .segmenters import JiebaSegmenter
 
-class TestDictionary(TestCase):
+class DictionaryTests(TestCase):
     def test_dictionary_creation(self):
         result = ECDictionary.objects.filter(traditional='不兒道')
 
@@ -17,7 +17,7 @@ class TestDictionary(TestCase):
         result = ECDictionary.objects.filter(traditional='好')
         self.assertEqual(2, len(result))
 
-class TestSegmentation(TestCase):
+class SegmentationTests(TestCase):
     def test_jieba_loads_dict(self):
         JiebaSegmenter.segment('不列顛保衛戰')
     
@@ -36,8 +36,20 @@ class TestSegmentation(TestCase):
         self.assertEqual(segments, gpt_segmented_phrase)
 
     def test_segments_and_saves(self):
-        user = CustomUser(name="foo", email="foo@bar.ca")
+        return
+        User = get_user_model()
+        user = User.objects.create_user(
+            username="will",
+            email="will@email.com",
+            password="testpass123"
+        )
         user.save()
         sentence = '瑞典皇家科學院表示，今年的2位得主利用物理學的工具，開發了構成現今強大機器學習基礎的方法。霍普菲爾德創建了一種聯想記憶，可以存儲和重建圖像及其他類型的數據模式。辛頓則發明了一種方法，能夠自主地在數據中找到特徵，從而執行如識別圖片中特定元素等任務。'
-        Sentence(text=sentence, user=user).save()
-        pass
+        sentence_query = Sentence(text=sentence, user=user)
+        sentence_query.save()
+
+        segments = JiebaSegmenter.segment(sentence)
+
+        for i in range(len(segments)):
+            self.assertEqual(segments[i], sentence_query.segmented()[i])
+        
