@@ -63,7 +63,7 @@ To run every test in Docker, run the following command:
 `docker-compose exec web python manage.py test`
 
 ### VSCode/Cursor
-In VSCode/Cursor, open the user settings: press `ctrl+p` (`command+p` in MacOS) and type "open user settings (JSON)". At the bottom of this JSON file, add the following lines:
+In VSCode/Cursor, open the user settings: press `ctrl+p` (`command+p` in MacOS) and type "open user settings (JSON)". At the bottom of this JSON file (but before the closing curly brace), add the following lines:
 
 ```json
 "python.experiments.optInto": ["pythonTestAdapter"],
