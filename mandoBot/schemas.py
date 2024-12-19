@@ -23,7 +23,10 @@ class WordSchema(Schema):
 class CEDictSchema(ModelSchema):
   class Meta:
     model = CEDictionary
-    fields = ['traditional', 'simplified', 'pronunciation', 'definitions']
+    fields = ['traditional', 
+              'simplified', 
+              'pronunciation', 
+              'definitions']
 
 class SegmentationResponse(Schema):
   translation: str
