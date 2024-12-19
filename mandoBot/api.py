@@ -2,7 +2,7 @@ from ninja import NinjaAPI
 from typing import List
 
 from accounts.models import CustomUser
-from .schemas import UserSchema, ECDictionary, ECDictSchema, WordSchema
+from .schemas import UserSchema, CEDictionary, CEDictSchema, WordSchema
 
 api = NinjaAPI()
 
@@ -10,6 +10,6 @@ api = NinjaAPI()
 def get_users(request):
   return CustomUser.objects.all()
 
-@api.post("/dictionary", response=List[ECDictSchema])
+@api.post("/dictionary", response=List[CEDictSchema])
 def dictionary(request, data: WordSchema):
-  return list(ECDictionary.objects.filter(traditional=data.word))
+  return list(CEDictionary.objects.filter(traditional=data.word))

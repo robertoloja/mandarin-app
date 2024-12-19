@@ -17,3 +17,6 @@ class JiebaSegmenter:
         segments = jieba.cut(sentence, cut_all=False)
         clean_segments = filter(lambda x: x != ' ', segments)
         return list(clean_segments)
+
+
+DefaultSegmenter = JiebaSegmenter

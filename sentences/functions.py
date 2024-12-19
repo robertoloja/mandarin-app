@@ -1,4 +1,4 @@
-from .models import ECDictionary
+from .models import CEDictionary
 
 def create_dictionary(lines: str):
     for line in lines.split('\n'):
@@ -10,7 +10,7 @@ def create_dictionary(lines: str):
         pronunciation = ' '.join(rest).split(']')[0][1:]
         definitions = ' '.join(rest).split('/')[1:-1]
 
-        ECDictionary(traditional=traditional, 
+        CEDictionary(traditional=traditional, 
                      simplified=simplified,
                      pronunciation=pronunciation,
                      definitions=definitions).save()

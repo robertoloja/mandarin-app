@@ -1,6 +1,6 @@
 
 from ninja import Schema, ModelSchema
-from sentences.models import ECDictionary
+from sentences.models import CEDictionary
 
 class UserSchema(Schema):
   email: str
@@ -8,7 +8,7 @@ class UserSchema(Schema):
 class WordSchema(Schema):
   word: str
 
-class ECDictSchema(ModelSchema):
+class CEDictSchema(ModelSchema):
   class Meta:
-    model = ECDictionary
+    model = CEDictionary
     fields = ['traditional', 'simplified', 'pronunciation', 'definitions']
