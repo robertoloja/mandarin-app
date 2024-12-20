@@ -77,3 +77,5 @@ This should make it possible for the IDE to discover all tests, so they can be r
 
 The API documentation is available at [127.0.0.1:8000/api/docs](http://127.0.0.1:8000/api/docs).
 
+## Deploy frontend to GitHub Pages
+Make sure to remove the leading / from every address in build/index.html
