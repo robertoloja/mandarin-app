@@ -17,7 +17,7 @@ class JiebaSegmenter:
             jieba.load_userdict(dictionary_path)
             JiebaSegmenter.dictionary_initialized = True
 
-        segments = jieba.cut(sentence, cut_all=True)
+        segments = jieba.cut(sentence, cut_all=False)
         clean_segments = filter(lambda x: x != ' ', segments)
         return list(clean_segments)
 

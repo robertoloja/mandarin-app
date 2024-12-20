@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { CircularProgress, Center, Input, Button } from '@chakra-ui/react'
+import { CircularProgress, Center, Input, Button, FormControl } from '@chakra-ui/react'
 
 import './App.css';
 import MandarinSentence from './components/MandarinSentence';
 import { MandoBotAPI } from './apis/mandoBotAPI';
 import TopNav from './components/TopNav';
 import Translation from './components/Translation';
-import { MandarinSentenceType, MandarinWordType, ChineseDictionary } from './types';
+import { MandarinSentenceType } from './types';
 
 function App() {
   const emptySentence: MandarinSentenceType = {
@@ -27,27 +27,29 @@ function App() {
     setLoading(true);
 
     await MandoBotAPI.segment(inputValue)
-      .then((response) => { setSentence(response) })
+      .then((response) => { console.log(response); setSentence(response) })
       .finally(() => setLoading(false));
   };
 
   return (
     <div className="App">
       <TopNav />
-      <br></br>
-      <br></br>
-      <form onSubmit={handleSubmit}>
-      <Input 
-        type="text" 
-        placeholder="Enter text" 
-        value={inputValue} 
-        onChange={handleInputChange} 
-        mb={4} // Adds margin-bottom for spacing
-      />
-      <Button type="submit" colorScheme="teal">
-        Submit
-      </Button>
-    </form>
+
+      <FormControl p={5}>
+        <br></br>
+        <br></br>
+        <Input 
+          type="text" 
+          placeholder="Enter Mandarin text" 
+          value={inputValue} 
+          onChange={handleInputChange} 
+        />
+
+        <Button type="submit" colorScheme="teal" onClick={handleSubmit} m={2}>
+          Submit
+        </Button>
+      </FormControl>
+
       {loading ? (<Center><CircularProgress isIndeterminate color='green.300' /></Center>) : (
         <div>
           <MandarinSentence
@@ -55,7 +57,9 @@ function App() {
             translation={sentence.translation}
             dictionary={sentence.dictionary}
           />
-          <Translation text={sentence.translation} />
+          {sentence.sentence.length != 0 ? 
+            <Translation text={sentence.translation} /> : 
+            <br></br>}
         </div>
       )}
     </div>
