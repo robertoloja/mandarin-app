@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POST Request Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <h1>POST Request Example</h1>
+  <button id="submitBtn">Send POST Request</button>
+  <p id="response"></p>
+
+  <script>
+    const postData = {
+        data: "這句話要長得多，所以一旦機器學習模型已經初始化，我就可以知道這個翻譯實際上需要多長時間。",
+    };
+    const queryString = new URLSearchParams(postData).toString();
+
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      // Data to be sent in the POST request
+      const postData = {
+        data: "這句話要長得多，所以一旦機器學習模型已經初始化，我就可以知道這個翻譯實際上需要多長時間。",
+    };
+
+      // Perform the POST request using Axios
+      axios.post(`http://127.0.0.1:8000/api/segment?data=${postData.data}`)
+        .then(response => {
+          // Display the response
+          document.getElementById('response').textContent = `Response: ${JSON.stringify(response.data)}`;
+        })
+        .catch(error => {
+          // Display error if any
+          document.getElementById('response').textContent = `Error: ${error.message}`;
+        });
+    });
+  </script>
+</body>
+</html>

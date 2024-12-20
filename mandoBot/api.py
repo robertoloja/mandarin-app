@@ -29,7 +29,6 @@ def segment(request, data: str):
   for i in range(len(segmented['sentence'])):
     word = segmented['sentence'][i]['word']
     defs = CEDictionary.objects.filter(traditional=word).values_list('definitions', flat=True)
-    print(defs)
     segmented['sentence'][i]['definitions'] = defs
 
   return segmented

@@ -1,0 +1,1 @@
+axiosClient specifies ENV variable for API's host on the client. REACT_APP_BASE_API_URL must be set.

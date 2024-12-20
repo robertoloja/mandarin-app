@@ -1,0 +1,46 @@
+import React, { useState } from 'react';
+import Word from './Word';
+import { MandarinSentenceType } from '../types';
+import { Flex } from '@chakra-ui/react';
+
+
+function MandarinSentence(props: MandarinSentenceType) {
+  // State to keep track of which definition tooltip is open.
+  const [childStates, setChildStates] = useState(
+    props.sentence.map((word, id) => ({ id: id, isOpen: false }))
+  );
+
+  function toggleDefinition(id: number) {
+    const updatedStates = childStates.map(child => {
+      if (child.id === id) {
+        return { ...child, isOpen: !child.isOpen };
+      }
+      return { ...child, isOpen: false };
+    });
+    setChildStates(updatedStates);
+  }
+
+  return (
+    <Flex
+      align="stretch"
+      w='100%'
+      flexWrap="wrap"
+      padding="1rem"
+      paddingTop="3.2rem"
+    >
+      {props.sentence.map((word, index) =>
+        <Word
+          word={word}
+          pronunciation={word.pinyin}
+          definitions={word.definitions}
+          dictionary={word.dictionary}
+          key={index}
+          isOpen={childStates[index].isOpen}
+          onclick={() => toggleDefinition(index)}
+        />
+      )}
+    </Flex>
+  );
+}
+
+export default MandarinSentence;
