@@ -79,3 +79,4 @@ The API documentation is available at [127.0.0.1:8000/api/docs](http://127.0.0.1
 
 ## Deploy frontend to GitHub Pages
 Make sure to remove the leading / from every address in build/index.html
+Open the main JS file and change BaseURL to https://mandobot.pythonanywhere.com/api/
