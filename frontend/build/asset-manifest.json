@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/mandarin-app/static/css/main.19342a24.css",
-    "main.js": "/mandarin-app/static/js/main.adff9224.js",
-    "static/js/787.cda612ba.chunk.js": "/mandarin-app/static/js/787.cda612ba.chunk.js",
-    "index.html": "/mandarin-app/index.html",
-    "main.19342a24.css.map": "/mandarin-app/static/css/main.19342a24.css.map",
-    "main.adff9224.js.map": "/mandarin-app/static/js/main.adff9224.js.map",
-    "787.cda612ba.chunk.js.map": "/mandarin-app/static/js/787.cda612ba.chunk.js.map"
+    "main.css": "/static/css/main.19342a24.css",
+    "main.js": "/static/js/main.e617f57d.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "index.html": "/index.html",
+    "main.19342a24.css.map": "/static/css/main.19342a24.css.map",
+    "main.e617f57d.js.map": "/static/js/main.e617f57d.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.19342a24.css",
-    "static/js/main.adff9224.js"
+    "static/js/main.e617f57d.js"
   ]
 }
