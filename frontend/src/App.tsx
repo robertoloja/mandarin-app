@@ -27,7 +27,7 @@ function App() {
     setLoading(true);
 
     await MandoBotAPI.segment(inputValue)
-      .then((response) => { console.log(response); setSentence(response) })
+      .then((response) => { setSentence(response) })
       .finally(() => setLoading(false));
   };
 
