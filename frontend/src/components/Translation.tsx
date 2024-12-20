@@ -18,11 +18,9 @@ function Translation(props: { text: string }) {
       right={["0%", "10%"]}
       width={["100%", "80%"]}
       height={isMinimized ? "1vh" : ["45vh", "20vh"]}
-      overflowY="scroll"
+      overflowY={isMinimized ? "hidden" : "scroll"}
       bg="white"
       zIndex={1}
-      // display="flex"
-      // alignItems="flex-start"
     >
       <Box
         onClick={() => setIsMinimized(!isMinimized)}
@@ -31,17 +29,19 @@ function Translation(props: { text: string }) {
         height="4px"
         bg="darkgrey"
         borderRadius="md"
-        marginBottom={2}
         cursor="pointer"
-        position="sticky"
+        position="fixed"
         left="50%"
         transform="translateX(-50%)"
       />
       <Center>
-      <Text
-        textAlign="justify"
-        px={5}
-      >{props.text}</Text>
+        <Text
+          mt={3}
+          textAlign="justify"
+          px={5}
+        >
+        {props.text}
+        </Text>
       </Center>
     </Box>
   );
