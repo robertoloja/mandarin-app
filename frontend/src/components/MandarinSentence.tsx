@@ -27,7 +27,8 @@ function MandarinSentence(props: MandarinSentenceType) {
       w='100%'
       flexWrap="wrap"
       padding="1rem"
-      paddingTop="3.2rem"
+      mb={["45vh", "20vh"]}
+      overflowX="hidden"
     >
       {props.sentence.map((word, index) =>
         <Word

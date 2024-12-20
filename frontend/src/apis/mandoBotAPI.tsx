@@ -1,4 +1,3 @@
-import axios from "axios"
 import { api } from "./configs/axiosClient"
 
 export const MandoBotAPI = {
