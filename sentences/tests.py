@@ -1,13 +1,13 @@
 from django import setup
 setup() #this is here for VSCode test discovery
 from django.test import TestCase
-from .models import ECDictionary, Sentence
+from .models import CEDictionary, Sentence
 from django.contrib.auth import get_user_model 
 from .segmenters import JiebaSegmenter
 
 class DictionaryTests(TestCase):
     def test_dictionary_creation(self):
-        result = ECDictionary.objects.filter(traditional='不兒道')
+        result = CEDictionary.objects.filter(traditional='不兒道')
 
         self.assertNotEqual(0, len(result))
         self.assertEqual(result[0].traditional, '不兒道')
@@ -16,7 +16,7 @@ class DictionaryTests(TestCase):
         self.assertEqual(result[0].definitions, '(dialect) contracted form of 不知道[bu4 zhi1 dao4]')
 
     def test_words_written_the_same(self):
-        result = ECDictionary.objects.filter(traditional='好')
+        result = CEDictionary.objects.filter(traditional='好')
         self.assertEqual(2, len(result))
 
 class SegmentationTests(TestCase):
