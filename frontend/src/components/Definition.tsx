@@ -12,9 +12,9 @@ function Definition(props: {
   return (
     <Box
       className="definition"
-      width="200%"
+      // width="200%"
       minWidth="6rem"
-      maxWidth="10rem"
+      maxWidth="100%"
       position="absolute"
       left="50%"
       transform="translateX(-50%)"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Text } from '@chakra-ui/react';
+import { Center, Box, Text } from '@chakra-ui/react';
 
 function Translation(props: { text: string }) {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -21,8 +21,8 @@ function Translation(props: { text: string }) {
       overflowY="scroll"
       bg="white"
       zIndex={1}
-      display="flex"
-      alignItems="flex-start"
+      // display="flex"
+      // alignItems="flex-start"
     >
       <Box
         onClick={() => setIsMinimized(!isMinimized)}
@@ -33,16 +33,16 @@ function Translation(props: { text: string }) {
         borderRadius="md"
         marginBottom={2}
         cursor="pointer"
-        position="absolute"
-        top={4}
+        position="sticky"
         left="50%"
         transform="translateX(-50%)"
       />
+      <Center>
       <Text
-        m={2}
-        p={2}
         textAlign="justify"
+        px={5}
       >{props.text}</Text>
+      </Center>
     </Box>
   );
 }

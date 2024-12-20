@@ -3,7 +3,7 @@ setup() #this is here for VSCode test discovery
 from django.test import TestCase
 from .models import CEDictionary, Sentence
 from django.contrib.auth import get_user_model 
-from .segmenters import JiebaSegmenter
+from .segmenters import JiebaSegmenter, DefaultSegmenter
 
 class DictionaryTests(TestCase):
     def test_dictionary_creation(self):
@@ -54,3 +54,8 @@ class SegmentationTests(TestCase):
         for i in range(len(segments)):
             self.assertEqual(segments[i], sentence_query.segmented()[i])
         
+
+class PinyinTests(TestCase):
+    def test_pinyin_correctly_segmented(self):
+        segments = DefaultSegmenter.segment_and_translate("這是一些事情。")
+        pass

@@ -36,13 +36,12 @@ function App() {
       <TopNav />
 
       <FormControl p={5}>
-        <br></br>
-        <br></br>
         <Input 
           type="text" 
           placeholder="Enter Mandarin text" 
           value={inputValue} 
           onChange={handleInputChange} 
+          mt={10}
         />
 
         <Button type="submit" colorScheme="teal" onClick={handleSubmit} m={2}>

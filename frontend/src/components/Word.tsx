@@ -2,20 +2,22 @@ import React from 'react';
 import Hanzi from './Hanzi';
 import Definition from './Definition'
 import { ChineseDictionary, MandarinWordType } from '../types';
-import { Text, Card, HStack, Center, CardBody, CardFooter } from '@chakra-ui/react';
+import { Flex, Text, Card, HStack, Center, CardBody, CardFooter } from '@chakra-ui/react';
 
 function Word(props: {
   word: MandarinWordType,
-  pronunciation: string,
+  pronunciation: string[],
   definitions: string[],
   dictionary: ChineseDictionary,
   isOpen: boolean,
   onClick: () => void,
 }) {
   // TODO: Account for numbers, quoted words (i.e. 《曹詩》), and compound words (e.g. 軍事將領)
-  const punctuation = props.word.word === props.pronunciation;
+  const punctuation = props.word.word === props.pronunciation[0];
 
   return (
+    <div>
+    {!punctuation ? 
     <Card
       variant="unstyled"
       backgroundColor="#B8EEFF"
@@ -23,8 +25,8 @@ function Word(props: {
       marginBottom="0.5rem"
       padding="0.2rem"
       border="1px solid #468DA4"
-      borderRadius="0"
-      boxShadow="2px 2px 2px rgba(0, 0, 0, 0.25)"
+      borderRadius="4"
+      boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
       onClick={props.onClick}
     >
       {props.isOpen && !punctuation ?
@@ -43,14 +45,13 @@ function Word(props: {
               <Hanzi
                 hanzi={char}
                 key={index}
-                pinyin={props.pronunciation.split(' ')[index]}
+                pinyin={props.pronunciation[index]}
               />
             )}
           </HStack>
         </Center>
       </CardBody>
 
-      {!punctuation ?
         <Center>
           <CardFooter>
             <Text
@@ -66,8 +67,17 @@ function Word(props: {
             </Text>
           </CardFooter>
         </Center>
-        : null}
     </Card>
+
+    : <Flex
+        align='center' 
+        justify='center' 
+        h='70%'
+        m={2}
+      >
+        <Text fontSize="lg">{props.word.word}</Text>
+      </Flex>}
+    </div>
   );
 }
 

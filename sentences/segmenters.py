@@ -2,7 +2,7 @@ import jieba
 import os
 from typing import List
 
-from dragonmapper import hanzi
+from dragonmapper import hanzi, transcriptions
 
 from mandoBot.settings import BASE_DIR
 from sentences.translators import DefaultTranslator
@@ -21,19 +21,30 @@ class JiebaSegmenter:
         clean_segments = filter(lambda x: x != ' ', segments)
         return list(clean_segments)
 
-DefaultSegmenter = JiebaSegmenter # So that other segmenters can be plugged in
+
+'''
+Below is the functionality that is shared by all segmenters.
+'''
+DefaultSegmenter = JiebaSegmenter
 
 def segment_and_translate(sentence: str) -> dict:
     segmented = DefaultSegmenter.segment(sentence)
-    pinyin = hanzi.to_pinyin('|'.join(segmented), delimiter='|').split('|')
+    pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented))
     translated = []
 
     for i in range(len(segmented)):
+        pinyin = ''
+
+        if hanzi.has_chinese(segmented[i]):
+            pinyin = [transcriptions.zhuyin_to_pinyin(x) for x in pronunciation[i].split(' ')]
+        else:
+            pinyin = [segmented[i]] # this is punctuation, digits, etc.
+
         translated += [{
             'word': segmented[i],
-            'pinyin': pinyin[i], # this is wrong, it needs to perform this at the sentence level
+            'pinyin': pinyin,
             'definitions': [],
-            'dictionary': {'english': 'english', 'pinyin': 'pinyin', 'simplified': 'simplified'}
+            'dictionary': {'english': 'english', 'pinyin': 'pinyin', 'simplified': 'simplified'} #TODO: Get rid of placeholders
         }]
 
     return {

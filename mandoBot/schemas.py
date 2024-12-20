@@ -10,7 +10,7 @@ class ChineseDictionary(Schema):
 
 class MandarinWordSchema(Schema):
   word: str
-  pinyin: str
+  pinyin: List[str]
   definitions: List[str]
   dictionary: ChineseDictionary
 

@@ -25,6 +25,7 @@ function MandarinSentence(props: MandarinSentenceType) {
     <Flex
       align="stretch"
       w='100%'
+      h='100%'
       px={['0', '5%']}
       flexWrap="wrap"
       mb={["45vh", "20vh"]}

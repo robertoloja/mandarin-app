@@ -6,7 +6,7 @@ export type ChineseDictionary = Record<string, {
 
 export type MandarinWordType = {
   word: string,
-  pinyin: string,
+  pinyin: string[],
   definitions: string[],
   dictionary: ChineseDictionary,
 }
