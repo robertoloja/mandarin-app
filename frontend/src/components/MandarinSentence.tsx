@@ -11,6 +11,7 @@ function MandarinSentence(props: MandarinSentenceType) {
   );
 
   function toggleDefinition(id: number) {
+    console.log("clicked")
     const updatedStates = childStates.map(child => {
       if (child.id === id) {
         return { ...child, isOpen: !child.isOpen };
@@ -36,7 +37,7 @@ function MandarinSentence(props: MandarinSentenceType) {
           dictionary={word.dictionary}
           key={index}
           isOpen={childStates[index].isOpen}
-          onclick={() => toggleDefinition(index)}
+          onClick={() => toggleDefinition(index)}
         />
       )}
     </Flex>
