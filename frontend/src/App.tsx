@@ -5,6 +5,7 @@ import './App.css';
 import MandarinSentence from './components/MandarinSentence';
 import { MandoBotAPI } from './apis/mandoBotAPI';
 import TopNav from './components/TopNav';
+import Translation from './components/Translation';
 import { MandarinSentenceType, MandarinWordType, ChineseDictionary } from './types';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
     dictionary: {},
     sentence: [],
   }
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [sentence, setSentence] = useState(emptySentence);
   const [inputValue, setInputValue] = useState('');
 
@@ -48,11 +49,14 @@ function App() {
       </Button>
     </form>
       {loading ? (<Center><CircularProgress isIndeterminate color='green.300' /></Center>) : (
-        <MandarinSentence
-          sentence={sentence.sentence}
-          translation={sentence.translation}
-          dictionary={sentence.dictionary}
-        />
+        <div>
+          <MandarinSentence
+            sentence={sentence.sentence}
+            translation={sentence.translation}
+            dictionary={sentence.dictionary}
+          />
+          <Translation text={sentence.translation} />
+        </div>
       )}
     </div>
   );
