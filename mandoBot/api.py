@@ -1,8 +1,10 @@
 from ninja import NinjaAPI
+from django.db.models import Q
 
 from dragonmapper import hanzi
 
 from sentences.segmenters import DefaultSegmenter
+from sentences.translators import DefaultTranslator
 from .schemas import CEDictionary, SegmentationResponse
 
 api = NinjaAPI()
@@ -24,11 +26,20 @@ def segment(request, data: str):
 
   segmented = DefaultSegmenter.segment_and_translate(data)
 
-  # Adding definitions in the segmenter creates 
-  # a circular import, so it is done here.
+  # Adding definitions in the segmenter creates a circular import, so it is done here.  
   for i in range(len(segmented['sentence'])):
     word = segmented['sentence'][i]['word']
-    defs = CEDictionary.objects.filter(traditional=word).values_list('definitions', flat=True) #TODO: Filter out definitions for other pronunciations.
+
+    if not hanzi.has_chinese(word):
+      continue
+
+    defs = CEDictionary.objects\
+                       .filter(Q(traditional=word) | Q(simplified=word))\
+                       .values_list('definitions', flat=True)
+
+    if len(defs) == 0:
+      defs = [DefaultTranslator.translate(word).lower()]
+
     segmented['sentence'][i]['definitions'] = defs
 
   return segmented

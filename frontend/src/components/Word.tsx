@@ -61,6 +61,7 @@ function Word(props: {
               height="2.6rem"
               marginTop="0.5rem"
               marginBottom="0.5rem"
+              textAlign="center"
             >
               {props.definitions.join('; ')}
             </Text>
