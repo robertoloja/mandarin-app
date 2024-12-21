@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Word from './Word';
 import { MandarinSentenceType } from '../types';
 import { Flex } from '@chakra-ui/react';
@@ -43,7 +43,7 @@ function MandarinSentence(props: MandarinSentenceType) {
         />
       )}
     </Flex>
-  );
+  )
 }
 
 export default MandarinSentence;

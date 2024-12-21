@@ -1,4 +1,3 @@
-
 from typing import List
 from ninja import Schema, ModelSchema
 from sentences.models import CEDictionary

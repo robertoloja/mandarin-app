@@ -1,4 +1,3 @@
-import React  from 'react';
 import { VStack, Text } from '@chakra-ui/react';
 
 function Hanzi(props: { hanzi: string, pinyin: string }) {
@@ -17,11 +16,8 @@ function Hanzi(props: { hanzi: string, pinyin: string }) {
         <Text>
           {props.pinyin.toLowerCase()}
         </Text>
-        : null
-      }
-
+      : null}
     </VStack>
-  )
-}
+  )}
 
 export default Hanzi;

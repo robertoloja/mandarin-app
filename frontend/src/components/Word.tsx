@@ -1,4 +1,3 @@
-import React from 'react';
 import Hanzi from './Hanzi';
 import Definition from './Definition'
 import { ChineseDictionary, MandarinWordType } from '../types';
@@ -12,45 +11,45 @@ function Word(props: {
   isOpen: boolean,
   onClick: () => void,
 }) {
-  // TODO: Account for numbers, quoted words (i.e. 《曹詩》), and compound words (e.g. 軍事將領)
+  // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation = props.word.word === props.pronunciation[0];
 
   return (
     <div>
     {!punctuation ? 
-    <Card
-      variant="unstyled"
-      backgroundColor="#B8EEFF"
-      margin="0.1rem"
-      marginBottom="0.5rem"
-      padding="0.2rem"
-      border="1px solid #468DA4"
-      borderRadius="4"
-      boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
-      onClick={props.onClick}
-    >
-      {props.isOpen && !punctuation ?
-        <Definition
-          word={props.word.word} 
-          definitions={props.definitions}
-          character_definitions={props.dictionary}
-          onClick={props.onClick}/> 
-        
-        : null}
+      <Card
+        variant="unstyled"
+        backgroundColor="#B8EEFF"
+        margin="0.1rem"
+        marginBottom="0.5rem"
+        padding="0.2rem"
+        border="1px solid #468DA4"
+        borderRadius="4"
+        boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
+        onClick={props.onClick}
+      >
+        {props.isOpen && !punctuation ?
+          <Definition
+            word={props.word.word} 
+            definitions={props.definitions}
+            character_definitions={props.dictionary}
+            onClick={props.onClick}/> 
+          
+          : null}
 
-      <CardBody>
-        <Center>
-          <HStack spacing="0.1rem">
-            {props.word.word.split('').map((char, index) =>
-              <Hanzi
-                hanzi={char}
-                key={index}
-                pinyin={props.pronunciation[index]}
-              />
-            )}
-          </HStack>
-        </Center>
-      </CardBody>
+        <CardBody>
+          <Center>
+            <HStack spacing="0.1rem">
+              {props.word.word.split('').map((char, index) =>
+                <Hanzi
+                  hanzi={char}
+                  key={index}
+                  pinyin={props.pronunciation[index]}
+                />
+              )}
+            </HStack>
+          </Center>
+        </CardBody>
 
         <Center>
           <CardFooter>
@@ -67,15 +66,16 @@ function Word(props: {
             </Text>
           </CardFooter>
         </Center>
-    </Card>
+      </Card>
 
     : <Flex
         align='center' 
         justify='center' 
         h='70%'
-        m={2}
-      >
-        <Text fontSize="lg">{props.word.word}</Text>
+        m={2}>
+        <Text fontSize="lg">
+          {props.word.word}
+        </Text>
       </Flex>}
     </div>
   );

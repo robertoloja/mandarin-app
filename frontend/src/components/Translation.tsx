@@ -19,6 +19,7 @@ function Translation(props: { text: string }) {
       width={["100%", "80%"]}
       height={isMinimized ? "1vh" : ["45vh", "20vh"]}
       overflowY={isMinimized ? "hidden" : "scroll"}
+      shadow="md"
       bg="white"
       zIndex={1}
     >
@@ -26,7 +27,7 @@ function Translation(props: { text: string }) {
         onClick={() => setIsMinimized(!isMinimized)}
         width="40%"
         minW="10rem"
-        height="4px"
+        height="0.3rem"
         bg="darkgrey"
         borderRadius="md"
         cursor="pointer"
@@ -34,6 +35,7 @@ function Translation(props: { text: string }) {
         left="50%"
         transform="translateX(-50%)"
       />
+
       <Center>
         <Text
           mt={3}

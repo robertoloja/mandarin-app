@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { CircularProgress, Center, Input, Button, FormControl } from '@chakra-ui/react'
+import React, { useState } from 'react';
+import { CircularProgress, Center, Input, Button, FormControl, Box } from '@chakra-ui/react'
 
 import './App.css';
+
 import MandarinSentence from './components/MandarinSentence';
-import { MandoBotAPI } from './apis/mandoBotAPI';
-import TopNav from './components/TopNav';
 import Translation from './components/Translation';
+// import TopNav from './components/TopNav';
+
 import { MandarinSentenceType } from './types';
+import { MandoBotAPI } from './apis/mandoBotAPI';
 
 function App() {
   const emptySentence: MandarinSentenceType = {
@@ -32,8 +34,8 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <TopNav />
+    <Box h="100%">
+      {/* <TopNav /> */}
 
       <FormControl p={5}>
         <Input 
@@ -50,18 +52,18 @@ function App() {
       </FormControl>
 
       {loading ? (<Center><CircularProgress isIndeterminate color='green.300' /></Center>) : (
-        <div>
+        <Box h="100%">
           <MandarinSentence
             sentence={sentence.sentence}
             translation={sentence.translation}
             dictionary={sentence.dictionary}
           />
-          {sentence.sentence.length != 0 ? 
-            <Translation text={sentence.translation} /> : 
-            <br></br>}
-        </div>
+
+          {sentence.sentence.length !== 0 ? 
+            <Translation text={sentence.translation} /> : null}
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

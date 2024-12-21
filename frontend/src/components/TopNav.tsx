@@ -44,7 +44,7 @@ function TopNav() {
         variant="buttonStyle"
         style={{ marginLeft: '0.5rem' }}
         onClick={onOpen}
-      />
+      /> 
 
       <NavPanel isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
     </HStack>

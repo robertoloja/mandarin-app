@@ -1,18 +1,16 @@
-import React from 'react';
 import { Box, Text, IconButton } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import Hanzi from './Hanzi';
 
 function Definition(props: {
   word: string,
-  onClick: any,
+  onClick: () => void,
   definitions: string[],
   character_definitions: Record<string, {english: string, pinyin: string, simplified: string}>
 }) {
   return (
     <Box
-      className="definition"
-      // width="200%"
+      h="30vh"
       minWidth="6rem"
       maxWidth="100%"
       position="absolute"
@@ -22,13 +20,12 @@ function Definition(props: {
       margin={0}
       padding="5px"
       backgroundColor="rgba(50, 228, 255, 0.497)"
-      zIndex={100}
+      zIndex={1000}
       border="1px solid rgb(0, 127, 169)"
       background="rgb(211, 249, 255)"
       boxShadow="0 2px 2px rgba(0, 0, 0, 0.163)"
       fontSize="small"
-      maxHeight="20vh"
-      overflowY="auto"
+      overflowX="auto"
     >
       <IconButton
         className="close-button"
