@@ -1,13 +1,52 @@
-import jieba
 import os
 from typing import List
+from concurrent.futures import ThreadPoolExecutor
 
+import jieba
 from dragonmapper import hanzi, transcriptions
 
 from mandoBot.settings import BASE_DIR
 from sentences.translators import DefaultTranslator
 
-class JiebaSegmenter:
+
+class Segmenter:
+    @staticmethod
+    def segment_and_translate(sentence: str) -> dict:
+        with ThreadPoolExecutor() as executor:
+            future_segmented = executor.submit(DefaultSegmenter.segment, sentence)
+            future_translation = executor.submit(DefaultTranslator.translate, sentence)
+
+            segmented = future_segmented.result()
+            translated = future_translation.result()
+
+        # In zhuyin, the individual hanzi are space delimited already, 
+        # while in pinyin the whole word is together.
+        pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented))
+        response = []
+
+        for i in range(len(segmented)):
+            pinyin = ''
+
+            if hanzi.has_chinese(segmented[i]):
+                pinyin = [transcriptions.zhuyin_to_pinyin(x) for x in pronunciation[i].split(' ')]
+            else:
+                pinyin = [segmented[i]] # this is punctuation, digits, etc.
+
+            response += [{
+                'word': segmented[i],
+                'pinyin': pinyin,
+                'definitions': [],
+                'dictionary': {'english': 'english', 'pinyin': 'pinyin', 'simplified': 'simplified'} #TODO: Get rid of placeholders
+            }]
+
+        return {
+            "translation": translated,
+            "dictionary": {},
+            "sentence": response
+        }
+
+
+class JiebaSegmenter(Segmenter):
     dictionary_initialized = False
 
     @staticmethod
@@ -21,36 +60,4 @@ class JiebaSegmenter:
         clean_segments = filter(lambda x: x != ' ', segments)
         return list(clean_segments)
 
-
-'''
-Below is the functionality that is shared by all segmenters.
-'''
 DefaultSegmenter = JiebaSegmenter
-
-def segment_and_translate(sentence: str) -> dict:
-    segmented = DefaultSegmenter.segment(sentence)
-    pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented))
-    translated = []
-
-    for i in range(len(segmented)):
-        pinyin = ''
-
-        if hanzi.has_chinese(segmented[i]):
-            pinyin = [transcriptions.zhuyin_to_pinyin(x) for x in pronunciation[i].split(' ')]
-        else:
-            pinyin = [segmented[i]] # this is punctuation, digits, etc.
-
-        translated += [{
-            'word': segmented[i],
-            'pinyin': pinyin,
-            'definitions': [],
-            'dictionary': {'english': 'english', 'pinyin': 'pinyin', 'simplified': 'simplified'} #TODO: Get rid of placeholders
-        }]
-
-    return {
-        "translation": DefaultTranslator.translate(sentence),
-        "dictionary": {},
-        "sentence": translated
-    }
-
-DefaultSegmenter.segment_and_translate = staticmethod(segment_and_translate)

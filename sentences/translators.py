@@ -1,25 +1,33 @@
 import argostranslate.package
 import argostranslate.translate
+from dragonmapper import hanzi
 
 # Download and install Argos Translate package. Only runs on server bootup. 
-to_code = "en"
-from_code = "zt" #TODO: Implement simplified mandarin too.
+english_code = "en"
+traditional_mandarin_code = "zt"
+simplified_mandarin_code = "zh"
 
 argostranslate.package.update_package_index()
 available_packages = argostranslate.package.get_available_packages()
-package_to_install = next(
-    filter(
-        lambda x: x.from_code == from_code and
-        x.to_code == to_code, available_packages
-    )
-)
-argostranslate.package.install_from_path(package_to_install.download())
+traditional_mandarin = next(filter(lambda x: x.from_code == traditional_mandarin_code and
+                                          x.to_code == english_code, available_packages))
+
+simplified_mandarin = next(filter(lambda x: x.from_code == simplified_mandarin_code and
+                                         x.to_code == english_code, available_packages))
+
+argostranslate.package.install_from_path(traditional_mandarin.download())
+argostranslate.package.install_from_path(simplified_mandarin.download())
 
 class ArgosTranslate:
     @staticmethod
     def translate(sentence: str) -> str:
+        from_code = simplified_mandarin_code
+
+        if hanzi.is_traditional(sentence):
+            from_code = traditional_mandarin_code
+
         return argostranslate.translate.translate(sentence, 
                                                   from_code, 
-                                                  to_code)
+                                                  english_code)
 
 DefaultTranslator = ArgosTranslate
