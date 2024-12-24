@@ -1,18 +1,37 @@
 import os
 from typing import List
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
+from multiprocessing import Manager, Lock
 
 import jieba
 from dragonmapper import hanzi, transcriptions
 
 from mandoBot.settings import BASE_DIR
-from sentences.translators import DefaultTranslator
+from sentences.translators import DefaultTranslator, initialize_translator
+
+manager = Manager()
+segmenter_initialized = manager.Value('b', False)
+segmenter_lock = Lock()
+segmenter = None
+
+def initialize_segmenter():
+    global segmenter
+    with segmenter_lock:
+        if not segmenter_initialized.value:
+            print("SEGMENTER")
+            dictionary_path = os.path.join(BASE_DIR, 'sentences/~cedict_edited_for_jieba.u8') #TODO: Rename file
+            jieba.load_userdict(dictionary_path)
+            jieba.initialize()
+            segmenter_initialized.value = True
+            segmenter = JiebaSegmenter()
+
 
 
 class Segmenter:
-    @staticmethod
     def segment_and_translate(sentence: str) -> dict:
-        with ThreadPoolExecutor() as executor:
+        initialize_translator()
+        initialize_segmenter()
+        with ProcessPoolExecutor() as executor:
             future_segmented = executor.submit(DefaultSegmenter.segment, sentence)
             future_translation = executor.submit(DefaultTranslator.translate, sentence)
 
@@ -47,15 +66,7 @@ class Segmenter:
 
 
 class JiebaSegmenter(Segmenter):
-    dictionary_initialized = False
-
-    @staticmethod
     def segment(sentence: str) -> List[str]:
-        if not JiebaSegmenter.dictionary_initialized:
-            dictionary_path = os.path.join(BASE_DIR, 'sentences/~cedict_edited_for_jieba.u8') #TODO: Rename file
-            jieba.load_userdict(dictionary_path)
-            JiebaSegmenter.dictionary_initialized = True
-
         segments = jieba.cut(sentence, cut_all=False)
         clean_segments = filter(lambda x: x != ' ', segments)
         return list(clean_segments)
