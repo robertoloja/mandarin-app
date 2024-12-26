@@ -1,59 +1,45 @@
-import { Box, Text, IconButton } from '@chakra-ui/react';
-import { CloseIcon } from '@chakra-ui/icons';
+import { 
+  Text, 
+  VStack, 
+  HStack,
+  Heading
+} from '@chakra-ui/react';
 import Hanzi from './Hanzi';
 
 function Definition(props: {
   word: string,
-  onClick: () => void,
+  // onClick: () => void,
   definitions: string[],
   character_definitions: Record<string, {english: string, pinyin: string, simplified: string}>
 }) {
   return (
-    <Box
-      h="30vh"
-      minWidth="6rem"
-      maxWidth="100%"
-      position="absolute"
-      left="50%"
-      transform="translateX(-50%)"
-      top="25%"
-      margin={0}
-      padding="5px"
-      backgroundColor="rgba(50, 228, 255, 0.497)"
-      zIndex={1000}
-      border="1px solid rgb(0, 127, 169)"
-      background="rgb(211, 249, 255)"
-      boxShadow="0 2px 2px rgba(0, 0, 0, 0.163)"
-      fontSize="small"
-      overflowX="auto"
-    >
-      <IconButton
-        className="close-button"
-        position="absolute"
-        right="0.3rem"
-        top={0}
-        margin={0}
-        padding={0}
-        cursor="pointer"
-        icon={<CloseIcon />}
-        onClick={props.onClick}
-        aria-label="Close"
-        variant="ghost"
-      />
+    <VStack>
+      <Heading>
+        {props.word}
+      </Heading>
 
-      {props.word.split('').map((hanzi, index) => (
-        <Box key={index} fontSize="160%" fontWeight="900">
-          <Hanzi
-            hanzi={hanzi}
-            pinyin="pinyin" // {props.character_definitions[hanzi].english}
-          />
-        </Box>
-      ))}
+      {props.definitions.map(definition => 
+        <Text textAlign="center">
+          {definition}
+        </Text>
+      )}
 
-      <Text margin={0} padding={0} textAlign="left">
-        {props.definitions.join('; ')}
-      </Text>
-    </Box>
+    {props.word.split('').length !== 1 ? 
+      <VStack align="start">
+        {props.word.split('').map((hanzi, index) => (
+          <HStack key={index}>
+            <Hanzi
+              hanzi={hanzi}
+              pinyin={props.character_definitions[hanzi].pinyin}
+            />
+            <Text>
+              {props.character_definitions[hanzi].english}
+            </Text>
+          </HStack>
+        ))}
+      </VStack>
+    : undefined}
+    </VStack> 
   );
 }
 

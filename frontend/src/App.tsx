@@ -38,17 +38,19 @@ function App() {
       {/* <TopNav /> */}
 
       <FormControl p={5}>
-        <Input 
-          type="text" 
-          placeholder="Enter Mandarin text" 
-          value={inputValue} 
-          onChange={handleInputChange} 
-          mt={10}
-        />
+        <form onSubmit={handleSubmit}>
+          <Input 
+            type="text" 
+            placeholder="Enter Mandarin text" 
+            value={inputValue} 
+            onChange={handleInputChange} 
+            mt={10}
+          />
 
-        <Button type="submit" colorScheme="teal" onClick={handleSubmit} m={2}>
-          Submit
-        </Button>
+          <Button type="submit" colorScheme="teal" m={2}>
+            Submit
+          </Button>
+        </form>
       </FormControl>
 
       {loading ? (<Center><CircularProgress isIndeterminate color='green.300' /></Center>) : (

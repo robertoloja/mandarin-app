@@ -16,7 +16,7 @@ class CEDictionary(models.Model):
         super().save()
 
     def __str__(self):
-        return f'{self.traditional} {self.simplified} {self.pronunciation} {[x for x in self.definitions.split('/')]}'
+        return f'{self.traditional} {self.simplified} {self.pronunciation} {[x for x in self.definitions.split("/")]}'
 
 class Sentence(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

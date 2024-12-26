@@ -5,6 +5,15 @@ name = "pypi"
 
 [packages]
 argostranslate = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
+dj-database-url = "*"
+python-dotenv = "*"
+django-cors-headers = "*"
+dragonmapper = "*"
+jieba = "*"
+django-ninja = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 

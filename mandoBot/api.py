@@ -1,3 +1,4 @@
+import string
 from ninja import NinjaAPI
 from django.db.models import Q
 
@@ -5,7 +6,8 @@ from dragonmapper import hanzi
 
 from sentences.segmenters import DefaultSegmenter
 from sentences.translators import DefaultTranslator
-from .schemas import CEDictionary, SegmentationResponse
+from sentences.models import CEDictionary
+from .schemas import SegmentationResponse
 
 api = NinjaAPI()
 
@@ -38,8 +40,27 @@ def segment(request, data: str):
                        .values_list('definitions', flat=True)
 
     if len(defs) == 0:
-      defs = [DefaultTranslator.translate(word).lower()]
+      defs = [DefaultTranslator.translate(word)\
+                .lower()\
+                .translate(str.maketrans('', '', string.punctuation))]
 
     segmented['sentence'][i]['definitions'] = defs
+
+    # Add dictionary of each individual hanzi
+    dictionary = {}
+
+    for single_hanzi in word:
+      if single_hanzi in "、。？，：；《》【】（）［］！＠＃＄％＾＆＊－／＋＝－～":
+        continue
+
+      hanzi_defs = CEDictionary.objects\
+                    .filter(Q(traditional=single_hanzi) | Q(simplified=single_hanzi))\
+                    .values_list('definitions', 'pronunciation')
+      dictionary[single_hanzi] = {
+        'english': hanzi_defs[0][0],
+        'pinyin': hanzi_defs[0][1],
+        'simplified': '',
+      }
+    segmented['sentence'][i]['dictionary'] = dictionary
 
   return segmented

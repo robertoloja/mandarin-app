@@ -2,16 +2,12 @@ from typing import List
 from ninja import Schema, ModelSchema
 from sentences.models import CEDictionary
 
-class ChineseDictionary(Schema):
-  english: str
-  pinyin: str
-  simplified: str
 
 class MandarinWordSchema(Schema):
   word: str
   pinyin: List[str]
   definitions: List[str]
-  dictionary: ChineseDictionary
+  dictionary: dict
 
 class UserSchema(Schema):
   email: str
