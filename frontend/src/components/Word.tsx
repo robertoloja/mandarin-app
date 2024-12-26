@@ -1,7 +1,23 @@
 import Hanzi from './Hanzi';
 import Definition from './Definition'
-import { ChineseDictionary, MandarinWordType } from '../types';
-import { Flex, Text, Card, HStack, Center, CardBody, CardFooter } from '@chakra-ui/react';
+import { 
+  ChineseDictionary, 
+  MandarinWordType 
+} from '../types';
+import { 
+  Flex, 
+  Text, 
+  Card, 
+  HStack, 
+  Center, 
+  CardBody, 
+  CardFooter,
+  Modal,
+  ModalOverlay,
+  ModalBody,
+  useDisclosure,
+  ModalContent,
+ } from '@chakra-ui/react';
 
 function Word(props: {
   word: MandarinWordType,
@@ -13,6 +29,7 @@ function Word(props: {
 }) {
   // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation = props.word.word === props.pronunciation[0];
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
     <div>
@@ -26,14 +43,27 @@ function Word(props: {
         border="1px solid #468DA4"
         borderRadius="4"
         boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
-        onClick={props.onClick}
+        onClick={onOpen}
       >
-        {props.isOpen && !punctuation ?
-          <Definition
-            word={props.word.word} 
-            definitions={props.definitions}
-            character_definitions={props.dictionary}
-            onClick={props.onClick}/> 
+        {!punctuation ?
+          <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent
+              maxWidth="90vw"
+              maxHeight="90vh"
+              width="auto"
+              height="auto"
+              onClick={onClose}
+            >
+              <ModalBody display="flex" p="3rem" overflow={"scroll"}>
+                <Definition
+                  word={props.word.word} 
+                  definitions={props.definitions}
+                  character_definitions={props.dictionary}
+                /> 
+              </ModalBody>
+            </ModalContent>
+          </Modal>
           
           : null}
 

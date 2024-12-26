@@ -13,7 +13,7 @@ function Hanzi(props: { hanzi: string, pinyin: string }) {
       </Text>
 
       {props.pinyin ?
-        <Text>
+        <Text fontSize='l'>
           {props.pinyin.toLowerCase()}
         </Text>
       : null}
