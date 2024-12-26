@@ -56,6 +56,7 @@ def segment(request, data: str):
       hanzi_defs = CEDictionary.objects\
                     .filter(Q(traditional=single_hanzi) | Q(simplified=single_hanzi))\
                     .values_list('definitions', 'pronunciation')
+
       dictionary[single_hanzi] = {
         'english': hanzi_defs[0][0],
         'pinyin': hanzi_defs[0][1],

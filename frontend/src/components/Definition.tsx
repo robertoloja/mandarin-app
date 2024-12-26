@@ -2,44 +2,62 @@ import {
   Text, 
   VStack, 
   HStack,
-  Heading
+  DialogHeader,
+  DialogTitle,
+  Center,
+  DialogBody,
+  DialogContent,
+  DialogRoot
 } from '@chakra-ui/react';
 import Hanzi from './Hanzi';
 
 function Definition(props: {
+  dialogOpen: boolean,
   word: string,
-  // onClick: () => void,
   definitions: string[],
-  character_definitions: Record<string, {english: string, pinyin: string, simplified: string}>
+  character_definitions: Record<string, {english: string, pinyin: string, simplified: string}>,
+  key: number,
 }) {
   return (
-    <VStack>
-      <Heading>
-        {props.word}
-      </Heading>
-
-      {props.definitions.map(definition => 
-        <Text textAlign="center">
-          {definition}
-        </Text>
-      )}
-
-    {props.word.split('').length !== 1 ? 
-      <VStack align="start">
-        {props.word.split('').map((hanzi, index) => (
-          <HStack key={index}>
-            <Hanzi
-              hanzi={hanzi}
-              pinyin={props.character_definitions[hanzi].pinyin}
-            />
-            <Text>
-              {props.character_definitions[hanzi].english}
+    <DialogRoot
+      size="cover" 
+      placement="center"
+      scrollBehavior="inside"
+      open={props.dialogOpen}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            <Center>
+              {props.word}
+            </Center>
+          </DialogTitle>
+          {props.definitions.map((definition, index) => 
+            <Text textAlign="center" key={index}>
+              {definition}
             </Text>
-          </HStack>
-        ))}
-      </VStack>
-    : undefined}
-    </VStack> 
+          )}
+        </DialogHeader>
+
+        <DialogBody>
+          {props.word.split('').length !== 1 ? 
+            <VStack align="start">
+              {props.word.split('').map((hanzi, index) => (
+                <HStack key={index}>
+                  <Hanzi
+                    hanzi={hanzi}
+                    pinyin={props.character_definitions[hanzi].pinyin}
+                  />
+                  <Text>
+                    {props.character_definitions[hanzi].english}
+                  </Text>
+                </HStack>
+              ))}
+            </VStack>
+          : undefined}
+        </DialogBody>
+      </DialogContent>
+    </DialogRoot>
   );
 }
 

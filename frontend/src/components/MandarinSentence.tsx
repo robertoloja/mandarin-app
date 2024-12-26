@@ -1,6 +1,8 @@
+'use client'
+
 import { useState } from 'react';
 import Word from './Word';
-import { MandarinSentenceType } from '../types';
+import { MandarinSentenceType } from '@/utils/types';
 import { Flex } from '@chakra-ui/react';
 
 
@@ -38,8 +40,6 @@ function MandarinSentence(props: MandarinSentenceType) {
           definitions={word.definitions}
           dictionary={word.dictionary}
           key={index}
-          isOpen={childStates[index].isOpen}
-          onClick={() => toggleDefinition(index)}
         />
       )}
     </Flex>

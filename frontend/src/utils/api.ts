@@ -1,0 +1,29 @@
+import axios from "axios"
+
+const API_BASE_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:8000/api'
+  : 'https://mandobot.pythonanywhere.com/api'
+
+const api = axios.create({
+  baseURL: API_BASE_URL,
+})
+
+const errorHandler = (error: { response: { status: any }; code: string }) => {
+  const statusCode = error.response?.status
+
+  if (statusCode && statusCode !== 401) {
+    console.error(error)
+  }
+  return Promise.reject(error)
+}
+
+api.interceptors.response.use(undefined, (error) => {
+  return errorHandler(error)
+})
+
+export const MandoBotAPI = {
+  segment: async function (sentence: string) {
+    const response = await api.post(`/segment?data=${sentence}`)
+    return response.data
+  },
+}
