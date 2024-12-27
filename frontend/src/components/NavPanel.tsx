@@ -30,14 +30,12 @@ defineStyleConfig({
 function NavPanel(props: {
   isOpen: boolean,
   onClose: () => void,
-  btnRef: React.RefObject<HTMLButtonElement>
 }) {
   return (
     <Drawer
       isOpen={props.isOpen}
       placement='left'
       onClose={props.onClose}
-      finalFocusRef={props.btnRef}
     >
       <DrawerOverlay />
       <DrawerContent>

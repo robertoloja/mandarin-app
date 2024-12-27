@@ -1,9 +1,11 @@
+'use client'
+
 import Hanzi from './Hanzi';
 import Definition from './Definition'
 import { 
   ChineseDictionary, 
   MandarinWordType 
-} from '../types';
+} from '../utils/types'
 import { 
   Flex, 
   Text, 
@@ -24,8 +26,6 @@ function Word(props: {
   pronunciation: string[],
   definitions: string[],
   dictionary: ChineseDictionary,
-  isOpen: boolean,
-  onClick: () => void,
 }) {
   // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation = props.word.word === props.pronunciation[0];

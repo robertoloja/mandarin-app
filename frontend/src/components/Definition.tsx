@@ -1,3 +1,5 @@
+'use client'
+
 import { 
   Text, 
   VStack, 
@@ -8,7 +10,6 @@ import Hanzi from './Hanzi';
 
 function Definition(props: {
   word: string,
-  // onClick: () => void,
   definitions: string[],
   character_definitions: Record<string, {english: string, pinyin: string, simplified: string}>
 }) {
@@ -18,8 +19,8 @@ function Definition(props: {
         {props.word}
       </Heading>
 
-      {props.definitions.map(definition => 
-        <Text textAlign="center">
+      {props.definitions.map((definition, index) => 
+        <Text textAlign="center" key={index}>
           {definition}
         </Text>
       )}
