@@ -1,3 +1,5 @@
+'use client'
+
 import { VStack, Text } from '@chakra-ui/react';
 
 function Hanzi(props: { hanzi: string, pinyin: string }) {
