@@ -6,12 +6,8 @@ import {
   Input,
   Button,
   Center,
-  Progress,
+  CircularProgress,
 } from "@chakra-ui/react"
-import {
-  ProgressCircleRing,
-  ProgressCircleRoot,
-} from "@/components/ui/progress-circle"
 
 import { MandoBotAPI } from "@/utils/api";
 import { ChineseDictionary, MandarinSentenceType } from "@/utils/types";
@@ -59,9 +55,7 @@ export default function Home() {
 
       {isLoading ? 
         <Center>
-          <ProgressCircleRoot value={null} size="md">
-            <ProgressCircleRing cap="round" />
-          </ProgressCircleRoot>
+          <CircularProgress isIndeterminate color='green.300' />
         </Center> 
         :
         <Box h="100%">
@@ -71,7 +65,7 @@ export default function Home() {
             dictionary={sentence.dictionary}
           />
 
-          {/* {sentence.sentence.length !== 0 ? <Translation text={sentence.translation} /> : null} */}
+          {sentence.sentence.length !== 0 ? <Translation text={sentence.translation} /> : null}
         </Box>
       }
     </Box>

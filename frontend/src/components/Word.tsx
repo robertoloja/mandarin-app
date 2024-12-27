@@ -1,84 +1,103 @@
-'use client'
-
-import { 
-  Flex, 
-  Text, 
-  HStack, 
-  Center, 
-  Card,
-  DialogRoot,
-  DialogTrigger,
-} from '@chakra-ui/react';
-
 import Hanzi from './Hanzi';
 import Definition from './Definition'
 import { 
   ChineseDictionary, 
   MandarinWordType 
-} from '@/utils/types';
-import { useState } from 'react';
-
+} from '../utils/types'
+import { 
+  Flex, 
+  Text, 
+  Card, 
+  HStack, 
+  Center, 
+  CardBody, 
+  CardFooter,
+  Modal,
+  ModalOverlay,
+  ModalBody,
+  useDisclosure,
+  ModalContent,
+ } from '@chakra-ui/react';
 
 function Word(props: {
   word: MandarinWordType,
   pronunciation: string[],
   definitions: string[],
   dictionary: ChineseDictionary,
+  isOpen: boolean,
+  onClick: () => void,
 }) {
   // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation = props.word.word === props.pronunciation[0];
-  const [dialogOpen, openDialog] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <>
+    <div>
     {!punctuation ? 
-          <Card.Root
-            backgroundColor="#B8EEFF"
-            margin="0.1rem"
-            marginBottom="0.5rem"
-            padding="0.2rem"
-            border="1px solid #468DA4"
-            borderRadius="4"
-            boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
-          >
-            <Definition
-              word={props.word.word} 
-              definitions={props.definitions}
-              character_definitions={props.dictionary}
-              dialogOpen={dialogOpen}
-              key={1}
-            /> 
+      <Card
+        variant="unstyled"
+        backgroundColor="#B8EEFF"
+        margin="0.1rem"
+        marginBottom="0.5rem"
+        padding="0.2rem"
+        border="1px solid #468DA4"
+        borderRadius="4"
+        boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
+        onClick={onOpen}
+      >
+        {!punctuation ?
+          <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent
+              maxWidth="90vw"
+              maxHeight="90vh"
+              width="auto"
+              height="auto"
+              onClick={onClose}
+            >
+              <ModalBody display="flex" p="3rem" overflow={"scroll"}>
+                <Definition
+                  word={props.word.word} 
+                  definitions={props.definitions}
+                  character_definitions={props.dictionary}
+                /> 
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+          
+          : null}
 
-            <Card.Body onClick={() => { openDialog(true); console.log("click") }}>
-              <Center>
-                <HStack>
-                  {props.word.word.split('').map((char, index) =>
-                    <Hanzi
-                      hanzi={char}
-                      key={index}
-                      pinyin={props.pronunciation[index]}
-                    />
-                  )}
-                </HStack>
-              </Center>
-            </Card.Body>
+        <CardBody>
+          <Center>
+            <HStack spacing="0.1rem">
+              {props.word.word.split('').map((char, index) =>
+                <Hanzi
+                  hanzi={char}
+                  key={index}
+                  pinyin={props.pronunciation[index]}
+                />
+              )}
+            </HStack>
+          </Center>
+        </CardBody>
 
-            <Center>
-              <Card.Footer>
-                <Text
-                  maxWidth="10rem"
-                  minWidth="5rem"
-                  fontSize="sm"
-                  height="2.6rem"
-                  marginTop="0.5rem"
-                  marginBottom="0.5rem"
-                  textAlign="center"
-                >
-                  {props.definitions.join('; ')}
-                </Text>
-              </Card.Footer>
-            </Center>
-          </Card.Root>
+        <Center>
+          <CardFooter>
+            <Text
+              noOfLines={2}
+              maxWidth="10rem"
+              minWidth="5rem"
+              fontSize="sm"
+              height="2.6rem"
+              marginTop="0.5rem"
+              marginBottom="0.5rem"
+              textAlign="center"
+            >
+              {props.definitions.join('; ')}
+            </Text>
+          </CardFooter>
+        </Center>
+      </Card>
 
     : <Flex
         align='center' 
@@ -89,7 +108,7 @@ function Word(props: {
           {props.word.word}
         </Text>
       </Flex>}
-    </>
+    </div>
   );
 }
 

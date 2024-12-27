@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react';
+import { Flex } from '@chakra-ui/react';
 import Word from './Word';
 import { MandarinSentenceType } from '@/utils/types';
-import { Flex } from '@chakra-ui/react';
 
 
 function MandarinSentence(props: MandarinSentenceType) {

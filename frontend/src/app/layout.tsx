@@ -1,6 +1,6 @@
 'use client'
 
-import { Provider } from "@/components/ui/provider";
+import { ChakraProvider } from "@chakra-ui/react";
 import TopNav from "@/components/TopNav";
 
 
@@ -15,10 +15,10 @@ export default function RootLayout({
         <title>mandoBot</title>
       </head>
       <body>
-        <Provider>
+        <ChakraProvider resetCSS>
           {/* <TopNav /> */}
           {children}
-        </Provider>
+        </ChakraProvider>
       </body>
     </html>
   );
