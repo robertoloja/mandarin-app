@@ -17,8 +17,6 @@ function TopNav() {
     border: '0',
     fontColor: 'blue',
     background: 'white',
-    // _hover: {},
-    // _active: {},
   })
 
   defineStyleConfig({
@@ -46,7 +44,7 @@ function TopNav() {
         onClick={onOpen}
       /> 
 
-      <NavPanel isOpen={isOpen} onClose={onClose} btnRef={btnRef} />
+      <NavPanel isOpen={isOpen} onClose={onClose} />
     </HStack>
   )
 }
