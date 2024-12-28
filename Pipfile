@@ -14,6 +14,7 @@ dragonmapper = "*"
 jieba = "*"
 django-ninja = "*"
 uvicorn = {extras = ["standard"], version = "*"}
+channels = "*"
 
 [dev-packages]
 
