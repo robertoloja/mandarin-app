@@ -61,6 +61,7 @@ export default function Home() {
             eventSource.close()
           })
           eventSource.onerror = (error) => {
+            console.error(error)
             eventSource.close()
           }
         })
