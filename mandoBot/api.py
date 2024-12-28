@@ -48,6 +48,7 @@ def segment_sse(request, taskId: str):
       segmented = await add_definitions(segmented)
       yield f"data: {json.dumps({'message': segmented})}\n\n"
     yield "event: close\n\n"
+    pending_tasks.pop(taskId)
 
   response = StreamingHttpResponse(send_sse_response(), content_type='text/event-stream')
   response['Cache-Control'] = 'no-cache'
