@@ -45,6 +45,7 @@ export default function Home() {
   }
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    setSentence(emptySentence)
     setLoading(true)
   
     try {
