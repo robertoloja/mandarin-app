@@ -25,25 +25,29 @@ load_dotenv()
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG') == "True"
 
 ALLOWED_HOSTS = [
     "mandobot.pythonanywhere.com",
-    "127.0.0.1",
-    "localhost",
-    "0.0.0.0"
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "https://robertoloja.github.io",
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "http://0.0.0.0"
 ]
 
+if DEBUG:
+    ALLOWED_HOSTS += [
+        "127.0.0.1",
+        "localhost",
+        "0.0.0.0"
+    ]
+    CORS_ALLOWED_ORIGINS += [
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "http://0.0.0.0"
+    ]
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -53,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # local apps
     'corsheaders',
+    'channels',
     'sentences',
     'accounts',
 ]
@@ -87,6 +92,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'mandoBot.wsgi.application'
+ASGI_APPLICATION = 'mandoBot.asgi.application'
 
 
 # Database

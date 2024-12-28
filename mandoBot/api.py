@@ -1,6 +1,8 @@
 import string
+import asyncio
 from ninja import NinjaAPI
 from django.db.models import Q
+from django.http import StreamingHttpResponse
 
 from dragonmapper import hanzi
 
@@ -10,6 +12,20 @@ from sentences.models import CEDictionary
 from .schemas import SegmentationResponse
 
 api = NinjaAPI()
+
+@api.get("/sse")
+def sse_test(request):
+  async def stream():
+    for i in range(10):
+      print('sending', i)
+      yield f"data: {{\"message\": \"Message {i}\", \"count\": {i}}}\n\n"
+      await asyncio.sleep(1)
+    yield "event: close\n\n"
+  
+  response = StreamingHttpResponse(stream(), content_type='text/event-stream')
+  response['Cache-Control'] = 'no-cache'
+  response['Transfer-Encoding'] = 'chunked'
+  return response
 
 @api.post("/segment", response=SegmentationResponse)
 def segment(request, data: str):

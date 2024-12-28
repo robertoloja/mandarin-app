@@ -26,4 +26,18 @@ export const MandoBotAPI = {
     const response = await api.post(`/segment?data=${sentence}`)
     return response.data
   },
+  sse: function (onMessage: (data: any) => void, onError?: (error: any) => void) {
+    const eventSource = new EventSource(`${API_BASE_URL}/sse`)
+    eventSource.onmessage = (event) => {
+      if (onMessage) {
+        try {
+          const data = JSON.parse(event.data)
+          onMessage(data)
+        } catch (e) {
+          console.error('Failed to parse SSE message', e)
+        }
+      }
+    }
+    return eventSource
+  }
 }

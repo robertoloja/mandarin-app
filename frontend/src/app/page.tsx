@@ -37,8 +37,28 @@ export default function Home() {
       .finally(() => { setLoading(false) })
   }
 
+  const handleMessage = (data: any) => {
+    console.log(data)
+  }
+  const handleError = (error: any) => {
+    console.error(error)
+  }
+  const getStream = () => {
+    console.log("Attempting to connect to SSE...");
+    const eventSource = MandoBotAPI.sse(handleMessage, handleError);
+    console.log("SSE connection established.");
+    eventSource.addEventListener("close", () => {
+      console.log("Closing connection")
+      eventSource.close()
+    })
+    eventSource.onerror = (error) => {
+      eventSource.close()
+    }
+  }
+
   return (
     <Box h="100%">
+      <Button onClick={getStream}>FOO</Button>
       <form onSubmit={handleSubmit}>
         <Input 
           type="text" 
