@@ -26,17 +26,24 @@ export const MandoBotAPI = {
     const response = await api.post(`/segment?data=${sentence}`)
     return response.data
   },
-  sse: function (onMessage: (data: any) => void, onError?: (error: any) => void) {
-    const eventSource = new EventSource(`${API_BASE_URL}/sse`)
+  sse: function (
+    taskId: string,
+    onMessage: (data: any) => void, 
+    onError?: (error: any) => void
+  ) {
+    const eventSource = new EventSource(`${API_BASE_URL}/segment?taskId=${taskId}`)
+
     eventSource.onmessage = (event) => {
-      if (onMessage) {
-        try {
-          const data = JSON.parse(event.data)
-          onMessage(data)
-        } catch (e) {
-          console.error('Failed to parse SSE message', e)
-        }
+      try {
+        const data = JSON.parse(event.data)
+        onMessage(data)
+      } catch (e) {
+        console.error('Failed to parse SSE message', e)
       }
+    }
+    eventSource.onerror = (error) => {
+      if (onError) onError(error);
+      else console.error("SSE Connection error:", error)
     }
     return eventSource
   }

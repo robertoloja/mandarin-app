@@ -10,55 +10,67 @@ import {
 } from "@chakra-ui/react"
 
 import { MandoBotAPI } from "@/utils/api";
-import { ChineseDictionary, MandarinSentenceType } from "@/utils/types";
+import { MandarinSentenceType } from "@/utils/types";
 import MandarinSentence from "@/components/MandarinSentence";
 import Translation from "@/components/Translation";
 
 
 export default function Home() {
+  const emptySentence: MandarinSentenceType = {
+    translation: '',
+    dictionary: {},
+    sentence: [],
+  }
   const [isLoading, setLoading] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [sentence, setSentence] = useState({
-    translation: '',
-    dictionary: {} as ChineseDictionary,
-    sentence: [],
-  } as MandarinSentenceType)
+  const [sentence, setSentence] = useState(emptySentence)
+
+  let taskId = ''
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
-    setLoading(true)
+  const handleMessage = (data: {message: MandarinSentenceType}) => {
+    setLoading(false)
 
-    await MandoBotAPI.segment(inputValue)
-      .then(response => { setSentence(response) })
-      .finally(() => { setLoading(false) })
-  }
-
-  const handleMessage = (data: any) => {
-    console.log(data)
+    setSentence(previousSentence => ({
+      translation: previousSentence.translation + ' ' + data.message.translation,
+      dictionary: {},
+      sentence: [...previousSentence.sentence, ...data.message.sentence],
+    }))
   }
   const handleError = (error: any) => {
     console.error(error)
   }
-  const getStream = () => {
-    console.log("Attempting to connect to SSE...");
-    const eventSource = MandoBotAPI.sse(handleMessage, handleError);
-    console.log("SSE connection established.");
-    eventSource.addEventListener("close", () => {
-      console.log("Closing connection")
-      eventSource.close()
-    })
-    eventSource.onerror = (error) => {
-      eventSource.close()
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    setLoading(true)
+  
+    try {
+      await MandoBotAPI.segment(inputValue)
+        .then(response => { 
+          taskId = response
+        })
+        .finally(() => {
+          console.log("Attempting to connect to SSE...");
+          const eventSource = MandoBotAPI.sse(taskId, handleMessage, handleError);
+          console.log("SSE connection established.");
+          eventSource.addEventListener("close", () => {
+            console.log("Closing connection")
+            eventSource.close()
+          })
+          eventSource.onerror = (error) => {
+            eventSource.close()
+          }
+        })
+    } catch (error) {
+      console.error(error)
     }
   }
 
   return (
     <Box h="100%">
-      <Button onClick={getStream}>FOO</Button>
       <form onSubmit={handleSubmit}>
         <Input 
           type="text" 
