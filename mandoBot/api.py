@@ -1,9 +1,9 @@
 import string
-import asyncio
 import re
 import uuid
 from typing import Union
 import json
+import math
 
 from ninja import NinjaAPI
 from django.db.models import Q
@@ -21,32 +21,23 @@ api = NinjaAPI()
 
 pending_tasks = {}
 
-@api.get("/sse")
-def sse_test(request):
-  async def stream():
-    for i in range(10):
-      print('sending', i)
-      yield f"data: {{\"message\": \"Message {i}\", \"count\": {i}}}\n\n"
-      await asyncio.sleep(1)
-    yield "event: close\n\n"
-  
-  response = StreamingHttpResponse(stream(), content_type='text/event-stream')
-  response['Cache-Control'] = 'no-cache'
-  response['Transfer-Encoding'] = 'chunked'
-  return response
-
 @api.get("/segment", response=SegmentationResponse)
 def segment_sse(request, taskId: str):
   parts_of_sentences = re.split(r'([。.])', pending_tasks[taskId]) # split on periods
 
   if len(parts_of_sentences) > 1:
-    parts_of_sentences = [parts_of_sentences[i] + parts_of_sentences[i + 1] for i in range(0, len(parts_of_sentences) - 1, 2)] + ([parts_of_sentences[-1]] if len(parts_of_sentences) % 2 != 0 and parts_of_sentences[-1] else [])  # add back the periods
+    parts_of_sentences = [parts_of_sentences[i] + parts_of_sentences[i + 1]\
+                          for i in range(0, len(parts_of_sentences) - 1, 2)] +\
+                          ([parts_of_sentences[-1]] if len(parts_of_sentences) % 2 != 0 and parts_of_sentences[-1] else [])  # add back the periods
 
   async def send_sse_response():
+    percentage_done = 0
+
     for i in range(len(parts_of_sentences)):
+      percentage_done = percentage_done + math.floor(len(parts_of_sentences[i]) / len(pending_tasks[taskId]) * 100)
       segmented = await DefaultSegmenter.segment_and_translate(parts_of_sentences[i])
       segmented = await add_definitions(segmented)
-      yield f"data: {json.dumps({'message': segmented})}\n\n"
+      yield f"data: {json.dumps({'message': segmented, 'percent': percentage_done})}\n\n"
     yield "event: close\n\n"
     pending_tasks.pop(taskId)
 

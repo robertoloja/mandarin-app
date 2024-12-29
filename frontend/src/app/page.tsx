@@ -6,7 +6,9 @@ import {
   Input,
   Button,
   Center,
+  Text,
   CircularProgress,
+  CircularProgressLabel,
 } from "@chakra-ui/react"
 
 import { MandoBotAPI } from "@/utils/api";
@@ -24,6 +26,7 @@ export default function Home() {
   const [isLoading, setLoading] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [sentence, setSentence] = useState(emptySentence)
+  const [percentage_done, setPercentageDone] = useState(0)
 
   let taskId = ''
 
@@ -31,12 +34,13 @@ export default function Home() {
     setInputValue(event.target.value);
   };
 
-  const handleMessage = (data: {message: MandarinSentenceType}) => {
+  const handleMessage = (data: {message: MandarinSentenceType, percent: number}) => {
     setSentence(previousSentence => ({
       translation: previousSentence.translation + ' ' + data.message.translation,
       dictionary: {},
       sentence: [...previousSentence.sentence, ...data.message.sentence],
     }))
+    setPercentageDone(data.percent)
   }
   const handleError = (error: any) => {
     console.error(error)
@@ -59,10 +63,11 @@ export default function Home() {
           eventSource.onerror = (error) => {
             if (error instanceof Event && error.type === "error") {
               console.log("Closing connection")
-              eventSource.close();
-              setLoading(false);
+              eventSource.close()
+              setLoading(false)
+              setPercentageDone(0)
             } else {
-              console.error("SSE Error:", error);
+              console.error("SSE Error:", error)
             }
           }
         })
@@ -89,14 +94,35 @@ export default function Home() {
 
       {isLoading ? 
         <Center>
+          {percentage_done == 0 ? 
           <CircularProgress
-            isIndeterminate 
+            isIndeterminate
             color='green.300'
             position="fixed"
             zIndex={1000}
-            size="10rem"
-            pt="5rem"
-          />
+            size="5rem"
+            pt="20rem"
+          /> 
+          :
+          <CircularProgress
+            color='green.300'
+            position="fixed"
+            zIndex={1000}
+            size="5rem"
+            pt="20rem"
+            value={percentage_done}
+          >
+            <CircularProgressLabel
+              position="absolute" 
+              zIndex={1000}
+              pt="20rem"
+              dropShadow="0px 0px 1px black">
+              <Text fontWeight="bold" color="white" textShadow="0px 0px 1px black">
+                {`${percentage_done}%`}
+              </Text>
+            </CircularProgressLabel>
+          </CircularProgress>
+          }
         </Center> 
         : null}
         <Box h="100%">
