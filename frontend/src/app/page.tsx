@@ -6,7 +6,7 @@ import {
   Input,
   Button,
   Center,
-  CircularProgress,
+  Progress,
 } from "@chakra-ui/react"
 
 import { MandoBotAPI } from "@/utils/api";
@@ -24,55 +24,42 @@ export default function Home() {
   const [isLoading, setLoading] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [sentence, setSentence] = useState(emptySentence)
-
-  let taskId = ''
+  const [percentage_done, setPercentageDone] = useState(0)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleMessage = (data: {message: MandarinSentenceType}) => {
+  const handleMessage = (message: MandarinSentenceType) => {
     setSentence(previousSentence => ({
-      translation: previousSentence.translation + ' ' + data.message.translation,
+      translation: previousSentence.translation + ' ' + message.translation,
       dictionary: {},
-      sentence: [...previousSentence.sentence, ...data.message.sentence],
+      sentence: [...previousSentence.sentence, ...message.sentence],
     }))
   }
-  const handleError = (error: any) => {
-    console.error(error)
-  }
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setSentence(emptySentence)
+    setPercentageDone(0)
     setLoading(true)
   
-    try {
-      await MandoBotAPI.segment(inputValue)
-        .then(response => { 
-          taskId = response
+    const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/)
+  
+    for (const sentenceToProcess of sentencesToProcess) {
+      await MandoBotAPI.segment(sentenceToProcess)
+        .then((response: MandarinSentenceType) => {
+          handleMessage(response)
         })
-        .finally(() => {
-          console.log("Attempting to connect to SSE...");
-          const eventSource = MandoBotAPI.sse(taskId, handleMessage, handleError);
-          console.log("SSE connection established.");
-
-          eventSource.onerror = (error) => {
-            if (error instanceof Event && error.type === "error") {
-              console.log("Closing connection")
-              eventSource.close();
-              setLoading(false);
-            } else {
-              console.error("SSE Error:", error);
-            }
-          }
-        })
-    } catch (error) {
-      console.error(error)
+      setPercentageDone(prev => prev + Math.floor(sentenceToProcess.length / inputValue.length * 100))
     }
+    setLoading(false)
   }
+
 
   return (
     <Box h="100%">
+
       <form onSubmit={handleSubmit}>
         <Input 
           type="text" 
@@ -80,25 +67,34 @@ export default function Home() {
           value={inputValue} 
           onChange={handleInputChange} 
           mt={10}
+          mb="0"
         />
+
+        {isLoading ?
+          <Center m="0">
+          {percentage_done == 0 ?
+            <Progress 
+              w="100%"
+              colorScheme="blue"
+              hasStripe
+              isIndeterminate
+              size='xs' />
+            :
+            <Progress
+              w="100%"
+              colorScheme="blue"
+              hasStripe
+              size='xs'
+              value={percentage_done} />
+          }
+          </Center>
+        : null}
 
         <Button type="submit" colorScheme="teal" m={2}>
           Submit
         </Button>
       </form>
 
-      {isLoading ? 
-        <Center>
-          <CircularProgress
-            isIndeterminate 
-            color='green.300'
-            position="fixed"
-            zIndex={1000}
-            size="10rem"
-            pt="5rem"
-          />
-        </Center> 
-        : null}
         <Box h="100%">
           <MandarinSentence
             sentence={sentence.sentence}
