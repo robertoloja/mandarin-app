@@ -32,8 +32,6 @@ export default function Home() {
   };
 
   const handleMessage = (data: {message: MandarinSentenceType}) => {
-    setLoading(false)
-
     setSentence(previousSentence => ({
       translation: previousSentence.translation + ' ' + data.message.translation,
       dictionary: {},
@@ -57,13 +55,15 @@ export default function Home() {
           console.log("Attempting to connect to SSE...");
           const eventSource = MandoBotAPI.sse(taskId, handleMessage, handleError);
           console.log("SSE connection established.");
-          eventSource.addEventListener("close", () => {
-            console.log("Closing connection")
-            eventSource.close()
-          })
+
           eventSource.onerror = (error) => {
-            console.error(error)
-            eventSource.close()
+            if (error instanceof Event && error.type === "error") {
+              console.log("Closing connection")
+              eventSource.close();
+              setLoading(false);
+            } else {
+              console.error("SSE Error:", error);
+            }
           }
         })
     } catch (error) {
@@ -89,9 +89,16 @@ export default function Home() {
 
       {isLoading ? 
         <Center>
-          <CircularProgress isIndeterminate color='green.300' />
+          <CircularProgress
+            isIndeterminate 
+            color='green.300'
+            position="fixed"
+            zIndex={1000}
+            size="10rem"
+            pt="5rem"
+          />
         </Center> 
-        :
+        : null}
         <Box h="100%">
           <MandarinSentence
             sentence={sentence.sentence}
@@ -101,7 +108,6 @@ export default function Home() {
 
           {sentence.sentence.length !== 0 ? <Translation text={sentence.translation} /> : null}
         </Box>
-      }
     </Box>
   );
 }
