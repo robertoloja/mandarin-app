@@ -7,22 +7,6 @@ import { MandarinSentenceType } from '@/utils/types';
 
 
 function MandarinSentence(props: MandarinSentenceType) {
-  // State to keep track of which definition tooltip is open.
-  // const [childStates, setChildStates] = useState(
-  //   props.sentence.map((word, id) => ({ id: id, isOpen: false }))
-  // );
-
-  // function toggleDefinition(id: number) {
-  //   console.log("clicked")
-  //   const updatedStates = childStates.map(child => {
-  //     if (child.id === id) {
-  //       return { ...child, isOpen: !child.isOpen };
-  //     }
-  //     return { ...child, isOpen: false };
-  //   });
-  //   setChildStates(updatedStates);
-  // }
-
   return (
     <Flex
       align="stretch"
@@ -31,7 +15,7 @@ function MandarinSentence(props: MandarinSentenceType) {
       px={['0', '5%']}
       flexWrap="wrap"
       mb={["45vh", "20vh"]}
-      overflowX="hidden"
+      overflow="hidden"
     >
       {props.sentence.map((word, index) =>
         <Word

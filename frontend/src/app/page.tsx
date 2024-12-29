@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Box,
   Input,
@@ -13,6 +13,7 @@ import { MandoBotAPI } from "@/utils/api";
 import { MandarinSentenceType } from "@/utils/types";
 import MandarinSentence from "@/components/MandarinSentence";
 import Translation from "@/components/Translation";
+import ProgressBar from "@/components/ProgressBar"
 
 
 export default function Home() {
@@ -25,6 +26,18 @@ export default function Home() {
   const [inputValue, setInputValue] = useState('')
   const [sentence, setSentence] = useState(emptySentence)
   const [percentage_done, setPercentageDone] = useState(0)
+  const [isAtTop, setIsAtTop] = useState(true)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsAtTop(window.scrollY === 0)
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -51,7 +64,10 @@ export default function Home() {
         .then((response: MandarinSentenceType) => {
           handleMessage(response)
         })
-      setPercentageDone(prev => prev + Math.floor(sentenceToProcess.length / inputValue.length * 100))
+
+      setPercentageDone(prev =>
+        prev + Math.floor(sentenceToProcess.length / inputValue.length * 100)
+      )
     }
     setLoading(false)
   }
@@ -71,22 +87,18 @@ export default function Home() {
         />
 
         {isLoading ?
-          <Center m="0">
-          {percentage_done == 0 ?
-            <Progress 
-              w="100%"
-              colorScheme="blue"
-              hasStripe
-              isIndeterminate
-              size='xs' />
-            :
-            <Progress
-              w="100%"
-              colorScheme="blue"
-              hasStripe
-              size='xs'
-              value={percentage_done} />
-          }
+          <Center 
+            m="0"
+            position={isAtTop ? "relative" : "fixed"}
+            top="0"
+            left={0}
+            right={0}
+            zIndex={1}
+            width="100%"
+          >
+            <ProgressBar 
+              progress_percent={percentage_done}
+              isAtTop={isAtTop} />
           </Center>
         : null}
 
