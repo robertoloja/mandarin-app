@@ -6,10 +6,7 @@ import {
   Input,
   Button,
   Center,
-  Text,
   Progress,
-  CircularProgress,
-  CircularProgressLabel,
 } from "@chakra-ui/react"
 
 import { MandoBotAPI } from "@/utils/api";
@@ -29,53 +26,36 @@ export default function Home() {
   const [sentence, setSentence] = useState(emptySentence)
   const [percentage_done, setPercentageDone] = useState(0)
 
-  let taskId = ''
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleMessage = (data: {message: MandarinSentenceType, percent: number}) => {
+  const handleMessage = (message: MandarinSentenceType) => {
     setSentence(previousSentence => ({
-      translation: previousSentence.translation + ' ' + data.message.translation,
+      translation: previousSentence.translation + ' ' + message.translation,
       dictionary: {},
-      sentence: [...previousSentence.sentence, ...data.message.sentence],
+      sentence: [...previousSentence.sentence, ...message.sentence],
     }))
-    setPercentageDone(data.percent)
   }
-  const handleError = (error: any) => {
-    console.error(error)
-  }
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setSentence(emptySentence)
+    setPercentageDone(0)
     setLoading(true)
   
-    try {
-      await MandoBotAPI.segment(inputValue)
-        .then(response => { 
-          taskId = response
+    const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/)
+  
+    for (const sentenceToProcess of sentencesToProcess) {
+      await MandoBotAPI.segment(sentenceToProcess)
+        .then((response: MandarinSentenceType) => {
+          handleMessage(response)
         })
-        .finally(() => {
-          console.log("Attempting to connect to SSE...");
-          const eventSource = MandoBotAPI.sse(taskId, handleMessage, handleError);
-          console.log("SSE connection established.");
-
-          eventSource.onerror = (error) => {
-            if (error instanceof Event && error.type === "error") {
-              console.log("Closing connection")
-              eventSource.close()
-              setLoading(false)
-              setPercentageDone(0)
-            } else {
-              console.error("SSE Error:", error)
-            }
-          }
-        })
-    } catch (error) {
-      console.error(error)
+      setPercentageDone(prev => prev + Math.floor(sentenceToProcess.length / inputValue.length * 100))
     }
+    setLoading(false)
   }
+
 
   return (
     <Box h="100%">

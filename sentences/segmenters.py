@@ -11,7 +11,7 @@ from sentences.translators import DefaultTranslator
 
 class Segmenter:
     @staticmethod
-    async def segment_and_translate(sentence: str) -> dict:
+    def segment_and_translate(sentence: str) -> dict:
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(DefaultSegmenter.segment, sentence)
             future_translation = executor.submit(DefaultTranslator.translate, sentence)
