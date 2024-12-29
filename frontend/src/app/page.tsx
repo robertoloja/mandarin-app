@@ -93,9 +93,19 @@ export default function Home() {
         {isLoading ?
           <Center m="0">
           {percentage_done == 0 ?
-            <Progress w="100%" colorScheme="blue" hasStripe isIndeterminate size='xs' />
+            <Progress 
+              w="100%"
+              colorScheme="blue"
+              hasStripe
+              isIndeterminate
+              size='xs' />
             :
-            <Progress w="100%" colorScheme="blue" hasStripe size='xs' value={percentage_done} />
+            <Progress
+              w="100%"
+              colorScheme="blue"
+              hasStripe
+              size='xs'
+              value={percentage_done} />
           }
           </Center>
         : null}
