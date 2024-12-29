@@ -7,6 +7,7 @@ import {
   Button,
   Center,
   Text,
+  Progress,
   CircularProgress,
   CircularProgressLabel,
 } from "@chakra-ui/react"
@@ -78,6 +79,7 @@ export default function Home() {
 
   return (
     <Box h="100%">
+
       <form onSubmit={handleSubmit}>
         <Input 
           type="text" 
@@ -85,46 +87,24 @@ export default function Home() {
           value={inputValue} 
           onChange={handleInputChange} 
           mt={10}
+          mb="0"
         />
+
+        {isLoading ?
+          <Center m="0">
+          {percentage_done == 0 ?
+            <Progress w="100%" colorScheme="blue" hasStripe isIndeterminate size='xs' />
+            :
+            <Progress w="100%" colorScheme="blue" hasStripe size='xs' value={percentage_done} />
+          }
+          </Center>
+        : null}
 
         <Button type="submit" colorScheme="teal" m={2}>
           Submit
         </Button>
       </form>
 
-      {isLoading ? 
-        <Center>
-          {percentage_done == 0 ? 
-          <CircularProgress
-            isIndeterminate
-            color='green.300'
-            position="fixed"
-            zIndex={1000}
-            size="5rem"
-            pt="20rem"
-          /> 
-          :
-          <CircularProgress
-            color='green.300'
-            position="fixed"
-            zIndex={1000}
-            size="5rem"
-            pt="20rem"
-            value={percentage_done}
-          >
-            <CircularProgressLabel
-              position="absolute" 
-              zIndex={1000}
-              pt="20rem"
-              dropShadow="0px 0px 1px black">
-              <Text fontWeight="bold" color="white" textShadow="0px 0px 1px black">
-                {`${percentage_done}%`}
-              </Text>
-            </CircularProgressLabel>
-          </CircularProgress>
-          }
-        </Center> 
-        : null}
         <Box h="100%">
           <MandarinSentence
             sentence={sentence.sentence}
