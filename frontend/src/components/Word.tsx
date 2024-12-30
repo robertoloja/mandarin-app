@@ -54,14 +54,14 @@ function Word(props: {
               maxHeight="90vh"
               width="auto"
               height="auto"
-              // onClick={onClose}
             >
               <ModalCloseButton />
               <ModalBody display="flex" p="3rem" overflow={"scroll"}>
                 <Definition
+                  pronunciations={props.pronunciation}
                   word={props.word.word} 
                   definitions={props.definitions}
-                  character_definitions={props.dictionary}
+                  dictionary={props.dictionary}
                 /> 
               </ModalBody>
             </ModalContent>

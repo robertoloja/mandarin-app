@@ -7,7 +7,6 @@ class MandarinWordSchema(Schema):
   word: str
   pinyin: List[str]
   definitions: List[str]
-  dictionary: dict
 
 class UserSchema(Schema):
   email: str
@@ -26,3 +25,4 @@ class CEDictSchema(ModelSchema):
 class SegmentationResponse(Schema):
   translation: str
   sentence: List[MandarinWordSchema]
+  dictionary: dict

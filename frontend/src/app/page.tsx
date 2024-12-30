@@ -12,7 +12,12 @@ import {
 import MandarinSentence from "@/components/MandarinSentence";
 import Translation from "@/components/Translation";
 import ProgressBar from "@/components/ProgressBar"
-import { MandarinSentenceType, MandarinWordType } from "@/utils/types";
+import {
+  MandarinSentenceType,
+  MandarinWordType,
+  ChineseDictionary,
+  SegmentResponseType
+} from "@/utils/types";
 import { MandoBotAPI } from "@/utils/api";
 
 
@@ -23,21 +28,23 @@ export default function Home() {
   }
 
   const [percentage_done, setPercentageDone] = useState(0)
-  const [sentence, setSentence] = useState(emptySentence)
+  const [sentence, setSentence] = useState(emptySentence as MandarinSentenceType)
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setLoading] = useState(false)
+  const [dictionary, setDictionary] = useState({} as ChineseDictionary)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
-  const handleMessage = (message: MandarinSentenceType) => {
+  const handleMessage = (message: SegmentResponseType) => {
     // Since the input is batched before being sent, this ensures
     // the more recent batches do not override previous batches.
     setSentence(previousSentence => ({
       translation: previousSentence.translation + ' ' + message.translation,
       sentence: [...previousSentence.sentence, ...message.sentence],
     }))
+    setDictionary(previousDictionary => ({...previousDictionary, ...message.dictionary}))
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -53,7 +60,7 @@ export default function Home() {
   
     for (const sentenceToProcess of sentencesToProcess) {
       await MandoBotAPI.segment(sentenceToProcess)
-        .then((response: MandarinSentenceType) => {
+        .then((response: SegmentResponseType) => {
           handleMessage(response)
         })
 
@@ -88,7 +95,9 @@ export default function Home() {
                 color="gray.600"
                 textAlign="center"
                 w="60%">
-                Segmentation and translation can take several minutes.
+                {percentage_done == 0
+                  ? "Segmentation and translation can take several minutes." 
+                  : "Your analysis will load one sentence at a time."}
               </Text>
           : null}
         </HStack>
@@ -98,6 +107,7 @@ export default function Home() {
           <MandarinSentence
             sentence={sentence.sentence}
             translation={sentence.translation}
+            dictionary={dictionary}
           />
 
           {sentence.sentence.length !== 0 ? 
