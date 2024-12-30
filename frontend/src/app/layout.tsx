@@ -1,7 +1,7 @@
 'use client'
 
 import { ChakraProvider } from "@chakra-ui/react";
-// import TopNav from "@/components/TopNav";
+import TopNav from "@/components/TopNav";
 
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
       </head>
       <body>
         <ChakraProvider resetCSS>
-          {/* <TopNav /> */}
+          <TopNav />
           {children}
         </ChakraProvider>
       </body>

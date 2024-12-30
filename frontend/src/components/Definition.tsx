@@ -11,7 +11,11 @@ import Hanzi from './Hanzi';
 function Definition(props: {
   word: string,
   definitions: string[],
-  character_definitions: Record<string, {english: string, pinyin: string, simplified: string}>
+  character_definitions: Record<string, {
+    english: string,
+    pinyin: string,
+    simplified: string
+  }>
 }) {
   return (
     <VStack>

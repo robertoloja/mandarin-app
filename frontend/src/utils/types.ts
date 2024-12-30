@@ -13,6 +13,5 @@ export type MandarinWordType = {
   
 export type MandarinSentenceType = {
   translation: string,
-  dictionary: ChineseDictionary,
   sentence: MandarinWordType[],
 }

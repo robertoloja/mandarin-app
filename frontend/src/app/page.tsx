@@ -5,45 +5,50 @@ import {
   Box,
   Input,
   Button,
-  Center,
-  Progress,
+  Text,
+  HStack,
 } from "@chakra-ui/react"
 
-import { MandoBotAPI } from "@/utils/api";
-import { MandarinSentenceType } from "@/utils/types";
 import MandarinSentence from "@/components/MandarinSentence";
 import Translation from "@/components/Translation";
+import ProgressBar from "@/components/ProgressBar"
+import { MandarinSentenceType, MandarinWordType } from "@/utils/types";
+import { MandoBotAPI } from "@/utils/api";
 
 
 export default function Home() {
   const emptySentence: MandarinSentenceType = {
     translation: '',
-    dictionary: {},
-    sentence: [],
+    sentence: [] as MandarinWordType[],
   }
-  const [isLoading, setLoading] = useState(false)
-  const [inputValue, setInputValue] = useState('')
-  const [sentence, setSentence] = useState(emptySentence)
+
   const [percentage_done, setPercentageDone] = useState(0)
+  const [sentence, setSentence] = useState(emptySentence)
+  const [inputValue, setInputValue] = useState('')
+  const [isLoading, setLoading] = useState(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
   const handleMessage = (message: MandarinSentenceType) => {
+    // Since the input is batched before being sent, this ensures
+    // the more recent batches do not override previous batches.
     setSentence(previousSentence => ({
       translation: previousSentence.translation + ' ' + message.translation,
-      dictionary: {},
       sentence: [...previousSentence.sentence, ...message.sentence],
     }))
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+
     setSentence(emptySentence)
     setPercentageDone(0)
+    if (inputValue == '') { return }
     setLoading(true)
   
+    // Batch input by sentence, to speed up initial response time from server.
     const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/)
   
     for (const sentenceToProcess of sentencesToProcess) {
@@ -51,58 +56,54 @@ export default function Home() {
         .then((response: MandarinSentenceType) => {
           handleMessage(response)
         })
-      setPercentageDone(prev => prev + Math.floor(sentenceToProcess.length / inputValue.length * 100))
+
+      setPercentageDone(prev =>
+        prev + Math.floor(sentenceToProcess.length / inputValue.length * 100)
+      )
     }
     setLoading(false)
   }
 
-
   return (
     <Box h="100%">
+      {isLoading ? <ProgressBar progress_percent={percentage_done} /> : null}
 
       <form onSubmit={handleSubmit}>
         <Input 
           type="text" 
-          placeholder="Enter Mandarin text" 
+          placeholder="Enter Mandarin text to translate and segment" 
           value={inputValue} 
           onChange={handleInputChange} 
-          mt={10}
           mb="0"
+          mt={isLoading ? '0' : '0.25rem'}
         />
 
-        {isLoading ?
-          <Center m="0">
-          {percentage_done == 0 ?
-            <Progress 
-              w="100%"
-              colorScheme="blue"
-              hasStripe
-              isIndeterminate
-              size='xs' />
-            :
-            <Progress
-              w="100%"
-              colorScheme="blue"
-              hasStripe
-              size='xs'
-              value={percentage_done} />
-          }
-          </Center>
-        : null}
+          <HStack>
+            <Button type="submit" colorScheme="teal" m={2}>
+              Submit
+            </Button>
 
-        <Button type="submit" colorScheme="teal" m={2}>
-          Submit
-        </Button>
+            {isLoading ?
+              <Text 
+                color="gray.600"
+                textAlign="center"
+                w="60%">
+                Segmentation and translation can take several minutes.
+              </Text>
+          : null}
+        </HStack>
       </form>
 
         <Box h="100%">
           <MandarinSentence
             sentence={sentence.sentence}
             translation={sentence.translation}
-            dictionary={sentence.dictionary}
           />
 
-          {sentence.sentence.length !== 0 ? <Translation text={sentence.translation} /> : null}
+          {sentence.sentence.length !== 0 ? 
+            <Translation text={sentence.translation} />
+            : null
+          }
         </Box>
     </Box>
   );

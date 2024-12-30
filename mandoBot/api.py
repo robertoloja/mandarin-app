@@ -1,10 +1,7 @@
 import string
-
 from ninja import NinjaAPI
 from django.db.models import Q
-
 from dragonmapper import hanzi
-
 from sentences.segmenters import DefaultSegmenter
 from sentences.translators import DefaultTranslator
 from sentences.models import CEDictionary
@@ -13,57 +10,70 @@ from .schemas import SegmentationResponse
 api = NinjaAPI()
 
 @api.post("/segment", response=SegmentationResponse)
-def segment(request, data: str):
-  if not hanzi.has_chinese(data):
+def segment(request, data: str) -> dict:
+    if not hanzi.has_chinese(data):
+        return handle_non_chinese(data)
+    
+    segmented_data = segment_and_translate(data)
+    return segmented_data
+
+# Utility functions
+def handle_non_chinese(data: str) -> dict:
+    """
+    When the "word" and the only item in "sentence" are equal,
+    the frontend recognizes that this is punctuation.
+    """
     word = {
-      "word": data,
-      "pinyin": [data],
-      "definitions":[],
-      "dictionary": {"english": "", "pinyin": "", "simplified": ""}
+        "word": data,
+        "pinyin": [data],
+        "definitions": [],
+        "dictionary": {"english": "", "pinyin": "", "simplified": ""}
     }
     return {
-      "translation": data,
-      "dictionary": {},
-      "sentence": [word]
+        "translation": data,
+        "sentence": [word]
     }
-  segmented = DefaultSegmenter.segment_and_translate(data)
-  segmented = add_definitions(segmented)
 
-  return segmented
+def segment_and_translate(data: str) -> dict:
+    segmented = DefaultSegmenter.segment_and_translate(data)
+    return add_definitions(segmented)
 
+def add_definitions(segmented: dict) -> dict:
+    for i, segment in enumerate(segmented['sentence']):
+        word = segment['word']
+        if hanzi.has_chinese(word):
+            defs = get_definitions(word)
+            segmented['sentence'][i]['definitions'] = defs
+            segmented['sentence'][i]['dictionary'] = get_hanzi_dictionary(word)
+    return segmented
 
-def add_definitions(segmented):
-  # Adding definitions in the segmenter creates a circular import, so it is done here.  
-  for i in range(len(segmented['sentence'])):
-    word = segmented['sentence'][i]['word']
+def get_definitions(word: str) -> list:
+    defs = CEDictionary.objects\
+        .filter(Q(traditional=word) | Q(simplified=word))\
+        .values_list('definitions', flat=True)
 
-    if not hanzi.has_chinese(word):
-      continue
+    if not defs:
+        translated_word = DefaultTranslator.translate(word)
+        return [
+            translated_word.lower()\
+              .translate(str.maketrans('', '', string.punctuation))
+          ]
 
-    # Use sync_to_async to run the synchronous database query
-    defs = CEDictionary.objects.filter(Q(traditional=word) | Q(simplified=word)).values_list('definitions', flat=True)
+    return defs
 
-    if len(defs) == 0:
-      # Correctly await the translation and process the result
-      translated_word = DefaultTranslator.translate(word)
-      defs = [translated_word.lower().translate(str.maketrans('', '', string.punctuation))]
-
-    segmented['sentence'][i]['definitions'] = defs
-
-    # Add dictionary of each individual hanzi
+def get_hanzi_dictionary(word: str) -> dict:
     dictionary = {}
-
     for single_hanzi in word:
-      if single_hanzi in "、。？，：；《》【】（）［］！＠＃＄％＾＆＊－／＋＝－～":
-        continue
+        if single_hanzi in "、。？，：；《》【】（）［］！＠＃＄％＾＆＊－／＋＝－～":
+            continue
 
-      hanzi_defs = CEDictionary.objects.filter(Q(traditional=single_hanzi) | Q(simplified=single_hanzi)).values_list('definitions', 'pronunciation')
+        hanzi_defs = CEDictionary.objects\
+            .filter(Q(traditional=single_hanzi) | Q(simplified=single_hanzi))\
+            .values_list('definitions', 'pronunciation')
 
-      dictionary[single_hanzi] = {
-        'english': hanzi_defs[0][0],
-        'pinyin': hanzi_defs[0][1],
-        'simplified': '',
-      }
-    segmented['sentence'][i]['dictionary'] = dictionary
-
-  return segmented
+        dictionary[single_hanzi] = {
+            'english': hanzi_defs[0][0],
+            'pinyin': hanzi_defs[0][1],
+            'simplified': '',
+        }
+    return dictionary
