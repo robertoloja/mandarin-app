@@ -19,6 +19,7 @@ import {
   ModalBody,
   useDisclosure,
   ModalContent,
+  ModalCloseButton,
  } from '@chakra-ui/react';
 
 function Word(props: {
@@ -53,8 +54,9 @@ function Word(props: {
               maxHeight="90vh"
               width="auto"
               height="auto"
-              onClick={onClose}
+              // onClick={onClose}
             >
+              <ModalCloseButton />
               <ModalBody display="flex" p="3rem" overflow={"scroll"}>
                 <Definition
                   word={props.word.word} 
