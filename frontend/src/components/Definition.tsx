@@ -6,7 +6,6 @@ import {
   HStack,
   Heading,
   Divider,
-  Accordion,
   Modal,
   ModalBody,
   ModalOverlay,
@@ -48,17 +47,17 @@ function Definition(props: {
             {/* The full mandarin word */}
             <Heading>{props.word}</Heading>
 
-            {/* The pronunciation */}
+            {/* The current pronunciation */}
             <Heading size="sm">{props.pronunciations.join(' ')}</Heading>
 
             {/* Each definition of the word */}
             {props.definitions.map((definition, index) => (
-              <React.Fragment key={index}>
+              <div key={index}>
                 <Text textAlign="center" key={index}>
                   {`${props.definitions.length > 1 ? index + 1 + '.' : ''} ${definition}`}
                 </Text>
                 {props.definitions.length - 1 > index ? <Divider /> : null}
-              </React.Fragment>
+              </div>
             ))}
 
             {props.word.split('').length !== 1 ? (
@@ -79,19 +78,22 @@ function Definition(props: {
 
                       <VStack key={hanziIndex} align="start">
                         {getIndicesOfMatchingPinyin(savedIndex, hanzi).map(
-                          (x, _, array) => (
-                            <HStack key={x}>
-                              <Text key={x}>
-                                {array.length > 1 ? x + 1 + '.' : ''}
-                              </Text>
-                              <Text>
-                                {
-                                  props.dictionary[hanzi].english[
-                                    x + savedIndex
-                                  ]
-                                }
-                              </Text>
-                            </HStack>
+                          (x, i, array) => (
+                            <div key={i}>
+                              <HStack key={x}>
+                                <Text key={x} fontWeight="bold">
+                                  {array.length > 1 ? x + 1 + '.' : ''}
+                                </Text>
+                                <Text>
+                                  {
+                                    props.dictionary[hanzi].english[
+                                      x + savedIndex
+                                    ]
+                                  }
+                                </Text>
+                              </HStack>
+                              {i + 1 < array.length ? <Divider /> : null}
+                            </div>
                           ),
                         )}
                       </VStack>
@@ -99,7 +101,7 @@ function Definition(props: {
                   </VStack>
                 ))}
               </VStack>
-            ) : undefined}
+            ) : null}
           </VStack>
         </ModalBody>
       </ModalContent>
