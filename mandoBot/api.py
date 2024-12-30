@@ -40,11 +40,9 @@ def add_definitions(segmented):
     if not hanzi.has_chinese(word):
       continue
 
-    # Use sync_to_async to run the synchronous database query
     defs = CEDictionary.objects.filter(Q(traditional=word) | Q(simplified=word)).values_list('definitions', flat=True)
 
     if len(defs) == 0:
-      # Correctly await the translation and process the result
       translated_word = DefaultTranslator.translate(word)
       defs = [translated_word.lower().translate(str.maketrans('', '', string.punctuation))]
 

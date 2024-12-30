@@ -6,14 +6,13 @@ import {
   Input,
   Button,
   Center,
-  Progress,
 } from "@chakra-ui/react"
 
-import { MandoBotAPI } from "@/utils/api";
-import { MandarinSentenceType } from "@/utils/types";
 import MandarinSentence from "@/components/MandarinSentence";
 import Translation from "@/components/Translation";
 import ProgressBar from "@/components/ProgressBar"
+import { MandarinSentenceType } from "@/utils/types";
+import { MandoBotAPI } from "@/utils/api";
 
 
 export default function Home() {
@@ -22,13 +21,15 @@ export default function Home() {
     dictionary: {},
     sentence: [],
   }
-  const [isLoading, setLoading] = useState(false)
-  const [inputValue, setInputValue] = useState('')
-  const [sentence, setSentence] = useState(emptySentence)
+
   const [percentage_done, setPercentageDone] = useState(0)
+  const [sentence, setSentence] = useState(emptySentence)
+  const [inputValue, setInputValue] = useState('')
+  const [isLoading, setLoading] = useState(false)
   const [isAtTop, setIsAtTop] = useState(true)
 
   useEffect(() => {
+    // Progress bar stays at the top when scrolling
     const handleScroll = () => {
       setIsAtTop(window.scrollY === 0)
     };
@@ -44,6 +45,8 @@ export default function Home() {
   };
 
   const handleMessage = (message: MandarinSentenceType) => {
+    // Since the input is batched before being sent, this ensures
+    // the more recent batches do not override previous batches.
     setSentence(previousSentence => ({
       translation: previousSentence.translation + ' ' + message.translation,
       dictionary: {},
@@ -57,6 +60,7 @@ export default function Home() {
     setPercentageDone(0)
     setLoading(true)
   
+    // Batch input by sentence, to speed up initial response time from server.
     const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/)
   
     for (const sentenceToProcess of sentencesToProcess) {
@@ -114,7 +118,10 @@ export default function Home() {
             dictionary={sentence.dictionary}
           />
 
-          {sentence.sentence.length !== 0 ? <Translation text={sentence.translation} /> : null}
+          {sentence.sentence.length !== 0 ? 
+            <Translation text={sentence.translation} />
+            : null
+          }
         </Box>
     </Box>
   );
