@@ -31,7 +31,6 @@ def handle_non_chinese(data: str) -> dict:
     }
     return {
         "translation": data,
-        "dictionary": {},
         "sentence": [word]
     }
 

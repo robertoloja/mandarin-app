@@ -41,7 +41,6 @@ class Segmenter:
 
         return {
             "translation": translated,
-            "dictionary": {},
             "sentence": response
         }
 

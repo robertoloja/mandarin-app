@@ -1,16 +1,17 @@
+'use client'
 import React, { useRef } from "react";
 import {
-  useDisclosure,
+  // useDisclosure,
   IconButton,
   defineStyle,
   defineStyleConfig,
   HStack,
 } from '@chakra-ui/react'
 import { HamburgerIcon } from "@chakra-ui/icons";
-import NavPanel from "./NavPanel";
+// import NavPanel from "./NavPanel";
 
 function TopNav() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const buttonStyle = defineStyle({
@@ -42,7 +43,7 @@ function TopNav() {
         colorScheme='blue'
         variant="buttonStyle"
         style={{ marginLeft: '0.5rem' }}
-        onClick={onOpen}
+        // onClick={onOpen}
       /> 
 
       {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}

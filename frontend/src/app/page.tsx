@@ -5,21 +5,21 @@ import {
   Box,
   Input,
   Button,
-  Center,
+  Text,
+  HStack,
 } from "@chakra-ui/react"
 
 import MandarinSentence from "@/components/MandarinSentence";
 import Translation from "@/components/Translation";
 import ProgressBar from "@/components/ProgressBar"
-import { MandarinSentenceType } from "@/utils/types";
+import { MandarinSentenceType, MandarinWordType } from "@/utils/types";
 import { MandoBotAPI } from "@/utils/api";
 
 
 export default function Home() {
   const emptySentence: MandarinSentenceType = {
     translation: '',
-    dictionary: {},
-    sentence: [],
+    sentence: [] as MandarinWordType[],
   }
 
   const [percentage_done, setPercentageDone] = useState(0)
@@ -36,7 +36,6 @@ export default function Home() {
     // the more recent batches do not override previous batches.
     setSentence(previousSentence => ({
       translation: previousSentence.translation + ' ' + message.translation,
-      dictionary: {},
       sentence: [...previousSentence.sentence, ...message.sentence],
     }))
   }
@@ -63,35 +62,42 @@ export default function Home() {
       )
     }
     setLoading(false)
-    console.log(JSON.stringify(sentence))
   }
 
   return (
     <Box h="100%">
-      {isLoading ?
-        <ProgressBar progress_percent={percentage_done} />
-      : null}
+      {isLoading ? <ProgressBar progress_percent={percentage_done} /> : null}
 
       <form onSubmit={handleSubmit}>
         <Input 
           type="text" 
-          placeholder="Enter Mandarin text" 
+          placeholder="Enter Mandarin text to translate and segment" 
           value={inputValue} 
           onChange={handleInputChange} 
           mb="0"
           mt={isLoading ? '0' : '0.25rem'}
         />
 
-        <Button type="submit" colorScheme="teal" m={2}>
-          Submit
-        </Button>
+          <HStack>
+            <Button type="submit" colorScheme="teal" m={2}>
+              Submit
+            </Button>
+
+            {isLoading ?
+              <Text 
+                color="gray.600"
+                textAlign="center"
+                w="60%">
+                Segmentation and translation can take several minutes.
+              </Text>
+          : null}
+        </HStack>
       </form>
 
         <Box h="100%">
           <MandarinSentence
             sentence={sentence.sentence}
             translation={sentence.translation}
-            dictionary={sentence.dictionary}
           />
 
           {sentence.sentence.length !== 0 ? 

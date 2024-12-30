@@ -25,5 +25,4 @@ class CEDictSchema(ModelSchema):
 
 class SegmentationResponse(Schema):
   translation: str
-  dictionary: dict
   sentence: List[MandarinWordSchema]
