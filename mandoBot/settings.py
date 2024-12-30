@@ -32,7 +32,7 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://robertoloja.github.io",
+    "https://mandobot.netlify.app/",
 ]
 
 if DEBUG:
