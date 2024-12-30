@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
 import { VStack, Text } from '@chakra-ui/react';
 
-function Hanzi(props: { hanzi: string, pinyin: string }) {
+function Hanzi(props: { hanzi: string; pinyin: string }) {
   return (
     <VStack
       border="solid 1px #468DA4"
@@ -14,12 +14,11 @@ function Hanzi(props: { hanzi: string, pinyin: string }) {
         {props.hanzi}
       </Text>
 
-      {props.pinyin ?
-        <Text fontSize='l'>
-          {props.pinyin.toLowerCase()}
-        </Text>
-      : null}
+      {props.pinyin ? (
+        <Text fontSize="l">{props.pinyin.toLowerCase()}</Text>
+      ) : null}
     </VStack>
-  )}
+  );
+}
 
 export default Hanzi;

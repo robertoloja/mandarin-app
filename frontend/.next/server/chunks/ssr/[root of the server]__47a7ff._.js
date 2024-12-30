@@ -57,12 +57,14 @@ __turbopack_esm__({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Hanzi$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/src/components/Hanzi.tsx [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$stack$2f$v$2d$stack$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/@chakra-ui/react/dist/esm/stack/v-stack.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$typography$2f$heading$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/@chakra-ui/react/dist/esm/typography/heading.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$typography$2f$text$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/@chakra-ui/react/dist/esm/typography/text.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$divider$2f$divider$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/@chakra-ui/react/dist/esm/divider/divider.mjs [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$stack$2f$h$2d$stack$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/@chakra-ui/react/dist/esm/stack/h-stack.mjs [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 ;
@@ -75,7 +77,7 @@ function Definition(props) {
                 children: props.word
             }, void 0, false, {
                 fileName: "[project]/src/components/Definition.tsx",
-                lineNumber: 28,
+                lineNumber: 27,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$typography$2f$heading$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Heading"], {
@@ -83,26 +85,30 @@ function Definition(props) {
                 children: props.pronunciations.join(' ')
             }, void 0, false, {
                 fileName: "[project]/src/components/Definition.tsx",
-                lineNumber: 33,
+                lineNumber: 30,
                 columnNumber: 7
             }, this),
-            props.definitions.map((definition, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+            props.definitions.map((definition, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].Fragment, {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$typography$2f$text$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Text"], {
                             textAlign: "center",
                             children: `${props.definitions.length > 1 ? index + 1 + '.' : ''} ${definition}`
                         }, index, false, {
                             fileName: "[project]/src/components/Definition.tsx",
-                            lineNumber: 40,
+                            lineNumber: 35,
                             columnNumber: 11
                         }, this),
                         props.definitions.length - 1 > index ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$divider$2f$divider$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Divider"], {}, void 0, false, {
                             fileName: "[project]/src/components/Definition.tsx",
-                            lineNumber: 43,
-                            columnNumber: 50
+                            lineNumber: 38,
+                            columnNumber: 51
                         }, this) : null
                     ]
-                }, void 0, true)),
+                }, index, true, {
+                    fileName: "[project]/src/components/Definition.tsx",
+                    lineNumber: 34,
+                    columnNumber: 9
+                }, this)),
             props.word.split('').length !== 1 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$stack$2f$v$2d$stack$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["VStack"], {
                 align: "start",
                 children: props.word.split('').map((hanzi, hanziIndex)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$stack$2f$v$2d$stack$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["VStack"], {
@@ -116,7 +122,7 @@ function Definition(props) {
                                     pinyin: pinyin
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Definition.tsx",
-                                    lineNumber: 58,
+                                    lineNumber: 55,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$stack$2f$v$2d$stack$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["VStack"], {
@@ -131,28 +137,28 @@ function Definition(props) {
                                             children: `${x.i + 1}. ${props.dictionary[hanzi].english[x.i + savedIndex]}`
                                         }, x.i, false, {
                                             fileName: "[project]/src/components/Definition.tsx",
-                                            lineNumber: 70,
-                                            columnNumber: 21
+                                            lineNumber: 68,
+                                            columnNumber: 25
                                         }, this))
                                 }, hanziIndex, false, {
                                     fileName: "[project]/src/components/Definition.tsx",
-                                    lineNumber: 64,
+                                    lineNumber: 59,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, hanziIndex, true, {
                             fileName: "[project]/src/components/Definition.tsx",
-                            lineNumber: 53,
+                            lineNumber: 47,
                             columnNumber: 15
                         }, this)
                     }, hanziIndex, false, {
                         fileName: "[project]/src/components/Definition.tsx",
-                        lineNumber: 52,
+                        lineNumber: 46,
                         columnNumber: 13
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/components/Definition.tsx",
-                lineNumber: 48,
+                lineNumber: 43,
                 columnNumber: 9
             }, this) : undefined
         ]
@@ -216,8 +222,8 @@ function Word(props) {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$modal$2f$modal$2d$overlay$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ModalOverlay"], {}, void 0, false, {
                             fileName: "[project]/src/components/Word.tsx",
-                            lineNumber: 51,
-                            columnNumber: 13
+                            lineNumber: 48,
+                            columnNumber: 15
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$modal$2f$modal$2d$content$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ModalContent"], {
                             maxWidth: "90vw",
@@ -227,13 +233,13 @@ function Word(props) {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$modal$2f$modal$2d$close$2d$button$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ModalCloseButton"], {}, void 0, false, {
                                     fileName: "[project]/src/components/Word.tsx",
-                                    lineNumber: 58,
-                                    columnNumber: 15
+                                    lineNumber: 55,
+                                    columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$modal$2f$modal$2d$body$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ModalBody"], {
                                     display: "flex",
                                     p: "3rem",
-                                    overflow: "scroll",
+                                    overflow: 'scroll',
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Definition$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                         pronunciations: props.pronunciation,
                                         word: props.word.word,
@@ -241,25 +247,25 @@ function Word(props) {
                                         dictionary: props.dictionary
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Word.tsx",
-                                        lineNumber: 60,
-                                        columnNumber: 17
+                                        lineNumber: 57,
+                                        columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Word.tsx",
-                                    lineNumber: 59,
-                                    columnNumber: 15
+                                    lineNumber: 56,
+                                    columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Word.tsx",
-                            lineNumber: 52,
-                            columnNumber: 13
+                            lineNumber: 49,
+                            columnNumber: 15
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/Word.tsx",
-                    lineNumber: 50,
-                    columnNumber: 11
+                    lineNumber: 47,
+                    columnNumber: 13
                 }, this) : null,
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$card$2f$card$2d$body$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardBody"], {
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$center$2f$center$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Center"], {
@@ -270,23 +276,23 @@ function Word(props) {
                                     pinyin: props.pronunciation[index]
                                 }, index, false, {
                                     fileName: "[project]/src/components/Word.tsx",
-                                    lineNumber: 76,
-                                    columnNumber: 17
+                                    lineNumber: 72,
+                                    columnNumber: 19
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/Word.tsx",
-                            lineNumber: 74,
-                            columnNumber: 13
+                            lineNumber: 70,
+                            columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/Word.tsx",
-                        lineNumber: 73,
-                        columnNumber: 11
+                        lineNumber: 69,
+                        columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/components/Word.tsx",
-                    lineNumber: 72,
-                    columnNumber: 9
+                    lineNumber: 68,
+                    columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$center$2f$center$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Center"], {
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$card$2f$card$2d$footer$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardFooter"], {
@@ -302,24 +308,24 @@ function Word(props) {
                             children: props.definitions.join('; ')
                         }, void 0, false, {
                             fileName: "[project]/src/components/Word.tsx",
-                            lineNumber: 88,
-                            columnNumber: 13
+                            lineNumber: 84,
+                            columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/Word.tsx",
-                        lineNumber: 87,
-                        columnNumber: 11
+                        lineNumber: 83,
+                        columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/components/Word.tsx",
-                    lineNumber: 86,
-                    columnNumber: 9
+                    lineNumber: 82,
+                    columnNumber: 11
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/Word.tsx",
-            lineNumber: 38,
-            columnNumber: 7
+            lineNumber: 35,
+            columnNumber: 9
         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$flex$2f$flex$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Flex"], {
             align: "center",
             justify: "center",
@@ -330,17 +336,17 @@ function Word(props) {
                 children: props.word.word
             }, void 0, false, {
                 fileName: "[project]/src/components/Word.tsx",
-                lineNumber: 109,
-                columnNumber: 9
+                lineNumber: 101,
+                columnNumber: 11
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/Word.tsx",
-            lineNumber: 104,
-            columnNumber: 7
+            lineNumber: 100,
+            columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/Word.tsx",
-        lineNumber: 36,
+        lineNumber: 33,
         columnNumber: 5
     }, this);
 }
@@ -373,8 +379,8 @@ function MandarinSentence(props) {
         ],
         flexWrap: "wrap",
         mb: [
-            "45vh",
-            "20vh"
+            '45vh',
+            '20vh'
         ],
         overflow: "hidden",
         children: props.sentence.map((word, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Word$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -384,12 +390,12 @@ function MandarinSentence(props) {
                 dictionary: props.dictionary
             }, index, false, {
                 fileName: "[project]/src/components/MandarinSentence.tsx",
-                lineNumber: 21,
+                lineNumber: 24,
                 columnNumber: 9
             }, this))
     }, void 0, false, {
         fileName: "[project]/src/components/MandarinSentence.tsx",
-        lineNumber: 11,
+        lineNumber: 14,
         columnNumber: 5
     }, this);
 }
@@ -424,22 +430,22 @@ function Translation(props) {
         position: "fixed",
         bottom: 0,
         left: [
-            "0%",
-            "10%"
+            '0%',
+            '10%'
         ],
         right: [
-            "0%",
-            "10%"
+            '0%',
+            '10%'
         ],
         width: [
-            "100%",
-            "80%"
+            '100%',
+            '80%'
         ],
-        height: isMinimized ? "1vh" : [
-            "45vh",
-            "20vh"
+        height: isMinimized ? '1vh' : [
+            '45vh',
+            '20vh'
         ],
-        overflowY: isMinimized ? "hidden" : "scroll",
+        overflowY: isMinimized ? 'hidden' : 'scroll',
         shadow: "md",
         bg: "white",
         zIndex: 1,
@@ -519,7 +525,7 @@ function ProgressBar(props) {
             size: "xs"
         }, void 0, false, {
             fileName: "[project]/src/components/ProgressBar.tsx",
-            lineNumber: 20,
+            lineNumber: 17,
             columnNumber: 9
         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$progress$2f$progress$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Progress"], {
             w: "100%",
@@ -531,12 +537,12 @@ function ProgressBar(props) {
             value: props.progress_percent
         }, void 0, false, {
             fileName: "[project]/src/components/ProgressBar.tsx",
-            lineNumber: 29,
+            lineNumber: 27,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/ProgressBar.tsx",
-        lineNumber: 10,
+        lineNumber: 7,
         columnNumber: 5
     }, this);
 }
@@ -678,7 +684,7 @@ const MandoBotAPI = {
         };
         eventSource.onerror = (error)=>{
             if (onError) onError(error);
-            else console.error("SSE Connection error:", error);
+            else console.error('SSE Connection error:', error);
         };
         return eventSource;
     }
@@ -716,11 +722,11 @@ function Home() {
         translation: '',
         sentence: []
     };
-    const [percentage_done, setPercentageDone] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [sentence, setSentence] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(emptySentence);
+    const [dictionary, setDictionary] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({});
+    const [percentage_done, setPercentageDone] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [inputValue, setInputValue] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
     const [isLoading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [dictionary, setDictionary] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])({});
     const handleInputChange = (event)=>{
         setInputValue(event.target.value);
     };
@@ -764,7 +770,7 @@ function Home() {
                 progress_percent: percentage_done
             }, void 0, false, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 76,
+                lineNumber: 80,
                 columnNumber: 20
             }, this) : null,
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -779,7 +785,7 @@ function Home() {
                         mt: isLoading ? '0' : '0.25rem'
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 79,
+                        lineNumber: 83,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$stack$2f$h$2d$stack$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["HStack"], {
@@ -791,29 +797,29 @@ function Home() {
                                 children: "Submit"
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 89,
-                                columnNumber: 13
+                                lineNumber: 93,
+                                columnNumber: 11
                             }, this),
                             isLoading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$typography$2f$text$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Text"], {
                                 color: "gray.600",
                                 textAlign: "center",
                                 w: "60%",
-                                children: percentage_done == 0 ? "Segmentation and translation can take several minutes." : "Your analysis will load one sentence at a time."
+                                children: percentage_done == 0 ? 'Segmentation and translation can take several minutes.' : 'Your analysis will load one sentence at a time.'
                             }, void 0, false, {
                                 fileName: "[project]/src/app/page.tsx",
-                                lineNumber: 94,
-                                columnNumber: 15
+                                lineNumber: 98,
+                                columnNumber: 13
                             }, this) : null
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 88,
-                        columnNumber: 11
+                        lineNumber: 92,
+                        columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 78,
+                lineNumber: 82,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$chakra$2d$ui$2f$react$2f$dist$2f$esm$2f$box$2f$box$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Box"], {
@@ -825,26 +831,26 @@ function Home() {
                         dictionary: dictionary
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 107,
-                        columnNumber: 11
+                        lineNumber: 108,
+                        columnNumber: 9
                     }, this),
                     sentence.sentence.length !== 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$Translation$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                         text: sentence.translation
                     }, void 0, false, {
                         fileName: "[project]/src/app/page.tsx",
-                        lineNumber: 114,
-                        columnNumber: 13
+                        lineNumber: 115,
+                        columnNumber: 11
                     }, this) : null
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/page.tsx",
-                lineNumber: 106,
-                columnNumber: 9
+                lineNumber: 107,
+                columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/page.tsx",
-        lineNumber: 75,
+        lineNumber: 79,
         columnNumber: 5
     }, this);
 }

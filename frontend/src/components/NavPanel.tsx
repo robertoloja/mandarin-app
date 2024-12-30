@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Drawer,
   DrawerBody,
@@ -20,23 +20,16 @@ import { ChatIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
 const noBorder = defineStyle({
   container: {
     border: '0',
-  }
-})
+  },
+});
 
 defineStyleConfig({
   variants: { noBorder },
-})
+});
 
-function NavPanel(props: {
-  isOpen: boolean,
-  onClose: () => void,
-}) {
+function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   return (
-    <Drawer
-      isOpen={props.isOpen}
-      placement='left'
-      onClose={props.onClose}
-    >
+    <Drawer isOpen={props.isOpen} placement="left" onClose={props.onClose}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
@@ -59,7 +52,11 @@ function NavPanel(props: {
 
             <Accordion allowToggle variant="noBorder">
               <AccordionItem>
-                <AccordionButton padding="0.5rem 0" _hover={{ bg: 'white' }} border="0">
+                <AccordionButton
+                  padding="0.5rem 0"
+                  _hover={{ bg: 'white' }}
+                  border="0"
+                >
                   <ViewIcon margin="0 0.5rem" />
                   <Link fontSize="xl" paddingRight="0.5rem">
                     reading list
@@ -74,8 +71,8 @@ function NavPanel(props: {
           </VStack>
         </DrawerBody>
       </DrawerContent>
-    </Drawer >
-  )
+    </Drawer>
+  );
 }
 
 export default NavPanel;
