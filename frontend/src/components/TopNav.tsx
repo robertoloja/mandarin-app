@@ -26,13 +26,14 @@ function TopNav() {
   return (
     <HStack
       justifyContent="flex-start"
-      boxShadow="2px 2px 2px 0 rgba(0, 0, 0, 0.3)"
-      borderBottom="solid 1px black"
-      position="fixed"
+      boxShadow="1px 1px 1px 0 rgba(0, 0, 0, 0.3)"
+      // borderBottom="solid 1px black"
+      position="sticky"
+      top="0"
       zIndex="100"
       backgroundColor="white"
-      maxW='100%'
       w='100%'
+      h='2.5rem'
     >
       <IconButton
         aria-label="Open Navigation"
@@ -44,7 +45,7 @@ function TopNav() {
         onClick={onOpen}
       /> 
 
-      <NavPanel isOpen={isOpen} onClose={onClose} />
+      {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
     </HStack>
   )
 }

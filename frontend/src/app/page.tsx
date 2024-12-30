@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { 
   Box,
   Input,
@@ -26,19 +26,6 @@ export default function Home() {
   const [sentence, setSentence] = useState(emptySentence)
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setLoading] = useState(false)
-  const [isAtTop, setIsAtTop] = useState(true)
-
-  useEffect(() => {
-    // Progress bar stays at the top when scrolling
-    const handleScroll = () => {
-      setIsAtTop(window.scrollY === 0)
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
@@ -56,8 +43,10 @@ export default function Home() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+
     setSentence(emptySentence)
     setPercentageDone(0)
+    if (inputValue == '') { return }
     setLoading(true)
   
     // Batch input by sentence, to speed up initial response time from server.
@@ -74,11 +63,14 @@ export default function Home() {
       )
     }
     setLoading(false)
+    console.log(JSON.stringify(sentence))
   }
-
 
   return (
     <Box h="100%">
+      {isLoading ?
+        <ProgressBar progress_percent={percentage_done} />
+      : null}
 
       <form onSubmit={handleSubmit}>
         <Input 
@@ -86,25 +78,9 @@ export default function Home() {
           placeholder="Enter Mandarin text" 
           value={inputValue} 
           onChange={handleInputChange} 
-          mt={10}
           mb="0"
+          mt={isLoading ? '0' : '0.25rem'}
         />
-
-        {isLoading ?
-          <Center 
-            m="0"
-            position={isAtTop ? "relative" : "fixed"}
-            top="0"
-            left={0}
-            right={0}
-            zIndex={1}
-            width="100%"
-          >
-            <ProgressBar 
-              progress_percent={percentage_done}
-              isAtTop={isAtTop} />
-          </Center>
-        : null}
 
         <Button type="submit" colorScheme="teal" m={2}>
           Submit
