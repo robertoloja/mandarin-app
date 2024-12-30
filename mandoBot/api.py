@@ -1,7 +1,8 @@
 import string
 from ninja import NinjaAPI
 from django.db.models import Q
-from dragonmapper import hanzi
+from dragonmapper import hanzi, transcriptions
+
 from sentences.segmenters import DefaultSegmenter
 from sentences.translators import DefaultTranslator
 from sentences.models import CEDictionary
@@ -73,6 +74,6 @@ def get_hanzi_dictionary(single_hanzi: str) -> dict:
 
     dictionary = {
         'english': [x[0] for x in hanzi_defs],
-        'pinyin': [x[1] for x in hanzi_defs],
+        'pinyin': [transcriptions.numbered_syllable_to_accented(x[1]) for x in hanzi_defs],
     }
     return dictionary

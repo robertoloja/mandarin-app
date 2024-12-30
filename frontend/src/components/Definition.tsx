@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import Hanzi from './Hanzi';
 import { ChineseDictionary } from '@/utils/types';
+import React from 'react';
 
 function Definition(props: {
   word: string,
@@ -36,12 +37,12 @@ function Definition(props: {
 
       {/* Each definition of the word */}
       {props.definitions.map((definition, index) => 
-        <>
+        <React.Fragment key={index}>
           <Text textAlign="center" key={index}>
             {`${props.definitions.length > 1 ? index + 1 + '.' : ''} ${definition}`}
           </Text>
           {props.definitions.length -1 > index ? <Divider /> : null}
-        </>
+        </React.Fragment>
       )}
 
       {props.word.split('').length !== 1 ? 
