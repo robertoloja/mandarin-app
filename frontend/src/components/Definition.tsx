@@ -27,7 +27,16 @@ function Definition(props: {
   onClose: () => void;
 }) {
   let savedIndex: number;
-  let pinyin: string;
+
+  function getIndicesOfMatchingPinyin(index: number, hanzi: string) {
+    const pinyin = props.dictionary[hanzi].pinyin[index];
+    const indicesOfMatchingPinyin = props.dictionary[hanzi].pinyin
+      .slice(index)
+      .map((x, i) => ({ x, i }))
+      .filter(({ x }) => x == pinyin)
+      .map(({ x, i }) => i);
+    return indicesOfMatchingPinyin;
+  }
 
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
@@ -63,26 +72,28 @@ function Definition(props: {
                           props.pronunciations[hanziIndex],
                         ))
                       }
-                      {(pinyin = props.dictionary[hanzi].pinyin[savedIndex])}
+                      <Hanzi
+                        hanzi={hanzi}
+                        pinyin={props.dictionary[hanzi].pinyin[savedIndex]}
+                      />
 
-                      <Hanzi hanzi={hanzi} pinyin={pinyin} />
-
-                      {/* The definition of the hanzi
-                Display all definitions that match the same pronunciation */}
                       <VStack key={hanziIndex} align="start">
-                        {props.dictionary[hanzi].pinyin
-                          .slice(savedIndex) // only look past the point of the savedIndex
-                          .map((x, i) => ({ x, i })) // get the pinyin and its index
-                          .filter(({ x }) => x == pinyin) // filter pinyin that don't match
-                          .map(
-                            (
-                              x, // get the english definitions at those indices
-                            ) => (
-                              <Text key={x.i}>
-                                {`${x.i + 1}. ${props.dictionary[hanzi].english[x.i + savedIndex]}`}
+                        {getIndicesOfMatchingPinyin(savedIndex, hanzi).map(
+                          (x, _, array) => (
+                            <HStack key={x}>
+                              <Text key={x}>
+                                {array.length > 1 ? x + 1 + '.' : ''}
                               </Text>
-                            ),
-                          )}
+                              <Text>
+                                {
+                                  props.dictionary[hanzi].english[
+                                    x + savedIndex
+                                  ]
+                                }
+                              </Text>
+                            </HStack>
+                          ),
+                        )}
                       </VStack>
                     </HStack>
                   </VStack>

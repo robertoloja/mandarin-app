@@ -11,12 +11,7 @@ import {
   Center,
   CardBody,
   CardFooter,
-  Modal,
-  ModalOverlay,
-  ModalBody,
   useDisclosure,
-  ModalContent,
-  ModalCloseButton,
 } from '@chakra-ui/react';
 
 function Word(props: {
@@ -30,7 +25,7 @@ function Word(props: {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <div>
+    <>
       {!punctuation ? (
         <Card
           variant="unstyled"
@@ -91,7 +86,7 @@ function Word(props: {
           <Text fontSize="lg">{props.word.word}</Text>
         </Flex>
       )}
-    </div>
+    </>
   );
 }
 
