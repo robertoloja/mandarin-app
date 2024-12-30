@@ -44,25 +44,15 @@ function Word(props: {
           onClick={onOpen}
         >
           {!punctuation ? (
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
-              <ModalOverlay />
-              <ModalContent
-                maxWidth="90vw"
-                maxHeight="90vh"
-                width="auto"
-                height="auto"
-              >
-                <ModalCloseButton />
-                <ModalBody display="flex" p="3rem" overflow={'scroll'}>
-                  <Definition
-                    pronunciations={props.pronunciation}
-                    word={props.word.word}
-                    definitions={props.definitions}
-                    dictionary={props.dictionary}
-                  />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
+            <Definition
+              pronunciations={props.pronunciation}
+              word={props.word.word}
+              definitions={props.definitions}
+              dictionary={props.dictionary}
+              isOpen={isOpen}
+              onOpen={onOpen}
+              onClose={onClose}
+            />
           ) : null}
 
           <CardBody>

@@ -7,6 +7,11 @@ import {
   Heading,
   Divider,
   Accordion,
+  Modal,
+  ModalBody,
+  ModalOverlay,
+  ModalContent,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import Hanzi from './Hanzi';
 import { ChineseDictionary } from '@/utils/types';
@@ -17,66 +22,77 @@ function Definition(props: {
   pronunciations: string[];
   definitions: string[];
   dictionary: ChineseDictionary;
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
 }) {
   let savedIndex: number;
   let pinyin: string;
 
   return (
-    <VStack>
-      {/* The full mandarin word */}
-      <Heading>{props.word}</Heading>
+    <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent maxWidth="90vw" maxHeight="90vh" width="auto" height="auto">
+        <ModalCloseButton />
+        <ModalBody display="flex" p="3rem" overflow={'scroll'}>
+          <VStack>
+            {/* The full mandarin word */}
+            <Heading>{props.word}</Heading>
 
-      {/* The pronunciation */}
-      <Heading size="sm">{props.pronunciations.join(' ')}</Heading>
+            {/* The pronunciation */}
+            <Heading size="sm">{props.pronunciations.join(' ')}</Heading>
 
-      {/* Each definition of the word */}
-      {props.definitions.map((definition, index) => (
-        <React.Fragment key={index}>
-          <Text textAlign="center" key={index}>
-            {`${props.definitions.length > 1 ? index + 1 + '.' : ''} ${definition}`}
-          </Text>
-          {props.definitions.length - 1 > index ? <Divider /> : null}
-        </React.Fragment>
-      ))}
+            {/* Each definition of the word */}
+            {props.definitions.map((definition, index) => (
+              <React.Fragment key={index}>
+                <Text textAlign="center" key={index}>
+                  {`${props.definitions.length > 1 ? index + 1 + '.' : ''} ${definition}`}
+                </Text>
+                {props.definitions.length - 1 > index ? <Divider /> : null}
+              </React.Fragment>
+            ))}
 
-      {props.word.split('').length !== 1 ? (
-        <VStack align="start">
-          {/* The individual hanzi information */}
-          {props.word.split('').map((hanzi: string, hanziIndex) => (
-            <VStack align="start" key={hanziIndex}>
-              <HStack key={hanziIndex}>
-                {
-                  (savedIndex = props.dictionary[hanzi].pinyin.indexOf(
-                    props.pronunciations[hanziIndex],
-                  ))
-                }
-                {(pinyin = props.dictionary[hanzi].pinyin[savedIndex])}
+            {props.word.split('').length !== 1 ? (
+              <VStack align="start">
+                {/* The individual hanzi information */}
+                {props.word.split('').map((hanzi: string, hanziIndex) => (
+                  <VStack align="start" key={hanziIndex}>
+                    <HStack key={hanziIndex}>
+                      {
+                        (savedIndex = props.dictionary[hanzi].pinyin.indexOf(
+                          props.pronunciations[hanziIndex],
+                        ))
+                      }
+                      {(pinyin = props.dictionary[hanzi].pinyin[savedIndex])}
 
-                <Hanzi hanzi={hanzi} pinyin={pinyin} />
+                      <Hanzi hanzi={hanzi} pinyin={pinyin} />
 
-                {/* The definition of the hanzi
+                      {/* The definition of the hanzi
                 Display all definitions that match the same pronunciation */}
-                <VStack key={hanziIndex} align="start">
-                  {props.dictionary[hanzi].pinyin
-                    .slice(savedIndex) // only look past the point of the savedIndex
-                    .map((x, i) => ({ x, i })) // get the pinyin and its index
-                    .filter(({ x }) => x == pinyin) // filter pinyin that don't match
-                    .map(
-                      (
-                        x, // get the english definitions at those indices
-                      ) => (
-                        <Text key={x.i}>
-                          {`${x.i + 1}. ${props.dictionary[hanzi].english[x.i + savedIndex]}`}
-                        </Text>
-                      ),
-                    )}
-                </VStack>
-              </HStack>
-            </VStack>
-          ))}
-        </VStack>
-      ) : undefined}
-    </VStack>
+                      <VStack key={hanziIndex} align="start">
+                        {props.dictionary[hanzi].pinyin
+                          .slice(savedIndex) // only look past the point of the savedIndex
+                          .map((x, i) => ({ x, i })) // get the pinyin and its index
+                          .filter(({ x }) => x == pinyin) // filter pinyin that don't match
+                          .map(
+                            (
+                              x, // get the english definitions at those indices
+                            ) => (
+                              <Text key={x.i}>
+                                {`${x.i + 1}. ${props.dictionary[hanzi].english[x.i + savedIndex]}`}
+                              </Text>
+                            ),
+                          )}
+                      </VStack>
+                    </HStack>
+                  </VStack>
+                ))}
+              </VStack>
+            ) : undefined}
+          </VStack>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 }
 
