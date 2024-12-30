@@ -98,7 +98,7 @@ export default function Home() {
             <Text color="gray.600" textAlign="center" w="60%">
               {percentage_done == 0
                 ? 'Segmentation and translation can take several minutes.'
-                : 'Your analysis will load one sentence at a time.'}
+                : 'Your results will load one sentence at a time.'}
             </Text>
           ) : null}
         </HStack>
