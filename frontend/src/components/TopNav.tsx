@@ -6,12 +6,15 @@ import {
   defineStyle,
   defineStyleConfig,
   HStack,
+  useColorMode,
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
+import { IoMoon, IoSunny } from 'react-icons/io5';
 // import NavPanel from "./NavPanel";
 
 function TopNav() {
   // const { isOpen, onOpen, onClose } = useDisclosure();
+  const { colorMode, toggleColorMode } = useColorMode();
   const btnRef = useRef<HTMLButtonElement>(null);
 
   const buttonStyle = defineStyle({
@@ -26,13 +29,12 @@ function TopNav() {
 
   return (
     <HStack
-      justifyContent="flex-start"
+      justifyContent="space-between"
       boxShadow="1px 1px 1px 0 rgba(0, 0, 0, 0.3)"
       // borderBottom="solid 1px black"
       position="sticky"
       top="0"
       zIndex="100"
-      backgroundColor="white"
       w="100%"
       h="2.5rem"
     >
@@ -44,6 +46,11 @@ function TopNav() {
         variant="buttonStyle"
         style={{ marginLeft: '0.5rem' }}
         // onClick={onOpen}
+      />
+      <IconButton
+        aria-label="Change color mode"
+        icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
+        onClick={toggleColorMode}
       />
 
       {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}

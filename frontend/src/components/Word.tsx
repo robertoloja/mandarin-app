@@ -12,6 +12,7 @@ import {
   CardBody,
   CardFooter,
   useDisclosure,
+  useColorMode,
 } from '@chakra-ui/react';
 
 function Word(props: {
@@ -23,17 +24,20 @@ function Word(props: {
   // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation = props.word.word === props.pronunciation[0];
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { colorMode } = useColorMode();
 
   return (
     <>
       {!punctuation ? (
         <Card
           variant="unstyled"
-          backgroundColor="#B8EEFF"
+          backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#282828'}
           margin="0.1rem"
           marginBottom="0.5rem"
           padding="0.2rem"
-          border="1px solid #468DA4"
+          border={
+            colorMode === 'light' ? '1px solid #468DA4' : '1px solid #3f3f3f'
+          }
           borderRadius="4"
           boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
           onClick={onOpen}
