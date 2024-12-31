@@ -31,12 +31,12 @@ function Word(props: {
       {!punctuation ? (
         <Card
           variant="unstyled"
-          backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#282828'}
+          backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
           margin="0.1rem"
           marginBottom="0.5rem"
           padding="0.2rem"
           border={
-            colorMode === 'light' ? '1px solid #468DA4' : '1px solid #3f3f3f'
+            colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
           }
           borderRadius="4"
           boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
