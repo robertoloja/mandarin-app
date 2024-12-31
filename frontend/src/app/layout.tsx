@@ -1,8 +1,7 @@
-'use client'
+'use client';
 
-import { ChakraProvider } from "@chakra-ui/react";
-import TopNav from "@/components/TopNav";
-
+import { ChakraProvider } from '@chakra-ui/react';
+import TopNav from '@/components/TopNav';
 
 export default function RootLayout({
   children,

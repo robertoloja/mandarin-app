@@ -1,10 +1,11 @@
-'use client'
+'use client';
 
 import React, { useState } from 'react';
-import { Center, Box, Text } from '@chakra-ui/react';
+import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
 
 function Translation(props: { text: string }) {
   const [isMinimized, setIsMinimized] = useState(false);
+  const { colorMode } = useColorMode();
 
   return (
     <Box
@@ -16,13 +17,13 @@ function Translation(props: { text: string }) {
       borderColor="black"
       position="fixed"
       bottom={0}
-      left={["0%", "10%"]}
-      right={["0%", "10%"]}
-      width={["100%", "80%"]}
-      height={isMinimized ? "1vh" : ["45vh", "20vh"]}
-      overflowY={isMinimized ? "hidden" : "scroll"}
+      left={['0%', '10%']}
+      right={['0%', '10%']}
+      width={['100%', '80%']}
+      height={isMinimized ? '1vh' : ['45vh', '20vh']}
+      overflowY={isMinimized ? 'hidden' : 'scroll'}
       shadow="md"
-      bg="white"
+      bg={colorMode === 'light' ? 'white' : '#282828'}
       zIndex={1}
     >
       <Box
@@ -39,12 +40,8 @@ function Translation(props: { text: string }) {
       />
 
       <Center>
-        <Text
-          mt={3}
-          textAlign="justify"
-          px={5}
-        >
-        {props.text}
+        <Text mt={3} textAlign="justify" px={5}>
+          {props.text}
         </Text>
       </Center>
     </Box>

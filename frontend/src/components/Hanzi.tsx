@@ -1,25 +1,25 @@
-'use client'
+'use client';
 
-import { VStack, Text } from '@chakra-ui/react';
+import { VStack, Text, useColorMode } from '@chakra-ui/react';
 
-function Hanzi(props: { hanzi: string, pinyin: string }) {
+function Hanzi(props: { hanzi: string; pinyin: string }) {
+  const { colorMode } = useColorMode();
   return (
     <VStack
-      border="solid 1px #468DA4"
+      border={colorMode === 'light' ? 'solid 1px #468DA4' : 'solid 1px #282828'}
       padding="0.5rem"
       paddingTop="0"
-      backgroundColor="#85E2FF"
+      backgroundColor={colorMode === 'light' ? '#85E2FF' : '#495255'}
     >
       <Text fontSize="3xl" fontWeight="bold">
         {props.hanzi}
       </Text>
 
-      {props.pinyin ?
-        <Text fontSize='l'>
-          {props.pinyin.toLowerCase()}
-        </Text>
-      : null}
+      {props.pinyin ? (
+        <Text fontSize="l">{props.pinyin.toLowerCase()}</Text>
+      ) : null}
     </VStack>
-  )}
+  );
+}
 
 export default Hanzi;

@@ -1,7 +1,8 @@
 import string
 from ninja import NinjaAPI
 from django.db.models import Q
-from dragonmapper import hanzi
+from dragonmapper import hanzi, transcriptions
+
 from sentences.segmenters import DefaultSegmenter
 from sentences.translators import DefaultTranslator
 from sentences.models import CEDictionary
@@ -27,15 +28,22 @@ def handle_non_chinese(data: str) -> dict:
         "word": data,
         "pinyin": [data],
         "definitions": [],
-        "dictionary": {"english": "", "pinyin": "", "simplified": ""}
     }
+
     return {
         "translation": data,
         "sentence": [word]
     }
 
 def segment_and_translate(data: str) -> dict:
+    punctuation = "、。？，：；《》【】（）［］！＠＃＄％＾＆＊－／＋＝－～'\""
+    dictionary = {
+        single_hanzi: get_hanzi_dictionary(single_hanzi)
+        for single_hanzi in data
+        if single_hanzi not in punctuation
+    }
     segmented = DefaultSegmenter.segment_and_translate(data)
+    segmented['dictionary'] = dictionary
     return add_definitions(segmented)
 
 def add_definitions(segmented: dict) -> dict:
@@ -44,7 +52,6 @@ def add_definitions(segmented: dict) -> dict:
         if hanzi.has_chinese(word):
             defs = get_definitions(word)
             segmented['sentence'][i]['definitions'] = defs
-            segmented['sentence'][i]['dictionary'] = get_hanzi_dictionary(word)
     return segmented
 
 def get_definitions(word: str) -> list:
@@ -58,22 +65,15 @@ def get_definitions(word: str) -> list:
             translated_word.lower()\
               .translate(str.maketrans('', '', string.punctuation))
           ]
-
     return defs
 
-def get_hanzi_dictionary(word: str) -> dict:
-    dictionary = {}
-    for single_hanzi in word:
-        if single_hanzi in "、。？，：；《》【】（）［］！＠＃＄％＾＆＊－／＋＝－～":
-            continue
+def get_hanzi_dictionary(single_hanzi: str) -> dict:
+    hanzi_defs = CEDictionary.objects\
+        .filter(Q(traditional=single_hanzi) | Q(simplified=single_hanzi))\
+        .values_list('definitions', 'pronunciation')
 
-        hanzi_defs = CEDictionary.objects\
-            .filter(Q(traditional=single_hanzi) | Q(simplified=single_hanzi))\
-            .values_list('definitions', 'pronunciation')
-
-        dictionary[single_hanzi] = {
-            'english': hanzi_defs[0][0],
-            'pinyin': hanzi_defs[0][1],
-            'simplified': '',
-        }
+    dictionary = {
+        'english': [x[0] for x in hanzi_defs],
+        'pinyin': [transcriptions.numbered_syllable_to_accented(x[1]) for x in hanzi_defs],
+    }
     return dictionary

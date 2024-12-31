@@ -36,7 +36,6 @@ class Segmenter:
                 'word': segmented[i],
                 'pinyin': pinyin,
                 'definitions': [],
-                'dictionary': {'english': 'english', 'pinyin': 'pinyin', 'simplified': 'simplified'} #TODO: Get rid of placeholders
             }]
 
         return {
