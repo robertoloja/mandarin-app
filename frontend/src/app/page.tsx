@@ -46,7 +46,7 @@ export default function Home() {
     }));
   };
 
-  const BATCH_REQUESTS = false;
+  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
