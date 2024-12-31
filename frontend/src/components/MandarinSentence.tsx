@@ -3,11 +3,7 @@
 // import { useState } from 'react';
 import { Flex } from '@chakra-ui/react';
 import Word from './Word';
-import {
-  ChineseDictionary,
-  MandarinSentenceType,
-  SegmentResponseType,
-} from '@/utils/types';
+import { SegmentResponseType } from '@/utils/types';
 
 function MandarinSentence(props: SegmentResponseType) {
   return (

@@ -33,7 +33,7 @@ function Definition(props: {
       .slice(index)
       .map((x, i) => ({ x, i }))
       .filter(({ x }) => x == pinyin)
-      .map(({ x, i }) => i);
+      .map((e: { x: string; i: number }) => e.i);
     return indicesOfMatchingPinyin;
   }
 
