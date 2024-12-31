@@ -37,6 +37,7 @@ function TopNav() {
       zIndex="100"
       w="100%"
       h="2.5rem"
+      backgroundColor={colorMode === 'light' ? 'white' : 'gray.800'}
     >
       <IconButton
         aria-label="Open Navigation"
@@ -51,6 +52,8 @@ function TopNav() {
         aria-label="Change color mode"
         icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
         onClick={toggleColorMode}
+        bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        mr="2rem"
       />
 
       {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
