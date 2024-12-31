@@ -32,11 +32,12 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://robertoloja.github.io",
+    "https://mandobot.netlify.app/",
 ]
 
 if DEBUG:
     ALLOWED_HOSTS += [
+        "192.168.1.8",
         "127.0.0.1",
         "localhost",
         "0.0.0.0"
@@ -44,8 +45,12 @@ if DEBUG:
     CORS_ALLOWED_ORIGINS += [
         "http://127.0.0.1:3000",
         "http://localhost:3000",
-        "http://0.0.0.0"
+        "http://0.0.0.0",
     ]
+    CORS_ALLOWED_ORIGINS_REGEXES = [
+        r"http://192\.168\.1\.\d{1,3}:\d+$"
+    ]
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 INSTALLED_APPS = [
