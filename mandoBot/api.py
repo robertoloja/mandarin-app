@@ -32,7 +32,8 @@ def handle_non_chinese(data: str) -> dict:
 
     return {
         "translation": data,
-        "sentence": [word]
+        "sentence": [word],
+        "dictionary": {}
     }
 
 def segment_and_translate(data: str) -> dict:
