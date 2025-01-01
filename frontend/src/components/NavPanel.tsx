@@ -42,12 +42,11 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
             alignItems="left"
           >
             <Link fontSize="xl">
-              <ChatIcon marginRight="0.5rem" />
-              live chat
+              <ChatIcon marginRight="0.5rem" />A thing
             </Link>
             <Link fontSize="xl">
               <EditIcon marginRight="0.5rem" />
-              insert text
+              Another thing?
             </Link>
 
             <Accordion allowToggle variant="noBorder">
@@ -59,12 +58,12 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                 >
                   <ViewIcon margin="0 0.5rem" />
                   <Link fontSize="xl" paddingRight="0.5rem">
-                    reading list
+                    Actually several things
                   </Link>
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel>
-                  <Link marginLeft="1rem">Three Kingdoms</Link>
+                  <Link marginLeft="1rem">I lied, it's only one thing</Link>
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>
