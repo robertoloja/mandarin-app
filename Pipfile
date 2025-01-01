@@ -14,6 +14,7 @@ django-ninja = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 channels = "*"
 deepl = "*"
+requests = "*"
 
 [dev-packages]
 argostranslate = "*"
