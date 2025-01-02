@@ -7,8 +7,12 @@ from .segmenters import DefaultSegmenter
 
 
 class CEDictionary(models.Model):
-    traditional: str = models.TextField(validators=[is_traditional], db_index=True)
-    simplified: str = models.TextField(validators=[is_simplified], db_index=True)
+    traditional: str = models.CharField(
+        max_length=50, validators=[is_traditional], db_index=True
+    )
+    simplified: str = models.CharField(
+        max_length=50, validators=[is_simplified], db_index=True
+    )
     word_length: int = models.IntegerField(editable=False)
     pronunciation: str = models.TextField(validators=[is_pinyin])
     definitions: str = models.TextField()
