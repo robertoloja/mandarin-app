@@ -6,6 +6,7 @@ import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
+import AccurateTimer from '@/utils/timer';
 
 import {
   MandarinSentenceType,
@@ -57,6 +58,8 @@ export default function Home() {
       return;
     }
     setLoading(true);
+    const timer = new AccurateTimer();
+    timer.start();
 
     if (BATCH_REQUESTS) {
       // Batch input by sentence, to speed up initial response time from server.
@@ -84,6 +87,8 @@ export default function Home() {
       );
     }
     setLoading(false);
+    timer.stop();
+    console.log(timer.getElapsedTime());
   };
 
   return (

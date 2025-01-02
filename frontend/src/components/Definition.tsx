@@ -75,7 +75,6 @@ function Definition(props: {
                         hanzi={hanzi}
                         pinyin={props.dictionary[hanzi].pinyin[savedIndex]}
                       />
-
                       <VStack key={hanziIndex} align="start">
                         {getIndicesOfMatchingPinyin(savedIndex, hanzi).map(
                           (x, i, array) => (

@@ -40,6 +40,11 @@ class SegmentationAPITest(TestCase):
         }
         self.assertEqual(response.data, english_only_response)
 
+    def test_includes_punctuation(self):
+        request_data = "《北京城市总体规划（2016年—2035年）》"
+        response = self.client.post(f"/segment?data={request_data}")
+        pass
+
     def test_mandarin_is_segmented_traditional(self):
         request_data = self.test_sentences["traditional"]["request_data"]
         response = self.client.post(f"/segment?data={request_data}")

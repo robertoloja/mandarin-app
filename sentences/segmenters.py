@@ -77,4 +77,4 @@ class ExternalRenderAPISegmenter(Segmenter):
             return e
 
 
-DefaultSegmenter = ExternalRenderAPISegmenter
+DefaultSegmenter = JiebaSegmenter
