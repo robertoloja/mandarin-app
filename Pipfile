@@ -4,9 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-argostranslate = "*"
 gunicorn = "*"
-psycopg2-binary = "*"
 dj-database-url = "*"
 python-dotenv = "*"
 django-cors-headers = "*"
@@ -16,8 +14,10 @@ django-ninja = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 channels = "*"
 deepl = "*"
+requests = "*"
 
 [dev-packages]
+argostranslate = "*"
 
 [requires]
 python_version = "3.12"

@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef } from 'react';
 import {
-  // useDisclosure,
+  useDisclosure,
   IconButton,
   defineStyle,
   defineStyleConfig,
@@ -9,11 +9,18 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
-import { IoMoon, IoSunny } from 'react-icons/io5';
-// import NavPanel from "./NavPanel";
+import {
+  IoMoon,
+  IoSunny,
+  IoOptionsOutline,
+  IoText,
+  IoLanguage,
+  IoBrushOutline,
+} from 'react-icons/io5';
+import NavPanel from './NavPanel';
 
 function TopNav() {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -39,15 +46,43 @@ function TopNav() {
       h="2.5rem"
       backgroundColor={colorMode === 'light' ? 'white' : 'gray.800'}
     >
-      <IconButton
-        aria-label="Open Navigation"
-        icon={<HamburgerIcon boxSize="2rem" color="#468DA4" />}
-        ref={btnRef}
-        colorScheme="blue"
-        variant="buttonStyle"
-        style={{ marginLeft: '0.5rem' }}
-        // onClick={onOpen}
-      />
+      <HStack justifyContent="left">
+        <IconButton
+          aria-label="Open Navigation"
+          icon={<HamburgerIcon boxSize="2rem" color="#468DA4" />}
+          ref={btnRef}
+          colorScheme="blue"
+          variant="buttonStyle"
+          style={{ marginLeft: '0.5rem' }}
+          mr="3rem"
+          onClick={onOpen}
+        />
+
+        <IconButton
+          aria-label="Text options"
+          icon={<IoOptionsOutline />}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        />
+
+        <IconButton
+          aria-label="Text size"
+          icon={<IoText />}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        />
+
+        <IconButton
+          aria-label="Language options"
+          icon={<IoLanguage />}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        />
+
+        <IconButton
+          aria-label="Language options"
+          icon={<IoBrushOutline />}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        />
+      </HStack>
+
       <IconButton
         aria-label="Change color mode"
         icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
@@ -56,7 +91,7 @@ function TopNav() {
         mr="2rem"
       />
 
-      {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
+      <NavPanel isOpen={isOpen} onClose={onClose} />
     </HStack>
   );
 }

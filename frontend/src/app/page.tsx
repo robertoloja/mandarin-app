@@ -6,6 +6,7 @@ import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
+import AccurateTimer from '@/utils/timer';
 
 import {
   MandarinSentenceType,
@@ -34,7 +35,7 @@ export default function Home() {
   };
 
   const handleMessage = (message: SegmentResponseType) => {
-    // Since the input is batched before being sent, this ensures
+    // Since the input (might be) batched before being sent, this ensures
     // the more recent batches do not override previous batches.
     setSentence((previousSentence) => ({
       translation: previousSentence.translation + ' ' + message.translation,
@@ -46,6 +47,8 @@ export default function Home() {
     }));
   };
 
+  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -55,24 +58,37 @@ export default function Home() {
       return;
     }
     setLoading(true);
+    const timer = new AccurateTimer();
+    timer.start();
 
-    // Batch input by sentence, to speed up initial response time from server.
-    const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/);
+    if (BATCH_REQUESTS) {
+      // Batch input by sentence, to speed up initial response time from server.
+      const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/);
 
-    for (const sentenceToProcess of sentencesToProcess) {
-      await MandoBotAPI.segment(sentenceToProcess).then(
+      for (const sentenceToProcess of sentencesToProcess) {
+        await MandoBotAPI.segment(sentenceToProcess).then(
+          (response: SegmentResponseType) => {
+            handleMessage(response);
+          },
+        );
+
+        setPercentageDone(
+          (prev) =>
+            prev +
+            Math.floor((sentenceToProcess.length / inputValue.length) * 100),
+        );
+      }
+    } else {
+      await MandoBotAPI.segment(inputValue).then(
         (response: SegmentResponseType) => {
+          setSentence(emptySentence);
           handleMessage(response);
         },
       );
-
-      setPercentageDone(
-        (prev) =>
-          prev +
-          Math.floor((sentenceToProcess.length / inputValue.length) * 100),
-      );
     }
     setLoading(false);
+    timer.stop();
+    console.log(timer.getElapsedTime());
   };
 
   return (
