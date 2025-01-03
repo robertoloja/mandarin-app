@@ -1,5 +1,5 @@
 import string
-from ninja import NinjaAPI, Router
+from ninja import NinjaAPI
 from django.db.models import Q
 from dragonmapper import hanzi, transcriptions
 
@@ -9,8 +9,11 @@ from sentences.models import CEDictionary
 from .schemas import SegmentationResponse
 
 api = NinjaAPI()
-router = Router()
-api.add_router("", router)
+
+
+@api.post("/share", response=str)
+def share(request, data: str) -> str:
+    return ""
 
 
 @api.post("/segment", response=SegmentationResponse)
