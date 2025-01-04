@@ -6,6 +6,7 @@ django.setup()  # this is here for VSCode test discovery
 
 from django.test import TestCase  # noqa: E402
 from ninja.testing import TestClient  # noqa: E402
+from dragonmapper import hanzi  # noqa: E402
 from mandoBot.api import api  # noqa: E402
 
 
@@ -15,8 +16,8 @@ class SegmentationAPITest(TestCase):
         self.client = TestClient(api)
         self.emptyResponse = {
             "translation": "",
-            "dictionary": {},
-            "sentence": [{"word": "", "pinyin": [""], "definitions": []}],
+            "dictionary": {"word": {"english": [], "pinyin": []}},
+            "sentence": [{"word": "", "pinyin": [], "definitions": []}],
         }
 
     def tearDown(self):
@@ -43,7 +44,19 @@ class SegmentationAPITest(TestCase):
     def test_includes_punctuation(self):
         request_data = "《北京城市总体规划（2016年—2035年）》"
         response = self.client.post(f"/segment?data={request_data}")
-        pass
+        pass  # TODO: Finish
+
+    def test_dictionary(self):
+        request_data = (
+            "北京市，通称北京，简称“京”，曾称“北平”[註 2]，中华人民共和国的首都及直辖市"
+        )
+        response = self.client.post(f"/segment?data={request_data}")
+
+        for character in request_data:
+            if hanzi.has_chinese(character):
+                print(character)
+                self.assertTrue(character in response.data["dictionary"])
+                # TODO: Test pinyin also
 
     def test_mandarin_is_segmented_traditional(self):
         request_data = self.test_sentences["traditional"]["request_data"]

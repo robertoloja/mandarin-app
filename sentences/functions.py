@@ -52,8 +52,8 @@ def create_dictionary_single_hanzi(lines: str):
                     constituent_hanzi = CEDictionary.objects.filter(
                         traditional=value["traditional"][index],
                         simplified=value["simplified"][index],
-                        pronunciation__exact=value["pronunciation"].split(" ")[index],
-                    )
+                        pronunciation__iexact=value["pronunciation"].split(" ")[index],
+                    ).exclude(definitions__icontains="surname")
 
                     for candidate in constituent_hanzi:
                         relation = Hanzi(word=word, hanzi=candidate, order=index)

@@ -26,6 +26,7 @@ function Definition(props: {
   onClose: () => void;
 }) {
   let savedIndex: number;
+  console.log(props.dictionary);
 
   function getIndicesOfMatchingPinyin(index: number, hanzi: string) {
     const pinyin = props.dictionary[hanzi].pinyin[index];
@@ -66,6 +67,10 @@ function Definition(props: {
                 {props.word.split('').map((hanzi: string, hanziIndex) => (
                   <VStack align="start" key={hanziIndex}>
                     <HStack key={hanziIndex}>
+                      {(() => {
+                        console.log(hanzi);
+                        return null;
+                      })()}
                       {
                         (savedIndex = props.dictionary[hanzi].pinyin.indexOf(
                           props.pronunciations[hanziIndex],

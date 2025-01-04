@@ -16,6 +16,15 @@ class CEDictionary(models.Model):
         "self", symmetrical=False, through="Hanzi"
     )
 
+    class Meta:
+        unique_together = (
+            "traditional",
+            "simplified",
+            "word_length",
+            "pronunciation",
+            "definitions",
+        )
+
     def save(self, **kwargs):
         self.word_length = len(self.traditional)
         self.definitions = "/".join(self.definitions)
