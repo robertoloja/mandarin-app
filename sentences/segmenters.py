@@ -1,16 +1,89 @@
 import os
 from typing import List
 from concurrent.futures import ThreadPoolExecutor
-
 import requests
+
 import jieba
 from dragonmapper import hanzi, transcriptions
+from django.db.models import Q
 
 from mandoBot.settings import BASE_DIR
+from sentences.models import CEDictionary
 from sentences.translators import DefaultTranslator
 
 
 class Segmenter:
+    def add_pinyin(segmented_sentence: List[str]) -> List[dict]:
+        # In zhuyin, the individual hanzi are space delimited already,
+        # while in pinyin the whole word is together, so we start with zhuyin.
+        pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented_sentence))
+        response = []
+
+        for i in range(len(segmented_sentence)):
+            pinyin = ""
+
+            if hanzi.has_chinese(
+                segmented_sentence[i]
+            ):  # not punctuation/numbers/alphabet
+                pinyin = [
+                    transcriptions.zhuyin_to_pinyin(x)
+                    for x in pronunciation[i].split(" ")
+                ]
+            else:
+                pinyin = [segmented_sentence[i]]  # this is punctuation, digits, etc.
+
+            response += [
+                {
+                    "word": segmented_sentence[i],
+                    "pinyin": pinyin,
+                    "definitions": [],
+                }
+            ]
+        return response
+
+    def add_definitions(segmented_sentence: List[dict]):
+        # for each segment, look up the word (and its hanzi),
+        # add the definitions of the word and append the hanzi
+        # definitions to the dictionary
+        dictionary = {}
+
+        for item in segmented_sentence:
+            db_result = CEDictionary.objects.filter(
+                Q(traditional=item["word"]) | Q(simplified=item["word"]),
+                pronunciation__iexact=item["pinyin"],  # "Bei jing" and "bei jing"
+                word_length=len(item["word"]),
+            )
+
+            if not db_result.exists():
+                item["definitions"] = [DefaultTranslator.translate(item["word"])]
+
+                for index, single_hanzi in enumerate(item["word"]):
+                    pinyin = item["pinyin"][index]
+
+                    db_hanzi = CEDictionary.objects.filter(
+                        Q(traditional=single_hanzi) | Q(simplified=single_hanzi),
+                        pronunciation__iexact=pinyin,
+                        word_length=1,
+                    )
+
+                    dictionary[single_hanzi] = {
+                        "english": list(db_hanzi.values_list("definitions", flat=True)),
+                        "pinyin": list(
+                            db_hanzi.values_list("pronunciation", flat=True)
+                        ),
+                    }
+            else:
+                for entry in db_result:
+                    item["definitions"] += entry.definitions
+                    constituent_hanzi = entry.constituent_hanzi.all()
+
+                    for single_hanzi in constituent_hanzi:
+                        dictionary[single_hanzi] = {
+                            "english": single_hanzi.definitions,
+                            "pinyin": single_hanzi.pronunciations,
+                        }
+        return dictionary
+
     @staticmethod
     def segment_and_translate(sentence: str) -> dict:
         with ThreadPoolExecutor() as executor:
@@ -20,31 +93,14 @@ class Segmenter:
             segmented = future_segmented.result()
             translated = future_translation.result()
 
-        # In zhuyin, the individual hanzi are space delimited already,
-        # while in pinyin the whole word is together.
-        pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented))
-        response = []
+            segmented = Segmenter.add_pinyin(segmented)
+            dictionary = Segmenter.add_definitions(segmented)
 
-        for i in range(len(segmented)):
-            pinyin = ""
-
-            if hanzi.has_chinese(segmented[i]):
-                pinyin = [
-                    transcriptions.zhuyin_to_pinyin(x)
-                    for x in pronunciation[i].split(" ")
-                ]
-            else:
-                pinyin = [segmented[i]]  # this is punctuation, digits, etc.
-
-            response += [
-                {
-                    "word": segmented[i],
-                    "pinyin": pinyin,
-                    "definitions": [],
-                }
-            ]
-
-        return {"translation": translated, "sentence": response}
+        return {
+            "translation": translated,
+            "sentence": segmented,
+            "dictionary": dictionary,
+        }
 
 
 class JiebaSegmenter(Segmenter):

@@ -12,9 +12,12 @@ import {
   ModalContent,
   ModalCloseButton,
 } from '@chakra-ui/react';
+import React from 'react';
+import 'pinyin-tone';
+
 import Hanzi from './Hanzi';
 import { ChineseDictionary } from '@/utils/types';
-import React from 'react';
+import Pinyin from 'pinyin-tone';
 
 function Definition(props: {
   word: string;
@@ -26,17 +29,6 @@ function Definition(props: {
   onClose: () => void;
 }) {
   let savedIndex: number;
-  console.log(props.dictionary);
-
-  function getIndicesOfMatchingPinyin(index: number, hanzi: string) {
-    const pinyin = props.dictionary[hanzi].pinyin[index];
-    const indicesOfMatchingPinyin = props.dictionary[hanzi].pinyin
-      .slice(index)
-      .map((x, i) => ({ x, i }))
-      .filter(({ x }) => x == pinyin)
-      .map((e: { x: string; i: number }) => e.i);
-    return indicesOfMatchingPinyin;
-  }
 
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
@@ -65,44 +57,19 @@ function Definition(props: {
               <VStack align="start">
                 {/* The individual hanzi information */}
                 {props.word.split('').map((hanzi: string, hanziIndex) => (
-                  <VStack align="start" key={hanziIndex}>
-                    <HStack key={hanziIndex}>
-                      {(() => {
-                        console.log(hanzi);
-                        return null;
-                      })()}
-                      {
-                        (savedIndex = props.dictionary[hanzi].pinyin.indexOf(
-                          props.pronunciations[hanziIndex],
-                        ))
-                      }
-                      <Hanzi
-                        hanzi={hanzi}
-                        pinyin={props.dictionary[hanzi].pinyin[savedIndex]}
-                      />
-                      <VStack key={hanziIndex} align="start">
-                        {getIndicesOfMatchingPinyin(savedIndex, hanzi).map(
-                          (x, i, array) => (
-                            <div key={i}>
-                              <HStack key={x}>
-                                <Text key={x} fontWeight="bold">
-                                  {array.length > 1 ? x + 1 + '.' : ''}
-                                </Text>
-                                <Text>
-                                  {
-                                    props.dictionary[hanzi].english[
-                                      x + savedIndex
-                                    ]
-                                  }
-                                </Text>
-                              </HStack>
-                              {i + 1 < array.length ? <Divider /> : null}
-                            </div>
-                          ),
-                        )}
-                      </VStack>
-                    </HStack>
-                  </VStack>
+                  <HStack key={hanziIndex}>
+                    <Hanzi
+                      hanzi={hanzi}
+                      pinyin={Pinyin(
+                        props.dictionary[hanzi].pinyin.filter((x, i) => {
+                          savedIndex = i;
+                          return props.pronunciations.includes(Pinyin(x));
+                        })[0],
+                      )}
+                    />
+
+                    <Text>{props.dictionary[hanzi].definitions}</Text>
+                  </HStack>
                 ))}
               </VStack>
             ) : null}

@@ -1,7 +1,7 @@
 export type ChineseDictionary = Record<
   string,
   {
-    english: string[];
+    definitions: string[];
     pinyin: string[];
   }
 >;
