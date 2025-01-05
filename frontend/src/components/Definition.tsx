@@ -56,6 +56,8 @@ function Definition(props: {
                 {/* The individual hanzi information */}
                 {props.word.split('').map((hanzi: string, hanziIndex) => (
                   <HStack key={hanziIndex}>
+                    <>{console.log(props.word)}</>
+                    <>{console.log(hanzi)}</>
                     <Hanzi
                       hanzi={hanzi}
                       pinyin={
