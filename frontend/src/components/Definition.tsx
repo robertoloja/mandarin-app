@@ -28,8 +28,6 @@ function Definition(props: {
   onOpen: () => void;
   onClose: () => void;
 }) {
-  let savedIndex: number;
-
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />
@@ -60,15 +58,9 @@ function Definition(props: {
                   <HStack key={hanziIndex}>
                     <Hanzi
                       hanzi={hanzi}
-                      pinyin={Pinyin(
-                        props.dictionary[hanzi].pinyin.filter((x, i) => {
-                          savedIndex = i;
-                          return props.pronunciations.includes(Pinyin(x));
-                        })[0],
-                      )}
+                      pinyin={Pinyin(props.dictionary[hanzi].pinyin[0])} {/* COULD CAUSE BUGS */}
                     />
-
-                    <Text>{props.dictionary[hanzi].definitions}</Text>
+                    <Text>{props.dictionary[hanzi].english}</Text>
                   </HStack>
                 ))}
               </VStack>

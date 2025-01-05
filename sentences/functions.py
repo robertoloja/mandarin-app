@@ -1,5 +1,12 @@
+import string
+
 from dragonmapper import hanzi
 from .models import CEDictionary, Hanzi
+
+
+def is_punctuation(character: str) -> bool:
+    punctuation = "，。！？：；、“”‘’（）《》【】〔〕……—～·"
+    return character in punctuation or character in string.punctuation
 
 
 def create_dictionary_single_hanzi(lines: str):
@@ -49,11 +56,23 @@ def create_dictionary_single_hanzi(lines: str):
         for index in range(len(value["traditional"])):
             if hanzi.has_chinese(value["traditional"][index]):
                 try:
-                    constituent_hanzi = CEDictionary.objects.filter(
-                        traditional=value["traditional"][index],
-                        simplified=value["simplified"][index],
-                        pronunciation__iexact=value["pronunciation"].split(" ")[index],
-                    ).exclude(definitions__icontains="surname")
+                    pinyin = value["pronunciation"].split(" ")[index]
+
+                    if "5" in pinyin:  # hanzi can be neutral tone at the end of words
+                        pinyin = pinyin[0:-1]
+
+                        constituent_hanzi = CEDictionary.objects.filter(
+                            traditional=value["traditional"][index],
+                            simplified=value["simplified"][index],
+                            pronunciation__startswith=pinyin,
+                        ).exclude(definitions__icontains="surname")
+
+                    else:
+                        constituent_hanzi = CEDictionary.objects.filter(
+                            traditional=value["traditional"][index],
+                            simplified=value["simplified"][index],
+                            pronunciation__iexact=pinyin,
+                        ).exclude(definitions__icontains="surname")
 
                     for candidate in constituent_hanzi:
                         relation = Hanzi(word=word, hanzi=candidate, order=index)

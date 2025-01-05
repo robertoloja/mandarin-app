@@ -8,6 +8,7 @@ from django.test import TestCase  # noqa: E402
 from ninja.testing import TestClient  # noqa: E402
 from dragonmapper import hanzi  # noqa: E402
 from mandoBot.api import api  # noqa: E402
+from sentences.functions import is_punctuation  # noqa: E402
 
 
 class SegmentationAPITest(TestCase):
@@ -47,16 +48,20 @@ class SegmentationAPITest(TestCase):
         pass  # TODO: Finish
 
     def test_dictionary(self):
-        request_data = (
-            "北京市，通称北京，简称“京”，曾称“北平”[註 2]，中华人民共和国的首都及直辖市"
-        )
-        response = self.client.post(f"/segment?data={request_data}")
+        test_sentences = [
+            "〔記者余瑞仁／桃園報導〕桃園市觀音工業區經建一路的臻鼎集團先豐通訊公司，今（5日）中午12時37分許發生火警，大量黑煙直竄天際，煙塵瀰漫整個觀音工業區及附近重劃區的住宅區，地方臉書社群網友紛紛貼文示警：「火很大、消防車一直來」，也呼籲民眾不要外出以免被毒煙影響，「電路板燒起來很毒，大家注意」！桃園市消防局表示，119勤務指揮中心於今天中午12點37分許接獲報案，指觀音區經建一路的先鋒通訊公司廠房發生火警，失火處為地上5層廠房的第2樓層，現場有存放毒化物及危險物品，消防局派遣草漯分隊及附近分隊62名消防員、消防車25輛、救護車3輛前往灌救，目前火勢尚未控制仍延燒中，消防人員積極搶中。",
+            "北京市，通称北京，简称“京”，曾称“北平”[註 2]，中华人民共和国的首都及直辖市",
+        ]
+        for sentence in test_sentences:
+            request_data = sentence
+            response = self.client.post(f"/segment?data={request_data}")
 
-        for character in request_data:
-            if hanzi.has_chinese(character):
-                print(character)
-                self.assertTrue(character in response.data["dictionary"])
-                # TODO: Test pinyin also
+            for character in request_data:
+                if hanzi.has_chinese(character) and not is_punctuation(character):
+                    if character not in response.data["dictionary"]:
+                        pass
+                    self.assertTrue(character in response.data["dictionary"])
+                    # TODO: Test pinyin also
 
     def test_mandarin_is_segmented_traditional(self):
         request_data = self.test_sentences["traditional"]["request_data"]

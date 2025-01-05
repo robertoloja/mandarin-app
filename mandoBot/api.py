@@ -29,7 +29,6 @@ def segment(request, data: str) -> SegmentationResponse:
         return handle_non_chinese(data)
 
     segmented_data = DefaultSegmenter.segment_and_translate(data)
-    print(segmented_data)
     return segmented_data
 
 

@@ -10,6 +10,7 @@ from django.db.models import Q
 from mandoBot.settings import BASE_DIR
 from sentences.models import CEDictionary
 from sentences.translators import DefaultTranslator
+from sentences.functions import is_punctuation
 
 
 class Segmenter:
@@ -22,7 +23,7 @@ class Segmenter:
         for i in range(len(segmented_sentence)):
             pinyin = ""
 
-            if hanzi.has_chinese(
+            if hanzi.has_chinese(segmented_sentence[i]) and not is_punctuation(
                 segmented_sentence[i]
             ):  # not punctuation/numbers/alphabet
                 pinyin = [
@@ -41,16 +42,26 @@ class Segmenter:
             ]
         return response
 
-    def add_definitions(segmented_sentence: List[dict]):
-        # for each segment, look up the word (and its hanzi),
-        # add the definitions of the word and append the hanzi
-        # definitions to the dictionary
+    def add_definitions_and_create_dictionary(segmented_sentence: List[dict]) -> dict:
+        """
+        Modifies 'segmented_sentence' to include word definitions, and returns
+        a dictionary with definitions for each hanzi in the sentence.
+        """
         dictionary = {}
 
         for item in segmented_sentence:
+            if not hanzi.has_chinese(item["word"]) or is_punctuation(item["word"]):
+                continue
+
+            pinyin = " ".join(
+                map(
+                    lambda x: transcriptions.accented_syllable_to_numbered(x),
+                    item["pinyin"],
+                )
+            )
             db_result = CEDictionary.objects.filter(
                 Q(traditional=item["word"]) | Q(simplified=item["word"]),
-                pronunciation__iexact=item["pinyin"],  # "Bei jing" and "bei jing"
+                pronunciation__iexact=pinyin,  # "Bei jing" and "bei jing"
                 word_length=len(item["word"]),
             )
 
@@ -58,7 +69,7 @@ class Segmenter:
                 item["definitions"] = [DefaultTranslator.translate(item["word"])]
 
                 for index, single_hanzi in enumerate(item["word"]):
-                    pinyin = item["pinyin"][index]
+                    pinyin = hanzi.accented_to_numbered(item["pinyin"][index])
 
                     db_hanzi = CEDictionary.objects.filter(
                         Q(traditional=single_hanzi) | Q(simplified=single_hanzi),
@@ -74,14 +85,30 @@ class Segmenter:
                     }
             else:
                 for entry in db_result:
-                    item["definitions"] += entry.definitions
+                    item["definitions"] += [entry.definitions]
                     constituent_hanzi = entry.constituent_hanzi.all()
 
-                    for single_hanzi in constituent_hanzi:
-                        dictionary[single_hanzi] = {
-                            "english": single_hanzi.definitions,
-                            "pinyin": single_hanzi.pronunciations,
+                    if constituent_hanzi.exists():
+                        for single_hanzi in constituent_hanzi:
+                            if hanzi.is_simplified(item["word"]):
+                                the_hanzi = single_hanzi.simplified
+                            else:
+                                the_hanzi = single_hanzi.traditional
+
+                            dictionary[the_hanzi] = {
+                                "english": [single_hanzi.definitions],
+                                "pinyin": [single_hanzi.pronunciation],
+                            }
+                    else:
+                        if hanzi.is_simplified(item["word"]):
+                            the_hanzi = entry.simplified
+                        else:
+                            the_hanzi = entry.traditional
+                        dictionary[the_hanzi] = {
+                            "english": [entry.definitions],
+                            "pinyin": [entry.pronunciation],
                         }
+
         return dictionary
 
     @staticmethod
@@ -93,8 +120,8 @@ class Segmenter:
             segmented = future_segmented.result()
             translated = future_translation.result()
 
-            segmented = Segmenter.add_pinyin(segmented)
-            dictionary = Segmenter.add_definitions(segmented)
+        segmented = Segmenter.add_pinyin(segmented)
+        dictionary = Segmenter.add_definitions_and_create_dictionary(segmented)
 
         return {
             "translation": translated,
