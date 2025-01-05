@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { SegmentResponseType } from './types';
 
 const API_BASE_URL =
   process.env.NODE_ENV === 'development'
-    ? 'http://192.168.1.8:8000/api'
+    ? 'http://0.0.0.0:8000/api'
     : 'https://mandobot.pythonanywhere.com/api';
 
 const api = axios.create({
@@ -23,31 +24,8 @@ api.interceptors.response.use(undefined, (error) => {
 });
 
 export const MandoBotAPI = {
-  segment: async function (sentence: string) {
+  segment: async function (sentence: string): Promise<SegmentResponseType> {
     const response = await api.post(`/segment?data=${sentence}`);
     return response.data;
-  },
-  sse: function (
-    taskId: string,
-    onMessage: (data: any) => void,
-    onError?: (error: any) => void,
-  ) {
-    const eventSource = new EventSource(
-      `${API_BASE_URL}/segment?taskId=${taskId}`,
-    );
-
-    eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        onMessage(data);
-      } catch (e) {
-        console.error('Failed to parse SSE message', e);
-      }
-    };
-    eventSource.onerror = (error) => {
-      if (onError) onError(error);
-      else console.error('SSE Connection error:', error);
-    };
-    return eventSource;
   },
 };

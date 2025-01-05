@@ -1,17 +1,29 @@
 from django.db import models
-from django.db.models import Q
-
-from django.contrib.auth import get_user_model
-from .validators import has_chinese, is_simplified, is_traditional, is_pinyin
-from .segmenters import DefaultSegmenter
+from .validators import is_simplified, is_traditional, is_pinyin
 
 
 class CEDictionary(models.Model):
-    traditional: str = models.TextField(validators=[is_traditional], db_index=True)
-    simplified: str = models.TextField(validators=[is_simplified], db_index=True)
-    word_length: int = models.IntegerField(editable=False)
+    traditional: str = models.CharField(
+        max_length=50, validators=[is_traditional], db_index=True
+    )
+    simplified: str = models.CharField(
+        max_length=50, validators=[is_simplified], db_index=True
+    )
+    word_length: int = models.PositiveIntegerField(editable=False)
     pronunciation: str = models.TextField(validators=[is_pinyin])
     definitions: str = models.TextField()
+    constituent_hanzi = models.ManyToManyField(
+        "self", symmetrical=False, through="Hanzi"
+    )
+
+    class Meta:
+        unique_together = (
+            "traditional",
+            "simplified",
+            "word_length",
+            "pronunciation",
+            "definitions",
+        )
 
     def save(self, **kwargs):
         self.word_length = len(self.traditional)
@@ -19,61 +31,20 @@ class CEDictionary(models.Model):
         super().save()
 
     def __str__(self):
-        return f'{self.traditional} {self.simplified} {self.pronunciation} {[x for x in self.definitions.split("/")]}'
+        return f"{self.traditional}/{self.simplified} [{self.pronunciation}]"
 
 
-class Sentence(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    text = models.TextField(validators=[has_chinese])
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    words = models.ManyToManyField(CEDictionary, through="WordsInSentence")
-
-    def segmented(self):
-        words_in_sentence = WordsInSentence.objects.filter(sentence=self).order_by(
-            "order"
-        )
-        return [
-            word.word.traditional if word.word else word.punctuation
-            for word in words_in_sentence
-        ]
-
-    def __str__(self):
-        return self.text
-
-    def save(self, *kwargs):
-        # TODO: validate the text has chinese, include translation.
-        super().save()
-        segmented = DefaultSegmenter.segment(self.text)
-
-        for index in range(len(segmented)):
-            word = CEDictionary.objects.filter(
-                Q(traditional=segmented[index]) | Q(simplified=segmented[index])
-            )
-
-            if len(word) == 0:
-                WordsInSentence.objects.get_or_create(
-                    sentence=self, order=index, punctuation=segmented[index]
-                )[0].save()
-                continue
-
-            if len(word) == 1:
-                WordsInSentence.objects.get_or_create(
-                    word=word[0], sentence=self, order=index
-                )
-                continue
-
-            # TODO: Figure out how to really solve this: For now, assume the second word is correct (since the first is often an archaic version, like 咊).
-            WordsInSentence.objects.get_or_create(
-                word=word[1], sentence=self, order=index
-            )
-
-
-class WordsInSentence(models.Model):
-    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
-    word = models.ForeignKey(CEDictionary, on_delete=models.CASCADE, null=True)
-    punctuation = models.TextField(null=True)
-    order = models.IntegerField()
+class Hanzi(models.Model):
+    word = models.ForeignKey(
+        CEDictionary, on_delete=models.CASCADE, related_name="containing_words"
+    )
+    hanzi = models.ForeignKey(
+        CEDictionary, on_delete=models.CASCADE, related_name="hanzi"
+    )
+    order = models.PositiveIntegerField()
 
     class Meta:
         ordering = ["order"]
+
+    def __str__(self):
+        return f"{self.hanzi.traditional} in {self.word.traditional} (position: {self.order})"
