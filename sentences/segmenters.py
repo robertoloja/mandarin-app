@@ -27,6 +27,7 @@ class Segmenter:
                 segmented_sentence[i]
             ):  # not punctuation/numbers/alphabet
                 pinyin = [
+                    # the next line messes up 而 (r2 instead of re2)
                     transcriptions.zhuyin_to_pinyin(x)
                     for x in pronunciation[i].split(" ")
                 ]
@@ -66,6 +67,7 @@ class Segmenter:
             )
 
             if not db_result.exists():
+                # TODO: Include a way to figure out if this is traditional or simplified
                 item["definitions"] = [DefaultTranslator.translate(item["word"])]
 
                 for index, single_hanzi in enumerate(item["word"]):
@@ -85,12 +87,13 @@ class Segmenter:
                     }
             else:
                 for entry in db_result:
+
                     item["definitions"] += [entry.definitions]
                     constituent_hanzi = entry.constituent_hanzi.all()
 
                     if constituent_hanzi.exists():
                         for single_hanzi in constituent_hanzi:
-                            if hanzi.is_simplified(item["word"]):
+                            if item["word"] == entry.simplified:
                                 the_hanzi = single_hanzi.simplified
                             else:
                                 the_hanzi = single_hanzi.traditional
@@ -100,7 +103,7 @@ class Segmenter:
                                 "pinyin": [single_hanzi.pronunciation],
                             }
                     else:
-                        if hanzi.is_simplified(item["word"]):
+                        if item["word"] == entry.simplified:
                             the_hanzi = entry.simplified
                         else:
                             the_hanzi = entry.traditional
