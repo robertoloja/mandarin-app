@@ -58,7 +58,11 @@ function Definition(props: {
                   <HStack key={hanziIndex}>
                     <Hanzi
                       hanzi={hanzi}
-                      pinyin={Pinyin(props.dictionary[hanzi].pinyin[0])} {/* COULD CAUSE BUGS */}
+                      pinyin={
+                        Pinyin(
+                          props.dictionary[hanzi].pinyin[0],
+                        ) /* COULD CAUSE BUGS */
+                      }
                     />
                     <Text>{props.dictionary[hanzi].english}</Text>
                   </HStack>
