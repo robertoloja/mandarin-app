@@ -27,7 +27,7 @@ class Segmenter:
                 segmented_sentence[i]
             ):  # not punctuation/numbers/alphabet
                 pinyin = [
-                    # the next line messes up 而 (r2 instead of re2)
+                    # TODO: the next line messes up 而 (r2 instead of er2)
                     transcriptions.zhuyin_to_pinyin(x)
                     for x in pronunciation[i].split(" ")
                 ]
