@@ -81,9 +81,11 @@ export default function Home() {
     if (inputValue == '') {
       return;
     }
+
     dispatch(setLoading(true));
     const timer = new AccurateTimer();
     timer.start();
+
 
     if (BATCH_REQUESTS && inputValue.length > 100) {
       // Batch input by sentence, to speed up initial response time from server.
@@ -109,9 +111,11 @@ export default function Home() {
         },
       );
     }
+
     dispatch(setLoading(false));
     timer.stop();
     console.log(timer.getElapsedTime());
+
   };
   useEffect(() => {
     // TODO: Wait, why is this here?

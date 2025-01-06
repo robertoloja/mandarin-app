@@ -1,3 +1,5 @@
+'use client';
+
 export default class AccurateTimer {
   private startTime: number | null = null;
   private elapsedTime: number = 0;

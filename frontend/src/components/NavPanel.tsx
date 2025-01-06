@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   Drawer,
@@ -63,7 +65,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel>
-                  <Link marginLeft="1rem">I lied, it's only one thing</Link>
+                  <Link marginLeft="1rem">I lied, its only one thing</Link>
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>
