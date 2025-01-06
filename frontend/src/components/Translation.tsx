@@ -34,20 +34,22 @@ function Translation(props: { text: string }) {
     >
       <Box
         onClick={() => setIsMinimized(!isMinimized)}
-        width={['100%', '80%']}
+        width={['100%', '75%']}
         height="2.3rem"
         cursor="pointer"
         position="fixed"
+        borderTopRadius="lg"
+        mx="10%"
         bg={
           colorMode === 'light' ? lightGradientBgString : darkGradientBgString
         }
-        left="50%"
+        left="40%"
         transform="translatex(-50%)"
       >
         <Box
           m={2}
           mx="30%"
-          borderRadius="md"
+          borderRadius="lg"
           bg="darkgrey"
           minW="10rem"
           height="0.3rem"
