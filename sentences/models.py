@@ -29,7 +29,7 @@ class SentenceHistory(models.Model):
     objects = NormalizedJSONManager()
 
     def __str__(self, **kwargs):
-        return f"{self.sentence_id}: {self.json_data['translation']}"
+        return f"{self.sentence_id}"
 
     def save(self, *args, **kwargs):
         self.sentence_id = secrets.token_urlsafe(10)

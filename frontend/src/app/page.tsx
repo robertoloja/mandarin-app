@@ -60,7 +60,7 @@ export default function Home() {
         dispatch(setShareLink(share_id));
       });
     }
-  }, [dispatch, handleMessage, share_id]);
+  }, []);
 
   const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
 
