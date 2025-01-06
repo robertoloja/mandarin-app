@@ -24,7 +24,7 @@ class NormalizedJSONManager(models.Manager):
 
 class SentenceHistory(models.Model):
     sentence_id = models.CharField(max_length=10, unique=True, db_index=True)
-    json_data = models.JSONField(unique=True)
+    json_data = models.TextField(unique=True)
 
     objects = NormalizedJSONManager()
 
