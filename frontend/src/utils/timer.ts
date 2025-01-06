@@ -20,9 +20,6 @@ export default class AccurateTimer {
   }
 
   stop(): void {
-    if (this.timerId === null) {
-      throw new Error('Timer is not running.');
-    }
     if (this.startTime !== null) {
       this.elapsedTime = performance.now() - this.startTime;
     }

@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
@@ -20,7 +21,9 @@ export default function RootLayout({
         <body>
           <ChakraProvider resetCSS>
             <TopNav />
-            <Suspense>{children}</Suspense>
+            <React.StrictMode>
+              <Suspense>{children}</Suspense>
+            </React.StrictMode>
           </ChakraProvider>
         </body>
       </Provider>
