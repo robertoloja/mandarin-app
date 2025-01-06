@@ -15,6 +15,7 @@ import {
   IoOptionsOutline,
   IoText,
   IoLanguage,
+  IoShareSocialOutline,
   IoBrushOutline,
 } from 'react-icons/io5';
 import NavPanel from './NavPanel';
@@ -83,13 +84,21 @@ function TopNav() {
         />
       </HStack>
 
-      <IconButton
-        aria-label="Change color mode"
-        icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
-        onClick={toggleColorMode}
-        bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        mr="2rem"
-      />
+      <HStack>
+        <IconButton
+          aria-label="Share segmentation"
+          icon={<IoShareSocialOutline />}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        />
+
+        <IconButton
+          aria-label="Change color mode"
+          icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
+          onClick={toggleColorMode}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          mr="2rem"
+        />
+      </HStack>
 
       <NavPanel isOpen={isOpen} onClose={onClose} />
     </HStack>
