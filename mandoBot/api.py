@@ -1,5 +1,6 @@
 from ninja import NinjaAPI
 from dragonmapper import hanzi
+import json
 
 from sentences.segmenters import DefaultSegmenter
 from .schemas import SegmentationResponse
@@ -18,7 +19,7 @@ emptyResponse = {
 def retrieve_shared(request, share_id):
     db_entry = SentenceHistory.objects.get(sentence_id=share_id)
     # TODO: Error handling
-    return db_entry.json_data
+    return json.loads(db_entry.json_data)
 
 
 @api.post("/share", response=str)

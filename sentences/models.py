@@ -49,7 +49,7 @@ class SentenceHistory(models.Model):
 
     @staticmethod
     def normalize_json(json_obj):
-        return json.loads(json.dumps(json_obj, sort_keys=True))
+        return json.dumps(json_obj, sort_keys=True)
 
 
 class CEDictionary(models.Model):
