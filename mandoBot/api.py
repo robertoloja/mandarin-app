@@ -16,27 +16,27 @@ emptyResponse = {
 
 
 @api.get("/shared", response=SegmentationResponse)
-def retrieve_shared(request, share_id):
+async def retrieve_shared(request, share_id):
     db_entry = SentenceHistory.objects.get(sentence_id=share_id)
     # TODO: Error handling
     return json.loads(db_entry.json_data)
 
 
 @api.post("/share", response=str)
-def share(request, data: SegmentationResponse) -> str:
+async def share(request, data: SegmentationResponse) -> str:
     db_entry, _ = SentenceHistory.objects.get_or_create(json_data=data.dict())
     return db_entry.sentence_id
 
 
 @api.post("/segment", response=SegmentationResponse)
-def segment(request, data: str) -> SegmentationResponse:
+async def segment(request, data: str) -> SegmentationResponse:
     if not data:
         return emptyResponse
 
     if not hanzi.has_chinese(data):
         return handle_non_chinese(data)
 
-    segmented_data = DefaultSegmenter.segment_and_translate(data)
+    segmented_data = await DefaultSegmenter.segment_and_translate(data)
     return segmented_data
 
 

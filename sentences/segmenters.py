@@ -43,7 +43,9 @@ class Segmenter:
             ]
         return response
 
-    def add_definitions_and_create_dictionary(segmented_sentence: List[dict]) -> dict:
+    async def add_definitions_and_create_dictionary(
+        segmented_sentence: List[dict],
+    ) -> dict:
         """
         Modifies 'segmented_sentence' to include word definitions, and returns
         a dictionary with definitions for each hanzi in the sentence.
@@ -66,7 +68,7 @@ class Segmenter:
                 word_length=len(item["word"]),
             )
 
-            if not db_result.exists():
+            if not await db_result.aexists():
                 # TODO: Include a way to figure out if this is traditional or simplified
                 item["definitions"] = [DefaultTranslator.translate(item["word"])]
 
@@ -80,19 +82,29 @@ class Segmenter:
                     )
 
                     dictionary[single_hanzi] = {
-                        "english": list(db_hanzi.values_list("definitions", flat=True)),
-                        "pinyin": list(
-                            db_hanzi.values_list("pronunciation", flat=True)
-                        ),
+                        "english": [
+                            definition
+                            async for definition in db_hanzi.values_list(
+                                "definitions", flat=True
+                            )
+                        ],  # list(db_hanzi.values_list("definitions", flat=True)),
+                        "pinyin": [
+                            pinyin
+                            async for pinyin in db_hanzi.values_list(
+                                "pronunciation", flat=True
+                            )
+                        ],  # list( db_hanzi.values_list("pronunciation", flat=True)),
                     }
             else:
-                for entry in db_result:
+                results = [result async for result in db_result]
+                for entry in results:
 
                     item["definitions"] += [entry.definitions]
                     constituent_hanzi = entry.constituent_hanzi.all()
 
-                    if constituent_hanzi.exists():
-                        for single_hanzi in constituent_hanzi:
+                    if await constituent_hanzi.aexists():
+                        hanzi_list = [h async for h in constituent_hanzi]
+                        for single_hanzi in hanzi_list:
                             if item["word"] == entry.simplified:
                                 the_hanzi = single_hanzi.simplified
                             else:
@@ -115,7 +127,7 @@ class Segmenter:
         return dictionary
 
     @staticmethod
-    def segment_and_translate(sentence: str) -> dict:
+    async def segment_and_translate(sentence: str) -> dict:
         sentence = sentence.replace("\u3000", "").strip()
 
         with ThreadPoolExecutor() as executor:
@@ -126,7 +138,7 @@ class Segmenter:
             translated = future_translation.result()
 
         segmented = Segmenter.add_pinyin(segmented)
-        dictionary = Segmenter.add_definitions_and_create_dictionary(segmented)
+        dictionary = await Segmenter.add_definitions_and_create_dictionary(segmented)
 
         return {
             "translation": translated,
