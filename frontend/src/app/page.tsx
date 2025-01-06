@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../utils/store/store';
+import { RootState, useAppDispatch } from '@/utils/store/store';
 import {
   clearMandarinSentence,
   appendToMandarinSentence,
@@ -34,7 +34,7 @@ export default function Home() {
     (state: RootState) => state.mandarinSentence.isLoading,
   );
 
-  const [percentage_done, setPercentageDone] = useState(0);
+  const [percentageDone, setPercentageDone] = useState(0);
   const [inputValue, setInputValue] = useState('');
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ export default function Home() {
     dispatch(appendToMandarinDictionary(message.dictionary));
   };
 
-  const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
+  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
 
   const resetState = () => {
     dispatch(clearMandarinSentence());
@@ -103,7 +103,7 @@ export default function Home() {
 
   return (
     <Box h="100%">
-      {isLoading ? <ProgressBar progress_percent={percentage_done} /> : null}
+      {isLoading ? <ProgressBar progress_percent={percentageDone} /> : null}
 
       <form onSubmit={handleSubmit}>
         <Input
@@ -122,7 +122,7 @@ export default function Home() {
 
           {isLoading ? (
             <Text color="gray.600" textAlign="center" w="60%">
-              {percentage_done == 0
+              {percentageDone == 0
                 ? 'Segmentation and translation can take several minutes.'
                 : 'Your results will load one sentence at a time.'}
             </Text>

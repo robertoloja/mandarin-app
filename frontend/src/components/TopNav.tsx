@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useRef } from 'react';
 import {
   useDisclosure,
@@ -15,10 +16,11 @@ import {
   IoOptionsOutline,
   IoText,
   IoLanguage,
-  IoShareSocialOutline,
   IoBrushOutline,
 } from 'react-icons/io5';
+
 import NavPanel from './NavPanel';
+import ShareButton from './ShareButton';
 
 function TopNav() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -85,11 +87,7 @@ function TopNav() {
       </HStack>
 
       <HStack>
-        <IconButton
-          aria-label="Share segmentation"
-          icon={<IoShareSocialOutline />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        />
+        <ShareButton />
 
         <IconButton
           aria-label="Change color mode"

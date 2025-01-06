@@ -1,3 +1,6 @@
+import secrets
+from django.http import HttpRequest
+
 from ninja import NinjaAPI
 from dragonmapper import hanzi
 
@@ -13,10 +16,18 @@ emptyResponse = {
 }
 
 
-@api.post("/share", response=str)
-def share(request, data: str) -> str:
-    # TODO: Create a UUID, store the JSON, return the UUID
+@api.get("/shared", response=str)
+def retrieve_shared(request, share_id):
+    # TODO: Get the database table with the share_id as index, and return the json value
     return ""
+
+
+@api.post("/share", response=str)
+def share(request, data: SegmentationResponse) -> str:
+    url_token = secrets.token_urlsafe(10)
+    url = f"{request.scheme}//{request.get_host()}/shared?link={url_token}"
+    # TODO: Create database row with the url_token as the key and the data as the value
+    return url
 
 
 # TODO: Rewrite this to use the new database features
@@ -32,7 +43,6 @@ def segment(request, data: str) -> SegmentationResponse:
     return segmented_data
 
 
-# Utility functions
 def handle_non_chinese(data: str) -> dict:
     """
     When the "word" and the only item in "sentence" are equal,
