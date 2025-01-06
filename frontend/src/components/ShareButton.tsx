@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 
 export default function ShareButton() {
+  const isBrowser = () => typeof window !== 'undefined';
   const sentenceIsLoading = useSelector(
     (state: RootState) => state.mandarinSentence.isLoading,
   );
@@ -33,7 +34,7 @@ export default function ShareButton() {
   const id = 'toast';
   const copyShareLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/?share_id=${shareLink}`,
+      isBrowser() ? `${window.location.origin}/?share_id=${shareLink}` : '',
     );
     if (!copiedToast.isActive(id)) {
       copiedToast({
@@ -67,7 +68,11 @@ export default function ShareButton() {
           <HStack>
             <Input
               type="text"
-              value={`${window.location.origin}/?share_id=${shareLink}`}
+              value={
+                isBrowser()
+                  ? `${window.location.origin}/?share_id=${shareLink}`
+                  : ''
+              }
               focusBorderColor="blue.500"
               cursor="text"
               userSelect="text"

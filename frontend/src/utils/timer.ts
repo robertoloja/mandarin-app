@@ -9,12 +9,14 @@ export default class AccurateTimer {
     if (this.timerId !== null) {
       throw new Error('Timer is already running.');
     }
-    this.startTime = performance.now();
-    this.timerId = window.setInterval(() => {
-      if (this.startTime !== null) {
-        this.elapsedTime = performance.now() - this.startTime;
-      }
-    }, 1);
+    if (typeof window !== 'undefined') {
+      this.startTime = performance.now();
+      this.timerId = window.setInterval(() => {
+        if (this.startTime !== null) {
+          this.elapsedTime = performance.now() - this.startTime;
+        }
+      }, 1);
+    }
   }
 
   stop(): void {

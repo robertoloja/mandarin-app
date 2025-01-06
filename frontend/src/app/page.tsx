@@ -22,18 +22,8 @@ import { emptySentence, SegmentResponseType } from '@/utils/types';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function Home() {
-  let share_id = useSearchParams().get('share_id') || '';
-
-  useEffect(() => {
-    if (share_id !== '') {
-      MandoBotAPI.shared(share_id).then((response: SegmentResponseType) => {
-        handleMessage(response);
-        dispatch(setShareLink(share_id));
-      });
-    }
-  }, []);
-
   const dispatch = useAppDispatch();
+  const share_id = useSearchParams().get('share_id') || '';
 
   const mandarinSentence = useSelector(
     (state: RootState) => state.mandarinSentence.mandarinSentence,
@@ -63,6 +53,15 @@ export default function Home() {
     dispatch(appendToMandarinDictionary(message.dictionary));
   };
 
+  useEffect(() => {
+    if (share_id !== '') {
+      MandoBotAPI.shared(share_id).then((response: SegmentResponseType) => {
+        handleMessage(response);
+        dispatch(setShareLink(share_id));
+      });
+    }
+  }, [dispatch, handleMessage, share_id]);
+
   const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
 
   const resetState = () => {
@@ -85,7 +84,6 @@ export default function Home() {
     dispatch(setLoading(true));
     const timer = new AccurateTimer();
     timer.start();
-
 
     if (BATCH_REQUESTS && inputValue.length > 100) {
       // Batch input by sentence, to speed up initial response time from server.
@@ -113,9 +111,11 @@ export default function Home() {
     }
 
     dispatch(setLoading(false));
-    timer.stop();
-    console.log(timer.getElapsedTime());
 
+    if (typeof window !== 'undefined') {
+      timer.stop();
+      console.log(timer.getElapsedTime());
+    }
   };
   useEffect(() => {
     // TODO: Wait, why is this here?

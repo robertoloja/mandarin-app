@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -19,7 +20,7 @@ export default function RootLayout({
         <body>
           <ChakraProvider resetCSS>
             <TopNav />
-            {children}
+            <Suspense>{children}</Suspense>
           </ChakraProvider>
         </body>
       </Provider>
