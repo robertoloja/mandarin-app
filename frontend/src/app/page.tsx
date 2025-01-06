@@ -37,7 +37,7 @@ export default function Home() {
   );
 
   const [percentageDone, setPercentageDone] = useState(0);
-  const inputRef = useRef<HTMLInputElement>('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleMessage = (message: SegmentResponseType) => {
     dispatch(
@@ -73,9 +73,12 @@ export default function Home() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     resetState();
-    const inputValue = inputRef.current.value;
 
-    if (inputValue == '') {
+    let inputValue = '';
+
+    if (inputRef.current && inputRef.current.value !== '') {
+      inputValue = inputRef.current.value;
+    } else {
       return;
     }
 
@@ -143,8 +146,6 @@ export default function Home() {
         <Input
           type="text"
           placeholder="Enter Mandarin text to translate and segment"
-          // value={inputValue}
-          // onChange={handleInputChange}
           ref={inputRef}
           mb="0"
           mt={isLoading ? '0' : '0.25rem'}
