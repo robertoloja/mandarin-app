@@ -27,7 +27,15 @@ const mandarinSentenceSlice = createSlice({
       state,
       action: PayloadAction<MandarinSentenceType>,
     ) {
-      state.mandarinSentence.translation += action.payload.translation + ' ';
+      let translation = '';
+
+      if (state.mandarinSentence.translation !== '') {
+        translation = action.payload.translation;
+      } else {
+        translation = ' ' + action.payload.translation;
+      }
+
+      state.mandarinSentence.translation += translation;
       state.mandarinSentence.sentence = [
         ...state.mandarinSentence.sentence,
         ...action.payload.sentence,

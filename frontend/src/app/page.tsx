@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useSearchParams } from 'next/navigation';
 import { RootState, useAppDispatch } from '@/utils/store/store';
+import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
+
 import {
   clearMandarinSentence,
   appendToMandarinSentence,
@@ -12,16 +14,25 @@ import {
   setLoading,
   setShareLink,
 } from '@/utils/store/mandarinSentenceSlice';
-
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
-
 import AccurateTimer from '@/utils/timer';
-import { SegmentResponseType } from '@/utils/types';
+import { emptySentence, SegmentResponseType } from '@/utils/types';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function Home() {
+  let share_id = useSearchParams().get('share_id') || '';
+
+  useEffect(() => {
+    if (share_id !== '') {
+      MandoBotAPI.shared(share_id).then((response: SegmentResponseType) => {
+        handleMessage(response);
+        dispatch(setShareLink(share_id));
+      });
+    }
+  }, []);
+
   const dispatch = useAppDispatch();
 
   const mandarinSentence = useSelector(
@@ -52,7 +63,7 @@ export default function Home() {
     dispatch(appendToMandarinDictionary(message.dictionary));
   };
 
-  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
+  const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
 
   const resetState = () => {
     dispatch(clearMandarinSentence());
@@ -60,6 +71,7 @@ export default function Home() {
     dispatch(setLoading(false));
     dispatch(setShareLink(''));
     setPercentageDone(0);
+    setShareLink('');
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -98,10 +110,15 @@ export default function Home() {
       );
     }
     dispatch(setLoading(false));
-    getShareLink();
     timer.stop();
     console.log(timer.getElapsedTime());
   };
+  useEffect(() => {
+    // TODO: Wait, why is this here?
+    if (!isLoading && mandarinSentence !== emptySentence && share_id === '') {
+      getShareLink();
+    }
+  }, [mandarinSentence, isLoading]);
 
   const getShareLink = async () => {
     // TODO: Should not create a new link if the sentence is the same.

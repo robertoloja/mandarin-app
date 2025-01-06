@@ -13,6 +13,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   useColorMode,
+  useToast,
 } from '@chakra-ui/react';
 import { IoClipboardOutline, IoShareSocialOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
@@ -23,20 +24,34 @@ export default function ShareButton() {
   const sentenceIsLoading = useSelector(
     (state: RootState) => state.mandarinSentence.isLoading,
   );
-  const mandarinSentence = useSelector(
-    (state: RootState) => state.mandarinSentence.mandarinSentence,
-  );
   const shareLink = useSelector(
     (state: RootState) => state.mandarinSentence.shareLink,
   );
   const { colorMode } = useColorMode();
+
+  const copiedToast = useToast();
+  const id = 'toast';
+  const copyShareLink = () => {
+    navigator.clipboard.writeText(
+      `${window.location.origin}/?share_id=${shareLink}`,
+    );
+    if (!copiedToast.isActive(id)) {
+      copiedToast({
+        id,
+        title: 'Copied!',
+        position: 'top-right',
+        isClosable: true,
+        duration: 2000,
+      });
+    }
+  };
 
   return (
     <Popover>
       <PopoverTrigger>
         <IconButton
           aria-label="Share segmentation"
-          isDisabled={shareLink.length == 0}
+          isDisabled={shareLink == ''}
           isLoading={sentenceIsLoading}
           icon={<IoShareSocialOutline />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
@@ -52,14 +67,17 @@ export default function ShareButton() {
           <HStack>
             <Input
               type="text"
-              value={shareLink}
+              value={`${window.location.origin}/?share_id=${shareLink}`}
               focusBorderColor="blue.500"
               cursor="text"
               userSelect="text"
+              onChange={() => null}
             />
+            {/* TODO: Should copy to clipboard when clicked */}
             <IconButton
               aria-label="Copy link to clipboard"
               icon={<IoClipboardOutline />}
+              onClick={copyShareLink}
             />
           </HStack>
         </PopoverBody>

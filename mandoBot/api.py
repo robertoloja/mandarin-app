@@ -1,11 +1,9 @@
-import secrets
-from django.http import HttpRequest
-
 from ninja import NinjaAPI
 from dragonmapper import hanzi
 
 from sentences.segmenters import DefaultSegmenter
 from .schemas import SegmentationResponse
+from sentences.models import SentenceHistory
 
 api = NinjaAPI()
 
@@ -16,20 +14,17 @@ emptyResponse = {
 }
 
 
-@api.get("/shared", response=str)
+@api.get("/shared", response=SegmentationResponse)
 def retrieve_shared(request, share_id):
-    # TODO: Get the database table with the share_id as index, and return the json value
-    return ""
+    db_entry = SentenceHistory.objects.get(sentence_id=share_id)
+    # TODO: Error handling
+    return db_entry.json_data
 
 
 @api.post("/share", response=str)
 def share(request, data: SegmentationResponse) -> str:
-    # TODO: Create database row with the url_token as the key and the data as the value
-    # TODO: Check if the sentence has already been stored in SentenceHistory and, if so,
-    # return the existing token.
-    url_token = secrets.token_urlsafe(10)
-    url = f"{request.scheme}//{request.get_host()}/shared?link={url_token}"
-    return url
+    db_entry, _ = SentenceHistory.objects.get_or_create(json_data=data.dict())
+    return db_entry.sentence_id
 
 
 @api.post("/segment", response=SegmentationResponse)

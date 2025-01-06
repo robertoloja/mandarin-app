@@ -34,8 +34,8 @@ export const MandoBotAPI = {
     });
     return response.data;
   },
-  shared: async function (jsonData: string): Promise<string> {
-    const response = await api.get(`/shared?data=${jsonData}`);
+  shared: async function (share_id: string): Promise<SegmentResponseType> {
+    const response = await api.get(`/shared?share_id=${share_id}`);
     return response.data;
   },
 };

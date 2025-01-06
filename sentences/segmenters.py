@@ -116,6 +116,8 @@ class Segmenter:
 
     @staticmethod
     def segment_and_translate(sentence: str) -> dict:
+        sentence = sentence.replace("\u3000", "").strip()
+
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(DefaultSegmenter.segment, sentence)
             future_translation = executor.submit(DefaultTranslator.translate, sentence)
