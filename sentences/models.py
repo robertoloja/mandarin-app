@@ -24,12 +24,12 @@ class NormalizedJSONManager(models.Manager):
 
 class SentenceHistory(models.Model):
     sentence_id = models.CharField(max_length=10, unique=True, db_index=True)
-    json_data = models.JSONField(unique=True)
+    json_data = models.TextField(unique=True)
 
     objects = NormalizedJSONManager()
 
     def __str__(self, **kwargs):
-        return f"{self.sentence_id}: {self.json_data['translation']}"
+        return f"{self.sentence_id}"
 
     def save(self, *args, **kwargs):
         self.sentence_id = secrets.token_urlsafe(10)
@@ -49,7 +49,7 @@ class SentenceHistory(models.Model):
 
     @staticmethod
     def normalize_json(json_obj):
-        return json.loads(json.dumps(json_obj, sort_keys=True))
+        return json.dumps(json_obj, sort_keys=True)
 
 
 class CEDictionary(models.Model):
