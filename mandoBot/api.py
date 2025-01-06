@@ -32,7 +32,6 @@ def share(request, data: SegmentationResponse) -> str:
     return url
 
 
-# TODO: Rewrite this to use the new database features
 @api.post("/segment", response=SegmentationResponse)
 def segment(request, data: str) -> SegmentationResponse:
     if not data:
