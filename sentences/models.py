@@ -1,5 +1,55 @@
+import json
+import secrets
 from django.db import models
+from django.core.exceptions import ValidationError
 from .validators import is_simplified, is_traditional, is_pinyin
+
+
+class NormalizedJSONManager(models.Manager):
+    def filter(self, *args, **kwargs):
+        if "json_data" in kwargs:
+            kwargs["json_data"] = SentenceHistory.normalize_json(kwargs["json_data"])
+        return super().filter(*args, **kwargs)
+
+    def get_or_create(self, *args, **kwargs):
+        if "json_data" in kwargs:
+            kwargs["json_data"] = SentenceHistory.normalize_json(kwargs["json_data"])
+        return super().get_or_create(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        if "json_data" in kwargs:
+            kwargs["json_data"] = SentenceHistory.normalize_json(kwargs["json_data"])
+        return super().get(*args, **kwargs)
+
+
+class SentenceHistory(models.Model):
+    sentence_id = models.CharField(max_length=10, unique=True, db_index=True)
+    json_data = models.JSONField(unique=True)
+
+    objects = NormalizedJSONManager()
+
+    def __str__(self, **kwargs):
+        return f"{self.sentence_id}: {self.json_data['translation']}"
+
+    def save(self, *args, **kwargs):
+        self.sentence_id = secrets.token_urlsafe(10)
+
+        # Normalize JSON before saving
+        if isinstance(self.json_data, dict):
+            self.json_data = self.normalize_json(self.json_data)
+        super().save(*args, **kwargs)
+
+    def clean(self):
+        if not isinstance(self.json_data, str):
+            raise ValidationError("json_data must be a string")
+        try:
+            json.loads(self.json_data)
+        except ValueError:
+            raise ValidationError("Invalid JSON format")
+
+    @staticmethod
+    def normalize_json(json_obj):
+        return json.loads(json.dumps(json_obj, sort_keys=True))
 
 
 class CEDictionary(models.Model):

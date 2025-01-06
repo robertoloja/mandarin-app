@@ -27,7 +27,7 @@ class Segmenter:
                 segmented_sentence[i]
             ):  # not punctuation/numbers/alphabet
                 pinyin = [
-                    # the next line messes up 而 (r2 instead of re2)
+                    # TODO: the next line messes up 而 (r2 instead of er2)
                     transcriptions.zhuyin_to_pinyin(x)
                     for x in pronunciation[i].split(" ")
                 ]
@@ -116,6 +116,8 @@ class Segmenter:
 
     @staticmethod
     def segment_and_translate(sentence: str) -> dict:
+        sentence = sentence.replace("\u3000", "").strip()
+
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(DefaultSegmenter.segment, sentence)
             future_translation = executor.submit(DefaultTranslator.translate, sentence)

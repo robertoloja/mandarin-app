@@ -5,7 +5,7 @@ from .models import CEDictionary, Hanzi
 
 
 def is_punctuation(character: str) -> bool:
-    punctuation = "，。！？：；、“”‘’（）《》【】〔〕……—～·"
+    punctuation = "，。！？：；、“”‘’（）《》【】〔〕……—～· \u3000"
     return character in punctuation or character in string.punctuation
 
 

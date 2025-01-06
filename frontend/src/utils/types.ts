@@ -12,6 +12,11 @@ export type MandarinWordType = {
   definitions: string[];
 };
 
+export const emptySentence: MandarinSentenceType = {
+  translation: '',
+  sentence: [] as MandarinWordType[],
+};
+
 export type MandarinSentenceType = {
   translation: string;
   sentence: MandarinWordType[];

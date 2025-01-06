@@ -22,7 +22,8 @@ function Word(props: {
   dictionary: ChineseDictionary;
 }) {
   // TODO: Account for compound words (e.g. 軍事將領)
-  const punctuation = props.word.word === props.pronunciation[0];
+  const punctuation =
+    props.word.word === props.pronunciation[0] || props.word.word === '';
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode } = useColorMode();
 
@@ -42,17 +43,15 @@ function Word(props: {
           boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
           onClick={onOpen}
         >
-          {!punctuation ? (
-            <Definition
-              pronunciations={props.pronunciation}
-              word={props.word.word}
-              definitions={props.definitions}
-              dictionary={props.dictionary}
-              isOpen={isOpen}
-              onOpen={onOpen}
-              onClose={onClose}
-            />
-          ) : null}
+          <Definition
+            pronunciations={props.pronunciation}
+            word={props.word.word}
+            definitions={props.definitions}
+            dictionary={props.dictionary}
+            isOpen={isOpen}
+            onOpen={onOpen}
+            onClose={onClose}
+          />
 
           <CardBody>
             <Center>

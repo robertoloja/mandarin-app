@@ -3,6 +3,7 @@ from dragonmapper import hanzi
 
 from sentences.segmenters import DefaultSegmenter
 from .schemas import SegmentationResponse
+from sentences.models import SentenceHistory
 
 api = NinjaAPI()
 
@@ -13,13 +14,19 @@ emptyResponse = {
 }
 
 
+@api.get("/shared", response=SegmentationResponse)
+def retrieve_shared(request, share_id):
+    db_entry = SentenceHistory.objects.get(sentence_id=share_id)
+    # TODO: Error handling
+    return db_entry.json_data
+
+
 @api.post("/share", response=str)
-def share(request, data: str) -> str:
-    # TODO: Create a UUID, store the JSON, return the UUID
-    return ""
+def share(request, data: SegmentationResponse) -> str:
+    db_entry, _ = SentenceHistory.objects.get_or_create(json_data=data.dict())
+    return db_entry.sentence_id
 
 
-# TODO: Rewrite this to use the new database features
 @api.post("/segment", response=SegmentationResponse)
 def segment(request, data: str) -> SegmentationResponse:
     if not data:
@@ -32,7 +39,6 @@ def segment(request, data: str) -> SegmentationResponse:
     return segmented_data
 
 
-# Utility functions
 def handle_non_chinese(data: str) -> dict:
     """
     When the "word" and the only item in "sentence" are equal,

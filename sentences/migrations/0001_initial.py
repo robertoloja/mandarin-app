@@ -48,6 +48,18 @@ class Migration(migrations.Migration):
                 ("definitions", models.TextField()),
             ],
         ),
+        migrations.AlterUniqueTogether(
+            name="cedictionary",
+            unique_together={
+                (
+                    "traditional",
+                    "simplified",
+                    "word_length",
+                    "pronunciation",
+                    "definitions",
+                )
+            },
+        ),
         migrations.CreateModel(
             name="Hanzi",
             fields=[

@@ -1,67 +1,93 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useSearchParams } from 'next/navigation';
+import { RootState, useAppDispatch } from '@/utils/store/store';
 import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
 
+import {
+  clearMandarinSentence,
+  appendToMandarinSentence,
+  clearMandarinDictionary,
+  appendToMandarinDictionary,
+  setLoading,
+  setShareLink,
+} from '@/utils/store/mandarinSentenceSlice';
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
-// import AccurateTimer from '@/utils/timer';
-
-import {
-  MandarinSentenceType,
-  MandarinWordType,
-  ChineseDictionary,
-  SegmentResponseType,
-} from '@/utils/types';
+import AccurateTimer from '@/utils/timer';
+import { emptySentence, SegmentResponseType } from '@/utils/types';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function Home() {
-  const emptySentence: MandarinSentenceType = {
-    translation: '',
-    sentence: [] as MandarinWordType[],
-  };
+  let share_id = useSearchParams().get('share_id') || '';
 
-  const [sentence, setSentence] = useState(
-    emptySentence as MandarinSentenceType,
+  useEffect(() => {
+    if (share_id !== '') {
+      MandoBotAPI.shared(share_id).then((response: SegmentResponseType) => {
+        handleMessage(response);
+        dispatch(setShareLink(share_id));
+      });
+    }
+  }, []);
+
+  const dispatch = useAppDispatch();
+
+  const mandarinSentence = useSelector(
+    (state: RootState) => state.mandarinSentence.mandarinSentence,
   );
-  const [dictionary, setDictionary] = useState({} as ChineseDictionary);
-  const [percentage_done, setPercentageDone] = useState(0);
+  const mandarinDictionary = useSelector(
+    (state: RootState) => state.mandarinSentence.mandarinDictionary,
+  );
+
+  const isLoading = useSelector(
+    (state: RootState) => state.mandarinSentence.isLoading,
+  );
+
+  const [percentageDone, setPercentageDone] = useState(0);
   const [inputValue, setInputValue] = useState('');
-  const [isLoading, setLoading] = useState(false);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
   const handleMessage = (message: SegmentResponseType) => {
-    // Since the input (might be) batched before being sent, this ensures
-    // the more recent batches do not override previous batches.
-    setSentence((previousSentence) => ({
-      translation: previousSentence.translation + ' ' + message.translation,
-      sentence: [...previousSentence.sentence, ...message.sentence],
-    }));
-    setDictionary((previousDictionary) => ({
-      ...previousDictionary,
-      ...message.dictionary,
-    }));
+    dispatch(
+      appendToMandarinSentence({
+        translation: message.translation,
+        sentence: message.sentence,
+      }),
+    );
+    dispatch(appendToMandarinDictionary(message.dictionary));
   };
 
-  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
+  const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
+
+  const resetState = () => {
+    dispatch(clearMandarinSentence());
+    dispatch(clearMandarinDictionary());
+    dispatch(setLoading(false));
+    dispatch(setShareLink(''));
+    setPercentageDone(0);
+    setShareLink('');
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    resetState();
 
-    setSentence(emptySentence);
-    setPercentageDone(0);
     if (inputValue == '') {
       return;
     }
-    setLoading(true);
-    // const timer = new AccurateTimer();
-    // timer.start();
 
-    if (BATCH_REQUESTS) {
+    dispatch(setLoading(true));
+    const timer = new AccurateTimer();
+    timer.start();
+
+
+    if (BATCH_REQUESTS && inputValue.length > 100) {
       // Batch input by sentence, to speed up initial response time from server.
       const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/);
 
@@ -81,19 +107,39 @@ export default function Home() {
     } else {
       await MandoBotAPI.segment(inputValue).then(
         (response: SegmentResponseType) => {
-          setSentence(emptySentence);
           handleMessage(response);
         },
       );
     }
-    setLoading(false);
-    // timer.stop();
-    // console.log(timer.getElapsedTime());
+
+    dispatch(setLoading(false));
+    timer.stop();
+    console.log(timer.getElapsedTime());
+
+  };
+  useEffect(() => {
+    // TODO: Wait, why is this here?
+    if (!isLoading && mandarinSentence !== emptySentence && share_id === '') {
+      getShareLink();
+    }
+  }, [mandarinSentence, isLoading]);
+
+  const getShareLink = async () => {
+    // TODO: Should not create a new link if the sentence is the same.
+    const dataToSend = {
+      translation: mandarinSentence.translation,
+      sentence: mandarinSentence.sentence,
+      dictionary: mandarinDictionary,
+    };
+
+    await MandoBotAPI.share(dataToSend).then((response: string) => {
+      dispatch(setShareLink(response));
+    });
   };
 
   return (
     <Box h="100%">
-      {isLoading ? <ProgressBar progress_percent={percentage_done} /> : null}
+      {isLoading ? <ProgressBar progress_percent={percentageDone} /> : null}
 
       <form onSubmit={handleSubmit}>
         <Input
@@ -112,7 +158,7 @@ export default function Home() {
 
           {isLoading ? (
             <Text color="gray.600" textAlign="center" w="60%">
-              {percentage_done == 0
+              {percentageDone == 0
                 ? 'Segmentation and translation can take several minutes.'
                 : 'Your results will load one sentence at a time.'}
             </Text>
@@ -122,13 +168,13 @@ export default function Home() {
 
       <Box h="100%">
         <MandarinSentence
-          sentence={sentence.sentence}
-          translation={sentence.translation}
-          dictionary={dictionary}
+          sentence={mandarinSentence.sentence}
+          translation={mandarinSentence.translation}
+          dictionary={mandarinDictionary}
         />
 
-        {sentence.sentence.length !== 0 ? (
-          <Translation text={sentence.translation} />
+        {mandarinSentence.sentence.length !== 0 ? (
+          <Translation text={mandarinSentence.translation} />
         ) : null}
       </Box>
     </Box>

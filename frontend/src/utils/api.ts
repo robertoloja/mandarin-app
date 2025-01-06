@@ -28,4 +28,14 @@ export const MandoBotAPI = {
     const response = await api.post(`/segment?data=${sentence}`);
     return response.data;
   },
+  share: async function (jsonData: SegmentResponseType): Promise<string> {
+    const response = await api.post(`/share`, jsonData, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+    return response.data;
+  },
+  shared: async function (share_id: string): Promise<SegmentResponseType> {
+    const response = await api.get(`/shared?share_id=${share_id}`);
+    return response.data;
+  },
 };

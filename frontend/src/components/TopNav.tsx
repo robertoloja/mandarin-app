@@ -18,7 +18,9 @@ import {
   IoLanguage,
   IoBrushOutline,
 } from 'react-icons/io5';
+
 import NavPanel from './NavPanel';
+import ShareButton from './ShareButton';
 
 function TopNav() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -84,13 +86,17 @@ function TopNav() {
         />
       </HStack>
 
-      <IconButton
-        aria-label="Change color mode"
-        icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
-        onClick={toggleColorMode}
-        bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        mr="2rem"
-      />
+      <HStack>
+        <ShareButton />
+
+        <IconButton
+          aria-label="Change color mode"
+          icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
+          onClick={toggleColorMode}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          mr="2rem"
+        />
+      </HStack>
 
       <NavPanel isOpen={isOpen} onClose={onClose} />
     </HStack>
