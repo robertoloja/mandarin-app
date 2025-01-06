@@ -86,7 +86,7 @@ export default function Home() {
     const timer = new AccurateTimer();
     timer.start();
 
-    if (BATCH_REQUESTS && inputValue.length > 100) {
+    if (BATCH_REQUESTS && inputValue.length > 200) {
       // Batch input by sentence, to speed up initial response time from server.
       const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/);
 
