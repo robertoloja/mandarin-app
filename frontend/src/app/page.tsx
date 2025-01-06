@@ -58,7 +58,7 @@ export default function Home() {
     }
   }, []);
 
-  const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
+  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
 
   const resetState = () => {
     dispatch(clearMandarinSentence());
