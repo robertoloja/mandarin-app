@@ -16,10 +16,8 @@ import {
 } from '@chakra-ui/react';
 import { IoClipboardOutline, IoShareSocialOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
 
 import { RootState } from '@/utils/store/store';
-import { MandoBotAPI } from '@/utils/api';
 
 export default function ShareButton() {
   const sentenceIsLoading = useSelector(
@@ -28,34 +26,20 @@ export default function ShareButton() {
   const mandarinSentence = useSelector(
     (state: RootState) => state.mandarinSentence.mandarinSentence,
   );
-  const dictionary = useSelector(
-    (state: RootState) => state.mandarinSentence.mandarinDictionary,
+  const shareLink = useSelector(
+    (state: RootState) => state.mandarinSentence.shareLink,
   );
   const { colorMode } = useColorMode();
-  const [shareUrl, setShareUrl] = useState('');
-
-  const getShareLink = async () => {
-    const dataToSend = {
-      translation: mandarinSentence.translation,
-      sentence: mandarinSentence.sentence,
-      dictionary: dictionary,
-    };
-
-    await MandoBotAPI.share(dataToSend).then((response: string) => {
-      setShareUrl(response);
-    });
-  };
 
   return (
     <Popover>
       <PopoverTrigger>
         <IconButton
           aria-label="Share segmentation"
-          isDisabled={mandarinSentence.sentence.length == 0}
+          isDisabled={shareLink.length == 0}
           isLoading={sentenceIsLoading}
           icon={<IoShareSocialOutline />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
-          onClick={getShareLink}
         />
       </PopoverTrigger>
       <PopoverContent>
@@ -66,7 +50,13 @@ export default function ShareButton() {
         </PopoverHeader>
         <PopoverBody>
           <HStack>
-            <Input isReadOnly={true} type="text" value={shareUrl} />
+            <Input
+              type="text"
+              value={shareLink}
+              focusBorderColor="blue.500"
+              cursor="text"
+              userSelect="text"
+            />
             <IconButton
               aria-label="Copy link to clipboard"
               icon={<IoClipboardOutline />}

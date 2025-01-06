@@ -3,19 +3,20 @@ import {
   MandarinSentenceType,
   emptySentence,
   ChineseDictionary,
-  SegmentResponseType,
 } from '../types';
 
 interface MandarinSentenceState {
   mandarinSentence: MandarinSentenceType;
   mandarinDictionary: ChineseDictionary;
   isLoading: boolean;
+  shareLink: string;
 }
 
 const initialState: MandarinSentenceState = {
   mandarinSentence: emptySentence,
   mandarinDictionary: {},
   isLoading: false,
+  shareLink: '',
 };
 
 const mandarinSentenceSlice = createSlice({
@@ -26,7 +27,7 @@ const mandarinSentenceSlice = createSlice({
       state,
       action: PayloadAction<MandarinSentenceType>,
     ) {
-      state.mandarinSentence.translation += ' ' + action.payload.translation;
+      state.mandarinSentence.translation += action.payload.translation + ' ';
       state.mandarinSentence.sentence = [
         ...state.mandarinSentence.sentence,
         ...action.payload.sentence,
@@ -50,6 +51,9 @@ const mandarinSentenceSlice = createSlice({
     setLoading(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload;
     },
+    setShareLink(state, action: PayloadAction<string>) {
+      state.shareLink = action.payload;
+    },
   },
 });
 
@@ -59,5 +63,6 @@ export const {
   appendToMandarinDictionary,
   clearMandarinDictionary,
   setLoading,
+  setShareLink,
 } = mandarinSentenceSlice.actions;
 export default mandarinSentenceSlice.reducer;

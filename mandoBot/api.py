@@ -24,9 +24,11 @@ def retrieve_shared(request, share_id):
 
 @api.post("/share", response=str)
 def share(request, data: SegmentationResponse) -> str:
+    # TODO: Create database row with the url_token as the key and the data as the value
+    # TODO: Check if the sentence has already been stored in SentenceHistory and, if so,
+    # return the existing token.
     url_token = secrets.token_urlsafe(10)
     url = f"{request.scheme}//{request.get_host()}/shared?link={url_token}"
-    # TODO: Create database row with the url_token as the key and the data as the value
     return url
 
 

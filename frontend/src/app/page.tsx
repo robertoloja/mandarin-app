@@ -10,6 +10,7 @@ import {
   clearMandarinDictionary,
   appendToMandarinDictionary,
   setLoading,
+  setShareLink,
 } from '@/utils/store/mandarinSentenceSlice';
 
 import MandarinSentence from '@/components/MandarinSentence';
@@ -57,6 +58,7 @@ export default function Home() {
     dispatch(clearMandarinSentence());
     dispatch(clearMandarinDictionary());
     dispatch(setLoading(false));
+    dispatch(setShareLink(''));
     setPercentageDone(0);
   };
 
@@ -91,14 +93,27 @@ export default function Home() {
     } else {
       await MandoBotAPI.segment(inputValue).then(
         (response: SegmentResponseType) => {
-          resetState();
           handleMessage(response);
         },
       );
     }
     dispatch(setLoading(false));
+    getShareLink();
     timer.stop();
     console.log(timer.getElapsedTime());
+  };
+
+  const getShareLink = async () => {
+    // TODO: Should not create a new link if the sentence is the same.
+    const dataToSend = {
+      translation: mandarinSentence.translation,
+      sentence: mandarinSentence.sentence,
+      dictionary: mandarinDictionary,
+    };
+
+    await MandoBotAPI.share(dataToSend).then((response: string) => {
+      dispatch(setShareLink(response));
+    });
   };
 
   return (
