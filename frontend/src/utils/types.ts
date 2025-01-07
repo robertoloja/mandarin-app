@@ -3,12 +3,14 @@ export type ChineseDictionary = Record<
   {
     english: string[];
     pinyin: string[];
+    zhuyin: string[];
   }
 >;
 
 export type MandarinWordType = {
   word: string;
   pinyin: string[];
+  zhuyin: string[];
   definitions: string[];
 };
 

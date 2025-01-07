@@ -60,7 +60,7 @@ function Word(props: {
                   <Hanzi
                     hanzi={char}
                     key={index}
-                    pinyin={props.pronunciation[index]}
+                    pronunciation={props.pronunciation[index]}
                   />
                 ))}
               </HStack>

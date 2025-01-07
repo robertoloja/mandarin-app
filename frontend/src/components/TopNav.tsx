@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-// import { useRef } from 'react';
 import {
   // useDisclosure,
   IconButton,
@@ -16,12 +15,12 @@ import {
   IoSunny,
   // IoOptionsOutline,
   // IoText,
-  // IoLanguage,
   // IoBrushOutline,
 } from 'react-icons/io5';
 
 // import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
+import LanguageMenu from './LanguageMenu';
 
 function TopNav() {
   // const { isOpen, onOpen, onClose } = useDisclosure();
@@ -74,11 +73,6 @@ function TopNav() {
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
         />
 
-        <IconButton
-          aria-label="Language options"
-          icon={<IoLanguage />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        />
 
         <IconButton
           aria-label="Language options"
@@ -88,6 +82,7 @@ function TopNav() {
       </HStack> */}
 
       <HStack justifyContent="right" w="100%">
+        <LanguageMenu />
         <ShareButton />
 
         <IconButton

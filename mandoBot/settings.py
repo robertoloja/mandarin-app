@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -22,10 +23,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG') == "True"
+DEBUG = os.getenv("DJANGO_DEBUG") == "True"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+}
 
 ALLOWED_HOSTS = [
     "mandobot.pythonanywhere.com",
@@ -35,69 +54,63 @@ CORS_ALLOWED_ORIGINS = [
     "https://mandobot.netlify.app",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 if DEBUG:
-    ALLOWED_HOSTS += [
-        "192.168.1.8",
-        "127.0.0.1",
-        "localhost",
-        "0.0.0.0"
-    ]
+    ALLOWED_HOSTS += ["192.168.1.8", "127.0.0.1", "localhost", "0.0.0.0"]
     CORS_ALLOWED_ORIGINS += [
         "http://127.0.0.1:3000",
         "http://localhost:3000",
         "http://0.0.0.0",
     ]
-    CORS_ALLOWED_ORIGINS_REGEXES = [
-        r"http://192\.168\.1\.\d{1,3}:\d+$"
-    ]
     CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # local apps
-    'corsheaders',
-    'channels',
-    'sentences',
-    'accounts',
+    "corsheaders",
+    "channels",
+    "sentences",
+    "accounts",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'mandoBot.urls'
+ROOT_URLCONF = "mandoBot.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'mandoBot.wsgi.application'
-ASGI_APPLICATION = 'mandoBot.asgi.application'
+WSGI_APPLICATION = "mandoBot.wsgi.application"
+ASGI_APPLICATION = "mandoBot.asgi.application"
 
 
 # Database
@@ -118,14 +131,14 @@ PYTHON_ANYWHERE = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "mandoBot$default",
         "USER": "mandoBot",
-        "PASSWORD": os.getenv('PYTHON_ANYWHERE_MYSQL_PASSWORD'),
+        "PASSWORD": os.getenv("PYTHON_ANYWHERE_MYSQL_PASSWORD"),
         "HOST": "mandoBot.mysql.pythonanywhere-services.com",
     }
 }
 
-if os.getenv('PYTHON_ANYWHERE') == "TRUE":
+if os.getenv("PYTHON_ANYWHERE") == "TRUE":
     DATABASES = PYTHON_ANYWHERE
-elif os.getenv('DOCKER') == "TRUE":
+elif os.getenv("DOCKER") == "TRUE":
     DATABASES = DOCKER
 else:
     DATABASES = {
@@ -142,16 +155,16 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -159,9 +172,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -171,10 +184,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

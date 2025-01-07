@@ -2,7 +2,7 @@
 
 import { VStack, Text, useColorMode } from '@chakra-ui/react';
 
-function Hanzi(props: { hanzi: string; pinyin: string }) {
+function Hanzi(props: { hanzi: string; pronunciation: string }) {
   const { colorMode } = useColorMode();
   return (
     <VStack
@@ -15,8 +15,8 @@ function Hanzi(props: { hanzi: string; pinyin: string }) {
         {props.hanzi}
       </Text>
 
-      {props.pinyin ? (
-        <Text fontSize="l">{props.pinyin.toLowerCase()}</Text>
+      {props.pronunciation ? (
+        <Text fontSize="l">{props.pronunciation.toLowerCase()}</Text>
       ) : null}
     </VStack>
   );

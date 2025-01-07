@@ -1,16 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface SettingsState {
   theme: 'light' | 'dark';
-  notificationsEnabled: boolean;
+  pronunciation: 'pinyin' | 'zhuyin';
 }
 
 const initialState: SettingsState = {
   theme: 'light',
-  notificationsEnabled: true,
+  pronunciation: 'pinyin',
 };
 
-// TODO: Re-write this to save actual settings.
 const settingsSlice = createSlice({
   name: 'settings',
   initialState,
@@ -18,11 +17,12 @@ const settingsSlice = createSlice({
     toggleTheme(state) {
       state.theme = state.theme === 'light' ? 'dark' : 'light';
     },
-    setNotificationsEnabled(state, action: PayloadAction<boolean>) {
-      state.notificationsEnabled = action.payload;
+    togglePronunciation(state) {
+      state.pronunciation =
+        state.pronunciation === 'pinyin' ? 'zhuyin' : 'pinyin';
     },
   },
 });
 
-export const { toggleTheme, setNotificationsEnabled } = settingsSlice.actions;
+export const { toggleTheme, togglePronunciation } = settingsSlice.actions;
 export default settingsSlice.reducer;
