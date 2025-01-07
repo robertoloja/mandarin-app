@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
+// import { useRef } from 'react';
 import {
-  useDisclosure,
+  // useDisclosure,
   IconButton,
   defineStyle,
   defineStyleConfig,
@@ -23,9 +24,9 @@ import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
 
 function TopNav() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const btnRef = useRef<HTMLButtonElement>(null);
+  // const btnRef = useRef<HTMLButtonElement>(null);
 
   const buttonStyle = defineStyle({
     border: '0',
@@ -98,7 +99,7 @@ function TopNav() {
         />
       </HStack>
 
-      <NavPanel isOpen={isOpen} onClose={onClose} />
+      {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
     </HStack>
   );
 }
