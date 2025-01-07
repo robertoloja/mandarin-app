@@ -3,7 +3,7 @@ from dragonmapper import hanzi
 import json
 
 from sentences.segmenters import DefaultSegmenter
-from .schemas import SegmentationResponse
+from .schemas import SegmentationResponse, SegmentationRequest
 from sentences.models import SentenceHistory
 
 api = NinjaAPI()
@@ -29,14 +29,14 @@ async def share(request, data: SegmentationResponse) -> str:
 
 
 @api.post("/segment", response=SegmentationResponse)
-async def segment(request, data: str) -> SegmentationResponse:
-    if not data:
+async def segment(request, data: SegmentationRequest) -> SegmentationResponse:
+    if not data.sentence:
         return emptyResponse
 
-    if not hanzi.has_chinese(data):
-        return handle_non_chinese(data)
+    if not hanzi.has_chinese(data.sentence):
+        return handle_non_chinese(data.sentence)
 
-    segmented_data = await DefaultSegmenter.segment_and_translate(data)
+    segmented_data = await DefaultSegmenter.segment_and_translate(data.sentence)
     return segmented_data
 
 

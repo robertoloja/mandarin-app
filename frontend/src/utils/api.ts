@@ -25,7 +25,9 @@ api.interceptors.response.use(undefined, (error) => {
 
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
-    const response = await api.post(`/segment?data=${sentence}`);
+    const response = await api.post(`/segment`, {
+      sentence: sentence,
+    });
     return response.data;
   },
   share: async function (jsonData: SegmentResponseType): Promise<string> {

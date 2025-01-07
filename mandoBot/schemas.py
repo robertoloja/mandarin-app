@@ -34,6 +34,10 @@ class ChineseDictionary(Schema):
     pinyin: List[str]
 
 
+class SegmentationRequest(Schema):
+    sentence: str
+
+
 class SegmentationResponse(Schema):
     translation: str
     sentence: List[MandarinWordSchema]
