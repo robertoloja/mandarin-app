@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from ninja import Schema, ModelSchema
 from sentences.models import CEDictionary
 from accounts.models import CustomUser
@@ -7,6 +7,7 @@ from accounts.models import CustomUser
 class MandarinWordSchema(Schema):
     word: str
     pinyin: List[str]
+    # zhuyin: List[str]
     definitions: List[str | None]
 
 
@@ -26,12 +27,6 @@ class CEDictSchema(ModelSchema):
         fields = ["traditional", "simplified", "pronunciation", "definitions"]
 
 
-class Translation(Schema):
-    english: List[str]
-    pinyin: List[str]
-    definitions: List[str]
-
-
 class ChineseDictionary(Schema):
     english: List[str]
     pinyin: List[str]
@@ -44,4 +39,4 @@ class SegmentationRequest(Schema):
 class SegmentationResponse(Schema):
     translation: str
     sentence: List[MandarinWordSchema]
-    dictionary: dict
+    dictionary: Dict[str, ChineseDictionary]
