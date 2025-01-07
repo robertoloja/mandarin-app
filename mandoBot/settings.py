@@ -134,9 +134,11 @@ PYTHON_ANYWHERE = {
         "PORT": 18958,
         "USER": "avnadmin",
         "PASSWORD": os.getenv("DB_PASSWORD"),
+        "CONN_MAX_AGE": 600,
         "OPTIONS": {
             "sslmode": "verify-ca",
             "sslrootcert": os.path.join(BASE_DIR, "ca_cert.crt"),
+            "pool": True,
         },
     }
 }
