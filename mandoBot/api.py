@@ -1,9 +1,10 @@
+from django.contrib.auth import authenticate, login, logout
 from ninja import NinjaAPI
 from dragonmapper import hanzi
 import json
 
 from sentences.segmenters import DefaultSegmenter
-from .schemas import SegmentationResponse, SegmentationRequest
+from .schemas import SegmentationResponse, SegmentationRequest, UserSchema
 from sentences.models import SentenceHistory
 
 api = NinjaAPI()
@@ -13,6 +14,23 @@ emptyResponse = {
     "dictionary": {"word": {"english": [], "pinyin": []}},
     "sentence": [{"word": "", "pinyin": [], "definitions": []}],
 }
+
+
+@api.post("/login")
+def login_endpoint(request, payload: UserSchema) -> str:
+    user = authenticate(username=payload.username, password=payload.password)
+
+    if user is not None:
+        login(request, user)
+        return "success"
+    else:
+        return "failed"
+
+
+@api.post("/logout")
+def logout_view(request) -> str:
+    logout(request)
+    return "success"
 
 
 @api.get("/shared", response=SegmentationResponse)

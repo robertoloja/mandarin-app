@@ -1,6 +1,7 @@
-from typing import List, Dict
+from typing import List
 from ninja import Schema, ModelSchema
 from sentences.models import CEDictionary
+from accounts.models import CustomUser
 
 
 class MandarinWordSchema(Schema):
@@ -9,8 +10,10 @@ class MandarinWordSchema(Schema):
     definitions: List[str | None]
 
 
-class UserSchema(Schema):
-    email: str
+class UserSchema(ModelSchema):
+    class Meta:
+        model = CustomUser
+        fields = ["username", "password"]
 
 
 class WordSchema(Schema):

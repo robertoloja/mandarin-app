@@ -40,4 +40,19 @@ export const MandoBotAPI = {
     const response = await api.get(`/shared?share_id=${share_id}`);
     return response.data;
   },
+  login: async function (
+    username: string,
+    password: string,
+  ): Promise<{ user: string; token: string }> {
+    const response = await api.post(
+      '/login',
+      { username, password },
+      { withCredentials: true },
+    );
+    return response.data;
+  },
+  logout: async function (): Promise<string> {
+    const response = await api.post('/logout', {}, { withCredentials: true });
+    return response.data;
+  },
 };
