@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'next/navigation';
 import { RootState, useAppDispatch } from '@/utils/store/store';
@@ -37,11 +37,7 @@ export default function Home() {
   );
 
   const [percentageDone, setPercentageDone] = useState(0);
-  const [inputValue, setInputValue] = useState('');
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleMessage = (message: SegmentResponseType) => {
     dispatch(
@@ -62,7 +58,7 @@ export default function Home() {
     }
   }, []);
 
-  const BATCH_REQUESTS = true; //process.env.NODE_ENV !== 'development';
+  const BATCH_REQUESTS = process.env.NODE_ENV !== 'development';
 
   const resetState = () => {
     dispatch(clearMandarinSentence());
@@ -71,13 +67,18 @@ export default function Home() {
     dispatch(setShareLink(''));
     setPercentageDone(0);
     setShareLink('');
+    history.pushState(null, '', '/');
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     resetState();
 
-    if (inputValue == '') {
+    let inputValue = '';
+
+    if (inputRef.current && inputRef.current.value !== '') {
+      inputValue = inputRef.current.value;
+    } else {
       return;
     }
 
@@ -85,7 +86,7 @@ export default function Home() {
     const timer = new AccurateTimer();
     timer.start();
 
-    if (BATCH_REQUESTS && inputValue.length > 100) {
+    if (BATCH_REQUESTS && inputValue.length > 200) {
       // Batch input by sentence, to speed up initial response time from server.
       const sentencesToProcess = inputValue.split(/(?<=[。？！.?!])/);
 
@@ -145,8 +146,7 @@ export default function Home() {
         <Input
           type="text"
           placeholder="Enter Mandarin text to translate and segment"
-          value={inputValue}
-          onChange={handleInputChange}
+          ref={inputRef}
           mb="0"
           mt={isLoading ? '0' : '0.25rem'}
         />

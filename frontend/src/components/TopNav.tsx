@@ -49,7 +49,7 @@ function TopNav() {
       h="2.5rem"
       backgroundColor={colorMode === 'light' ? 'white' : 'gray.800'}
     >
-      <HStack justifyContent="left">
+      {/* <HStack justifyContent="left">
         <IconButton
           aria-label="Open Navigation"
           icon={<HamburgerIcon boxSize="2rem" color="#468DA4" />}
@@ -84,9 +84,9 @@ function TopNav() {
           icon={<IoBrushOutline />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
         />
-      </HStack>
+      </HStack> */}
 
-      <HStack>
+      <HStack justifyContent="right" w="100%">
         <ShareButton />
 
         <IconButton

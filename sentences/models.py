@@ -21,6 +21,16 @@ class NormalizedJSONManager(models.Manager):
             kwargs["json_data"] = SentenceHistory.normalize_json(kwargs["json_data"])
         return super().get(*args, **kwargs)
 
+    def aget_or_create(self, *args, **kwargs):
+        if "json_data" in kwargs:
+            kwargs["json_data"] = SentenceHistory.normalize_json(kwargs["json_data"])
+        return super().aget_or_create(*args, **kwargs)
+
+    def aget(self, *args, **kwargs):
+        if "json_data" in kwargs:
+            kwargs["json_data"] = SentenceHistory.normalize_json(kwargs["json_data"])
+        return super().aget(*args, **kwargs)
+
 
 class SentenceHistory(models.Model):
     sentence_id = models.CharField(max_length=10, unique=True, db_index=True)
