@@ -19,11 +19,13 @@ emptyResponse = {
 @api.post("/login")
 def login_endpoint(request, payload: UserSchema) -> str:
     user = authenticate(username=payload.username, password=payload.password)
+    print("It worked on the server")
 
     if user is not None:
         login(request, user)
         return "success"
     else:
+        print("It failed on the server")
         return "failed"
 
 
