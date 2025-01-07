@@ -15,6 +15,7 @@ uvicorn = {extras = ["standard"], version = "*"}
 channels = "*"
 deepl = "*"
 requests = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 argostranslate = "*"
