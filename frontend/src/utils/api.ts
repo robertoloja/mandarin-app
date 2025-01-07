@@ -3,7 +3,7 @@ import { SegmentResponseType } from './types';
 
 const API_BASE_URL =
   process.env.NODE_ENV === 'development'
-    ? 'http://0.0.0.0:8000/api'
+    ? 'http://192.168.1.8:8000/api'
     : 'https://mandobot.pythonanywhere.com/api';
 
 const api = axios.create({
@@ -25,21 +25,24 @@ api.interceptors.response.use(undefined, (error) => {
 
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
-    const response = await api.post(`/segment`, {
+    const response = await api.post(`/segment?data=${sentence}`, {
       sentence: sentence,
     });
     return response.data;
   },
+
   share: async function (jsonData: SegmentResponseType): Promise<string> {
     const response = await api.post(`/share`, jsonData, {
       headers: { 'Content-Type': 'application/json' },
     });
     return response.data;
   },
+
   shared: async function (share_id: string): Promise<SegmentResponseType> {
     const response = await api.get(`/shared?share_id=${share_id}`);
     return response.data;
   },
+
   login: async function (
     username: string,
     password: string,
@@ -51,6 +54,7 @@ export const MandoBotAPI = {
     );
     return response.data;
   },
+
   logout: async function (): Promise<string> {
     const response = await api.post('/logout', {}, { withCredentials: true });
     return response.data;

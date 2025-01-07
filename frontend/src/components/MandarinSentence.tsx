@@ -4,8 +4,13 @@
 import { Flex } from '@chakra-ui/react';
 import Word from './Word';
 import { SegmentResponseType } from '@/utils/types';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 
 function MandarinSentence(props: SegmentResponseType) {
+  const pronunciation = useSelector(
+    (state: RootState) => state.settings.pronunciation,
+  );
   return (
     <Flex
       align="stretch"
@@ -19,7 +24,7 @@ function MandarinSentence(props: SegmentResponseType) {
       {props.sentence.map((word, index) => (
         <Word
           word={word}
-          pronunciation={word.pinyin}
+          pronunciation={pronunciation == 'pinyin' ? word.pinyin : word.zhuyin}
           definitions={word.definitions}
           dictionary={props.dictionary}
           key={index}

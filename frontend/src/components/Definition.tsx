@@ -12,12 +12,14 @@ import {
   ModalContent,
   ModalCloseButton,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'pinyin-tone';
 
 import Hanzi from './Hanzi';
 import { ChineseDictionary } from '@/utils/types';
 import Pinyin from 'pinyin-tone';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 
 function Definition(props: {
   word: string;
@@ -28,6 +30,10 @@ function Definition(props: {
   onOpen: () => void;
   onClose: () => void;
 }) {
+  const pronunciationSetting = useSelector(
+    (state: RootState) => state.settings.pronunciation,
+  );
+
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />
@@ -58,10 +64,12 @@ function Definition(props: {
                   <HStack key={hanziIndex}>
                     <Hanzi
                       hanzi={hanzi}
-                      pinyin={
-                        Pinyin(
-                          props.dictionary[hanzi].pinyin[0],
-                        ) /* COULD CAUSE BUGS */
+                      pronunciation={
+                        pronunciationSetting == 'pinyin'
+                          ? Pinyin(
+                              props.dictionary[hanzi].pinyin[0],
+                            ) /* COULD CAUSE BUGS */
+                          : props.dictionary[hanzi].zhuyin[0]
                       }
                     />
                     <Text>{props.dictionary[hanzi].english}</Text>

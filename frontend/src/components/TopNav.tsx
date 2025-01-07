@@ -2,28 +2,28 @@
 
 import React, { useRef } from 'react';
 import {
-  useDisclosure,
+  // useDisclosure,
   IconButton,
   defineStyle,
   defineStyleConfig,
   HStack,
   useColorMode,
 } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+// import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   IoMoon,
   IoSunny,
-  IoOptionsOutline,
-  IoText,
-  IoLanguage,
-  IoBrushOutline,
+  // IoOptionsOutline,
+  // IoText,
+  // IoBrushOutline,
 } from 'react-icons/io5';
 
-import NavPanel from './NavPanel';
+// import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
+import LanguageMenu from './LanguageMenu';
 
 function TopNav() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const btnRef = useRef<HTMLButtonElement>(null);
 
@@ -73,11 +73,6 @@ function TopNav() {
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
         />
 
-        <IconButton
-          aria-label="Language options"
-          icon={<IoLanguage />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        />
 
         <IconButton
           aria-label="Language options"
@@ -87,6 +82,7 @@ function TopNav() {
       </HStack> */}
 
       <HStack justifyContent="right" w="100%">
+        <LanguageMenu />
         <ShareButton />
 
         <IconButton
@@ -98,7 +94,7 @@ function TopNav() {
         />
       </HStack>
 
-      <NavPanel isOpen={isOpen} onClose={onClose} />
+      {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
     </HStack>
   );
 }
