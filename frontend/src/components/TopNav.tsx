@@ -9,14 +9,14 @@ import {
   HStack,
   useColorMode,
 } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
+// import { HamburgerIcon } from '@chakra-ui/icons';
 import {
   IoMoon,
   IoSunny,
-  IoOptionsOutline,
-  IoText,
-  IoLanguage,
-  IoBrushOutline,
+  // IoOptionsOutline,
+  // IoText,
+  // IoLanguage,
+  // IoBrushOutline,
 } from 'react-icons/io5';
 
 import NavPanel from './NavPanel';
