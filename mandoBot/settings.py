@@ -128,11 +128,16 @@ DOCKER = {
 
 PYTHON_ANYWHERE = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "mandoBot$default",
-        "USER": "mandoBot",
-        "PASSWORD": os.getenv("PYTHON_ANYWHERE_MYSQL_PASSWORD"),
-        "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "defaultdb",
+        "HOST": "mandobot-psql-mandobot-1.j.aivencloud.com",
+        "PORT": 18958,
+        "USER": "avnadmin",
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "OPTIONS": {
+            "sslmode": "verify-ca",
+            "sslrootcert": os.path.join(BASE_DIR, "ca_cert.crt"),
+        },
     }
 }
 
