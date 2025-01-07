@@ -72,13 +72,13 @@ async def share(request, data: SegmentationResponse) -> str:
 
 @api.post("/segment", response=SegmentationResponse)
 async def segment(request, data: str) -> SegmentationResponse:
-    if not data.sentence:
+    if not data:
         return emptyResponse
 
-    if not hanzi.has_chinese(data.sentence):
-        return handle_non_chinese(data.sentence)
+    if not hanzi.has_chinese(data):
+        return handle_non_chinese(data)
 
-    segmented_data = await DefaultSegmenter.segment_and_translate(data.sentence)
+    segmented_data = await DefaultSegmenter.segment_and_translate(data)
     return segmented_data
 
 

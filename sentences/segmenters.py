@@ -14,7 +14,7 @@ from sentences.functions import is_punctuation
 
 
 class Segmenter:
-    def add_pinyin(segmented_sentence: List[str]) -> List[dict]:
+    def add_pronunciations(segmented_sentence: List[str]) -> List[dict]:
         # In zhuyin, the individual hanzi are space delimited already,
         # while in pinyin the whole word is together, so we start with zhuyin.
         pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented_sentence))
@@ -25,19 +25,22 @@ class Segmenter:
 
             if hanzi.has_chinese(segmented_sentence[i]) and not is_punctuation(
                 segmented_sentence[i]
-            ):  # not punctuation/numbers/alphabet
+            ):
                 pinyin = [
-                    # TODO: the next line messes up 而 (r2 instead of er2)
+                    # TODO: the next line messes up 而 (r2 instead of er2). See SCRUM-75
                     transcriptions.zhuyin_to_pinyin(x)
                     for x in pronunciation[i].split(" ")
                 ]
+                zhuyin = [x for x in pronunciation[i].split(" ")]
             else:
-                pinyin = [segmented_sentence[i]]  # this is punctuation, digits, etc.
+                pinyin = [segmented_sentence[i]]
+                zhuyin = [segmented_sentence[i]]
 
             response += [
                 {
                     "word": segmented_sentence[i],
                     "pinyin": pinyin,
+                    "zhuyin": zhuyin,
                     "definitions": [],
                 }
             ]
@@ -56,6 +59,7 @@ class Segmenter:
             if not hanzi.has_chinese(item["word"]) or is_punctuation(item["word"]):
                 continue
 
+            # In the db, pinyin is stored as numbered syllables, so convert before queries
             pinyin = " ".join(
                 map(
                     lambda x: transcriptions.accented_syllable_to_numbered(x),
@@ -69,7 +73,6 @@ class Segmenter:
             )
 
             if not await db_result.aexists():
-                # TODO: Include a way to figure out if this is traditional or simplified
                 item["definitions"] = [DefaultTranslator.translate(item["word"])]
 
                 for index, single_hanzi in enumerate(item["word"]):
@@ -87,23 +90,30 @@ class Segmenter:
                             async for definition in db_hanzi.values_list(
                                 "definitions", flat=True
                             )
-                        ],  # list(db_hanzi.values_list("definitions", flat=True)),
+                        ],
                         "pinyin": [
                             pinyin
                             async for pinyin in db_hanzi.values_list(
                                 "pronunciation", flat=True
                             )
-                        ],  # list( db_hanzi.values_list("pronunciation", flat=True)),
+                        ],
+                        "zhuyin": [
+                            hanzi.pinyin_to_zhuyin(zhuyin)
+                            async for zhuyin in db_hanzi.values_list(
+                                "pronunciation", flat=True
+                            )
+                        ],
                     }
             else:
                 results = [result async for result in db_result]
-                for entry in results:
 
+                for entry in results:
                     item["definitions"] += [entry.definitions]
                     constituent_hanzi = entry.constituent_hanzi.all()
 
                     if await constituent_hanzi.aexists():
                         hanzi_list = [h async for h in constituent_hanzi]
+
                         for single_hanzi in hanzi_list:
                             if item["word"] == entry.simplified:
                                 the_hanzi = single_hanzi.simplified
@@ -113,15 +123,20 @@ class Segmenter:
                             dictionary[the_hanzi] = {
                                 "english": [single_hanzi.definitions],
                                 "pinyin": [single_hanzi.pronunciation],
+                                "zhuyin": [
+                                    hanzi.pinyin_to_zhuyin(single_hanzi.pronunciation)
+                                ],
                             }
                     else:
                         if item["word"] == entry.simplified:
                             the_hanzi = entry.simplified
                         else:
                             the_hanzi = entry.traditional
+
                         dictionary[the_hanzi] = {
                             "english": [entry.definitions],
                             "pinyin": [entry.pronunciation],
+                            "zhuyin": [hanzi.pinyin_to_zhuyin(entry.pronunciation)],
                         }
 
         return dictionary
@@ -137,7 +152,7 @@ class Segmenter:
             segmented = future_segmented.result()
             translated = future_translation.result()
 
-        segmented = Segmenter.add_pinyin(segmented)
+        segmented = Segmenter.add_pronunciations(segmented)
         dictionary = await Segmenter.add_definitions_and_create_dictionary(segmented)
 
         return {
