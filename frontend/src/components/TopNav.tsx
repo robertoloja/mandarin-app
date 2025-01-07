@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   // useDisclosure,
   IconButton,
@@ -25,7 +25,7 @@ import LanguageMenu from './LanguageMenu';
 function TopNav() {
   // const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const btnRef = useRef<HTMLButtonElement>(null);
+  // const btnRef = useRef<HTMLButtonElement>(null);
 
   const buttonStyle = defineStyle({
     border: '0',

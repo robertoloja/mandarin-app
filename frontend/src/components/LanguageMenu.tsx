@@ -18,7 +18,7 @@ import { useAppDispatch } from './LoginTest';
 
 export default function LanguageMenu() {
   const dispatch = useAppDispatch();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const toggle = () => {
     dispatch(togglePronunciation());
   };

@@ -11,7 +11,8 @@
 !.yarn/versions
 
 .next/
-out/
+out/*
+/out
 
 # testing
 /coverage

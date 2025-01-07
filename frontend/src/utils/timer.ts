@@ -23,7 +23,7 @@ export default class AccurateTimer {
     if (this.startTime !== null) {
       this.elapsedTime = performance.now() - this.startTime;
     }
-    clearInterval(this.timerId);
+    // clearInterval(this.timerId);
     this.timerId = null;
   }
 

@@ -12,7 +12,7 @@ import {
   ModalContent,
   ModalCloseButton,
 } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'pinyin-tone';
 
 import Hanzi from './Hanzi';
