@@ -28,6 +28,24 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG") == "True"
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "ERROR",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+}
+
 ALLOWED_HOSTS = [
     "mandobot.pythonanywhere.com",
 ]

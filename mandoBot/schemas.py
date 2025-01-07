@@ -1,6 +1,5 @@
 from typing import List, Dict
 from ninja import Schema, ModelSchema
-from sentences.models import CEDictionary
 from accounts.models import CustomUser
 
 
@@ -21,19 +20,9 @@ class WordSchema(Schema):
     word: str
 
 
-class CEDictSchema(ModelSchema):
-    class Meta:
-        model = CEDictionary
-        fields = ["traditional", "simplified", "pronunciation", "definitions"]
-
-
 class ChineseDictionary(Schema):
     english: List[str]
     pinyin: List[str]
-
-
-class SegmentationRequest(Schema):
-    sentence: str
 
 
 class SegmentationResponse(Schema):

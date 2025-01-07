@@ -1,12 +1,17 @@
+import json
+import logging
+
+from django.db import Error
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout
 from ninja import NinjaAPI
 from dragonmapper import hanzi
-import json
 
 from sentences.segmenters import DefaultSegmenter
-from .schemas import SegmentationResponse, SegmentationRequest, UserSchema
+from .schemas import SegmentationResponse, UserSchema
 from sentences.models import SentenceHistory
 
+logger = logging.getLogger(__name__)
 api = NinjaAPI()
 
 emptyResponse = {
@@ -14,6 +19,8 @@ emptyResponse = {
     "dictionary": {"word": {"english": [], "pinyin": []}},
     "sentence": [{"word": "", "pinyin": [], "definitions": []}],
 }
+
+# TODO: Respond with HTTP status codes
 
 
 @api.post("/login")
@@ -35,20 +42,36 @@ def logout_view(request) -> str:
 
 
 @api.get("/shared", response=SegmentationResponse)
-async def retrieve_shared(request, share_id):
-    db_entry = await SentenceHistory.objects.aget(sentence_id=share_id)
-    # TODO: Error handling
+async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
+    try:
+        db_entry = await SentenceHistory.objects.aget(sentence_id=share_id)
+    except ObjectDoesNotExist:
+        logger.error(f"No SentenceHistory object with sentence_id: {share_id}")
+        return emptyResponse
+    except Error:
+        logger.error(
+            f"Database error while getting SentenceHistory.sentence_id: {share_id}"
+        )
+        return emptyResponse
     return json.loads(db_entry.json_data)
 
 
 @api.post("/share", response=str)
 async def share(request, data: SegmentationResponse) -> str:
-    db_entry, _ = await SentenceHistory.objects.aget_or_create(json_data=data.dict())
+    try:
+        db_entry, _ = await SentenceHistory.objects.aget_or_create(
+            json_data=data.dict()
+        )
+    except Error:
+        logger.error(
+            f"""Database error while getting/creating
+            SentenceHistory entry for {''.join([word["word"] for word in data.sentence])}"""
+        )
     return db_entry.sentence_id
 
 
 @api.post("/segment", response=SegmentationResponse)
-async def segment(request, data: SegmentationRequest) -> SegmentationResponse:
+async def segment(request, data: str) -> SegmentationResponse:
     if not data.sentence:
         return emptyResponse
 
