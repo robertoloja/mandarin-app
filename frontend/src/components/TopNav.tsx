@@ -20,7 +20,7 @@ import {
   // IoBrushOutline,
 } from 'react-icons/io5';
 
-import NavPanel from './NavPanel';
+// import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
 
 function TopNav() {
