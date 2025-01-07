@@ -17,14 +17,14 @@ emptyResponse = {
 
 @api.get("/shared", response=SegmentationResponse)
 async def retrieve_shared(request, share_id):
-    db_entry = SentenceHistory.objects.get(sentence_id=share_id)
+    db_entry = await SentenceHistory.objects.aget(sentence_id=share_id)
     # TODO: Error handling
     return json.loads(db_entry.json_data)
 
 
 @api.post("/share", response=str)
 async def share(request, data: SegmentationResponse) -> str:
-    db_entry, _ = SentenceHistory.objects.get_or_create(json_data=data.dict())
+    db_entry, _ = await SentenceHistory.objects.aget_or_create(json_data=data.dict())
     return db_entry.sentence_id
 
 
