@@ -1,6 +1,6 @@
 from django.db import migrations
 from ..cedict_ts import mandarin_dict_unstructured
-from ..functions import create_dictionary_single_hanzi
+from sentences.functions import create_dictionary_single_hanzi
 
 
 def run_create_dictionary(apps, schema_editor):

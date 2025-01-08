@@ -130,7 +130,7 @@ PYTHON_ANYWHERE = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "defaultdb",
-        "HOST": "mandobot-psql-mandobot-1.j.aivencloud.com",
+        "HOST": "mandobot-1-mandobot-1.j.aivencloud.com",
         "PORT": 18958,
         "USER": "avnadmin",
         "PASSWORD": os.getenv("DB_PASSWORD"),
@@ -155,7 +155,7 @@ else:
         }
     }
 
-AUTH_USER_MODEL = "accounts.CustomUser"
+AUTH_USER_MODEL = "accounts.MandoBotUser"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
