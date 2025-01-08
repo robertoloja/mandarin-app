@@ -84,13 +84,14 @@ class CEDictionary(models.Model):
         symmetrical=False,
     )
 
-    def get_hanzi(self):
+    async def get_hanzi(self):
         """
         Returns an ordered QuerySet of the CEDictionary objects corresponding
         the hanzi in the CEDictionary object being manipulated.
         """
         return [
-            constituent.hanzi for constituent in self.word_hanzi.select_related("hanzi")
+            constituent.hanzi
+            async for constituent in self.word_hanzi.select_related("hanzi")
         ]
 
     class Meta:

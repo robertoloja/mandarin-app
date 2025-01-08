@@ -16,8 +16,8 @@ api = NinjaAPI()
 
 emptyResponse = {
     "translation": "",
-    "dictionary": {"word": {"english": [], "pinyin": []}},
-    "sentence": [{"word": "", "pinyin": [], "definitions": []}],
+    "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
+    "sentence": [{"word": "", "pinyin": [], "zhuyin": [], "definitions": []}],
 }
 
 # TODO: Respond with HTTP status codes
@@ -90,11 +90,12 @@ def handle_non_chinese(data: str) -> dict:
     word = {
         "word": data,
         "pinyin": [data],
+        "zhuyin": [data],
         "definitions": [],
     }
 
     return {
         "translation": data,
         "sentence": [word],
-        "dictionary": {"word": {"english": [], "pinyin": []}},
+        "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
     }
