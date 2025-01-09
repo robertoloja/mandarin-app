@@ -37,7 +37,7 @@ class SentenceHistory(models.Model):
     sentence_id = models.CharField(max_length=10, unique=True, db_index=True)
     json_data = models.JSONField(unique=True)
     user = models.ForeignKey(
-        MandoBotUser, on_delete=models.CASCADE, related_name="history"
+        MandoBotUser, on_delete=models.CASCADE, related_name="history", null=True
     )
 
     objects = NormalizedJSONManager()

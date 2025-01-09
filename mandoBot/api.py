@@ -65,7 +65,7 @@ async def share(request, data: SegmentationResponse) -> str:
     except Error:
         logger.error(
             f"""Database error while getting/creating
-            SentenceHistory entry for {''.join([word["word"] for word in data.sentence])}"""
+            SentenceHistory entry for {''.join([word for word in data.sentence])}"""
         )
     return db_entry.sentence_id
 

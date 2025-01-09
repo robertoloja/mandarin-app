@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from '@/utils/store/store';
 
-export default function ShareButton() {
+export default function ShareButton(props: { iconSize: number }) {
   const isBrowser = () => typeof window !== 'undefined';
   const sentenceIsLoading = useSelector(
     (state: RootState) => state.mandarinSentence.isLoading,
@@ -54,7 +54,7 @@ export default function ShareButton() {
           aria-label="Share segmentation"
           isDisabled={shareLink == ''}
           isLoading={sentenceIsLoading}
-          icon={<IoShareSocialOutline />}
+          icon={<IoShareSocialOutline size={props.iconSize + 2} />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
         />
       </PopoverTrigger>
