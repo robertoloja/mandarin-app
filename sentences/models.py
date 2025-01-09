@@ -3,6 +3,7 @@ import secrets
 from django.db import models
 from django.core.exceptions import ValidationError
 from .validators import is_simplified, is_traditional, is_pinyin
+from accounts.models import MandoBotUser
 
 
 class NormalizedJSONManager(models.Manager):
@@ -34,7 +35,10 @@ class NormalizedJSONManager(models.Manager):
 
 class SentenceHistory(models.Model):
     sentence_id = models.CharField(max_length=10, unique=True, db_index=True)
-    json_data = models.TextField(unique=True)
+    json_data = models.JSONField(unique=True)
+    user = models.ForeignKey(
+        MandoBotUser, on_delete=models.CASCADE, related_name="history", null=True
+    )
 
     objects = NormalizedJSONManager()
 
@@ -42,7 +46,7 @@ class SentenceHistory(models.Model):
         return f"{self.sentence_id}"
 
     def save(self, *args, **kwargs):
-        self.sentence_id = secrets.token_urlsafe(10)
+        self.sentence_id = secrets.token_urlsafe(10)[:10]
 
         # Normalize JSON before saving
         if isinstance(self.json_data, dict):
@@ -72,9 +76,23 @@ class CEDictionary(models.Model):
     word_length: int = models.PositiveIntegerField(editable=False)
     pronunciation: str = models.TextField(validators=[is_pinyin])
     definitions: str = models.TextField()
-    constituent_hanzi = models.ManyToManyField(
-        "self", symmetrical=False, through="Hanzi"
+    hanzi = models.ManyToManyField(
+        "self",
+        through="ConstituentHanzi",
+        through_fields=("word", "hanzi"),
+        related_name="is_in",
+        symmetrical=False,
     )
+
+    async def get_hanzi(self):
+        """
+        Returns an ordered QuerySet of the CEDictionary objects corresponding
+        the hanzi in the CEDictionary object being manipulated.
+        """
+        return [
+            constituent.hanzi
+            async for constituent in self.word_hanzi.select_related("hanzi")
+        ]
 
     class Meta:
         unique_together = (
@@ -87,24 +105,25 @@ class CEDictionary(models.Model):
 
     def save(self, **kwargs):
         self.word_length = len(self.traditional)
-        self.definitions = "/".join(self.definitions)
+        self.definitions = " / ".join(self.definitions)
         super().save()
 
     def __str__(self):
         return f"{self.traditional}/{self.simplified} [{self.pronunciation}]"
 
 
-class Hanzi(models.Model):
+class ConstituentHanzi(models.Model):
     word = models.ForeignKey(
-        CEDictionary, on_delete=models.CASCADE, related_name="containing_words"
+        CEDictionary, on_delete=models.CASCADE, related_name="word_hanzi"
     )
     hanzi = models.ForeignKey(
-        CEDictionary, on_delete=models.CASCADE, related_name="hanzi"
+        CEDictionary, on_delete=models.CASCADE, related_name="hanzi_word"
     )
-    order = models.PositiveIntegerField()
+    order = models.PositiveSmallIntegerField()
 
     class Meta:
         ordering = ["order"]
+        unique_together = ("word", "hanzi", "order")
 
     def __str__(self):
-        return f"{self.hanzi.traditional} in {self.word.traditional} (position: {self.order})"
+        return f"{self.hanzi.traditional} in {self.word.traditional}[{self.order}]"

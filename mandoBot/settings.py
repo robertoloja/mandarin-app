@@ -24,6 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+API_ACCESS_TOKEN = os.getenv("API_ACCESS_TOKEN")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG") == "True"
@@ -89,6 +90,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "mandoBot.middleware.ValidateAPITokenMiddleware",
 ]
 
 ROOT_URLCONF = "mandoBot.urls"
@@ -128,11 +130,18 @@ DOCKER = {
 
 PYTHON_ANYWHERE = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "mandoBot$default",
-        "USER": "mandoBot",
-        "PASSWORD": os.getenv("PYTHON_ANYWHERE_MYSQL_PASSWORD"),
-        "HOST": "mandoBot.mysql.pythonanywhere-services.com",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "defaultdb",
+        "HOST": "mandobot-1-mandobot-1.j.aivencloud.com",
+        "PORT": 18958,
+        "USER": "avnadmin",
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "CONN_MAX_AGE": 600,
+        "OPTIONS": {
+            "sslmode": "verify-ca",
+            "sslrootcert": os.path.join(BASE_DIR, "ca_cert.crt"),
+            "pool": True,
+        },
     }
 }
 
@@ -148,7 +157,7 @@ else:
         }
     }
 
-AUTH_USER_MODEL = "accounts.CustomUser"
+AUTH_USER_MODEL = "accounts.MandoBotUser"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

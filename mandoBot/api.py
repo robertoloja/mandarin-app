@@ -16,8 +16,8 @@ api = NinjaAPI()
 
 emptyResponse = {
     "translation": "",
-    "dictionary": {"word": {"english": [], "pinyin": []}},
-    "sentence": [{"word": "", "pinyin": [], "definitions": []}],
+    "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
+    "sentence": [{"word": "", "pinyin": [], "zhuyin": [], "definitions": []}],
 }
 
 # TODO: Respond with HTTP status codes
@@ -65,7 +65,7 @@ async def share(request, data: SegmentationResponse) -> str:
     except Error:
         logger.error(
             f"""Database error while getting/creating
-            SentenceHistory entry for {''.join([word["word"] for word in data.sentence])}"""
+            SentenceHistory entry for {''.join([word for word in data.sentence])}"""
         )
     return db_entry.sentence_id
 
@@ -90,11 +90,12 @@ def handle_non_chinese(data: str) -> dict:
     word = {
         "word": data,
         "pinyin": [data],
+        "zhuyin": [data],
         "definitions": [],
     }
 
     return {
         "translation": data,
         "sentence": [word],
-        "dictionary": {"word": {"english": [], "pinyin": []}},
+        "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
     }

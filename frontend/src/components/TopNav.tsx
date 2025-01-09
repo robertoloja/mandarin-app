@@ -21,6 +21,7 @@ import {
 // import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
 import LanguageMenu from './LanguageMenu';
+import ErrorButton from './ErrorButton';
 
 function TopNav() {
   // const { isOpen, onOpen, onClose } = useDisclosure();
@@ -37,6 +38,7 @@ function TopNav() {
     variants: { buttonStyle },
   });
 
+  const iconSize = 20;
   return (
     <HStack
       justifyContent="space-between"
@@ -82,18 +84,24 @@ function TopNav() {
       </HStack> */}
 
       <HStack justifyContent="right" w="100%">
-        <LanguageMenu />
-        <ShareButton />
+        <ErrorButton iconSize={iconSize} />
+        <LanguageMenu iconSize={iconSize} />
+        <ShareButton iconSize={iconSize} />
 
         <IconButton
           aria-label="Change color mode"
-          icon={colorMode === 'light' ? <IoMoon /> : <IoSunny />}
+          icon={
+            colorMode === 'light' ? (
+              <IoMoon size={iconSize} />
+            ) : (
+              <IoSunny size={iconSize} />
+            )
+          }
           onClick={toggleColorMode}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
           mr="2rem"
         />
       </HStack>
-
       {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
     </HStack>
   );

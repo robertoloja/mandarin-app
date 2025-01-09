@@ -27,13 +27,13 @@ class DictionaryTests(TestCase):
         result = CEDictionary.objects.filter(traditional="好")
         self.assertEqual(2, len(result))
 
-    def test_populate_database_function(self):
+    async def test_populate_database_function(self):
         for word in ["齒齦炎", "一字不落", "北京市", "中文"]:
-            queried_word = CEDictionary.objects.get(traditional=word)
+            queried_word = await CEDictionary.objects.aget(traditional=word)
             reconstructed_word = "".join(
                 map(
-                    lambda x: x["traditional"],
-                    queried_word.constituent_hanzi.all().values("traditional"),
+                    lambda x: x.traditional,
+                    await queried_word.get_hanzi(),
                 )
             )
             self.assertEqual(queried_word.traditional, reconstructed_word)

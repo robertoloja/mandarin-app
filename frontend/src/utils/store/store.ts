@@ -3,12 +3,14 @@ import { useDispatch } from 'react-redux';
 import authReducer from './authSlice';
 import settingsReducer from './settingsSlice';
 import mandarinSentenceSlice from './mandarinSentenceSlice';
+import errorSlice from './errorSlice';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     settings: settingsReducer,
     mandarinSentence: mandarinSentenceSlice,
+    errors: errorSlice,
   },
 });
 

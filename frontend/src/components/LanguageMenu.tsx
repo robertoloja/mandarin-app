@@ -16,7 +16,7 @@ import { IoLanguage } from 'react-icons/io5';
 import { togglePronunciation } from '@/utils/store/settingsSlice';
 import { useAppDispatch } from './LoginTest';
 
-export default function LanguageMenu() {
+export default function LanguageMenu(props: { iconSize: number }) {
   const dispatch = useAppDispatch();
   const { colorMode } = useColorMode();
   const toggle = () => {
@@ -27,8 +27,9 @@ export default function LanguageMenu() {
     <Menu closeOnSelect={false}>
       <MenuButton
         as={IconButton}
-        icon={<IoLanguage />}
+        icon={<IoLanguage size={props.iconSize + 3} />}
         bg={colorMode === 'light' ? 'white' : 'gray.800'}
+        mr={1}
       />
       <MenuList>
         <MenuItem>

@@ -1,11 +1,11 @@
 from typing import List, Dict
 from ninja import Schema, ModelSchema
-from accounts.models import CustomUser
+from accounts.models import MandoBotUser
 
 
 class UserSchema(ModelSchema):
     class Meta:
-        model = CustomUser
+        model = MandoBotUser
         fields = ["username", "password"]
 
 

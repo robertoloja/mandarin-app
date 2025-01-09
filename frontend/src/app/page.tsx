@@ -14,9 +14,11 @@ import {
   setLoading,
   setShareLink,
 } from '@/utils/store/mandarinSentenceSlice';
+
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
+
 import AccurateTimer from '@/utils/timer';
 import { emptySentence, SegmentResponseType } from '@/utils/types';
 import { MandoBotAPI } from '@/utils/api';
@@ -104,18 +106,20 @@ export default function Home() {
         );
       }
     } else {
-      await MandoBotAPI.segment(inputValue).then(
-        (response: SegmentResponseType) => {
+      await MandoBotAPI.segment(inputValue)
+        .then((response: SegmentResponseType) => {
           handleMessage(response);
-        },
-      );
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
 
     dispatch(setLoading(false));
 
     if (typeof window !== 'undefined') {
       timer.stop();
-      console.log(timer.getElapsedTime());
+      console.log(`Request fullfilment time: ${timer.getElapsedTime()} ms`);
     }
   };
   useEffect(() => {

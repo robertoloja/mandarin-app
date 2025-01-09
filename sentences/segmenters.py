@@ -75,6 +75,7 @@ class Segmenter:
             if not await db_result.aexists():
                 item["definitions"] = [DefaultTranslator.translate(item["word"])]
 
+                # TODO: Rewrite this to use CEDictionary.get_hanzi()
                 for index, single_hanzi in enumerate(item["word"]):
                     pinyin = hanzi.accented_to_numbered(item["pinyin"][index])
 
@@ -109,10 +110,10 @@ class Segmenter:
 
                 for entry in results:
                     item["definitions"] += [entry.definitions]
-                    constituent_hanzi = entry.constituent_hanzi.all()
+                    constituent_hanzi = await entry.get_hanzi()
 
-                    if await constituent_hanzi.aexists():
-                        hanzi_list = [h async for h in constituent_hanzi]
+                    if constituent_hanzi:
+                        hanzi_list = [h for h in constituent_hanzi]
 
                         for single_hanzi in hanzi_list:
                             if item["word"] == entry.simplified:
