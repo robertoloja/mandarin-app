@@ -1,19 +1,69 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
 
 function Translation(props: { text: string }) {
-  const [isMinimized, setIsMinimized] = useState(false);
   const { colorMode } = useColorMode();
   const lightGradientBgString =
-    'linear-gradient(to bottom, rgba(255, 255, 255, 1) 80%, rgba(0, 0, 0, 0) 100%);';
-  const darkGradientBgString =
-    'linear-gradient(to bottom, rgba(40, 40, 40, 1) 50%, rgba(0, 0, 0, 0) 100%);';
+    'linear-gradient(to bottom, rgba(255, 255, 255, 1) 10%, rgba(0, 0, 0, 0) 100%);';
+  const darkGradientBgString = `linear-gradient(to bottom, rgba(40, 40, 40, 1) 10%, rgba(0, 0, 0, 0) 100%);`;
+
+  const initialHeight = 300;
+  const minHeight = 20;
+  const maxHeight = 300;
+
+  const [height, setHeight] = useState(initialHeight);
+  const tempHeightRef = useRef(initialHeight);
+  const isResizingRef = useRef(false);
+
+  const handleStartResize = (event: React.MouseEvent | React.TouchEvent) => {
+    event.preventDefault();
+    isResizingRef.current = true;
+
+    const startY =
+      'touches' in event ? event.touches[0].clientY : event.clientY;
+    const startHeight = tempHeightRef.current;
+
+    const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
+      moveEvent.preventDefault();
+
+      if (!isResizingRef.current) return;
+      const currentY =
+        'touches' in moveEvent
+          ? moveEvent.touches[0].clientY
+          : moveEvent.clientY;
+      const newHeight = Math.min(
+        Math.max(startHeight + (startY - currentY), minHeight),
+        maxHeight,
+      );
+      tempHeightRef.current = newHeight;
+
+      if (resizableRef.current) {
+        resizableRef.current.style.height = `${newHeight}px`;
+      }
+    };
+
+    const handleEnd = () => {
+      isResizingRef.current = false;
+      setHeight(tempHeightRef.current);
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleMove);
+      document.removeEventListener('touchend', handleEnd);
+    };
+
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchmove', handleMove, { passive: false });
+    document.addEventListener('touchend', handleEnd);
+  };
+
+  const resizableRef = useRef<HTMLDivElement>(null);
 
   return (
     <Box
-      className="translation"
+      ref={resizableRef}
       p={4}
       pt={0}
       borderWidth={1}
@@ -25,18 +75,17 @@ function Translation(props: { text: string }) {
       left={['0%', '10%']}
       right={['0%', '10%']}
       width={['100%', '80%']}
-      height={isMinimized ? '2.2vh' : ['35vh', '20vh']}
-      overflowY={isMinimized ? 'hidden' : 'scroll'}
+      overflowY="scroll"
+      height={`${height}px`}
       shadow="md"
       bg={colorMode === 'light' ? 'white' : '#282828'}
       zIndex={1}
-      transition="height 0.2s ease"
+      onTouchStart={handleStartResize}
     >
       <Box
-        onClick={() => setIsMinimized(!isMinimized)}
         width={['100%', '75%']}
         height="2rem"
-        cursor="pointer"
+        cursor="ns-resize"
         position="fixed"
         borderTopRadius="lg"
         mx="10%"
@@ -45,14 +94,19 @@ function Translation(props: { text: string }) {
         }
         left="40%"
         transform="translatex(-50%)"
+        onMouseDown={handleStartResize}
+        onTouchStart={handleStartResize}
       >
         <Box
           m={2}
+          cursor="ns-resize"
           mx="30%"
           borderRadius="lg"
           bg="darkgrey"
           minW="10rem"
           height="0.3rem"
+          onMouseDown={handleStartResize}
+          onTouchStart={handleStartResize}
         />
       </Box>
 
