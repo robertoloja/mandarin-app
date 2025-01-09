@@ -145,9 +145,9 @@ PYTHON_ANYWHERE = {
     }
 }
 
-if os.getenv("PYTHON_ANYWHERE") == "TRUE":
-    DATABASES = PYTHON_ANYWHERE
-elif os.getenv("DOCKER") == "TRUE":
+# if os.getenv("PYTHON_ANYWHERE") == "TRUE":
+#     DATABASES = PYTHON_ANYWHERE
+if os.getenv("DOCKER") == "TRUE":
     DATABASES = DOCKER
 else:
     DATABASES = {
