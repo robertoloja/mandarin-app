@@ -10,7 +10,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import { RootState } from '@/utils/store/store';
-import { IoWarning } from 'react-icons/io5';
+import { IoWarningOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 
 export default function ErrorButton(props: { iconSize: number }) {
@@ -26,7 +26,7 @@ export default function ErrorButton(props: { iconSize: number }) {
             <IconButton
               aria-label="Error message"
               icon={
-                <IoWarning
+                <IoWarningOutline
                   color="rgba(200, 60, 60, 1)"
                   size={props.iconSize + 5}
                 />

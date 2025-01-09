@@ -60,7 +60,6 @@ export default function ShareButton(props: { iconSize: number }) {
       </PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />
-        <PopoverCloseButton />
         <PopoverHeader>
           <Center>Share Segmented Sentence</Center>
         </PopoverHeader>
@@ -78,7 +77,6 @@ export default function ShareButton(props: { iconSize: number }) {
               userSelect="text"
               onChange={() => null}
             />
-            {/* TODO: Should copy to clipboard when clicked */}
             <IconButton
               aria-label="Copy link to clipboard"
               icon={<IoClipboardOutline />}

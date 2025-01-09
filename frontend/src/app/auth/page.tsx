@@ -2,13 +2,11 @@
 import React from 'react';
 import LoginTest from '@/components/LoginTest';
 
-const LoginPage: React.FC = () => {
+export default function LoginPage() {
   return (
     <div>
       <h1>Login Page</h1>
       <LoginTest />
     </div>
   );
-};
-
-export default LoginPage;
+}

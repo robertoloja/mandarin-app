@@ -38,6 +38,10 @@ export default function Home() {
     (state: RootState) => state.mandarinSentence.isLoading,
   );
 
+  const shareLink = useSelector(
+    (state: RootState) => state.mandarinSentence.shareLink,
+  );
+
   const [percentageDone, setPercentageDone] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -49,6 +53,16 @@ export default function Home() {
       }),
     );
     dispatch(appendToMandarinDictionary(message.dictionary));
+  };
+
+  const addToHistory = () => {
+    localStorage.setItem(
+      shareLink,
+      JSON.stringify({
+        sentence: mandarinSentence,
+        dictionary: mandarinDictionary,
+      }),
+    );
   };
 
   useEffect(() => {
@@ -123,14 +137,12 @@ export default function Home() {
     }
   };
   useEffect(() => {
-    // TODO: Wait, why is this here?
     if (!isLoading && mandarinSentence !== emptySentence && share_id === '') {
       getShareLink();
     }
   }, [mandarinSentence, isLoading]);
 
   const getShareLink = async () => {
-    // TODO: Should not create a new link if the sentence is the same.
     const dataToSend = {
       translation: mandarinSentence.translation,
       sentence: mandarinSentence.sentence,
@@ -139,6 +151,7 @@ export default function Home() {
 
     await MandoBotAPI.share(dataToSend).then((response: string) => {
       dispatch(setShareLink(response));
+      addToHistory();
     });
   };
 
@@ -156,7 +169,7 @@ export default function Home() {
         />
 
         <HStack>
-          <Button type="submit" colorScheme="teal" m={2}>
+          <Button type="submit" colorScheme="teal" m={2} isDisabled={isLoading}>
             Submit
           </Button>
 
