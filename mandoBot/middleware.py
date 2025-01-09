@@ -19,9 +19,9 @@ class ValidateAPITokenMiddleware:
                 return JsonResponse({"error": "Missing x-nf-sign header"})
 
             self.validate_x_nf_sign(x_nf_sign)
-        return self.get_response(request)
+            return self.get_response(request)
 
-    def validate_x_nf_sign(x_nf_sign):
+    def validate_x_nf_sign(self, x_nf_sign):
         try:
             payload = jwt.decode(x_nf_sign, API_ACCESS_TOKEN, algorithms=["HS256"])
 
