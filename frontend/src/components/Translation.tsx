@@ -35,7 +35,7 @@ function Translation(props: { text: string }) {
       <Box
         onClick={() => setIsMinimized(!isMinimized)}
         width={['100%', '75%']}
-        height="2.3rem"
+        height="2rem"
         cursor="pointer"
         position="fixed"
         borderTopRadius="lg"
