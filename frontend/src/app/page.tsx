@@ -20,7 +20,11 @@ import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
 
 import AccurateTimer from '@/utils/timer';
-import { emptySentence, SegmentResponseType } from '@/utils/types';
+import {
+  emptySentence,
+  SegmentResponseType,
+  SentenceHistory,
+} from '@/utils/types';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function Home() {
@@ -38,6 +42,10 @@ export default function Home() {
     (state: RootState) => state.mandarinSentence.isLoading,
   );
 
+  const shareLink = useSelector(
+    (state: RootState) => state.mandarinSentence.shareLink,
+  );
+
   const [percentageDone, setPercentageDone] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -49,6 +57,30 @@ export default function Home() {
       }),
     );
     dispatch(appendToMandarinDictionary(message.dictionary));
+  };
+
+  const addToHistory = () => {
+    const existingHistory = localStorage.getItem('history');
+    const sentenceHistory: SentenceHistory[] = existingHistory
+      ? JSON.parse(existingHistory)
+      : [];
+
+    const newSentence: SentenceHistory = {
+      sentence: mandarinSentence,
+      dictionary: mandarinDictionary,
+      shareLink: shareLink,
+    };
+
+    const isDuplicate =
+      sentenceHistory.filter((x) => x.shareLink == newSentence.shareLink)
+        .length !== 0;
+
+    if (!isDuplicate) {
+      sentenceHistory.push(newSentence);
+    }
+
+    localStorage.setItem('history', JSON.stringify(sentenceHistory));
+    //TODO: Send to store in the API if logged-in
   };
 
   useEffect(() => {
@@ -123,14 +155,12 @@ export default function Home() {
     }
   };
   useEffect(() => {
-    // TODO: Wait, why is this here?
     if (!isLoading && mandarinSentence !== emptySentence && share_id === '') {
       getShareLink();
     }
   }, [mandarinSentence, isLoading]);
 
   const getShareLink = async () => {
-    // TODO: Should not create a new link if the sentence is the same.
     const dataToSend = {
       translation: mandarinSentence.translation,
       sentence: mandarinSentence.sentence,
@@ -139,6 +169,7 @@ export default function Home() {
 
     await MandoBotAPI.share(dataToSend).then((response: string) => {
       dispatch(setShareLink(response));
+      addToHistory();
     });
   };
 
@@ -156,7 +187,7 @@ export default function Home() {
         />
 
         <HStack>
-          <Button type="submit" colorScheme="teal" m={2}>
+          <Button type="submit" colorScheme="teal" m={2} isDisabled={isLoading}>
             Submit
           </Button>
 

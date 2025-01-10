@@ -2,7 +2,15 @@ import axios from 'axios';
 import { SegmentResponseType } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
+import { logout, setUsername } from './store/authSlice';
 
+export function getCookie(name: string): string | null {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith(`${name}=`))
+    ?.split('=')[1];
+  return cookieValue ? decodeURIComponent(cookieValue) : null;
+}
 const API_BASE_URL =
   process.env.NODE_ENV === 'development'
     ? 'http://192.168.1.8:8000/api'
@@ -10,6 +18,7 @@ const API_BASE_URL =
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
 });
 
 const errorHandler = (error: {
@@ -18,14 +27,18 @@ const errorHandler = (error: {
   code: string;
 }) => {
   const statusCode = error.response?.status;
-  store.dispatch(
-    setError(
-      'There has been an error connecting to the server. Please try again soon',
-    ),
-  );
+  if (statusCode === 403) {
+    store.dispatch(
+      setError('Authentication error: CSRF token validation failed.'),
+    );
+  }
 
   if (statusCode && statusCode !== 401) {
-    console.error(error.code);
+    store.dispatch(
+      setError(
+        'There has been an error connecting to the server. Please try again soon',
+      ),
+    );
   }
   return Promise.reject(error);
 };
@@ -39,6 +52,14 @@ api.interceptors.response.use(
     return errorHandler(error);
   },
 );
+
+api.interceptors.request.use((config) => {
+  const csrfToken = getCookie('csrftoken');
+  if (csrfToken) {
+    config.headers['X-CSRFToken'] = csrfToken;
+  }
+  return config;
+});
 
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
@@ -63,17 +84,22 @@ export const MandoBotAPI = {
   login: async function (
     username: string,
     password: string,
-  ): Promise<{ user: string; token: string }> {
+  ): Promise<{ user: string; email: string }> {
     const response = await api.post(
       '/login',
       { username, password },
-      { withCredentials: true },
+      {
+        withCredentials: true,
+      },
     );
+    store.dispatch(setUsername(response.data.username));
     return response.data;
   },
 
   logout: async function (): Promise<string> {
     const response = await api.post('/logout', {}, { withCredentials: true });
+    console.log(response.data);
+    store.dispatch(logout());
     return response.data;
   },
 };

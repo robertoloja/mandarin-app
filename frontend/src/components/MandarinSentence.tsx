@@ -1,6 +1,5 @@
 'use client';
 
-// import { useState } from 'react';
 import { Flex } from '@chakra-ui/react';
 import Word from './Word';
 import { SegmentResponseType } from '@/utils/types';

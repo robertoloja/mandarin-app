@@ -1,32 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import {
-  // useDisclosure,
+  useDisclosure,
   IconButton,
   defineStyle,
   defineStyleConfig,
   HStack,
   useColorMode,
 } from '@chakra-ui/react';
-// import { HamburgerIcon } from '@chakra-ui/icons';
+
 import {
   IoMoon,
   IoSunny,
+  IoMenuOutline,
   // IoOptionsOutline,
   // IoText,
   // IoBrushOutline,
 } from 'react-icons/io5';
 
-// import NavPanel from './NavPanel';
+import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
 import LanguageMenu from './LanguageMenu';
 import ErrorButton from './ErrorButton';
 
 function TopNav() {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  // const btnRef = useRef<HTMLButtonElement>(null);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   const buttonStyle = defineStyle({
     border: '0',
@@ -51,19 +52,20 @@ function TopNav() {
       h="2.5rem"
       backgroundColor={colorMode === 'light' ? 'white' : 'gray.800'}
     >
-      {/* <HStack justifyContent="left">
+      <HStack justifyContent="left">
+        <NavPanel isOpen={isOpen} onClose={onClose} />
         <IconButton
           aria-label="Open Navigation"
-          icon={<HamburgerIcon boxSize="2rem" color="#468DA4" />}
+          icon={<IoMenuOutline size={iconSize + 7} />}
           ref={btnRef}
           colorScheme="blue"
           variant="buttonStyle"
-          style={{ marginLeft: '0.5rem' }}
-          mr="3rem"
           onClick={onOpen}
+          ml="0.2rem"
+          mt={0.5}
         />
 
-        <IconButton
+        {/* <IconButton
           aria-label="Text options"
           icon={<IoOptionsOutline />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
@@ -80,8 +82,8 @@ function TopNav() {
           aria-label="Language options"
           icon={<IoBrushOutline />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        />
-      </HStack> */}
+        /> */}
+      </HStack>
 
       <HStack justifyContent="right" w="100%">
         <ErrorButton iconSize={iconSize} />
@@ -102,7 +104,6 @@ function TopNav() {
           mr="2rem"
         />
       </HStack>
-      {/* <NavPanel isOpen={isOpen} onClose={onClose} /> */}
     </HStack>
   );
 }

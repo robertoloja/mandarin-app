@@ -29,3 +29,9 @@ export type SegmentResponseType = {
   sentence: MandarinWordType[];
   dictionary: ChineseDictionary;
 };
+
+export type SentenceHistory = {
+  shareLink: string;
+  dictionary: ChineseDictionary;
+  sentence: MandarinSentenceType;
+};

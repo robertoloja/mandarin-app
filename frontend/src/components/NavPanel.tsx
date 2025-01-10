@@ -7,68 +7,156 @@ import {
   DrawerContent,
   DrawerOverlay,
   VStack,
-  Link,
   DrawerCloseButton,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionIcon,
-  AccordionPanel,
-  defineStyle,
-  defineStyleConfig,
+  HStack,
+  Text,
+  Link as CLink,
+  Spacer,
+  useColorMode,
+  IconButton,
 } from '@chakra-ui/react';
-import { ChatIcon, EditIcon, ViewIcon } from '@chakra-ui/icons';
-
-const noBorder = defineStyle({
-  container: {
-    border: '0',
-  },
-});
-
-defineStyleConfig({
-  variants: { noBorder },
-});
+import {
+  IoFolderOpenOutline,
+  IoHomeOutline,
+  IoLogInOutline,
+  IoLogOutOutline,
+  IoLibraryOutline,
+  IoInformationCircleOutline,
+  IoSettingsOutline,
+} from 'react-icons/io5';
+import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from '@/utils/store/store';
+import { logout } from '@/utils/store/authSlice';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
+  const { colorMode } = useColorMode();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
+  const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
+  const dispatch = useAppDispatch();
+
+  const handleAuthClick = (e) => {
+    if (user) {
+      e.preventDefault();
+      dispatch(logout());
+    } else {
+      props.onClose();
+    }
+  };
+
   return (
-    <Drawer isOpen={props.isOpen} placement="left" onClose={props.onClose}>
+    <Drawer
+      isOpen={props.isOpen}
+      placement="left"
+      onClose={props.onClose}
+      size="xs"
+      allowPinchZoom={true}
+    >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
 
-        <DrawerBody>
-          <VStack
-            spacing="2rem"
-            marginTop="10rem"
-            marginLeft="5rem"
-            alignItems="left"
-          >
-            <Link fontSize="xl">
-              <ChatIcon marginRight="0.5rem" />A thing
-            </Link>
-            <Link fontSize="xl">
-              <EditIcon marginRight="0.5rem" />
-              Another thing?
+        <DrawerBody ml="-4rem">
+          <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
+            {user ? <IoSettingsOutline size="22" /> : <Spacer mt="7rem" />}
+            <Link href="/" passHref onClick={props.onClose} prefetch={true}>
+              <CLink>
+                <HStack>
+                  <IoHomeOutline size="22" />
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    Home
+                  </Text>
+                </HStack>
+              </CLink>
             </Link>
 
-            <Accordion allowToggle variant="noBorder">
-              <AccordionItem>
-                <AccordionButton
-                  padding="0.5rem 0"
-                  _hover={{ bg: 'white' }}
-                  border="0"
-                >
-                  <ViewIcon margin="0 0.5rem" />
-                  <Link fontSize="xl" paddingRight="0.5rem">
-                    Actually several things
-                  </Link>
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel>
-                  <Link marginLeft="1rem">I lied, its only one thing</Link>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+            <Link
+              href="/history"
+              passHref
+              onClick={props.onClose}
+              prefetch={true}
+            >
+              <CLink>
+                <HStack>
+                  <IoFolderOpenOutline size="22" />
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    Sentence History
+                  </Text>
+                </HStack>
+              </CLink>
+            </Link>
+
+            <Link
+              href="/reading"
+              passHref
+              onClick={props.onClose}
+              prefetch={true}
+            >
+              <CLink>
+                <HStack>
+                  <IoLibraryOutline size="22" color="#d9d9d9" />
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    Reading Room
+                  </Text>
+                </HStack>
+              </CLink>
+            </Link>
+          </VStack>
+
+          <Spacer mt="16rem" />
+
+          <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
+            <Link
+              href="/about"
+              passHref
+              onClick={props.onClose}
+              prefetch={true}
+            >
+              <CLink>
+                <HStack>
+                  <IoInformationCircleOutline size="22" />
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    About
+                  </Text>
+                </HStack>
+              </CLink>
+            </Link>
+
+            <Link href="/auth" passHref onClick={handleAuthClick}>
+              <CLink>
+                <HStack>
+                  {user ? (
+                    <IoLogOutOutline size="22" />
+                  ) : (
+                    <IoLogInOutline size="22" />
+                  )}
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    {user ? 'Log Out' : 'Log In'}
+                  </Text>
+                </HStack>
+              </CLink>
+            </Link>
           </VStack>
         </DrawerBody>
       </DrawerContent>
