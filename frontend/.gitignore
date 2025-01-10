@@ -12,7 +12,8 @@
 
 .next/
 out/*
-/out
+/out/*
+/out/
 
 # testing
 /coverage

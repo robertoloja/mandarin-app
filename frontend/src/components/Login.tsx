@@ -13,6 +13,7 @@ const LoginForm: React.FC = () => {
 
   const handleLogin = async () => {
     const response = await dispatch(login({ username, password })).unwrap();
+    console.log(response);
   };
 
   return (

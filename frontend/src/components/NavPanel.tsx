@@ -13,7 +13,7 @@ import {
   Link as CLink,
   Spacer,
   useColorMode,
-  IconButton,
+  // IconButton,
 } from '@chakra-ui/react';
 import {
   IoFolderOpenOutline,
@@ -36,7 +36,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
   const dispatch = useAppDispatch();
 
-  const handleAuthClick = (e) => {
+  const handleAuthClick = (e: any) => {
     if (user) {
       e.preventDefault();
       dispatch(logout());
