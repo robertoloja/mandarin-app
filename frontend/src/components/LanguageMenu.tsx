@@ -17,7 +17,7 @@ import {
 import { IoLanguageOutline } from 'react-icons/io5';
 
 import { togglePronunciation } from '@/utils/store/settingsSlice';
-import { useAppDispatch } from './LoginTest';
+import { useAppDispatch } from '@/utils/store/store';
 
 export default function LanguageMenu(props: { iconSize: number }) {
   const dispatch = useAppDispatch();

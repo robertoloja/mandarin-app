@@ -13,6 +13,7 @@ import {
   Link as CLink,
   Spacer,
   useColorMode,
+  IconButton,
 } from '@chakra-ui/react';
 import {
   IoFolderOpenOutline,
@@ -21,16 +22,28 @@ import {
   IoLogOutOutline,
   IoLibraryOutline,
   IoInformationCircleOutline,
+  IoSettingsOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/utils/store/store';
+import { RootState, useAppDispatch } from '@/utils/store/store';
+import { logout } from '@/utils/store/authSlice';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const { colorMode } = useColorMode();
   const user = useSelector((state: RootState) => state.auth.user);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
+  const dispatch = useAppDispatch();
+
+  const handleAuthClick = (e) => {
+    if (user) {
+      e.preventDefault();
+      dispatch(logout());
+    } else {
+      props.onClose();
+    }
+  };
 
   return (
     <Drawer
@@ -45,12 +58,8 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
         <DrawerCloseButton />
 
         <DrawerBody ml="-4rem">
-          <VStack
-            spacing="2rem"
-            marginTop="6rem"
-            marginLeft="7.4rem"
-            alignItems="left"
-          >
+          <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
+            {user ? <IoSettingsOutline size="22" /> : <Spacer mt="7rem" />}
             <Link href="/" passHref onClick={props.onClose} prefetch={true}>
               <CLink>
                 <HStack>
@@ -94,7 +103,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
             >
               <CLink>
                 <HStack>
-                  <IoLibraryOutline size="22" />
+                  <IoLibraryOutline size="22" color="#d9d9d9" />
                   <Text
                     textShadow={
                       colorMode === 'light' ? lightTextShadow : darkTextShadow
@@ -106,7 +115,9 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               </CLink>
             </Link>
           </VStack>
+
           <Spacer mt="16rem" />
+
           <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
             <Link
               href="/about"
@@ -128,7 +139,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               </CLink>
             </Link>
 
-            <Link href="/auth" passHref onClick={props.onClose}>
+            <Link href="/auth" passHref onClick={handleAuthClick}>
               <CLink>
                 <HStack>
                   {user ? (

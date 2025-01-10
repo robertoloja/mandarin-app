@@ -3,9 +3,12 @@ import logging
 
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.http import JsonResponse
 from ninja import NinjaAPI
 from dragonmapper import hanzi
+
+from django.middleware.csrf import get_token
 
 from sentences.segmenters import DefaultSegmenter
 from .schemas import SegmentationResponse, UserSchema
@@ -29,16 +32,22 @@ def login_endpoint(request, payload: UserSchema) -> str:
 
     if user is not None:
         login(request, user)
-        return "success"
+        User = get_user_model()
+        user_object = User.objects.get(username=user.username)
+        response = JsonResponse(
+            {"user": user_object.username, "email": user_object.email}
+        )
+        return response
     else:
-        print("It failed on the server")
-        return "failed"
+        return JsonResponse({"error": "Invalid credentials"}, status=401)
 
 
 @api.post("/logout")
 def logout_view(request) -> str:
     logout(request)
-    return "success"
+    response = JsonResponse({"message": "Logged out successfully"})
+    response.delete_cookie("csrftoken", path="/", domain=None)
+    return response
 
 
 @api.get("/shared", response=SegmentationResponse)

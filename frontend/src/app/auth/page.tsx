@@ -1,12 +1,11 @@
 'use client';
 import React from 'react';
-import LoginTest from '@/components/LoginTest';
+import LoginForm from '@/components/Login';
 
 export default function LoginPage() {
   return (
     <div>
-      <h1>Login Page</h1>
-      <LoginTest />
+      <LoginForm />
     </div>
   );
 }

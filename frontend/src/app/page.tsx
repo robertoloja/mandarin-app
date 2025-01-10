@@ -20,7 +20,11 @@ import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
 
 import AccurateTimer from '@/utils/timer';
-import { emptySentence, SegmentResponseType } from '@/utils/types';
+import {
+  emptySentence,
+  SegmentResponseType,
+  SentenceHistory,
+} from '@/utils/types';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function Home() {
@@ -57,14 +61,25 @@ export default function Home() {
 
   const addToHistory = () => {
     const existingHistory = localStorage.getItem('history');
-    const history = existingHistory ? JSON.parse(existingHistory) : [];
-    history.push({
+    const sentenceHistory: SentenceHistory[] = existingHistory
+      ? JSON.parse(existingHistory)
+      : [];
+
+    const newSentence: SentenceHistory = {
       sentence: mandarinSentence,
       dictionary: mandarinDictionary,
       shareLink: shareLink,
-    });
+    };
 
-    localStorage.setItem('history', JSON.stringify(history));
+    const isDuplicate =
+      sentenceHistory.filter((x) => x.shareLink == newSentence.shareLink)
+        .length !== 0;
+
+    if (!isDuplicate) {
+      sentenceHistory.push(newSentence);
+    }
+
+    localStorage.setItem('history', JSON.stringify(sentenceHistory));
     //TODO: Send to store in the API if logged-in
   };
 
