@@ -59,9 +59,9 @@ export default function HistoryPage() {
     router.push('/');
   };
 
-  const deleteFromHistory = (sentenceHistory: SentenceHistory) => {
-    //TODO: filter the full history by shareLink
-  };
+  // TODO:
+  // const deleteFromHistory = (sentenceHistory: SentenceHistory) => {
+  // };
 
   return (
     <Box h="100%" my="2rem" mx="5%">
@@ -131,7 +131,7 @@ export default function HistoryPage() {
                 <IconButton
                   aria-label="Delete sentence"
                   icon={<IoTrashOutline />}
-                  onClick={() => deleteFromHistory(historyItem)}
+                  // onClick={() => deleteFromHistory(historyItem)}
                 />
                 <Spacer />
                 <IconButton
