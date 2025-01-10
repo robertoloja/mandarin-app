@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 export default function ErrorButton(props: { iconSize: number }) {
   const { colorMode } = useColorMode();
   const errorMessage = useSelector((state: RootState) => state.errors.error);
-  console.log(errorMessage);
 
   return (
     <>

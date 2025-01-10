@@ -56,13 +56,16 @@ export default function Home() {
   };
 
   const addToHistory = () => {
-    localStorage.setItem(
-      shareLink,
-      JSON.stringify({
-        sentence: mandarinSentence,
-        dictionary: mandarinDictionary,
-      }),
-    );
+    const existingHistory = localStorage.getItem('history');
+    const history = existingHistory ? JSON.parse(existingHistory) : [];
+    history.push({
+      sentence: mandarinSentence,
+      dictionary: mandarinDictionary,
+      shareLink: shareLink,
+    });
+
+    localStorage.setItem('history', JSON.stringify(history));
+    //TODO: Send to store in the API if logged-in
   };
 
   useEffect(() => {

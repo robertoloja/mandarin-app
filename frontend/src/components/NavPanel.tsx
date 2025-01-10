@@ -12,6 +12,7 @@ import {
   Text,
   Link as CLink,
   Spacer,
+  useColorMode,
 } from '@chakra-ui/react';
 import {
   IoFolderOpenOutline,
@@ -22,13 +23,14 @@ import {
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
-  const pathName = usePathname();
+  const { colorMode } = useColorMode();
   const user = useSelector((state: RootState) => state.auth.user);
+  const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
+  const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
 
   return (
     <Drawer
@@ -36,6 +38,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
       placement="left"
       onClose={props.onClose}
       size="xs"
+      allowPinchZoom={true}
     >
       <DrawerOverlay />
       <DrawerContent>
@@ -52,7 +55,13 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <CLink>
                 <HStack>
                   <IoHomeOutline size="22" />
-                  <Text>Home</Text>
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    Home
+                  </Text>
                 </HStack>
               </CLink>
             </Link>
@@ -66,7 +75,13 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <CLink>
                 <HStack>
                   <IoFolderOpenOutline size="22" />
-                  <Text>Sentence History</Text>
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    Sentence History
+                  </Text>
                 </HStack>
               </CLink>
             </Link>
@@ -80,7 +95,13 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <CLink>
                 <HStack>
                   <IoLibraryOutline size="22" />
-                  <Text>Reading Room</Text>
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    Reading Room
+                  </Text>
                 </HStack>
               </CLink>
             </Link>
@@ -96,7 +117,13 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <CLink>
                 <HStack>
                   <IoInformationCircleOutline size="22" />
-                  <Text>About</Text>
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    About
+                  </Text>
                 </HStack>
               </CLink>
             </Link>
@@ -109,7 +136,13 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                   ) : (
                     <IoLogInOutline size="22" />
                   )}
-                  <Text>{user ? 'Log Out' : 'Log In'}</Text>
+                  <Text
+                    textShadow={
+                      colorMode === 'light' ? lightTextShadow : darkTextShadow
+                    }
+                  >
+                    {user ? 'Log Out' : 'Log In'}
+                  </Text>
                 </HStack>
               </CLink>
             </Link>
