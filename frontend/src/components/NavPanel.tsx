@@ -22,24 +22,25 @@ import {
   IoLogOutOutline,
   IoLibraryOutline,
   IoInformationCircleOutline,
-  IoSettingsOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '@/utils/store/store';
-import { logout } from '@/utils/store/authSlice';
+import { MandoBotAPI } from '@/utils/api';
+import SettingsButton from './SettingsButton';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const { colorMode } = useColorMode();
   const user = useSelector((state: RootState) => state.auth.user);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
-  const dispatch = useAppDispatch();
 
   const handleAuthClick = (e: any) => {
     if (user) {
       e.preventDefault();
-      dispatch(logout());
+      MandoBotAPI.logout().then((response) => {
+        console.log(response);
+      });
     } else {
       props.onClose();
     }
@@ -59,7 +60,11 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
 
         <DrawerBody ml="-4rem">
           <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
-            {user ? <IoSettingsOutline size="22" /> : <Spacer mt="7rem" />}
+            {user ? (
+              <SettingsButton onClose={props.onClose} />
+            ) : (
+              <Spacer mt="7rem" />
+            )}
             <Link href="/" passHref onClick={props.onClose} prefetch={true}>
               <CLink>
                 <HStack>
