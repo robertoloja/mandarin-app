@@ -14,24 +14,24 @@ export type MandarinWordType = {
   definitions: string[];
 };
 
-export const emptySentence: MandarinSentenceType = {
-  translation: '',
-  sentence: [] as MandarinWordType[],
+export type SegmentResponseType = {
+  sentence: MandarinWordType[];
+  dictionary: ChineseDictionary;
+  translation: string;
 };
 
 export type MandarinSentenceType = {
+  mandarin: string;
+  segments: MandarinWordType[];
+  dictionary: ChineseDictionary;
   translation: string;
-  sentence: MandarinWordType[];
+  shareURL: string;
 };
 
-export type SegmentResponseType = {
-  translation: string;
-  sentence: MandarinWordType[];
-  dictionary: ChineseDictionary;
-};
-
-export type SentenceHistory = {
-  shareLink: string;
-  dictionary: ChineseDictionary;
-  sentence: MandarinSentenceType;
+export const emptySentence: MandarinSentenceType = {
+  mandarin: '',
+  segments: [],
+  translation: '',
+  dictionary: {},
+  shareURL: '',
 };

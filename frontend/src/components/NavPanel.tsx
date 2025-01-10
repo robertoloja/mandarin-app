@@ -25,7 +25,7 @@ import {
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '@/utils/store/store';
+import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import SettingsButton from './SettingsButton';
 
@@ -60,11 +60,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
 
         <DrawerBody ml="-4rem">
           <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
-            {user ? (
-              <SettingsButton onClose={props.onClose} />
-            ) : (
-              <Spacer mt="7rem" />
-            )}
+            <SettingsButton onClose={props.onClose} />
             <Link href="/" passHref onClick={props.onClose} prefetch={true}>
               <CLink>
                 <HStack>

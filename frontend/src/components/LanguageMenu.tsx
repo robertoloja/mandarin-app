@@ -17,13 +17,12 @@ import {
 import { IoLanguageOutline } from 'react-icons/io5';
 
 import { togglePronunciation } from '@/utils/store/settingsSlice';
-import { useAppDispatch } from '@/utils/store/store';
+import { store } from '@/utils/store/store';
 
 export default function LanguageMenu(props: { iconSize: number }) {
-  const dispatch = useAppDispatch();
   const { colorMode } = useColorMode();
   const toggle = () => {
-    dispatch(togglePronunciation());
+    store.dispatch(togglePronunciation());
   };
 
   return (

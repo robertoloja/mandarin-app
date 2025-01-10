@@ -21,12 +21,10 @@ import { RootState } from '@/utils/store/store';
 
 export default function ShareButton(props: { iconSize: number }) {
   const isBrowser = () => typeof window !== 'undefined';
-  const sentenceIsLoading = useSelector(
-    (state: RootState) => state.mandarinSentence.isLoading,
+  const percentLoaded = useSelector(
+    (state: RootState) => state.loading.percentLoaded,
   );
-  const shareLink = useSelector(
-    (state: RootState) => state.mandarinSentence.shareLink,
-  );
+  const shareLink = useSelector((state: RootState) => state.sentence.shareLink);
   const { colorMode } = useColorMode();
 
   const copiedToast = useToast();
@@ -52,7 +50,7 @@ export default function ShareButton(props: { iconSize: number }) {
         <IconButton
           aria-label="Share segmentation"
           isDisabled={shareLink == ''}
-          isLoading={sentenceIsLoading}
+          isLoading={percentLoaded < 100}
           icon={<IoShareSocialOutline size={props.iconSize + 2} />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
         />

@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from 'react';
 import { IoShareSocialOutline, IoTrashOutline } from 'react-icons/io5';
 
-import { SentenceHistory } from '@/utils/types';
+import { MandarinSentenceType } from '@/utils/types';
 import {
   appendToMandarinSentence,
   appendToMandarinDictionary,
@@ -27,13 +27,12 @@ import {
   clearMandarinSentence,
   setShareLink,
 } from '@/utils/store/mandarinSentenceSlice';
-import { useAppDispatch } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
+import { store } from '@/utils/store/store';
 
 export default function HistoryPage() {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const [fullHistory, setSentences] = useState<SentenceHistory[]>([]);
+  const [fullHistory, setSentences] = useState<MandarinSentenceType[]>([]);
   const { colorMode } = useColorMode();
 
   useEffect(() => {
@@ -43,25 +42,32 @@ export default function HistoryPage() {
     }
   }, []);
 
-  const unpackSentence = (sentenceHistory: SentenceHistory) => {
+  const unpackSentence = (sentenceHistory: MandarinSentenceType) => {
     return {
-      sentence: sentenceHistory.sentence.sentence.map((x) => x.word).join(''),
-      translation: sentenceHistory.sentence.translation,
+      sentence: sentenceHistory.segments.map((x) => x.word).join(''),
+      translation: sentenceHistory.translation,
     };
   };
 
-  const viewSentence = (historyItem: SentenceHistory) => {
-    dispatch(clearMandarinDictionary());
-    dispatch(clearMandarinSentence());
-    dispatch(appendToMandarinSentence(historyItem.sentence));
-    dispatch(appendToMandarinDictionary(historyItem.dictionary));
-    dispatch(setShareLink(historyItem.shareLink));
+  const viewSentence = (historyItem: MandarinSentenceType) => {
+    store.dispatch(clearMandarinDictionary());
+    store.dispatch(clearMandarinSentence());
+    store.dispatch(appendToMandarinSentence(historyItem.sentence));
+    store.dispatch(appendToMandarinDictionary(historyItem.dictionary));
+    store.dispatch(setShareLink(historyItem.shareURL));
     router.push('/');
   };
 
-  // TODO:
-  // const deleteFromHistory = (sentenceHistory: SentenceHistory) => {
-  // };
+  const deleteFromHistory = (sentenceHistory: MandarinSentenceType) => {
+    const stringHistory = localStorage.getItem('history');
+    if (stringHistory) {
+      const parsedHistory: MandarinSentenceType[] = JSON.parse(stringHistory);
+      const newHistory = parsedHistory.filter(
+        (x) => x.shareURL !== sentenceHistory.shareURL,
+        // TODO: Finish
+      );
+    }
+  };
 
   return (
     <Box h="100%" my="2rem" mx="5%">

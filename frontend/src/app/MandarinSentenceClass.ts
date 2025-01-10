@@ -1,24 +1,21 @@
-import { MandoBotAPI } from '@/utils/api';
+import { updateLoading } from '@/utils/store/loadingSlice';
+import { store } from '@/utils/store/store';
 import {
   appendToMandarinDictionary,
   appendToMandarinSentence,
   clearMandarinDictionary,
   clearMandarinSentence,
+  setShareLink,
 } from '@/utils/store/mandarinSentenceSlice';
+import { MandoBotAPI } from '@/utils/api';
 import {
-  ChineseDictionary,
   MandarinSentenceType,
-  MandarinWordType,
   SegmentResponseType,
+  ChineseDictionary,
+  MandarinWordType,
 } from '@/utils/types';
 
-import { RootState, store } from '@/utils/store/store';
-
-/**
- * Data and methods for processing, storing, and displaying
- * Mandarin sentences.
- */
-export class MandarinSentence {
+export class MandarinSentenceClass {
   mandarin: string;
   segments: MandarinWordType[];
   dictionary: ChineseDictionary;
@@ -26,10 +23,6 @@ export class MandarinSentence {
   shareURL: string;
   batched: boolean;
 
-  /**
-   * Create a new MandarinSentence instance.
-   * @param userInput Raw Mandarin sentence to process.
-   */
   constructor(userInput: string, batched: boolean = false) {
     this.mandarin = userInput.trim();
     this.segments = [];
@@ -39,16 +32,8 @@ export class MandarinSentence {
     this.batched = batched;
   }
 
-  private isReady() {
-    return (
-      this.translation !== '' &&
-      this.shareURL !== '' &&
-      this.segments.length !== 0 &&
-      Object.keys(this.dictionary).length !== 0
-    );
-  }
-
   populate() {
+    this.updateLoading(0);
     const rawHistory = localStorage.getItem('history');
 
     if (rawHistory) {
@@ -56,25 +41,21 @@ export class MandarinSentence {
       const local = sentenceHistory.filter(
         (stored) => stored.mandarin === this.mandarin,
       );
-      if (local && !this.isReady()) {
+      if (local.length !== 0 && !this.isReady()) {
         this.segments = local[0].segments;
         this.dictionary = local[0].dictionary;
         this.translation = local[0].translation;
         this.shareURL = local[0].shareURL;
-      } else if (!local && this.isReady()) {
-        localStorage.setItem(
-          'history',
-          JSON.stringify({
-            mandarin: this.mandarin,
-            segments: this.segments,
-            dictionary: this.dictionary,
-            translation: this.translation,
-            shareURL: this.shareURL,
-          }),
-        );
-      } else {
-        this.segment();
+        this.finish();
+        return;
+      } else if (local.length === 0 && this.isReady()) {
+        this.finish();
+        return;
       }
+    } else {
+      this.segment().then(() => {
+        this.finish();
+      });
     }
   }
 
@@ -89,10 +70,12 @@ export class MandarinSentence {
           translation: string;
         };
       };
-
       const promises = batches.map((batch, i) =>
         MandoBotAPI.segment(batch).then((response) => {
           orderedBatches[i] = response;
+          this.updateLoading(
+            Math.floor(Object.keys(orderedBatches).length / batches.length),
+          );
         }),
       );
       Promise.all(promises)
@@ -113,6 +96,7 @@ export class MandarinSentence {
             translation: this.translation,
           }).then((response) => {
             this.shareURL = response;
+            this.finish();
           });
         });
     } else {
@@ -129,8 +113,28 @@ export class MandarinSentence {
         dictionary: this.dictionary,
       }).then((response: string) => {
         this.shareURL = response;
+        this.finish();
       });
     }
+  }
+
+  private addToLocalStorage() {
+    const rawHistory = localStorage.getItem('history');
+    let local: MandarinSentenceType[] = [];
+
+    if (rawHistory) local = JSON.parse(rawHistory);
+    if (local.filter((x) => x.mandarin === this.mandarin).length !== 0) return;
+    const newHistory = [
+      ...local,
+      {
+        mandarin: this.mandarin,
+        segments: this.segments,
+        dictionary: this.dictionary,
+        translation: this.translation,
+        shareURL: this.shareURL,
+      },
+    ];
+    localStorage.setItem('history', JSON.stringify(newHistory));
   }
 
   setActive() {
@@ -143,5 +147,25 @@ export class MandarinSentence {
     );
     store.dispatch(clearMandarinDictionary());
     store.dispatch(appendToMandarinDictionary(this.dictionary));
+    store.dispatch(setShareLink(this.shareURL));
+  }
+
+  private isReady() {
+    return (
+      this.translation !== '' &&
+      this.shareURL !== '' &&
+      this.segments.length !== 0 &&
+      Object.keys(this.dictionary).length !== 0
+    );
+  }
+
+  private finish() {
+    this.updateLoading(100);
+    this.setActive();
+    this.addToLocalStorage();
+  }
+
+  private updateLoading(p: number) {
+    store.dispatch(updateLoading({ percent: p }));
   }
 }
