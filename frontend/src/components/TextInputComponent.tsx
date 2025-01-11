@@ -12,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  PopoverCloseButton,
 } from '@chakra-ui/react';
 import { RefObject, useState } from 'react';
 import { useSelector } from 'react-redux';
