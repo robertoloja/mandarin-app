@@ -89,7 +89,7 @@ export class MandarinSentenceClass {
             ...this.dictionary,
             ...orderedBatches[i].dictionary,
           };
-          await this.sleep(20);
+          await this.sleep(10);
           console.log(`${i + 1} of ${promises.length}`);
         }
       })();

@@ -48,13 +48,13 @@ export default function Home() {
           >
             Submit
           </Button>
-          {percentLoaded < 100 ? (
+          {percentLoaded < 100 && (
             <Text color="gray.600" textAlign="center" w="60%">
               {percentLoaded == 0
                 ? 'Segmentation and translation can take several minutes.'
                 : 'Your results will load one sentence at a time.'}
             </Text>
-          ) : null}
+          )}
         </HStack>
       </form>
       <Box h="100%">
@@ -63,9 +63,9 @@ export default function Home() {
           translation={mandarinSentence.translation}
           dictionary={mandarinSentence.dictionary}
         />
-        {mandarinSentence.segments.length !== 0 ? (
+        {mandarinSentence.segments.length !== 0 && (
           <Translation text={mandarinSentence.translation} />
-        ) : null}
+        )}
       </Box>
     </Box>
   );
