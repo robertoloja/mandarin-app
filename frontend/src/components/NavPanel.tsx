@@ -98,7 +98,10 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               prefetch={true}
             >
               <HStack>
-                <IoLibraryOutline size="22" color="#d9d9d9" />
+                <IoLibraryOutline
+                  size="22"
+                  color={colorMode === 'light' ? '#222' : '#d9d9d9'}
+                />
                 <Text
                   textShadow={
                     colorMode === 'light' ? lightTextShadow : darkTextShadow

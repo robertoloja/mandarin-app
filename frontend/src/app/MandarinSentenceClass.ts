@@ -23,12 +23,21 @@ export class MandarinSentenceClass {
   shareURL: string;
   batched: boolean;
 
-  constructor(userInput: string, batched: boolean = false) {
-    this.mandarin = userInput.trim();
-    this.segments = [];
-    this.dictionary = {};
-    this.translation = '';
-    this.shareURL = '';
+  constructor(
+    userInput: string,
+    segments: MandarinWordType[] = [],
+    dictionary: ChineseDictionary = {},
+    translation: string = '',
+    shareURL: string = '',
+    batched: boolean = process.env.NODE_ENV !== 'development' ? false : true,
+  ) {
+    this.mandarin = userInput
+      ? userInput.trim()
+      : segments.map((x) => x.word).join();
+    this.segments = segments;
+    this.dictionary = dictionary;
+    this.translation = translation;
+    this.shareURL = shareURL;
     this.batched = batched;
   }
 
@@ -160,6 +169,7 @@ export class MandarinSentenceClass {
   }
 
   setActive() {
+    this.addToLocalStorage();
     store.dispatch(clearMandarinSentence());
     store.dispatch(clearMandarinDictionary());
     store.dispatch(setShareLink(this.shareURL));
@@ -184,7 +194,6 @@ export class MandarinSentenceClass {
   private finish() {
     this.updateLoading(100);
     this.setActive();
-    this.addToLocalStorage();
   }
 
   private updateLoading(p: number) {

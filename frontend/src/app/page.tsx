@@ -1,5 +1,5 @@
 'use client';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
@@ -7,6 +7,9 @@ import ProgressBar from '@/components/ProgressBar';
 import { MandarinSentenceClass } from './MandarinSentenceClass';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
+import { useSearchParams } from 'next/navigation';
+import { MandoBotAPI } from '@/utils/api';
+import { SegmentResponseType } from '@/utils/types';
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -17,6 +20,22 @@ export default function Home() {
     (state: RootState) => state.sentence.mandarinSentence,
   );
 
+  const urlShareId = useSearchParams().get('share_id') || '';
+  useEffect(() => {
+    if (urlShareId !== '') {
+      MandoBotAPI.shared(urlShareId).then((response: SegmentResponseType) => {
+        const sharedSentenced = new MandarinSentenceClass(
+          '',
+          response.sentence,
+          response.dictionary,
+          response.translation,
+          urlShareId,
+        );
+        sharedSentenced.setActive();
+      });
+    }
+  }, []);
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     let inputValue = '';
@@ -24,7 +43,7 @@ export default function Home() {
     if (inputRef.current && inputRef.current.value !== '') {
       inputValue = inputRef.current.value;
     }
-    const mandarinClassInstance = new MandarinSentenceClass(inputValue, true);
+    const mandarinClassInstance = new MandarinSentenceClass(inputValue);
     mandarinClassInstance.populate();
   };
 
