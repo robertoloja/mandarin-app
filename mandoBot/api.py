@@ -6,16 +6,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
 from ninja import NinjaAPI
+from ninja.security import django_auth
+from ninja.throttling import AnonRateThrottle, AuthRateThrottle
 from dragonmapper import hanzi
-
-from django.middleware.csrf import get_token
 
 from sentences.segmenters import DefaultSegmenter
 from .schemas import SegmentationResponse, UserSchema
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
-api = NinjaAPI()
+api = NinjaAPI(throttle=[AnonRateThrottle("1/s"), AuthRateThrottle("4/s")])
 
 emptyResponse = {
     "translation": "",
