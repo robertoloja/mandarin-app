@@ -19,7 +19,7 @@ export default function ErrorButton(props: { iconSize: number }) {
 
   return (
     <>
-      {errorMessage ? (
+      {errorMessage && (
         <Popover>
           <PopoverTrigger>
             <IconButton
@@ -40,7 +40,7 @@ export default function ErrorButton(props: { iconSize: number }) {
             <PopoverBody>{errorMessage}</PopoverBody>
           </PopoverContent>
         </Popover>
-      ) : null}
+      )}
     </>
   );
 }
