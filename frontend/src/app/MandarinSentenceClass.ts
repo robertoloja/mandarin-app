@@ -52,11 +52,8 @@ export class MandarinSentenceClass {
         this.finish();
         return;
       }
-    } else {
-      this.segment().then(() => {
-        this.finish();
-      });
     }
+    this.segment();
   }
 
   private async segment() {
@@ -74,7 +71,9 @@ export class MandarinSentenceClass {
         MandoBotAPI.segment(batch).then((response) => {
           orderedBatches[i] = response;
           this.updateLoading(
-            Math.floor(Object.keys(orderedBatches).length / batches.length),
+            Math.floor(
+              (Object.keys(orderedBatches).length / batches.length) * 100,
+            ),
           );
         }),
       );
