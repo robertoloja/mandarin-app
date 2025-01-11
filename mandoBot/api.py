@@ -15,7 +15,7 @@ from .schemas import SegmentationResponse, UserSchema
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
-api = NinjaAPI(throttle=[AnonRateThrottle("1/s"), AuthRateThrottle("4/s")])
+api = NinjaAPI(throttle=[AnonRateThrottle("1/s"), AuthRateThrottle("4/s")], csrf=True)
 
 emptyResponse = {
     "translation": "",
@@ -81,13 +81,19 @@ async def share(request, data: SegmentationResponse) -> str:
 
 @api.post("/segment", response=SegmentationResponse)
 async def segment(request, data: str) -> SegmentationResponse:
+    MAX_CHARS_FREE = 501
+    if request.auth:
+        text_to_segment = data
+    else:
+        text_to_segment = data[:MAX_CHARS_FREE]
+
     if not data:
         return emptyResponse
 
     if not hanzi.has_chinese(data):
         return handle_non_chinese(data)
 
-    segmented_data = await DefaultSegmenter.segment_and_translate(data)
+    segmented_data = await DefaultSegmenter.segment_and_translate(text_to_segment)
     return segmented_data
 
 

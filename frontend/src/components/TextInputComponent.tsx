@@ -24,13 +24,16 @@ export default function TextInput(props: {
 }) {
   const [charCount, setCharCount] = useState(0);
   const [popoverIsOpen, setPopoverIsOpen] = useState(false);
+  const [previousText, setPreviousText] = useState('');
+
   const handleTextChange = () => {
     if (props.inputRef.current) {
       const input = props.inputRef.current.value;
-      if (input.length >= MAX_LENGTH_FREE) {
+      if (input.length > MAX_LENGTH_FREE) {
         setPopoverIsOpen(true);
-        props.inputRef.current.value = input.slice(0, MAX_LENGTH_FREE);
+        props.inputRef.current.value = previousText;
       } else {
+        setPreviousText(input);
         setPopoverIsOpen(false);
       }
       setCharCount(props.inputRef.current.value.length);
@@ -51,7 +54,11 @@ export default function TextInput(props: {
         mt={percentLoaded < 100 ? '0' : '0.25rem'}
       />
       <Container w="4rem" m="0" p="0">
-        <Popover isOpen={popoverIsOpen}>
+        <Popover
+          isOpen={popoverIsOpen}
+          onOpen={() => setPopoverIsOpen(true)}
+          onClose={() => setPopoverIsOpen(false)}
+        >
           <PopoverTrigger>
             <Tag
               cursor="help"
