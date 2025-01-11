@@ -1,4 +1,5 @@
 from django.conf import settings
+
 if settings.DEBUG:
     import argostranslate.package
     import argostranslate.translate
@@ -6,25 +7,47 @@ if settings.DEBUG:
 import deepl
 import os
 
-translator = deepl.Translator(os.getenv('DEEPL_API_KEY'))
+
+class TranslatorManager:
+    # Ping the DeepL api to see about usage quotas before each translation. If the quota is exceeded,
+    # switch to Azure. If THAT quota is exceeded, thank god: this is a great problem to have.
+    pass
+
+
+translator = deepl.Translator(os.getenv("DEEPL_API_KEY"))
+
+
 class DeepLTranslate:
     @staticmethod
     def translate(sentence: str) -> str:
-        return translator.translate_text(sentence, source_lang='ZH', target_lang='EN-US').text
+        return translator.translate_text(
+            sentence, source_lang="ZH", target_lang="EN-US"
+        ).text
+
 
 if settings.DEBUG:
-    # Download and install Argos Translate package. Only runs on server bootup. 
+    # Download and install Argos Translate package. Only runs on server bootup.
     english_code = "en"
     traditional_mandarin_code = "zt"
     simplified_mandarin_code = "zh"
 
     argostranslate.package.update_package_index()
     available_packages = argostranslate.package.get_available_packages()
-    traditional_mandarin = next(filter(lambda x: x.from_code == traditional_mandarin_code and
-                                            x.to_code == english_code, available_packages))
+    traditional_mandarin = next(
+        filter(
+            lambda x: x.from_code == traditional_mandarin_code
+            and x.to_code == english_code,
+            available_packages,
+        )
+    )
 
-    simplified_mandarin = next(filter(lambda x: x.from_code == simplified_mandarin_code and
-                                            x.to_code == english_code, available_packages))
+    simplified_mandarin = next(
+        filter(
+            lambda x: x.from_code == simplified_mandarin_code
+            and x.to_code == english_code,
+            available_packages,
+        )
+    )
 
     argostranslate.package.install_from_path(traditional_mandarin.download())
     argostranslate.package.install_from_path(simplified_mandarin.download())
@@ -37,8 +60,7 @@ if settings.DEBUG:
             if hanzi.is_traditional(sentence):
                 from_code = traditional_mandarin_code
 
-            return argostranslate.translate.translate(sentence, 
-                                                    from_code, 
-                                                    english_code)
+            return argostranslate.translate.translate(sentence, from_code, english_code)
+
 
 DefaultTranslator = ArgosTranslate if settings.DEBUG else DeepLTranslate
