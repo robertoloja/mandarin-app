@@ -16,7 +16,6 @@ import React from 'react';
 import 'pinyin-tone';
 
 import Hanzi from './Hanzi';
-import { ChineseDictionary } from '@/utils/types';
 import Pinyin from 'pinyin-tone';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
@@ -25,13 +24,15 @@ function Definition(props: {
   word: string;
   pronunciations: string[];
   definitions: string[];
-  dictionary: ChineseDictionary;
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
 }) {
   const pronunciationSetting = useSelector(
     (state: RootState) => state.settings.pronunciation,
+  );
+  const dictionary = useSelector(
+    (state: RootState) => state.sentence.mandarinDictionary,
   );
 
   return (
@@ -67,12 +68,12 @@ function Definition(props: {
                       pronunciation={
                         pronunciationSetting == 'pinyin'
                           ? Pinyin(
-                              props.dictionary[hanzi].pinyin[0],
+                              dictionary[hanzi].pinyin[0],
                             ) /* COULD CAUSE BUGS */
-                          : props.dictionary[hanzi].zhuyin[0]
+                          : dictionary[hanzi].zhuyin[0]
                       }
                     />
-                    <Text>{props.dictionary[hanzi].english}</Text>
+                    <Text>{dictionary[hanzi].english}</Text>
                   </HStack>
                 ))}
               </VStack>

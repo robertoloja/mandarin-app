@@ -1,21 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   MandarinSentenceType,
-  emptySentence,
   ChineseDictionary,
+  MandarinWordType,
+  emptySentence,
 } from '../types';
 
 interface MandarinSentenceState {
   mandarinSentence: MandarinSentenceType;
   mandarinDictionary: ChineseDictionary;
-  isLoading: boolean;
   shareLink: string;
 }
 
 const initialState: MandarinSentenceState = {
   mandarinSentence: emptySentence,
-  mandarinDictionary: {},
-  isLoading: false,
+  mandarinDictionary: {} as ChineseDictionary,
   shareLink: '',
 };
 
@@ -25,7 +24,11 @@ const mandarinSentenceSlice = createSlice({
   reducers: {
     appendToMandarinSentence(
       state,
-      action: PayloadAction<MandarinSentenceType>,
+      action: PayloadAction<{
+        mandarin: string;
+        translation: string;
+        segments: MandarinWordType[];
+      }>,
     ) {
       let translation = '';
 
@@ -35,10 +38,12 @@ const mandarinSentenceSlice = createSlice({
         translation = ' ' + action.payload.translation;
       }
 
+      state.mandarinSentence.mandarin = action.payload.mandarin; // never append
+
       state.mandarinSentence.translation += translation;
-      state.mandarinSentence.sentence = [
-        ...state.mandarinSentence.sentence,
-        ...action.payload.sentence,
+      state.mandarinSentence.segments = [
+        ...state.mandarinSentence.segments,
+        ...action.payload.segments,
       ];
     },
     clearMandarinSentence(state) {
@@ -56,9 +61,6 @@ const mandarinSentenceSlice = createSlice({
     clearMandarinDictionary(state) {
       state.mandarinDictionary = {};
     },
-    setLoading(state, action: PayloadAction<boolean>) {
-      state.isLoading = action.payload;
-    },
     setShareLink(state, action: PayloadAction<string>) {
       state.shareLink = action.payload;
     },
@@ -70,7 +72,6 @@ export const {
   clearMandarinSentence,
   appendToMandarinDictionary,
   clearMandarinDictionary,
-  setLoading,
   setShareLink,
 } = mandarinSentenceSlice.actions;
 export default mandarinSentenceSlice.reducer;

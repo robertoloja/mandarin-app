@@ -10,10 +10,8 @@ import {
   DrawerCloseButton,
   HStack,
   Text,
-  Link as CLink,
   Spacer,
   useColorMode,
-  // IconButton,
 } from '@chakra-ui/react';
 import {
   IoFolderOpenOutline,
@@ -22,24 +20,25 @@ import {
   IoLogOutOutline,
   IoLibraryOutline,
   IoInformationCircleOutline,
-  IoSettingsOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '@/utils/store/store';
-import { logout } from '@/utils/store/authSlice';
+import { RootState } from '@/utils/store/store';
+import { MandoBotAPI } from '@/utils/api';
+import SettingsButton from './SettingsButton';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const { colorMode } = useColorMode();
   const user = useSelector((state: RootState) => state.auth.user);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
-  const dispatch = useAppDispatch();
 
   const handleAuthClick = (e: any) => {
     if (user) {
       e.preventDefault();
-      dispatch(logout());
+      MandoBotAPI.logout().then((response) => {
+        console.log(response);
+      });
     } else {
       props.onClose();
     }
@@ -59,20 +58,19 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
 
         <DrawerBody ml="-4rem">
           <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
-            {user ? <IoSettingsOutline size="22" /> : <Spacer mt="7rem" />}
+            <SettingsButton onClose={props.onClose} />
             <Link href="/" passHref onClick={props.onClose} prefetch={true}>
-              <CLink>
-                <HStack>
-                  <IoHomeOutline size="22" />
-                  <Text
-                    textShadow={
-                      colorMode === 'light' ? lightTextShadow : darkTextShadow
-                    }
-                  >
-                    Home
-                  </Text>
-                </HStack>
-              </CLink>
+              <HStack>
+                <IoHomeOutline size="22" />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  Home
+                </Text>
+              </HStack>
             </Link>
 
             <Link
@@ -81,18 +79,17 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               onClick={props.onClose}
               prefetch={true}
             >
-              <CLink>
-                <HStack>
-                  <IoFolderOpenOutline size="22" />
-                  <Text
-                    textShadow={
-                      colorMode === 'light' ? lightTextShadow : darkTextShadow
-                    }
-                  >
-                    Sentence History
-                  </Text>
-                </HStack>
-              </CLink>
+              <HStack>
+                <IoFolderOpenOutline size="22" />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  Sentence History
+                </Text>
+              </HStack>
             </Link>
 
             <Link
@@ -101,18 +98,20 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               onClick={props.onClose}
               prefetch={true}
             >
-              <CLink>
-                <HStack>
-                  <IoLibraryOutline size="22" color="#d9d9d9" />
-                  <Text
-                    textShadow={
-                      colorMode === 'light' ? lightTextShadow : darkTextShadow
-                    }
-                  >
-                    Reading Room
-                  </Text>
-                </HStack>
-              </CLink>
+              <HStack>
+                <IoLibraryOutline
+                  size="22"
+                  color={colorMode === 'light' ? '#222' : '#d9d9d9'}
+                />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  Reading Room
+                </Text>
+              </HStack>
             </Link>
           </VStack>
 
@@ -125,37 +124,35 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               onClick={props.onClose}
               prefetch={true}
             >
-              <CLink>
-                <HStack>
-                  <IoInformationCircleOutline size="22" />
-                  <Text
-                    textShadow={
-                      colorMode === 'light' ? lightTextShadow : darkTextShadow
-                    }
-                  >
-                    About
-                  </Text>
-                </HStack>
-              </CLink>
+              <HStack>
+                <IoInformationCircleOutline size="22" />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  About
+                </Text>
+              </HStack>
             </Link>
 
             <Link href="/auth" passHref onClick={handleAuthClick}>
-              <CLink>
-                <HStack>
-                  {user ? (
-                    <IoLogOutOutline size="22" />
-                  ) : (
-                    <IoLogInOutline size="22" />
-                  )}
-                  <Text
-                    textShadow={
-                      colorMode === 'light' ? lightTextShadow : darkTextShadow
-                    }
-                  >
-                    {user ? 'Log Out' : 'Log In'}
-                  </Text>
-                </HStack>
-              </CLink>
+              <HStack>
+                {user ? (
+                  <IoLogOutOutline size="22" />
+                ) : (
+                  <IoLogInOutline size="22" />
+                )}
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  {user ? 'Log Out' : 'Log In'}
+                </Text>
+              </HStack>
             </Link>
           </VStack>
         </DrawerBody>

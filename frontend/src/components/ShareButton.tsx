@@ -1,5 +1,4 @@
 'use client';
-
 import {
   Center,
   HStack,
@@ -19,21 +18,25 @@ import { useSelector } from 'react-redux';
 
 import { RootState } from '@/utils/store/store';
 
-export default function ShareButton(props: { iconSize: number }) {
+export default function ShareButton(props: {
+  iconSize: number;
+  shareLink?: string;
+  defaultStyles?: boolean;
+}) {
   const isBrowser = () => typeof window !== 'undefined';
-  const sentenceIsLoading = useSelector(
-    (state: RootState) => state.mandarinSentence.isLoading,
+  const percentLoaded = useSelector(
+    (state: RootState) => state.loading.percentLoaded,
   );
-  const shareLink = useSelector(
-    (state: RootState) => state.mandarinSentence.shareLink,
-  );
+  const shareLink = useSelector((state: RootState) => state.sentence.shareLink);
   const { colorMode } = useColorMode();
 
   const copiedToast = useToast();
   const id = 'toast';
   const copyShareLink = () => {
     navigator.clipboard.writeText(
-      isBrowser() ? `${window.location.origin}/?share_id=${shareLink}` : '',
+      isBrowser()
+        ? `${window.location.origin}/?share_id=${props.shareLink ? props.shareLink : shareLink}`
+        : '',
     );
     if (!copiedToast.isActive(id)) {
       copiedToast({
@@ -52,9 +55,15 @@ export default function ShareButton(props: { iconSize: number }) {
         <IconButton
           aria-label="Share segmentation"
           isDisabled={shareLink == ''}
-          isLoading={sentenceIsLoading}
+          isLoading={percentLoaded < 100}
           icon={<IoShareSocialOutline size={props.iconSize + 2} />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg={
+            props.defaultStyles
+              ? undefined
+              : colorMode === 'light'
+                ? 'white'
+                : 'gray.800'
+          }
         />
       </PopoverTrigger>
       <PopoverContent>
@@ -68,7 +77,7 @@ export default function ShareButton(props: { iconSize: number }) {
               type="text"
               value={
                 isBrowser()
-                  ? `${window.location.origin}/?share_id=${shareLink}`
+                  ? `${window.location.origin}/?share_id=${props.shareLink ? props.shareLink : shareLink}`
                   : ''
               }
               focusBorderColor="blue.500"

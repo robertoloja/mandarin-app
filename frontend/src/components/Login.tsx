@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { login } from '@/utils/store/authSlice';
 import { useSelector } from 'react-redux';
 import { Button, Container, Heading, Input } from '@chakra-ui/react';
-import { RootState, useAppDispatch } from '@/utils/store/store';
+import { RootState, store } from '@/utils/store/store';
 
 const LoginForm: React.FC = () => {
-  const dispatch = useAppDispatch();
   const authState = useSelector((state: RootState) => state.auth);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const response = await dispatch(login({ username, password })).unwrap();
+    const response = await store
+      .dispatch(login({ username, password }))
+      .unwrap();
     console.log(response);
   };
 

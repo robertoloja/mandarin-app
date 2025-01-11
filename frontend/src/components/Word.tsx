@@ -47,7 +47,6 @@ function Word(props: {
             pronunciations={props.pronunciation}
             word={props.word.word}
             definitions={props.definitions}
-            dictionary={props.dictionary}
             isOpen={isOpen}
             onOpen={onOpen}
             onClose={onClose}

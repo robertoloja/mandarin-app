@@ -43,6 +43,7 @@ const authSlice = createSlice({
       state.user = action.payload;
     },
     logout(state) {
+      console.log('set user to null: ');
       state.user = null;
     },
   },

@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider } from '@chakra-ui/react';
 import TopNav from '@/components/TopNav';
+import BackToTop from '@/components/BackToTopComponent';
 
 export default function RootLayout({
   children,
@@ -21,6 +22,7 @@ export default function RootLayout({
           <ChakraProvider resetCSS>
             <TopNav />
             <Suspense>{children}</Suspense>
+            <BackToTop />
           </ChakraProvider>
         </body>
       </Provider>
