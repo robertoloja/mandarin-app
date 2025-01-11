@@ -57,13 +57,6 @@ export default function Home() {
       <ProgressBar />
       <form onSubmit={handleSubmit}>
         <TextInput inputRef={inputRef} />
-        {/* <Input
-          type="text"
-          placeholder="Enter Mandarin text to translate and segment"
-          ref={inputRef}
-          mb="0"
-          mt={percentLoaded < 100 ? '0' : '0.25rem'}
-        /> */}
         <HStack>
           <Button
             type="submit"

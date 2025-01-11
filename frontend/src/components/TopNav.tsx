@@ -13,6 +13,7 @@ import {
   IoMoon,
   IoSunny,
   IoMenuOutline,
+  IoHomeOutline,
   // IoOptionsOutline,
   // IoText,
   // IoBrushOutline,
@@ -22,6 +23,7 @@ import NavPanel from './NavPanel';
 import ShareButton from './ShareButton';
 import LanguageMenu from './LanguageMenu';
 import ErrorButton from './ErrorButton';
+import Link from 'next/link';
 
 function TopNav() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -57,20 +59,21 @@ function TopNav() {
           aria-label="Open Navigation"
           icon={<IoMenuOutline size={iconSize + 7} />}
           ref={btnRef}
-          colorScheme="blue"
-          variant="buttonStyle"
           onClick={onOpen}
+          bg={colorMode === 'light' ? 'white' : 'gray.800'}
           ml="0.2rem"
           mt={0.5}
         />
 
-        {/* <IconButton
-          aria-label="Text options"
-          icon={<IoOptionsOutline />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        />
+        <Link href="/" prefetch={true}>
+          <IconButton
+            aria-label="Text options"
+            icon={<IoHomeOutline size={iconSize} />}
+            bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          />
+        </Link>
 
-        <IconButton
+        {/*<IconButton
           aria-label="Text size"
           icon={<IoText />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
