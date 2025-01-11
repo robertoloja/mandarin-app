@@ -12,8 +12,6 @@ import {
   Text,
   Spacer,
   useColorMode,
-  textDecoration,
-  // IconButton,
 } from '@chakra-ui/react';
 import {
   IoFolderOpenOutline,

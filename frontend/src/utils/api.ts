@@ -3,7 +3,7 @@ import { SegmentResponseType } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUsername } from './store/authSlice';
-import { MAX_LENGTH_FREE } from 'Constants';
+import { MAX_LENGTH_FREE } from 'constant_variables';
 
 export function getCookie(name: string): string | null {
   const cookieValue = document.cookie

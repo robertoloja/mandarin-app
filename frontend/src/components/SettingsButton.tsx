@@ -2,7 +2,7 @@
 
 import { HStack, Spacer, useColorMode } from '@chakra-ui/react';
 import Link from 'next/link';
-import { Link as CLink, Text } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';

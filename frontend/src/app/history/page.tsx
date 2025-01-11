@@ -17,7 +17,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { IoShareSocialOutline, IoTrashOutline } from 'react-icons/io5';
+import { IoTrashOutline } from 'react-icons/io5';
 
 import { MandarinSentenceType } from '@/utils/types';
 import { useRouter } from 'next/navigation';

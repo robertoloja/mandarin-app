@@ -1,5 +1,5 @@
 'use client';
-import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
+import { Box, Button, Text, HStack } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';

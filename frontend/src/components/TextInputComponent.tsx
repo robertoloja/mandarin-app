@@ -13,10 +13,9 @@ import {
   PopoverTrigger,
   Text,
 } from '@chakra-ui/react';
-import { IoHelpCircleOutline } from 'react-icons/io5';
-import { RefObject, useEffect, useState } from 'react';
+import { RefObject, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { MAX_LENGTH_FREE } from 'Constants';
+import { MAX_LENGTH_FREE } from 'constant_variables';
 import Link from 'next/link';
 
 export default function TextInput(props: {
