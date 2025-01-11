@@ -20,6 +20,7 @@ import {
   IoLogOutOutline,
   IoLibraryOutline,
   IoInformationCircleOutline,
+  IoBugOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
@@ -133,6 +134,20 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                   }
                 >
                   About
+                </Text>
+              </HStack>
+            </Link>
+
+            <Link href="https://forms.gle/j89uiVM2xv3CeK7HA">
+              <HStack>
+                <IoBugOutline size="22" />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  Report a Bug
                 </Text>
               </HStack>
             </Link>
