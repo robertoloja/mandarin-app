@@ -3,6 +3,7 @@ import { SegmentResponseType } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUsername } from './store/authSlice';
+import { MAX_LENGTH_FREE } from 'Constants';
 
 export function getCookie(name: string): string | null {
   const cookieValue = document.cookie
@@ -63,9 +64,12 @@ api.interceptors.request.use((config) => {
 
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
-    const response = await api.post(`/segment?data=${sentence}`, {
-      sentence: sentence,
-    });
+    const response = await api.post(
+      `/segment?data=${sentence.slice(0, MAX_LENGTH_FREE)}`,
+      {
+        sentence: sentence,
+      },
+    );
     return response.data;
   },
 

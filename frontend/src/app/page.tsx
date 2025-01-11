@@ -10,6 +10,7 @@ import ProgressBar from '@/components/ProgressBar';
 import { SegmentResponseType } from '@/utils/types';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
+import TextInput from '@/components/TextInputComponent';
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,13 +56,14 @@ export default function Home() {
     <Box h="100%">
       <ProgressBar />
       <form onSubmit={handleSubmit}>
-        <Input
+        <TextInput inputRef={inputRef} />
+        {/* <Input
           type="text"
           placeholder="Enter Mandarin text to translate and segment"
           ref={inputRef}
           mb="0"
           mt={percentLoaded < 100 ? '0' : '0.25rem'}
-        />
+        /> */}
         <HStack>
           <Button
             type="submit"
