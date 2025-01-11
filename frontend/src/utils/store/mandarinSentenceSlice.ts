@@ -25,6 +25,7 @@ const mandarinSentenceSlice = createSlice({
     appendToMandarinSentence(
       state,
       action: PayloadAction<{
+        mandarin: string;
         translation: string;
         segments: MandarinWordType[];
       }>,
@@ -36,6 +37,8 @@ const mandarinSentenceSlice = createSlice({
       } else {
         translation = ' ' + action.payload.translation;
       }
+
+      state.mandarinSentence.mandarin = action.payload.mandarin; // never append
 
       state.mandarinSentence.translation += translation;
       state.mandarinSentence.segments = [

@@ -29,11 +29,14 @@ export class MandarinSentenceClass {
     dictionary: ChineseDictionary = {},
     translation: string = '',
     shareURL: string = '',
-    batched: boolean = process.env.NODE_ENV !== 'development' ? false : true,
+    batched: boolean = process.env.NODE_ENV === 'development' ? false : true,
   ) {
     this.mandarin = userInput
       ? userInput.trim()
-      : segments.map((x) => x.word).join();
+      : segments
+          .map((x) => x.word)
+          .join('')
+          .trim();
     this.segments = segments;
     this.dictionary = dictionary;
     this.translation = translation;
@@ -80,11 +83,6 @@ export class MandarinSentenceClass {
       const promises = batches.map((batch, i) =>
         MandoBotAPI.segment(batch).then((response) => {
           orderedBatches[i] = response;
-          this.updateLoading(
-            Math.floor(
-              (Object.keys(orderedBatches).length / batches.length) * 100,
-            ),
-          );
         }),
       );
       // ...retrieve synchronously.
@@ -99,7 +97,7 @@ export class MandarinSentenceClass {
             ...orderedBatches[i].dictionary,
           };
           await this.sleep(10);
-          console.log(`${i + 1} of ${promises.length}`);
+          this.updateLoading(Math.floor((i + 1 / promises.length) * 100));
         }
       })();
       Promise.all(promises).then(() => {
@@ -139,12 +137,18 @@ export class MandarinSentenceClass {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  private addToLocalStorage() {
+  private addToHistory() {
+    // TODO: Also add via the API
     const rawHistory = localStorage.getItem('history');
     let local: MandarinSentenceType[] = [];
 
     if (rawHistory) local = JSON.parse(rawHistory);
-    if (local.filter((x) => x.mandarin === this.mandarin).length !== 0) return;
+    if (
+      local.filter(
+        (x) => x.mandarin === this.mandarin || x.shareURL === this.shareURL,
+      ).length !== 0
+    )
+      return;
     const newHistory = [
       ...local,
       {
@@ -158,9 +162,32 @@ export class MandarinSentenceClass {
     localStorage.setItem('history', JSON.stringify(newHistory));
   }
 
-  appendToStore(partiallySegmented: SegmentResponseType) {
+  deleteFromHistory() {
+    // TODO: Also delete from the API
+    const rawHistory = localStorage.getItem('history');
+    let local: MandarinSentenceType[] = [];
+
+    if (rawHistory) local = JSON.parse(rawHistory);
+    for (let i = 0; i < local.length; i++) {
+      console.log(
+        this.mandarin === local[i].mandarin ||
+          this.shareURL === local[i].shareURL,
+      );
+      if (
+        this.mandarin === local[i].mandarin ||
+        this.shareURL === local[i].shareURL
+      ) {
+        local.splice(i, 1);
+        localStorage.setItem('history', JSON.stringify(local));
+      }
+    }
+    this.emptyFields();
+  }
+
+  private appendToStore(partiallySegmented: SegmentResponseType) {
     store.dispatch(
       appendToMandarinSentence({
+        mandarin: this.mandarin,
         translation: partiallySegmented.translation,
         segments: partiallySegmented.sentence,
       }),
@@ -169,12 +196,13 @@ export class MandarinSentenceClass {
   }
 
   setActive() {
-    this.addToLocalStorage();
+    this.addToHistory();
     store.dispatch(clearMandarinSentence());
     store.dispatch(clearMandarinDictionary());
     store.dispatch(setShareLink(this.shareURL));
     store.dispatch(
       appendToMandarinSentence({
+        mandarin: this.mandarin,
         translation: this.translation,
         segments: this.segments,
       }),
@@ -198,5 +226,15 @@ export class MandarinSentenceClass {
 
   private updateLoading(p: number) {
     store.dispatch(updateLoading({ percent: p }));
+  }
+
+  private emptyFields() {
+    this.mandarin = '';
+    this.segments = [];
+    this.dictionary = {};
+    this.translation = '';
+    this.shareURL = '';
+    store.dispatch(clearMandarinDictionary());
+    store.dispatch(clearMandarinSentence());
   }
 }

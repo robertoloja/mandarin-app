@@ -34,6 +34,9 @@ export default function Home() {
         sharedSentenced.setActive();
         if (inputRef.current) inputRef.current.value = sharedSentenced.mandarin;
       });
+    } else {
+      if (mandarinSentence.mandarin && inputRef.current)
+        inputRef.current.value = mandarinSentence.mandarin;
     }
   }, []);
 

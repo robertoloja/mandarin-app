@@ -12,6 +12,7 @@ import {
   Text,
   Spacer,
   useColorMode,
+  textDecoration,
   // IconButton,
 } from '@chakra-ui/react';
 import {
@@ -64,6 +65,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <HStack>
                 <IoHomeOutline size="22" />
                 <Text
+                  _hover={{ textDecoration: 'underline' }}
                   textShadow={
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
@@ -82,6 +84,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <HStack>
                 <IoFolderOpenOutline size="22" />
                 <Text
+                  _hover={{ textDecoration: 'underline' }}
                   textShadow={
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
@@ -103,6 +106,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                   color={colorMode === 'light' ? '#222' : '#d9d9d9'}
                 />
                 <Text
+                  _hover={{ textDecoration: 'underline' }}
                   textShadow={
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
@@ -125,6 +129,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               <HStack>
                 <IoInformationCircleOutline size="22" />
                 <Text
+                  _hover={{ textDecoration: 'underline' }}
                   textShadow={
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
@@ -142,6 +147,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                   <IoLogInOutline size="22" />
                 )}
                 <Text
+                  _hover={{ textDecoration: 'underline' }}
                   textShadow={
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
