@@ -1,15 +1,15 @@
 'use client';
-import { useEffect, useRef } from 'react';
 import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { MandarinSentenceClass } from './MandarinSentenceClass';
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
-import { MandarinSentenceClass } from './MandarinSentenceClass';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/utils/store/store';
-import { useSearchParams } from 'next/navigation';
-import { MandoBotAPI } from '@/utils/api';
 import { SegmentResponseType } from '@/utils/types';
+import { RootState } from '@/utils/store/store';
+import { MandoBotAPI } from '@/utils/api';
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -32,6 +32,7 @@ export default function Home() {
           urlShareId,
         );
         sharedSentenced.setActive();
+        if (inputRef.current) inputRef.current.value = sharedSentenced.mandarin;
       });
     }
   }, []);
