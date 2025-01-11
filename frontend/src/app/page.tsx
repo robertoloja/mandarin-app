@@ -4,7 +4,6 @@ import { Box, Input, Button, Text, HStack } from '@chakra-ui/react';
 import MandarinSentence from '@/components/MandarinSentence';
 import Translation from '@/components/Translation';
 import ProgressBar from '@/components/ProgressBar';
-import AccurateTimer from '@/utils/timer';
 import { MandarinSentenceClass } from './MandarinSentenceClass';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';

@@ -52,21 +52,15 @@ export default function HistoryPage() {
   const viewSentence = (historyItem: MandarinSentenceType) => {
     store.dispatch(clearMandarinDictionary());
     store.dispatch(clearMandarinSentence());
-    store.dispatch(appendToMandarinSentence(historyItem.sentence));
+    store.dispatch(
+      appendToMandarinSentence({
+        translation: historyItem.translation,
+        segments: historyItem.segments,
+      }),
+    );
     store.dispatch(appendToMandarinDictionary(historyItem.dictionary));
     store.dispatch(setShareLink(historyItem.shareURL));
     router.push('/');
-  };
-
-  const deleteFromHistory = (sentenceHistory: MandarinSentenceType) => {
-    const stringHistory = localStorage.getItem('history');
-    if (stringHistory) {
-      const parsedHistory: MandarinSentenceType[] = JSON.parse(stringHistory);
-      const newHistory = parsedHistory.filter(
-        (x) => x.shareURL !== sentenceHistory.shareURL,
-        // TODO: Finish
-      );
-    }
   };
 
   return (

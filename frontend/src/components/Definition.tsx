@@ -16,7 +16,6 @@ import React from 'react';
 import 'pinyin-tone';
 
 import Hanzi from './Hanzi';
-import { ChineseDictionary } from '@/utils/types';
 import Pinyin from 'pinyin-tone';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';

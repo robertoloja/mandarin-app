@@ -17,18 +17,16 @@ export default function SettingsButton(props: { onClose: () => void }) {
     <>
       <Spacer mt="3.5rem" />
       <Link href="/settings" passHref prefetch={true} onClick={props.onClose}>
-        <CLink>
-          <HStack visibility={user ? 'visible' : 'hidden'}>
-            <IoSettingsOutline size="22" />
-            <Text
-              textShadow={
-                colorMode === 'light' ? lightTextShadow : darkTextShadow
-              }
-            >
-              Settings
-            </Text>
-          </HStack>
-        </CLink>
+        <HStack visibility={user ? 'visible' : 'hidden'}>
+          <IoSettingsOutline size="22" />
+          <Text
+            textShadow={
+              colorMode === 'light' ? lightTextShadow : darkTextShadow
+            }
+          >
+            Settings
+          </Text>
+        </HStack>
       </Link>
     </>
   );

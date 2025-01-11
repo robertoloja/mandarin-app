@@ -60,13 +60,14 @@ export class MandarinSentenceClass {
     if (this.batched) {
       const batches = this.mandarin.split(/(?<=[。？！.?!])/);
 
-      let orderedBatches = {} as {
+      const orderedBatches = {} as {
         [index: number]: {
           sentence: MandarinWordType[];
           dictionary: ChineseDictionary;
           translation: string;
         };
       };
+      // Execute concurrently...
       const promises = batches.map((batch, i) =>
         MandoBotAPI.segment(batch).then((response) => {
           orderedBatches[i] = response;
@@ -77,27 +78,31 @@ export class MandarinSentenceClass {
           );
         }),
       );
-      Promise.all(promises)
-        .then(() => {
-          for (let i = 0; i < batches.length; i++) {
-            this.segments = [...this.segments, ...orderedBatches[i].sentence];
-            this.translation += orderedBatches[i].translation;
-            this.dictionary = {
-              ...this.dictionary,
-              ...orderedBatches[i].dictionary,
-            };
-          }
-        })
-        .finally(() => {
-          MandoBotAPI.share({
-            sentence: this.segments,
-            dictionary: this.dictionary,
-            translation: this.translation,
-          }).then((response) => {
-            this.shareURL = response;
-            this.finish();
-          });
+      // ...retrieve synchronously.
+      (async () => {
+        for (let i = 0; i < promises.length; i++) {
+          await promises[i];
+          this.appendToStore(orderedBatches[i]);
+          this.segments = [...this.segments, ...orderedBatches[i].sentence];
+          this.translation += orderedBatches[i].translation;
+          this.dictionary = {
+            ...this.dictionary,
+            ...orderedBatches[i].dictionary,
+          };
+          await this.sleep(20);
+          console.log(`${i + 1} of ${promises.length}`);
+        }
+      })();
+      Promise.all(promises).then(() => {
+        MandoBotAPI.share({
+          sentence: this.segments,
+          dictionary: this.dictionary,
+          translation: this.translation,
+        }).then((response) => {
+          this.shareURL = response;
+          this.finish();
         });
+      });
     } else {
       await MandoBotAPI.segment(this.mandarin).then(
         (response: SegmentResponseType) => {
@@ -115,6 +120,14 @@ export class MandarinSentenceClass {
         this.finish();
       });
     }
+  }
+
+  /**
+   * Useful for debouncing redux store updates.
+   * @param ms Sleep interval
+   */
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private addToLocalStorage() {
@@ -136,17 +149,27 @@ export class MandarinSentenceClass {
     localStorage.setItem('history', JSON.stringify(newHistory));
   }
 
+  appendToStore(partiallySegmented: SegmentResponseType) {
+    store.dispatch(
+      appendToMandarinSentence({
+        translation: partiallySegmented.translation,
+        segments: partiallySegmented.sentence,
+      }),
+    );
+    store.dispatch(appendToMandarinDictionary(partiallySegmented.dictionary));
+  }
+
   setActive() {
     store.dispatch(clearMandarinSentence());
+    store.dispatch(clearMandarinDictionary());
+    store.dispatch(setShareLink(this.shareURL));
     store.dispatch(
       appendToMandarinSentence({
         translation: this.translation,
         segments: this.segments,
       }),
     );
-    store.dispatch(clearMandarinDictionary());
     store.dispatch(appendToMandarinDictionary(this.dictionary));
-    store.dispatch(setShareLink(this.shareURL));
   }
 
   private isReady() {
