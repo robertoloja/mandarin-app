@@ -52,6 +52,10 @@ def logout_view(request) -> str:
 
 @api.get("/shared", response=SegmentationResponse)
 async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
+    """
+    Receives a sentence_id, retrieves the stored JSON of a segmented sentence,
+    and returns it so it can immediately populate the client.
+    """
     try:
         db_entry = await SentenceHistory.objects.aget(sentence_id=share_id)
     except ObjectDoesNotExist:
@@ -67,6 +71,10 @@ async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
 
 @api.post("/share", response=str)
 async def share(request, data: SegmentationResponse) -> str:
+    """
+    Receives a full JSON of a segmentation, retrieves or creates it, then returns
+    the corresponding sentence_id to be used by the /shared endpoint.
+    """
     try:
         db_entry, _ = await SentenceHistory.objects.aget_or_create(
             json_data=data.dict()
