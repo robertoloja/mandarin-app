@@ -15,7 +15,7 @@ uvicorn = {extras = ["standard"], version = "*"}
 channels = "*"
 deepl = "*"
 requests = "*"
-psycopg2-binary = "*"
+beautifulsoup4 = "*"
 pyjwt = "*"
 
 [dev-packages]

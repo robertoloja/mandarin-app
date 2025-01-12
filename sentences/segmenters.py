@@ -8,9 +8,10 @@ from dragonmapper import hanzi, transcriptions
 from django.db.models import Q
 
 from mandoBot.settings import BASE_DIR
-from sentences.models import CEDictionary
+from sentences.models import CEDictionary, ConstituentHanzi
 from sentences.translators import DefaultTranslator
 from sentences.functions import is_punctuation
+from sentences.dictionaries import WiktionaryScraper
 
 
 class Segmenter:
@@ -73,6 +74,42 @@ class Segmenter:
             )
 
             if not await db_result.aexists():
+                wikitionary = WiktionaryScraper()
+                wiki_definitions = wikitionary.get_definitions(item["word"])
+
+                if "error" not in wiki_definitions:
+                    for key in wiki_definitions:
+                        new_cedictionary = CEDictionary.objects.create(
+                            traditional=item["word"],
+                            simplified=item["word"],
+                            pronunciation=wiki_definitions[key]["pronunciation"],
+                            definitions=wiki_definitions[key]["definition"],
+                        )
+                        if len(item["word"]) > 1:
+                            split_pronunciation = wiki_definitions[key][
+                                "pronunciation"
+                            ].split(" ")
+                            for i in range(len(item["word"])):
+                                h = CEDictionary.objects.filter(
+                                    traditional=item["word"][i],
+                                    pronunciation=split_pronunciation[i],
+                                )
+                                if not h.exists():
+                                    continue
+
+                                ConstituentHanzi.objects.create(
+                                    word=new_cedictionary, hanzi=h, order=i
+                                )
+                        else:
+                            CEDictionary.objects.create(
+                                traditional=item["word"],
+                                simplified=item["word"],
+                                pronunciation=wiki_definitions[key]["pronunciation"],
+                                definitions=wiki_definitions[key]["definition"],
+                            )
+                else:
+                    pass  # TODO: Try to segment again before machine translating
+
                 item["definitions"] = [DefaultTranslator.translate(item["word"])]
 
                 # TODO: Rewrite this to use CEDictionary.get_hanzi()

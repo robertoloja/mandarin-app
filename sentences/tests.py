@@ -8,6 +8,7 @@ from django.test import TestCase  # noqa: E402
 
 from .models import CEDictionary  # noqa: E402
 from .segmenters import JiebaSegmenter  # noqa: E402
+from .dictionaries import WiktionaryScraper  # noqa: E402
 
 
 class DictionaryTests(TestCase):
@@ -46,3 +47,26 @@ class SegmentationTests(TestCase):
     def test_easy_segmentation(self):
         segments = JiebaSegmenter.segment("我来到北京清华大学")
         self.assertEqual(segments, ["我", "来到", "北京", "清华大学"])
+
+
+class WiktionaryTests(TestCase):
+    def setUp(self):
+        self.dictionary = WiktionaryScraper()
+
+    def test_definitions(self):
+        definitions = self.dictionary.get_definitions("朝政")
+        expected = {
+            1: {
+                "definition": "(literary, historical) running of the imperial court",
+                "pronunciation": "chao2 zheng4",
+            }
+        }
+        self.assertEqual(definitions, expected)
+
+    def test_definition_does_not_exist(self):
+        definitions = self.dictionary.get_definitions("好")
+        expected = {
+            1: {"pronunciation": "hao3", "definition": "good; well"},
+            2: {"pronunciation": "hao3", "definition": "to be fond of; to like"},
+        }
+        self.assertEqual(definitions, expected)
