@@ -26,7 +26,7 @@ import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
-import SettingsButton from './SettingsButton';
+import SettingsButton from './SettingsButtonComponent';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const { colorMode } = useColorMode();

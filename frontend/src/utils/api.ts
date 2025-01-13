@@ -106,4 +106,9 @@ export const MandoBotAPI = {
     store.dispatch(logout());
     return response.data;
   },
+
+  status: async function (): Promise<string> {
+    const response = await api.get('/status');
+    return response.data;
+  },
 };

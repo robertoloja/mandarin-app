@@ -1,7 +1,7 @@
 'use client';
 
 import { Flex } from '@chakra-ui/react';
-import Word from './Word';
+import Word from './WordComponent';
 import { SegmentResponseType } from '@/utils/types';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';

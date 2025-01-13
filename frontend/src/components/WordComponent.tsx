@@ -1,7 +1,7 @@
 'use client';
 
-import Hanzi from './Hanzi';
-import Definition from './Definition';
+import Hanzi from './HanziComponent';
+import Definition from './DefinitionComponent';
 import { ChineseDictionary, MandarinWordType } from '../utils/types';
 import {
   Flex,

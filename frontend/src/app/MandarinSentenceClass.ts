@@ -130,7 +130,7 @@ export class MandarinSentenceClass {
   }
 
   /**
-   * Useful for debouncing redux store updates.
+   * For debouncing redux store updates.
    * @param ms Sleep interval
    */
   private sleep(ms: number): Promise<void> {
@@ -236,5 +236,6 @@ export class MandarinSentenceClass {
     this.shareURL = '';
     store.dispatch(clearMandarinDictionary());
     store.dispatch(clearMandarinSentence());
+    store.dispatch(setShareLink(''));
   }
 }
