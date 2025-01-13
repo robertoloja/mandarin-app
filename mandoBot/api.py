@@ -1,22 +1,23 @@
 import json
 import logging
+import time
 
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
 from ninja import NinjaAPI
-from ninja.security import django_auth
-from ninja.throttling import AnonRateThrottle, AuthRateThrottle
 from dragonmapper import hanzi
 
 from sentences.segmenters import DefaultSegmenter
+
+from status.models import ServerStatus
 from .schemas import SegmentationResponse, UserSchema
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
 api = NinjaAPI()
-# throttle=[AnonRateThrottle("1/s"), AuthRateThrottle("4/s")],
+
 emptyResponse = {
     "translation": "",
     "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
@@ -24,6 +25,16 @@ emptyResponse = {
 }
 
 # TODO: Respond with HTTP status codes
+
+
+@api.get("/status")
+def server_status(request):
+    status = ServerStatus.objects.last()
+    return {
+        "updated_at": status.updated_at,
+        "translation_backend": status.translation_backend,
+        "average_response_time": status.mandobot_response_time,
+    }
 
 
 @api.post("/login")
@@ -89,6 +100,9 @@ async def share(request, data: SegmentationResponse) -> str:
 
 @api.post("/segment", response=SegmentationResponse)
 def segment(request, data: str) -> SegmentationResponse:
+    timer = Timer()
+    timer.start()
+
     MAX_CHARS_FREE = 501
     if request.user.is_authenticated:
         text_to_segment = data
@@ -102,7 +116,24 @@ def segment(request, data: str) -> SegmentationResponse:
         return handle_non_chinese(data)
 
     segmented_data = DefaultSegmenter.segment_and_translate(text_to_segment)
+    timer.stop()
     return segmented_data
+
+
+class Timer:
+    start_time = 0
+
+    def start(self):
+        self.start_time = time.time()
+
+    def stop(self):
+        end_time = time.time()
+
+        server_status = ServerStatus.objects.last()
+        server_status.mandobot_response_time = (
+            (server_status.mandobot_response_time) + (end_time - self.start_time)
+        ) / 2
+        server_status.save()
 
 
 def handle_non_chinese(data: str) -> dict:

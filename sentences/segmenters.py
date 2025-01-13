@@ -246,7 +246,7 @@ class JiebaSegmenter(Segmenter):
         if not JiebaSegmenter.dictionary_initialized:
             dictionary_path = os.path.join(
                 BASE_DIR, "sentences/~cedict_edited_for_jieba.u8"
-            )  # TODO: Rename file
+            )
             jieba.load_userdict(dictionary_path)
             JiebaSegmenter.dictionary_initialized = True
 

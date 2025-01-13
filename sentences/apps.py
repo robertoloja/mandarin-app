@@ -14,3 +14,10 @@ class SentencesConfig(AppConfig):
 
         DefaultTranslator.translate("好的")
         DefaultSegmenter.segment("好安")
+
+        # Reset average response time
+        from status.models import ServerStatus
+
+        server_status, _ = ServerStatus.objects.get_or_create()
+        server_status.mandobot_response_time = 10000
+        server_status.save()

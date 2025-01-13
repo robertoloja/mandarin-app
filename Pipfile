@@ -17,9 +17,9 @@ deepl = "*"
 requests = "*"
 beautifulsoup4 = "*"
 pyjwt = "*"
+argostranslate = "*"
 
 [dev-packages]
-argostranslate = "*"
 pysnooper = "*"
 
 [requires]

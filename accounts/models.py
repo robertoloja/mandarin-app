@@ -4,8 +4,10 @@ from django.db import models
 
 
 class PronunciationPreference(Enum):
-    PINYIN = "pinyin"
+    PINYIN_NUM = "pinyin_num"
+    PINYIN_ACC = "pinyin_acc"
     ZHUYIN = "zhuyin"
+    IPA = "ipa"
 
 
 class MandoBotUser(AbstractUser):
@@ -22,7 +24,7 @@ class MandoBotUser(AbstractUser):
     pronunciation_preference = models.CharField(
         max_length=10,
         choices=PRONUNCIATION,
-        default=PronunciationPreference.PINYIN.value,
+        default=PronunciationPreference.PINYIN_ACC.value,
     )
 
     theme_preference = models.IntegerField(
