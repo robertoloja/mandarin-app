@@ -17,7 +17,7 @@ function MandarinSentence(props: SegmentResponseType) {
       h="100%"
       px={['0', '5%']}
       flexWrap="wrap"
-      mb={['45vh', '20vh']}
+      mb={['45vh', '33vh']}
       overflow="hidden"
     >
       {props.sentence.map((word, index) => (

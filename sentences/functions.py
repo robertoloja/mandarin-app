@@ -1,8 +1,14 @@
 import string
 from django.db.utils import IntegrityError
+from django.db.models import F
 
 from .models import CEDictionary, ConstituentHanzi
 from sentences.cedict_ts import mandarin_dict_unstructured
+
+
+def fix_simplified_equals_traditional():
+    all_equal = CEDictionary.objects.filter(traditional=F("simplified"))
+    pass
 
 
 def is_punctuation(character: str) -> bool:

@@ -6,6 +6,11 @@ from .dictionaries import WiktionaryScraper
 
 
 class DictionaryTests(TestCase):
+    def test_simplified_from_API(self):
+        wiktionary = WiktionaryScraper()
+        wiktionary.get_from_api("個")
+        pass
+
     def test_dictionary_creation(self):
         result = CEDictionary.objects.filter(traditional="不兒道")
 
