@@ -7,3 +7,4 @@ db.sqlite3
 node_modules/
 lcsts_acc_56.86_ppl_10.97_e11.pt
 ca_cert.crt
+snoop.log

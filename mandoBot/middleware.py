@@ -13,7 +13,6 @@ class ValidateAPITokenMiddleware:
 
     def __call__(self, request):
         if not settings.DEBUG:
-            print("foo")
             x_nf_sign = request.headers.get("x-nf-sign")
 
             if not x_nf_sign:
@@ -23,7 +22,6 @@ class ValidateAPITokenMiddleware:
             if not payload:
                 return JsonResponse({"error": "Invalid or expired token"}, status=401)
         return self.get_response(request)
-
 
     def validate_x_nf_sign(self, x_nf_sign):
         try:

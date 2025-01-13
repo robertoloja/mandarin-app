@@ -2,9 +2,10 @@ import os
 from typing import List
 from concurrent.futures import ThreadPoolExecutor
 import requests
+import re
 
 import jieba
-from dragonmapper import hanzi, transcriptions
+from dragonmapper import hanzi
 from django.db.models import Q
 
 from mandoBot.settings import BASE_DIR
@@ -15,10 +16,32 @@ from sentences.dictionaries import WiktionaryScraper
 
 
 class Segmenter:
+    def most_frequent_pronunciation(hanzi5: str) -> CEDictionary:
+        """
+        When a hanzi has a 5th tone and we have to guess which regular tone
+        is most common, this function performs that logic.
+        """
+        hanzi_regular = CEDictionary.objects.filter(
+            Q(traditional=hanzi5) | Q(simplified=hanzi5)
+        )
+
+        if hanzi_regular.count() == 0:
+            # TODO: Find this hanzi using dictionary classes and return it
+            pass
+        if hanzi_regular.count() == 1:
+            return hanzi_regular
+        if hanzi_regular.count() > 1:
+            max_count = 0
+
+            for candidate in hanzi_regular:
+                count = ConstituentHanzi.objects.filter(hanzi=candidate).count()
+                if count > max_count:
+                    max_count = count
+                    most_common = candidate
+        return most_common
+
     def add_pronunciations(segmented_sentence: List[str]) -> List[dict]:
-        # In zhuyin, the individual hanzi are space delimited already,
-        # while in pinyin the whole word is together, so we start with zhuyin.
-        pronunciation = list(map(lambda x: hanzi.to_zhuyin(x), segmented_sentence))
+        pronunciation = [hanzi.to_pinyin(x, accented=False) for x in segmented_sentence]
         response = []
 
         for i in range(len(segmented_sentence)):
@@ -27,12 +50,8 @@ class Segmenter:
             if hanzi.has_chinese(segmented_sentence[i]) and not is_punctuation(
                 segmented_sentence[i]
             ):
-                pinyin = [
-                    # TODO: the next line messes up 而 (r2 instead of er2). See SCRUM-75
-                    transcriptions.zhuyin_to_pinyin(x)
-                    for x in pronunciation[i].split(" ")
-                ]
-                zhuyin = [x for x in pronunciation[i].split(" ")]
+                pinyin = re.findall(r"[a-zA-Z]+(?:\d+)?", pronunciation[i])
+                zhuyin = [hanzi.pinyin_to_zhuyin(x) for x in pinyin]
             else:
                 pinyin = [segmented_sentence[i]]
                 zhuyin = [segmented_sentence[i]]
@@ -47,7 +66,7 @@ class Segmenter:
             ]
         return response
 
-    async def add_definitions_and_create_dictionary(
+    def add_definitions_and_create_dictionary(
         segmented_sentence: List[dict],
     ) -> dict:
         """
@@ -60,127 +79,146 @@ class Segmenter:
             if not hanzi.has_chinese(item["word"]) or is_punctuation(item["word"]):
                 continue
 
-            # In the db, pinyin is stored as numbered syllables, so convert before queries
-            pinyin = " ".join(
-                map(
-                    lambda x: transcriptions.accented_syllable_to_numbered(x),
-                    item["pinyin"],
-                )
-            )
             db_result = CEDictionary.objects.filter(
                 Q(traditional=item["word"]) | Q(simplified=item["word"]),
-                pronunciation__iexact=pinyin,  # "Bei jing" and "bei jing"
+                pronunciation__iexact=" ".join(item["pinyin"]),
                 word_length=len(item["word"]),
             )
 
-            if not await db_result.aexists():
+            if not db_result.exists():
                 wikitionary = WiktionaryScraper()
                 wiki_definitions = wikitionary.get_definitions(item["word"])
 
-                if "error" not in wiki_definitions:
+                if wiki_definitions and "error" not in wiki_definitions:
                     for key in wiki_definitions:
-                        new_cedictionary = CEDictionary.objects.create(
+                        if len(wiki_definitions) == 1:
+                            item["pinyin"] = wiki_definitions[key]["pronunciation"]
+
+                        new_cedictionary = CEDictionary.objects.filter(
                             traditional=item["word"],
                             simplified=item["word"],
-                            pronunciation=wiki_definitions[key]["pronunciation"],
-                            definitions=wiki_definitions[key]["definition"],
+                            pronunciation=" ".join(
+                                wiki_definitions[key]["pronunciation"]
+                            ),
                         )
-                        if len(item["word"]) > 1:
-                            split_pronunciation = wiki_definitions[key][
-                                "pronunciation"
-                            ].split(" ")
-                            for i in range(len(item["word"])):
-                                h = CEDictionary.objects.filter(
-                                    traditional=item["word"][i],
-                                    pronunciation=split_pronunciation[i],
-                                )
-                                if not h.exists():
-                                    continue
 
-                                ConstituentHanzi.objects.create(
-                                    word=new_cedictionary, hanzi=h, order=i
-                                )
-                        else:
-                            CEDictionary.objects.create(
+                        if not new_cedictionary.exists():
+                            new_cedictionary = CEDictionary.objects.create(
                                 traditional=item["word"],
                                 simplified=item["word"],
-                                pronunciation=wiki_definitions[key]["pronunciation"],
-                                definitions=wiki_definitions[key]["definition"],
+                                pronunciation=" ".join(
+                                    wiki_definitions[key]["pronunciation"]
+                                ),
+                                definitions=[wiki_definitions[key]["definition"]],
                             )
-                else:
-                    pass  # TODO: Try to segment again before machine translating
-
-                item["definitions"] = [DefaultTranslator.translate(item["word"])]
-
-                # TODO: Rewrite this to use CEDictionary.get_hanzi()
-                for index, single_hanzi in enumerate(item["word"]):
-                    pinyin = hanzi.accented_to_numbered(item["pinyin"][index])
-
-                    db_hanzi = CEDictionary.objects.filter(
-                        Q(traditional=single_hanzi) | Q(simplified=single_hanzi),
-                        pronunciation__iexact=pinyin,
-                        word_length=1,
-                    )
-
-                    dictionary[single_hanzi] = {
-                        "english": [
-                            definition
-                            async for definition in db_hanzi.values_list(
-                                "definitions", flat=True
-                            )
-                        ],
-                        "pinyin": [
-                            pinyin
-                            async for pinyin in db_hanzi.values_list(
-                                "pronunciation", flat=True
-                            )
-                        ],
-                        "zhuyin": [
-                            hanzi.pinyin_to_zhuyin(zhuyin)
-                            async for zhuyin in db_hanzi.values_list(
-                                "pronunciation", flat=True
-                            )
-                        ],
-                    }
-            else:
-                results = [result async for result in db_result]
-
-                for entry in results:
-                    item["definitions"] += [entry.definitions]
-                    constituent_hanzi = await entry.get_hanzi()
-
-                    if constituent_hanzi:
-                        hanzi_list = [h for h in constituent_hanzi]
-
-                        for single_hanzi in hanzi_list:
-                            if item["word"] == entry.simplified:
-                                the_hanzi = single_hanzi.simplified
-                            else:
-                                the_hanzi = single_hanzi.traditional
-
-                            dictionary[the_hanzi] = {
-                                "english": [single_hanzi.definitions],
-                                "pinyin": [single_hanzi.pronunciation],
-                                "zhuyin": [
-                                    hanzi.pinyin_to_zhuyin(single_hanzi.pronunciation)
-                                ],
-                            }
-                    else:
-                        if item["word"] == entry.simplified:
-                            the_hanzi = entry.simplified
+                        elif new_cedictionary.count() > 1:
+                            new_cedictionary = new_cedictionary.filter(
+                                definitions=" / ".join(
+                                    [wiki_definitions[key]["definition"]]
+                                )
+                            ).first()
                         else:
-                            the_hanzi = entry.traditional
+                            new_cedictionary = new_cedictionary.first()
+                        if len(item["word"]) > 1:
+                            for i in range(len(item["word"])):
+                                wiki_pronunciation = wiki_definitions[key][
+                                    "pronunciation"
+                                ][i]
+                                h = CEDictionary.objects.filter(
+                                    pronunciation=wiki_pronunciation,
+                                    traditional=item["word"][i],
+                                )
+                                if h.count() == 0:
+                                    h = CEDictionary.objects.filter(
+                                        pronunciation__startswith=wiki_pronunciation[
+                                            :-1
+                                        ]
+                                    )
+
+                                if h.count() > 1:
+                                    h = Segmenter.most_frequent_pronunciation(
+                                        item["word"][i]
+                                    )
+                                else:
+                                    h = h.first()
+
+                                ConstituentHanzi.objects.get_or_create(
+                                    word=new_cedictionary, hanzi=h, order=i
+                                )
+
+                    db_result = CEDictionary.objects.filter(
+                        Q(traditional=item["word"]) | Q(simplified=item["word"]),
+                    )
+                else:
+                    # TODO: Try to segment again before machine translating
+                    item["definitions"] = [DefaultTranslator.translate(item["word"])]
+
+                    # TODO: Rewrite this to use CEDictionary.get_hanzi()
+                    for index, single_hanzi in enumerate(item["word"]):
+                        pinyin = item["pinyin"][index]
+
+                        db_hanzi = CEDictionary.objects.filter(
+                            Q(traditional=single_hanzi) | Q(simplified=single_hanzi),
+                            pronunciation__iexact=pinyin,
+                            word_length=1,
+                        )
+
+                        dictionary[single_hanzi] = {
+                            "english": [
+                                definition
+                                for definition in db_hanzi.values_list(
+                                    "definitions", flat=True
+                                )
+                            ],
+                            "pinyin": [pinyin],
+                            "zhuyin": [
+                                hanzi.pinyin_to_zhuyin(zhuyin)
+                                for zhuyin in db_hanzi.values_list(
+                                    "pronunciation", flat=True
+                                )
+                            ],
+                        }
+
+            results = [result for result in db_result]
+
+            for entry in results:
+                item["definitions"] += [entry.definitions]
+                constituent_hanzi = entry.get_hanzi()
+
+                if constituent_hanzi:
+                    hanzi_list = [h for h in constituent_hanzi]
+
+                    for single_hanzi in hanzi_list:
+                        if item["word"] == entry.simplified:
+                            if "個" in item["word"]:
+                                print(entry)
+                            the_hanzi = single_hanzi.simplified
+                        else:
+                            the_hanzi = single_hanzi.traditional
 
                         dictionary[the_hanzi] = {
-                            "english": [entry.definitions],
-                            "pinyin": [entry.pronunciation],
-                            "zhuyin": [hanzi.pinyin_to_zhuyin(entry.pronunciation)],
+                            "english": [single_hanzi.definitions],
+                            "pinyin": [single_hanzi.pronunciation],
+                            "zhuyin": [
+                                hanzi.pinyin_to_zhuyin(single_hanzi.pronunciation)
+                            ],
                         }
+                else:
+                    if item["word"] == entry.simplified:
+                        the_hanzi = entry.simplified
+                    else:
+                        the_hanzi = entry.traditional
+
+                    dictionary[the_hanzi] = {
+                        "english": [entry.definitions],
+                        "pinyin": [entry.pronunciation],
+                        "zhuyin": [hanzi.pinyin_to_zhuyin(entry.pronunciation)],
+                    }
 
         return dictionary
 
     @staticmethod
-    async def segment_and_translate(sentence: str) -> dict:
+    def segment_and_translate(sentence: str) -> dict:
         sentence = sentence.replace("\u3000", "").strip()
 
         with ThreadPoolExecutor() as executor:
@@ -191,7 +229,7 @@ class Segmenter:
             translated = future_translation.result()
 
         segmented = Segmenter.add_pronunciations(segmented)
-        dictionary = await Segmenter.add_definitions_and_create_dictionary(segmented)
+        dictionary = Segmenter.add_definitions_and_create_dictionary(segmented)
 
         return {
             "translation": translated,

@@ -1,6 +1,9 @@
+import re
 import requests
 from bs4 import BeautifulSoup
-from dragonmapper import transcriptions, hanzi
+from dragonmapper import hanzi
+
+from sentences.functions import is_punctuation
 
 
 # TODO: Cleanup this file
@@ -49,12 +52,14 @@ class WiktionaryScraper:
 
                 pronunciation = (
                     header.find_next("a", string="Mandarin")
-                    .find_next("a", string="Zhuyin")
+                    .find_next("a", string="Pinyin")
                     .find_next("span")
                     .text
                 )
-                accented = transcriptions.zhuyin_to_pinyin(pronunciation)
-                numbered = hanzi.accented_to_numbered(accented)
+                accented = pronunciation
+                numbered = re.findall(
+                    r"[a-zA-Z]+(?:\d+)?", hanzi.accented_to_numbered(accented)
+                )
 
                 results[num] = {"pronunciation": numbered}
 
@@ -80,18 +85,30 @@ class WiktionaryScraper:
 
                 num = num + 1
 
+        mandarin_pronunciation = header.find_next("a", string="Mandarin")
+
+        if not mandarin_pronunciation:
+            return
+
         pronunciation = (
-            header.find_next("a", string="Mandarin")
-            .find_next("a", string="Zhuyin")
+            mandarin_pronunciation.find_next("a", string="Pinyin")
             .find_next("span")
             .text
         )
-        accented = transcriptions.zhuyin_to_pinyin(pronunciation)
-        numbered = hanzi.accented_to_numbered(accented)
+
+        if "," in pronunciation:
+            pronunciation = pronunciation.split(", ")[0]
+
+        accented = pronunciation
+        numbered = re.findall(
+            r"[a-zA-Z]+(?:\d+)?", hanzi.accented_to_numbered(accented)
+        )
 
         results[1] = {"pronunciation": numbered}
 
-        definitions_header = pronunciation_header.find_next("h4", string="Definitions")
+        definitions_header = mandarin_pronunciation.find_next(
+            "h4", string="Definitions"
+        )
 
         if not definitions_header:
             definitions_header = pronunciation_header.find_next(

@@ -19,7 +19,6 @@ function Word(props: {
   word: MandarinWordType;
   pronunciation: string[];
   definitions: string[];
-  dictionary: ChineseDictionary;
 }) {
   // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation =

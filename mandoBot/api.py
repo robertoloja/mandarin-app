@@ -88,7 +88,7 @@ async def share(request, data: SegmentationResponse) -> str:
 
 
 @api.post("/segment", response=SegmentationResponse)
-async def segment(request, data: str) -> SegmentationResponse:
+def segment(request, data: str) -> SegmentationResponse:
     MAX_CHARS_FREE = 501
     if request.user.is_authenticated:
         text_to_segment = data
@@ -101,7 +101,7 @@ async def segment(request, data: str) -> SegmentationResponse:
     if not hanzi.has_chinese(data):
         return handle_non_chinese(data)
 
-    segmented_data = await DefaultSegmenter.segment_and_translate(text_to_segment)
+    segmented_data = DefaultSegmenter.segment_and_translate(text_to_segment)
     return segmented_data
 
 
