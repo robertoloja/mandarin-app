@@ -7,7 +7,9 @@ from sentences.cedict_ts import mandarin_dict_unstructured
 
 
 def fix_simplified_equals_traditional():
-    all_equal = CEDictionary.objects.filter(traditional=F("simplified"))
+    distinct_hanzi = CEDictionary.objects.exclude(
+        traditional=F("simplified"), word_length=1
+    )
     pass
 
 
