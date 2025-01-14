@@ -138,7 +138,11 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               </HStack>
             </Link>
 
-            <Link href="https://forms.gle/j89uiVM2xv3CeK7HA">
+            <Link
+              href="https://forms.gle/j89uiVM2xv3CeK7HA"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <HStack>
                 <IoBugOutline size="22" />
                 <Text

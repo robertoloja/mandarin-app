@@ -61,7 +61,16 @@ export default function ServerStatusComponent() {
   return (
     <Box justifyContent="center">
       <HStack justifyContent="center">
-        <Heading size="md" textAlign="center" mb={1}>
+        <Heading
+          size="md"
+          textAlign="center"
+          mb={1}
+          textShadow={
+            colorMode === 'light'
+              ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+              : '1px 1px 1px #222'
+          }
+        >
           Server Status
         </Heading>
         <ServerStatusPopover serverStatus={serverStatus} />
@@ -97,10 +106,18 @@ export default function ServerStatusComponent() {
             backgroundColor={colorMode === 'light' ? '#85E2FF' : '#495255'}
           >
             <VStack>
-              <Heading size="sm" whiteSpace="nowrap">
+              <Heading
+                size="sm"
+                whiteSpace="nowrap"
+                textShadow={
+                  colorMode === 'light'
+                    ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+                    : '1px 1px 1px #222'
+                }
+              >
                 Average First Response Time
               </Heading>
-              <Text fontSize="lg">{responseTime / 1000} seconds</Text>
+              <Text fontSize="lg">{responseTime} seconds</Text>
               <Text fontSize="sm" whiteSpace="nowrap">
                 Last Update: {localDateTime}
               </Text>
@@ -119,7 +136,15 @@ export default function ServerStatusComponent() {
           >
             <VStack mb={3} mx={2}>
               <HStack>
-                <Heading size="sm" whiteSpace="nowrap">
+                <Heading
+                  size="sm"
+                  whiteSpace="nowrap"
+                  textShadow={
+                    colorMode === 'light'
+                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+                      : '1px 1px 1px #222'
+                  }
+                >
                   Current Translation Backend
                 </Heading>
                 {serverStatus && translationBackend == 'argos' && (

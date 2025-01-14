@@ -7,6 +7,7 @@ import {
   Flex,
   Heading,
   HStack,
+  Link,
   ListItem,
   OrderedList,
   Text,
@@ -45,8 +46,18 @@ export default function AboutPage() {
 const ProjectSupportCard = () => {
   const { colorMode } = useColorMode();
   return (
-    <Box>
-      <Heading size="md" textAlign="center" mb={4} whiteSpace="nowrap">
+    <Box id="support">
+      <Heading
+        size="md"
+        textAlign="center"
+        mb={4}
+        whiteSpace="nowrap"
+        textShadow={
+          colorMode === 'light'
+            ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+            : '1px 1px 1px #222'
+        }
+      >
         Support This Project
       </Heading>
 
@@ -72,7 +83,16 @@ const ProjectSupportCard = () => {
         <Center>
           <VStack>
             <HStack>
-              <Heading size="sm">$5 / month</Heading>
+              <Heading
+                textShadow={
+                  colorMode === 'light'
+                    ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+                    : '1px 1px 1px #222'
+                }
+                size="sm"
+              >
+                $5 / month
+              </Heading>
             </HStack>
             <Box
               p={3}
@@ -87,7 +107,13 @@ const ProjectSupportCard = () => {
               }
             >
               <OrderedList p={4}>
-                <ListItem>
+                <ListItem
+                  textShadow={
+                    colorMode === 'light'
+                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+                      : '1px 1px 1px #222'
+                  }
+                >
                   <b>Increased Segmentation Limit</b>
                 </ListItem>
                 <UnorderedList mb={3}>
@@ -98,7 +124,13 @@ const ProjectSupportCard = () => {
                   <ListItem>Free users are limited to 200 characters</ListItem>
                 </UnorderedList>
 
-                <ListItem>
+                <ListItem
+                  textShadow={
+                    colorMode === 'light'
+                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+                      : '1px 1px 1px #222'
+                  }
+                >
                   <b>Always the best available translation</b>
                 </ListItem>
                 <UnorderedList mb={3}>
@@ -112,7 +144,13 @@ const ProjectSupportCard = () => {
                   </ListItem>
                 </UnorderedList>
 
-                <ListItem>
+                <ListItem
+                  textShadow={
+                    colorMode === 'light'
+                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
+                      : '1px 1px 1px #222'
+                  }
+                >
                   <b>
                     Advance Access to Reading Room and Prioritized Suggestions
                   </b>
@@ -134,8 +172,19 @@ const ProjectSupportCard = () => {
           MandoBot is built and maintained by a single developer on a shoestring
           budget. While every optimization is used to maintain good performance,
           free hosting can only go so far. If you experience any issues at all,
-          please <u>contact me</u>, or <u>fill out a bug report</u>, and it will
-          be addressed as soon as possible.
+          please{' '}
+          <Link href="mailto:robertoloja+mandobot@gmail.com">
+            <u>contact me</u>
+          </Link>
+          , or{' '}
+          <Link
+            href="https://forms.gle/j89uiVM2xv3CeK7HA"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <u>fill out a bug report</u>
+          </Link>
+          , and it will be addressed as soon as possible.
         </Text>
       </Box>
     </Box>

@@ -20,6 +20,7 @@ const API_BASE_URL =
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
+  timeout: 20000,
 });
 
 const errorHandler = (error: {
@@ -28,6 +29,12 @@ const errorHandler = (error: {
   code: string;
 }) => {
   const statusCode = error.response?.status;
+  if (error.code === 'ECONNABORTED') {
+    setError(
+      'Connection timeout. The server might be under heavy load. Please try again soon.',
+    );
+  }
+
   if (statusCode === 403) {
     store.dispatch(
       setError('Authentication error: CSRF token validation failed.'),
