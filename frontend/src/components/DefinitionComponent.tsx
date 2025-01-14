@@ -63,11 +63,6 @@ function Definition(props: {
                 {/* The individual hanzi information */}
                 {props.word.split('').map((hanzi: string, hanziIndex) => (
                   <HStack key={hanziIndex}>
-                    <>
-                      {dictionary[hanzi] === undefined
-                        ? console.log(hanzi)
-                        : null}
-                    </>
                     <Hanzi
                       hanzi={hanzi}
                       pronunciation={

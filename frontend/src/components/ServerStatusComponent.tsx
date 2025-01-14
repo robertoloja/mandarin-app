@@ -50,7 +50,7 @@ export default function ServerStatusComponent() {
         setBackend(response.translation_backend);
         setServerStatus(true);
       })
-      .catch((error) => {
+      .catch(() => {
         setServerStatus(false);
         store.dispatch(
           setError('Server currently unreachable. Please try again soon.'),
@@ -190,10 +190,10 @@ const InformationPopover = () => {
           <Text mb={3}>
             While Argos Translate is a very good open-source project, it can
             sometimes make egregious mistakes when translating Mandarin (such as
-            rendering "京" as "Kyoto").
+            rendering &quot;京&quot; as &quot;Kyoto&quot;).
           </Text>
           <Text>
-            Users at the "Project Backer" level always have access to{' '}
+            Users at the Project Backer level always have access to{' '}
             <Link href="https://www.deepl.com">
               <u>DeepL</u>
             </Link>

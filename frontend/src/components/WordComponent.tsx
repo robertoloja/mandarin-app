@@ -2,7 +2,7 @@
 
 import Hanzi from './HanziComponent';
 import Definition from './DefinitionComponent';
-import { ChineseDictionary, MandarinWordType } from '../utils/types';
+import { MandarinWordType } from '../utils/types';
 import {
   Flex,
   Text,

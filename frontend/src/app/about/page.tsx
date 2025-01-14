@@ -4,13 +4,11 @@ import ServerStatusComponent from '@/components/ServerStatusComponent';
 import {
   Box,
   Center,
-  ColorModeContextType,
   Flex,
   Heading,
   HStack,
   ListItem,
   OrderedList,
-  Spacer,
   Text,
   UnorderedList,
   useColorMode,
@@ -18,7 +16,6 @@ import {
 } from '@chakra-ui/react';
 
 export default function AboutPage() {
-  const { colorMode } = useColorMode();
   return (
     <Box
       display="flex"
@@ -110,7 +107,8 @@ const ProjectSupportCard = () => {
                     best-in-class translation system
                   </ListItem>
                   <ListItem>
-                    Free users' translations are performed by Argos Translate
+                    Free users&apos; translations are performed by Argos
+                    Translate
                   </ListItem>
                 </UnorderedList>
 
