@@ -79,7 +79,7 @@ export default function TextInput(props: {
               <Text>
                 Unregistered users are limited to {MAX_LENGTH_FREE} characters
                 per usage.{' '}
-                <Link href="/about">
+                <Link href="/about#support">
                   <u>More info.</u>
                 </Link>
               </Text>

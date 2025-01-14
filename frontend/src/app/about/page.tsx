@@ -46,7 +46,7 @@ export default function AboutPage() {
 const ProjectSupportCard = () => {
   const { colorMode } = useColorMode();
   return (
-    <Box>
+    <Box id="support">
       <Heading
         size="md"
         textAlign="center"
@@ -173,7 +173,7 @@ const ProjectSupportCard = () => {
           budget. While every optimization is used to maintain good performance,
           free hosting can only go so far. If you experience any issues at all,
           please{' '}
-          <Link href="mailto: robertoloja@gmail.com">
+          <Link href="mailto:robertoloja+mandobot@gmail.com">
             <u>contact me</u>
           </Link>
           , or{' '}
