@@ -54,7 +54,7 @@ export default function ShareButton(props: {
       <PopoverTrigger>
         <IconButton
           aria-label="Share segmentation"
-          isDisabled={shareLink == ''}
+          isDisabled={props.shareLink ? false : shareLink == ''}
           isLoading={percentLoaded < 100}
           icon={<IoShareSocialOutline size={props.iconSize + 2} />}
           bg={
@@ -66,7 +66,7 @@ export default function ShareButton(props: {
           }
         />
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
         <PopoverArrow />
         <PopoverHeader>
           <Center>Share Segmented Sentence</Center>

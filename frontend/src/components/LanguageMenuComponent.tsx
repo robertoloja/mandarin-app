@@ -35,7 +35,7 @@ export default function LanguageMenu(props: { iconSize: number }) {
           mr={1}
         />
       </PopoverTrigger>
-      <PopoverContent width="auto">
+      <PopoverContent width="auto" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
         <PopoverArrow />
         {/* <PopoverCloseButton /> */}
         <PopoverHeader>

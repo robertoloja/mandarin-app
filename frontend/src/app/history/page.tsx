@@ -160,7 +160,9 @@ export default function HistoryPage() {
             </Card>
           ))
         ) : (
-          <Text>No history found</Text>
+          <Center>
+            <Text>No history found</Text>
+          </Center>
         )}
       </Flex>
     </Box>

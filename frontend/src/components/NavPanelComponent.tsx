@@ -133,7 +133,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  About
+                  Status / About
                 </Text>
               </HStack>
             </Link>
