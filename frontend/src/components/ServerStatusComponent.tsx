@@ -117,7 +117,7 @@ export default function ServerStatusComponent() {
               >
                 Average First Response Time
               </Heading>
-              <Text fontSize="lg">{responseTime / 1000} seconds</Text>
+              <Text fontSize="lg">{responseTime} seconds</Text>
               <Text fontSize="sm" whiteSpace="nowrap">
                 Last Update: {localDateTime}
               </Text>
