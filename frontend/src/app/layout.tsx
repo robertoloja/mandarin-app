@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider } from '@chakra-ui/react';
-import TopNav from '@/components/TopNav';
+import TopNav from '@/components/TopNavComponent';
 import BackToTop from '@/components/BackToTopComponent';
 
 export default function RootLayout({

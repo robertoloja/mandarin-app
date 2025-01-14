@@ -80,7 +80,6 @@ function Translation(props: { text: string }) {
       shadow="md"
       bg={colorMode === 'light' ? 'white' : '#282828'}
       zIndex={1}
-      onTouchStart={handleStartResize}
     >
       <Box
         width={['100%', '75%']}

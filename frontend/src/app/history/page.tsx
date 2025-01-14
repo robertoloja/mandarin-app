@@ -22,7 +22,7 @@ import { IoTrashOutline } from 'react-icons/io5';
 import { MandarinSentenceType } from '@/utils/types';
 import { useRouter } from 'next/navigation';
 import { MandarinSentenceClass } from '../MandarinSentenceClass';
-import ShareButton from '@/components/ShareButton';
+import ShareButton from '@/components/ShareButtonComponent';
 
 export default function HistoryPage() {
   const router = useRouter();
@@ -156,15 +156,13 @@ export default function HistoryPage() {
                   shareLink={historyItem.shareURL}
                   defaultStyles={true}
                 />
-                {/* <IconButton
-                  aria-label="Get share link"
-                  icon={<IoShareSocialOutline />}
-                /> */}
               </CardFooter>
             </Card>
           ))
         ) : (
-          <Text>No history found</Text>
+          <Center>
+            <Text>No history found</Text>
+          </Center>
         )}
       </Flex>
     </Box>

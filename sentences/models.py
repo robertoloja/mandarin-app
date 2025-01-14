@@ -84,14 +84,13 @@ class CEDictionary(models.Model):
         symmetrical=False,
     )
 
-    async def get_hanzi(self):
+    def get_hanzi(self):
         """
         Returns an ordered QuerySet of the CEDictionary objects corresponding
         the hanzi in the CEDictionary object being manipulated.
         """
         return [
-            constituent.hanzi
-            async for constituent in self.word_hanzi.select_related("hanzi")
+            constituent.hanzi for constituent in self.word_hanzi.select_related("hanzi")
         ]
 
     class Meta:
@@ -105,7 +104,8 @@ class CEDictionary(models.Model):
 
     def save(self, **kwargs):
         self.word_length = len(self.traditional)
-        self.definitions = " / ".join(self.definitions)
+        if type(self.definitions is list):
+            self.definitions = " / ".join(self.definitions)
         super().save()
 
     def __str__(self):

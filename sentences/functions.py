@@ -1,7 +1,16 @@
 import string
 from django.db.utils import IntegrityError
+from django.db.models import F
 
 from .models import CEDictionary, ConstituentHanzi
+from sentences.cedict_ts import mandarin_dict_unstructured
+
+
+def fix_simplified_equals_traditional():
+    distinct_hanzi = CEDictionary.objects.exclude(
+        traditional=F("simplified"), word_length=1
+    )
+    pass
 
 
 def is_punctuation(character: str) -> bool:
@@ -18,6 +27,8 @@ def create_dictionary_single_hanzi(lines: str):
         traditional, simplified, rest = fields[0], fields[1], fields[2:]
         pronunciation = " ".join(rest).split("]")[0][1:]
         definitions = " ".join(rest).split("/")[1:-1]
+        traditional = "".join([x for x in traditional if not is_punctuation(x)])
+        simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
         if (
             len(traditional) == 1
@@ -35,11 +46,14 @@ def create_dictionary_single_hanzi(lines: str):
             print(traditional)
 
 
+def call(n):
+    create_dictionary_n_hanzi(mandarin_dict_unstructured, n)
+
+
 def create_dictionary_n_hanzi(lines: str, length: int):
     split = lines.split("\n")
-    longest_length = 0
     for done, line in enumerate(split):
-        print(longest_length)
+        print(len(split) - done)
         if line == "":
             continue
 
@@ -47,9 +61,9 @@ def create_dictionary_n_hanzi(lines: str, length: int):
         traditional, simplified, rest = fields[0], fields[1], fields[2:]
         pronunciation = " ".join(rest).split("]")[0][1:]
         definitions = " ".join(rest).split("/")[1:-1]
+        traditional = "".join([x for x in traditional if not is_punctuation(x)])
+        simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
-        if len(traditional) > longest_length:
-            longest_length = len(traditional)
         print(done)
 
         if len(traditional) == length and len(simplified) == length:
@@ -75,7 +89,9 @@ def create_dictionary_n_hanzi(lines: str, length: int):
             else:
                 word = word.first()
 
-            constituent_pinyin = pronunciation.split(" ")
+            constituent_pinyin = [
+                x for x in pronunciation.split(" ") if not is_punctuation(x)
+            ]
             constituent_traditional = [h for h in traditional]
             constituent_simplified = [h for h in simplified]
 
@@ -84,22 +100,21 @@ def create_dictionary_n_hanzi(lines: str, length: int):
                     continue
 
                 if i > len(constituent_pinyin) - 1:
-                    continue
-                    # choice = None
+                    choice = None
 
-                    # while True:
-                    #     print(
-                    #         f"\nList index out of range: {i}, {constituent_pinyin}, {constituent_traditional}, word: {word}"
-                    #     )
-                    #     choice = input("Insert? If not, skip: [y/N] ")
+                    while True:
+                        print(
+                            f"\nList index out of range: {i}, {constituent_pinyin}, {constituent_traditional}, word: {word}"
+                        )
+                        choice = input("Insert? If not, skip: [y/N] ")
 
-                    #     if choice in ["y", "Y", "n", "N"]:
-                    #         break
-                    #     else:
-                    #         print("Invalid choice")
+                        if choice in ["y", "Y", "n", "N"]:
+                            break
+                        else:
+                            print("Invalid choice")
 
-                    # if choice != "y":
-                    #     continue
+                    if choice != "y":
+                        continue
 
                 pinyin = constituent_pinyin[i]
                 trad = constituent_traditional[i]
@@ -108,9 +123,11 @@ def create_dictionary_n_hanzi(lines: str, length: int):
                 hanzi = try_to_find(trad, simp, pinyin, definitions, word, i)
 
                 if not hanzi:
+                    print("Trad: ", trad, "\nPinyin: ", pinyin)
                     hanzi = try_to_find(trad, simp, pinyin[:-1], definitions, word, i)
 
                     if not hanzi:
+
                         hanzi = try_to_find(trad, simp, "", definitions, word, i)
 
                         if not hanzi:

@@ -15,11 +15,12 @@ uvicorn = {extras = ["standard"], version = "*"}
 channels = "*"
 deepl = "*"
 requests = "*"
-psycopg2-binary = "*"
+beautifulsoup4 = "*"
 pyjwt = "*"
+argostranslate = "*"
 
 [dev-packages]
-argostranslate = "*"
+pysnooper = "*"
 
 [requires]
 python_version = "3.12"

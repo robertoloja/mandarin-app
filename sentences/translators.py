@@ -1,44 +1,85 @@
-from django.conf import settings
-if settings.DEBUG:
-    import argostranslate.package
-    import argostranslate.translate
-    from dragonmapper import hanzi
-import deepl
 import os
+from django.conf import settings
 
-translator = deepl.Translator(os.getenv('DEEPL_API_KEY'))
+import argostranslate.package
+import argostranslate.translate
+from dragonmapper import hanzi
+import deepl
+
+from status.models import ServerStatus
+
+
+class TranslatorManager:
+    # Ping the DeepL api to see about usage quotas before each translation. If the quota is exceeded,
+    # switch to Azure. If THAT quota is exceeded, thank god: this is a great problem to have.
+    pass
+
+
+translator = deepl.Translator(os.getenv("DEEPL_API_KEY"))
+
+
 class DeepLTranslate:
     @staticmethod
     def translate(sentence: str) -> str:
-        return translator.translate_text(sentence, source_lang='ZH', target_lang='EN-US').text
+        usage = translator.get_usage()
 
-if settings.DEBUG:
-    # Download and install Argos Translate package. Only runs on server bootup. 
-    english_code = "en"
-    traditional_mandarin_code = "zt"
-    simplified_mandarin_code = "zh"
+        status = ServerStatus.objects.last()
+        status.translation_backend = "deepl"
+        status.deepl_character_limit = 500000
+        status.deepl_character_count = usage.character.count
+        status.save()
 
-    argostranslate.package.update_package_index()
-    available_packages = argostranslate.package.get_available_packages()
-    traditional_mandarin = next(filter(lambda x: x.from_code == traditional_mandarin_code and
-                                            x.to_code == english_code, available_packages))
+        if (
+            status.difference < len(sentence)
+            or usage.any_limit_reached
+            or usage.any_limit_exceeded
+        ):
+            return ArgosTranslate.translate(sentence)
 
-    simplified_mandarin = next(filter(lambda x: x.from_code == simplified_mandarin_code and
-                                            x.to_code == english_code, available_packages))
+        return translator.translate_text(
+            sentence, source_lang="ZH", target_lang="EN-US"
+        ).text
 
-    argostranslate.package.install_from_path(traditional_mandarin.download())
-    argostranslate.package.install_from_path(simplified_mandarin.download())
 
-    class ArgosTranslate:
-        @staticmethod
-        def translate(sentence: str) -> str:
-            from_code = simplified_mandarin_code
+# Download and install Argos Translate package. Only runs on server bootup.
+english_code = "en"
+traditional_mandarin_code = "zt"
+simplified_mandarin_code = "zh"
 
-            if hanzi.is_traditional(sentence):
-                from_code = traditional_mandarin_code
+argostranslate.package.update_package_index()
+available_packages = argostranslate.package.get_available_packages()
+traditional_mandarin = next(
+    filter(
+        lambda x: x.from_code == traditional_mandarin_code
+        and x.to_code == english_code,
+        available_packages,
+    )
+)
 
-            return argostranslate.translate.translate(sentence, 
-                                                    from_code, 
-                                                    english_code)
+simplified_mandarin = next(
+    filter(
+        lambda x: x.from_code == simplified_mandarin_code and x.to_code == english_code,
+        available_packages,
+    )
+)
 
-DefaultTranslator = ArgosTranslate if settings.DEBUG else DeepLTranslate
+argostranslate.package.install_from_path(traditional_mandarin.download())
+argostranslate.package.install_from_path(simplified_mandarin.download())
+
+
+class ArgosTranslate:
+    @staticmethod
+    def translate(sentence: str) -> str:
+        status = ServerStatus.objects.last()
+        status.translation_backend = "argos"
+        status.save()
+
+        from_code = simplified_mandarin_code
+
+        if hanzi.is_traditional(sentence):
+            from_code = traditional_mandarin_code
+
+        return argostranslate.translate.translate(sentence, from_code, english_code)
+
+
+DefaultTranslator = ArgosTranslate

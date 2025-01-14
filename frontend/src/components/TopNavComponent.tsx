@@ -9,20 +9,12 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 
-import {
-  IoMoon,
-  IoSunny,
-  IoMenuOutline,
-  IoHomeOutline,
-  // IoOptionsOutline,
-  // IoText,
-  // IoBrushOutline,
-} from 'react-icons/io5';
+import { IoMoon, IoSunny, IoMenuOutline, IoHomeOutline } from 'react-icons/io5';
 
-import NavPanel from './NavPanel';
-import ShareButton from './ShareButton';
-import LanguageMenu from './LanguageMenu';
-import ErrorButton from './ErrorButton';
+import NavPanel from './NavPanelComponent';
+import ShareButton from './ShareButtonComponent';
+import LanguageMenu from './LanguageMenuComponent';
+import ErrorButton from './ErrorButtonComponent';
 import Link from 'next/link';
 
 function TopNav() {
@@ -63,6 +55,7 @@ function TopNav() {
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
           ml="0.2rem"
           mt={0.5}
+          mb={0.5}
         />
 
         <Link href="/" prefetch={true}>
@@ -72,19 +65,6 @@ function TopNav() {
             bg={colorMode === 'light' ? 'white' : 'gray.800'}
           />
         </Link>
-
-        {/*<IconButton
-          aria-label="Text size"
-          icon={<IoText />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        />
-
-
-        <IconButton
-          aria-label="Language options"
-          icon={<IoBrushOutline />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-        /> */}
       </HStack>
 
       <HStack justifyContent="right" w="100%">

@@ -1,8 +1,8 @@
 'use client';
 
-import Hanzi from './Hanzi';
-import Definition from './Definition';
-import { ChineseDictionary, MandarinWordType } from '../utils/types';
+import Hanzi from './HanziComponent';
+import Definition from './DefinitionComponent';
+import { MandarinWordType } from '../utils/types';
 import {
   Flex,
   Text,
@@ -19,7 +19,6 @@ function Word(props: {
   word: MandarinWordType;
   pronunciation: string[];
   definitions: string[];
-  dictionary: ChineseDictionary;
 }) {
   // TODO: Account for compound words (e.g. 軍事將領)
   const punctuation =

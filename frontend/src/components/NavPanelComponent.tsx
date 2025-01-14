@@ -20,12 +20,13 @@ import {
   IoLogOutOutline,
   IoLibraryOutline,
   IoInformationCircleOutline,
+  IoBugOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
-import SettingsButton from './SettingsButton';
+import SettingsButton from './SettingsButtonComponent';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const { colorMode } = useColorMode();
@@ -132,7 +133,21 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  About
+                  Status / About
+                </Text>
+              </HStack>
+            </Link>
+
+            <Link href="https://forms.gle/j89uiVM2xv3CeK7HA">
+              <HStack>
+                <IoBugOutline size="22" />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  Report a Bug
                 </Text>
               </HStack>
             </Link>

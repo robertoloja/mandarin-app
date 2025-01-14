@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     "channels",
     "sentences",
     "accounts",
+    "status",
 ]
 
 MIDDLEWARE = [
