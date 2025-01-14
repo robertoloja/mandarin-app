@@ -27,6 +27,10 @@ import {
 } from 'react-icons/io5';
 
 export default function AboutPage() {
+  return <ServerStatusComponent />;
+}
+
+const ServerStatusComponent = () => {
   const { colorMode } = useColorMode();
   const [localDateTime, setLastUpdate] = useState('-');
   const [translationBackend, setBackend] = useState('-');
@@ -124,7 +128,7 @@ export default function AboutPage() {
       </Box>
     </Box>
   );
-}
+};
 
 const ServerStatusPopover = (props: { serverStatus: boolean }) => {
   return (
