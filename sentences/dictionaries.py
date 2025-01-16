@@ -68,7 +68,7 @@ class WiktionaryScraper:
                     .find_next("span")
                     .text
                 )
-                accented = pronunciation
+                accented = re.sub(r"\(.*?\)", "", pronunciation).strip()
                 numbered = re.findall(
                     r"[a-zA-Z]+(?:\d+)?", hanzi.accented_to_numbered(accented)
                 )
@@ -111,7 +111,7 @@ class WiktionaryScraper:
         if "," in pronunciation:
             pronunciation = pronunciation.split(", ")[0]
 
-        accented = pronunciation
+        accented = re.sub(r"\(.*?\)", "", pronunciation).strip()
         numbered = re.findall(
             r"[a-zA-Z]+(?:\d+)?", hanzi.accented_to_numbered(accented)
         )
