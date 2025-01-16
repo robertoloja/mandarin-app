@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, TypedDict
 from concurrent.futures import ThreadPoolExecutor
 import requests
 import re
@@ -13,6 +13,23 @@ from sentences.models import CEDictionary, ConstituentHanzi
 from sentences.translators import DefaultTranslator
 from sentences.functions import is_punctuation
 from sentences.dictionaries import WiktionaryScraper
+
+
+class SentenceSegment(TypedDict):
+    word: str
+    piyin: List[str]
+    zhuyin: List[str]
+    definitions: List[str]
+
+
+class WordProperty(TypedDict):
+    english: List[str]
+    pinyin: List[str]
+    zhuyin: List[str]
+
+
+class MandarinDictionary(TypedDict):
+    word: WordProperty
 
 
 class Segmenter:
@@ -40,9 +57,9 @@ class Segmenter:
                     most_common = candidate
         return most_common
 
-    def add_pronunciations(segmented_sentence: List[str]) -> List[dict]:
+    def add_pronunciations(segmented_sentence: List[str]) -> List[SentenceSegment]:
         pronunciation = [hanzi.to_pinyin(x, accented=False) for x in segmented_sentence]
-        response = []
+        response: List[SentenceSegment] = []
 
         for i in range(len(segmented_sentence)):
             pinyin = ""
@@ -66,17 +83,77 @@ class Segmenter:
             ]
         return response
 
-    def add_definitions_and_create_dictionary(
-        segmented_sentence: List[dict],
-    ) -> dict:
+    def try_to_concat(
+        segmented_sentence: List[SentenceSegment], index: int
+    ) -> List[SentenceSegment] | None:
         """
-        Modifies 'segmented_sentence' to include word definitions, and returns
-        a dictionary with definitions for each hanzi in the sentence.
+        Try to concatenate the current word with the next, including if there is a
+        comma between them. This is specifically meant to catch 成語, which are
+        stored in the database with a comma between their two parts.
+        """
+        if (
+            "，" in segmented_sentence[index]
+            or "," in segmented_sentence[index]
+            or len(segmented_sentence[index]) > 8
+        ):
+            # Prevent looping
+            return
+
+        if segmented_sentence[index + 1]["word"] in [",", "，"]:
+            compounded_word = "".join(
+                segmented_sentence[index]["word"]
+                + ","
+                + segmented_sentence[index + 2]["word"]
+            )
+
+            db_word = CEDictionary.objects.filter(
+                Q(traditional=compounded_word) | Q(simplified=compounded_word)
+            )
+
+            if db_word.exists() and db_word.count() == 1:
+                pinyin: List[str] = (
+                    segmented_sentence[index]["pinyin"]
+                    + segmented_sentence[index + 1]["pinyin"]
+                    + segmented_sentence[index + 2]["pinyin"]
+                )
+
+                zhuyin: List[str] = (
+                    segmented_sentence[index]["zhuyin"]
+                    + segmented_sentence[index + 1]["zhuyin"]
+                    + segmented_sentence[index + 2]["zhuyin"]
+                )
+
+                new_sentence_slice = {
+                    "word": compounded_word,
+                    "pinyin": pinyin,
+                    "zhuyin": zhuyin,
+                    "definitions": [],  # since definitions haven't been added yet
+                }
+
+                new_sentence = (
+                    segmented_sentence[:index]
+                    + [new_sentence_slice]
+                    + segmented_sentence[index + 3 :]
+                )
+                return new_sentence
+
+        return
+
+    def add_definitions_and_create_dictionary(
+        segmented_sentence: List[SentenceSegment],
+    ) -> tuple[List[SentenceSegment], MandarinDictionary]:
+        """
+        Modifies 'segmented_sentence' and returns a tuple containing
+        the sentence and adictionary with definitions for each hanzi
+        in the sentence.
+
+        :param segmented_sentence: The list of SentenceSegments being worked on.
+        :return: A tuple containing the sentence, and the mandarin dictionary.
         """
         dictionary = {}
 
-        for item in segmented_sentence:
-            if not hanzi.has_chinese(item["word"]) or is_punctuation(item["word"]):
+        for index, item in enumerate(segmented_sentence):
+            if is_punctuation(item["word"]) or not hanzi.has_chinese(item["word"]):
                 continue
 
             db_result = CEDictionary.objects.filter(
@@ -86,6 +163,12 @@ class Segmenter:
             )
 
             if not db_result.exists():
+                concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
+                if concat_attempt:
+                    return Segmenter.add_definitions_and_create_dictionary(
+                        concat_attempt
+                    )
+
                 wikitionary = WiktionaryScraper()
                 wiki_definitions = wikitionary.get_definitions(item["word"])
 
@@ -111,14 +194,17 @@ class Segmenter:
                                 ),
                                 definitions=[wiki_definitions[key]["definition"]],
                             )
+
                         elif new_cedictionary.count() > 1:
                             new_cedictionary = new_cedictionary.filter(
                                 definitions=" / ".join(
                                     [wiki_definitions[key]["definition"]]
                                 )
                             ).first()
+
                         else:
                             new_cedictionary = new_cedictionary.first()
+
                         if len(item["word"]) > 1:
                             for i in range(len(item["word"])):
                                 wiki_pronunciation = wiki_definitions[key][
@@ -133,7 +219,7 @@ class Segmenter:
                                         pronunciation__startswith=wiki_pronunciation[
                                             :-1
                                         ]
-                                    )
+                                    ).first()
 
                                 if h.count() > 1:
                                     h = Segmenter.most_frequent_pronunciation(
@@ -189,12 +275,10 @@ class Segmenter:
                     hanzi_list = [h for h in constituent_hanzi]
 
                     for single_hanzi in hanzi_list:
-                        if item["word"] == entry.simplified:
-                            if "個" in item["word"]:
-                                print(entry)
-                            the_hanzi = single_hanzi.simplified
-                        else:
+                        if item["word"] == entry.traditional:
                             the_hanzi = single_hanzi.traditional
+                        else:
+                            the_hanzi = single_hanzi.simplified
 
                         dictionary[the_hanzi] = {
                             "english": [single_hanzi.definitions],
@@ -204,10 +288,10 @@ class Segmenter:
                             ],
                         }
                 else:
-                    if item["word"] == entry.simplified:
-                        the_hanzi = entry.simplified
-                    else:
+                    if item["word"] == entry.traditional:
                         the_hanzi = entry.traditional
+                    else:
+                        the_hanzi = entry.simplified
 
                     dictionary[the_hanzi] = {
                         "english": [entry.definitions],
@@ -215,7 +299,7 @@ class Segmenter:
                         "zhuyin": [hanzi.pinyin_to_zhuyin(entry.pronunciation)],
                     }
 
-        return dictionary
+        return (segmented_sentence, dictionary)
 
     @staticmethod
     def segment_and_translate(sentence: str) -> dict:
@@ -251,7 +335,8 @@ class JiebaSegmenter(Segmenter):
             JiebaSegmenter.dictionary_initialized = True
 
         segments = jieba.cut(sentence, cut_all=False)
-        clean_segments = filter(lambda x: x != " ", segments)
+        clean_segments: filter[str] = filter(lambda x: x != " ", segments)
+
         return list(clean_segments)
 
 

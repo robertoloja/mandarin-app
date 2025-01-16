@@ -2,6 +2,9 @@
 
 import React, { useState, useRef } from 'react';
 import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
+import { useSelector } from 'react-redux';
+import { RootState, store } from '@/utils/store/store';
+import { setTranslationPanelHeight } from '@/utils/store/mandarinSentenceSlice';
 
 function Translation(props: { text: string }) {
   const { colorMode } = useColorMode();
@@ -9,12 +12,14 @@ function Translation(props: { text: string }) {
     'linear-gradient(to bottom, rgba(255, 255, 255, 1) 10%, rgba(0, 0, 0, 0) 100%);';
   const darkGradientBgString = `linear-gradient(to bottom, rgba(40, 40, 40, 1) 10%, rgba(0, 0, 0, 0) 100%);`;
 
-  const initialHeight = 300;
   const minHeight = 20;
   const maxHeight = 300;
 
-  const [height, setHeight] = useState(initialHeight);
-  const tempHeightRef = useRef(initialHeight);
+  const height = useSelector(
+    (state: RootState) => state.sentence.translationPanelHeight,
+  );
+
+  const tempHeightRef = useRef(height);
   const isResizingRef = useRef(false);
 
   const handleStartResize = (event: React.MouseEvent | React.TouchEvent) => {
@@ -46,7 +51,7 @@ function Translation(props: { text: string }) {
 
     const handleEnd = () => {
       isResizingRef.current = false;
-      setHeight(tempHeightRef.current);
+      store.dispatch(setTranslationPanelHeight(tempHeightRef.current));
       document.removeEventListener('mousemove', handleMove);
       document.removeEventListener('mouseup', handleEnd);
       document.removeEventListener('touchmove', handleMove);

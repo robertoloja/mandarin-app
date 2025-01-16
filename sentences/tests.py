@@ -1,7 +1,8 @@
+from typing import List
 from django.test import TestCase
 
 from .models import CEDictionary
-from .segmenters import JiebaSegmenter, Segmenter
+from .segmenters import JiebaSegmenter, Segmenter, SentenceSegment
 from .dictionaries import WiktionaryScraper
 
 
@@ -24,6 +25,30 @@ class DictionaryTests(TestCase):
 
 
 class SegmentationTests(TestCase):
+    def test_chengyu(self):
+        chengyu = [
+            {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["1"], "definitions": []},
+            {"word": "，", "pinyin": ["2"], "zhuyin": ["2"], "definitions": []},
+            {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["3"], "definitions": []},
+        ]
+
+        expected: List[SentenceSegment] = [
+            {
+                "word": "分久必合,合久必分",
+                "pinyin": ["1", "2", "3"],
+                "zhuyin": ["1", "2", "3"],
+                "definitions": [],
+            },
+        ]
+
+        concatenated_chengyu = JiebaSegmenter.try_to_concat(chengyu, 0)
+        self.assertEqual(expected, concatenated_chengyu)
+
+    def test_dictionary_contains_traditional_when_word_is_traditional(self):
+        sentence = "話說天下大勢分久必合，合久必分。周末，七國分爭，並入于秦。及，秦滅之後，楚、漢分爭，又並入於漢。漢朝自高祖斬白蛇而起義一統天下。後來，光武中興。傳至獻帝，遂分為三國。推其致亂之由，殆始於桓、靈二帝。"
+        segmented = JiebaSegmenter.segment_and_translate(sentence)
+        pass
+
     def test_choose_most_common_hanzi(self):
         test_hanzi = "上"
         answer = Segmenter.most_frequent_pronunciation(test_hanzi)

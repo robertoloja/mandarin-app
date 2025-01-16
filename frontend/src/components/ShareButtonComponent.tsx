@@ -32,6 +32,7 @@ export default function ShareButton(props: {
 
   const copiedToast = useToast();
   const id = 'toast';
+
   const copyShareLink = () => {
     navigator.clipboard.writeText(
       isBrowser()

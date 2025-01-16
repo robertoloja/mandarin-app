@@ -21,6 +21,7 @@ argostranslate = "*"
 
 [dev-packages]
 pysnooper = "*"
+bpython = "*"
 
 [requires]
 python_version = "3.12"

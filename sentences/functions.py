@@ -1,9 +1,42 @@
 import string
 from django.db.utils import IntegrityError
-from django.db.models import F
+from django.db.models import F, Q
 
 from .models import CEDictionary, ConstituentHanzi
 from sentences.cedict_ts import mandarin_dict_unstructured
+
+
+def fix_commas():
+    query = (
+        CEDictionary.objects.filter(
+            Q(pronunciation__contains=",") | Q(pronunciation__contains="，")
+        )
+        .exclude(traditional__contains=",")
+        .exclude(traditional__contains="，")
+    )
+    for index, word in enumerate(query):
+        for i in range(len(word.pronunciation.split(" "))):
+            if (
+                "," == word.pronunciation.split(" ")[i]
+                or "，" == word.pronunciation.split(" ")[i]
+            ) and "," not in word.traditional:
+                print(word)
+                word.traditional = (
+                    word.traditional[:i]
+                    + word.pronunciation.split(" ")[i]
+                    + word.traditional[i:]
+                )
+                word.simplified = (
+                    word.simplified[:i]
+                    + word.pronunciation.split(" ")[i]
+                    + word.simplified[i:]
+                )
+                print(word)
+                print(f"{index} of {query.count()}")
+                choice = input("continue?")
+                if choice == "n":
+                    continue
+                word.save()
 
 
 def fix_simplified_equals_traditional():

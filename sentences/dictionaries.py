@@ -1,4 +1,5 @@
 import re
+from typing import Dict, TypedDict
 import requests
 from bs4 import BeautifulSoup
 from dragonmapper import hanzi
@@ -6,12 +7,23 @@ from dragonmapper import hanzi
 from sentences.functions import is_punctuation
 
 
+class WiktionaryDefinition(TypedDict):
+    pronunciation: str
+    definition: str
+
+
+class WiktionaryError(TypedDict):
+    error: str
+
+
 # TODO: Cleanup this file
 class WiktionaryScraper:
     BASE_URL = "https://en.wiktionary.org/wiki/"
     LANGUAGE_NAME = "Chinese"
 
-    def get_definitions(self, word):
+    def get_definitions(
+        self, word: str
+    ) -> Dict[int, WiktionaryDefinition] | WiktionaryError:
         """
         Scrape definitions for a given word from Wiktionary.
         :param word: The word to look up.
@@ -27,13 +39,13 @@ class WiktionaryScraper:
 
         soup = BeautifulSoup(response.content, "html.parser")
 
-        results = {}
+        results: dict[int, WiktionaryDefinition] = {}
 
         headers = soup.find_all("h2")
         chinese_headers = [x for x in headers if self.LANGUAGE_NAME in x]
 
         if len(chinese_headers) == 0:
-            return "error"
+            return {"error": "Couldn't find chinese pronunciations"}
 
         # Find pronunciation
         header = chinese_headers[0]
@@ -73,7 +85,7 @@ class WiktionaryScraper:
                     )  # "Noun" or "Verb" or wtv
 
                 if not definitions_header:
-                    return  # Didn't find it, return nothing
+                    return {"error": "Couldn't find definitions header"}
 
                 primary_definition = (
                     definitions_header.find_next("ol")
@@ -88,7 +100,7 @@ class WiktionaryScraper:
         mandarin_pronunciation = header.find_next("a", string="Mandarin")
 
         if not mandarin_pronunciation:
-            return
+            return {"error": "Couldn't find mandarin pronunciation"}
 
         pronunciation = (
             mandarin_pronunciation.find_next("a", string="Pinyin")
@@ -116,7 +128,7 @@ class WiktionaryScraper:
             )  # "Noun" or "Verb" or wtv
 
         if not definitions_header:
-            return  # Didn't find it, return nothing
+            return {"error": "Couldn't find definitions header"}
 
         primary_definition = (
             definitions_header.find_next("ol").find_next("li").text.split("\n")[0]

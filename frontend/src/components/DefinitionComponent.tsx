@@ -63,17 +63,26 @@ function Definition(props: {
                 {/* The individual hanzi information */}
                 {props.word.split('').map((hanzi: string, hanziIndex) => (
                   <HStack key={hanziIndex}>
-                    <Hanzi
-                      hanzi={hanzi}
-                      pronunciation={
-                        pronunciationSetting == 'pinyin'
-                          ? Pinyin(
-                              dictionary[hanzi].pinyin[0],
-                            ) /* COULD CAUSE BUGS */
-                          : dictionary[hanzi].zhuyin[0]
-                      }
-                    />
-                    <Text>{dictionary[hanzi].english}</Text>
+                    {!dictionary[hanzi] ? (
+                      <>
+                        {console.log(`Missing ${hanzi} in dictionary`)}
+                        {console.log(props.word)}
+                      </>
+                    ) : (
+                      <>
+                        <Hanzi
+                          hanzi={hanzi}
+                          pronunciation={
+                            pronunciationSetting == 'pinyin'
+                              ? Pinyin(
+                                  dictionary[hanzi].pinyin[0],
+                                ) /* COULD CAUSE BUGS */
+                              : dictionary[hanzi].zhuyin[0]
+                          }
+                        />
+                        <Text>{dictionary[hanzi].english}</Text>{' '}
+                      </>
+                    )}
                   </HStack>
                 ))}
               </VStack>

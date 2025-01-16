@@ -103,7 +103,7 @@ def segment(request, data: str) -> SegmentationResponse:
     timer = Timer()
     timer.start()
 
-    MAX_CHARS_FREE = 501
+    MAX_CHARS_FREE = 200
     if request.user.is_authenticated:
         text_to_segment = data
     else:

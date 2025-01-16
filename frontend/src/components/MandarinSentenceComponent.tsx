@@ -10,6 +10,9 @@ function MandarinSentence(props: SegmentResponseType) {
   const pronunciation = useSelector(
     (state: RootState) => state.settings.pronunciation,
   );
+  const height = useSelector(
+    (state: RootState) => state.sentence.translationPanelHeight,
+  );
   return (
     <Flex
       align="stretch"
@@ -17,7 +20,7 @@ function MandarinSentence(props: SegmentResponseType) {
       h="100%"
       px={['0', '5%']}
       flexWrap="wrap"
-      mb={['45vh', '33vh']}
+      mb={`${height}px`}
       overflow="hidden"
     >
       {props.sentence.map((word, index) => (
