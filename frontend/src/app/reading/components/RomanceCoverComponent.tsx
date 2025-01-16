@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Heading, VStack } from '@chakra-ui/react';
-import { Cinzel, Yuji_Mai } from '@next/font/google';
+import { Cinzel, Yuji_Mai } from "next/font/google";
 
 const cinzel = Cinzel({
   weight: ['400'],
