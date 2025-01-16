@@ -104,8 +104,6 @@ class CEDictionary(models.Model):
 
     def save(self, **kwargs):
         self.word_length = len(self.traditional)
-        if type(self.definitions is list):
-            self.definitions = " / ".join(self.definitions)
         super().save()
 
     def __str__(self):
