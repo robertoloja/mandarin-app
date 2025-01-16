@@ -92,7 +92,8 @@ class Segmenter:
         stored in the database with a comma between their two parts.
         """
         if (
-            "，" in segmented_sentence[index]
+            len(segmented_sentence) < 3
+            or "，" in segmented_sentence[index]
             or "," in segmented_sentence[index]
             or len(segmented_sentence[index]) > 8
         ):
@@ -113,7 +114,7 @@ class Segmenter:
             if db_word.exists() and db_word.count() == 1:
                 pinyin: List[str] = (
                     segmented_sentence[index]["pinyin"]
-                    + segmented_sentence[index + 1]["pinyin"]
+                    + [","]
                     + segmented_sentence[index + 2]["pinyin"]
                 )
 
