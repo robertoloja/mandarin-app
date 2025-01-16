@@ -136,7 +136,6 @@ class Segmenter:
                     + segmented_sentence[index + 3 :]
                 )
                 return new_sentence
-
         return
 
     def add_definitions_and_create_dictionary(
@@ -144,7 +143,7 @@ class Segmenter:
     ) -> tuple[List[SentenceSegment], MandarinDictionary]:
         """
         Modifies 'segmented_sentence' and returns a tuple containing
-        the sentence and adictionary with definitions for each hanzi
+        the sentence and a dictionary with definitions for each hanzi
         in the sentence.
 
         :param segmented_sentence: The list of SentenceSegments being worked on.
@@ -313,7 +312,9 @@ class Segmenter:
             translated = future_translation.result()
 
         segmented = Segmenter.add_pronunciations(segmented)
-        dictionary = Segmenter.add_definitions_and_create_dictionary(segmented)
+        segmented, dictionary = Segmenter.add_definitions_and_create_dictionary(
+            segmented
+        )
 
         return {
             "translation": translated,
