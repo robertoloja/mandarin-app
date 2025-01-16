@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
+import {
+  Center,
+  Box,
+  Text,
+  useColorMode,
+  Select,
+  HStack,
+  VStack,
+} from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { RootState, store } from '@/utils/store/store';
 import { setTranslationPanelHeight } from '@/utils/store/mandarinSentenceSlice';
@@ -115,12 +123,44 @@ function Translation(props: { text: string }) {
       </Box>
 
       <Center>
-        <Text my={6} textAlign="justify" px={5}>
-          {props.text}
-        </Text>
+        <VStack>
+          <Text my={6} textAlign="justify" px={5}>
+            {props.text}
+          </Text>
+          <TranslatorSelector />
+        </VStack>
       </Center>
     </Box>
   );
 }
 
 export default Translation;
+
+const TranslatorSelector = () => {
+  return (
+    <>
+      <Box
+        backdropFilter="blur(0.2rem)"
+        position="fixed"
+        bottom="0"
+        width={['50%', '20%']}
+        h="1.8rem"
+        zIndex={1}
+      ></Box>
+      <Select
+        width={['50%', '20%']}
+        placeholder="Select translator"
+        size="sm"
+        position="fixed"
+        bottom="0"
+        zIndex={2}
+        borderRadius={6}
+      >
+        <option value="argos">Argos Translate</option>
+        <option value="DeepL" disabled>
+          DeepL - Requires subscription
+        </option>
+      </Select>
+    </>
+  );
+};
