@@ -1,8 +1,9 @@
 import os
-from django.conf import settings
+import time
 
 import argostranslate.package
 import argostranslate.translate
+from django.db import OperationalError
 from dragonmapper import hanzi
 import deepl
 
@@ -19,15 +20,21 @@ translator = deepl.Translator(os.getenv("DEEPL_API_KEY"))
 
 
 class DeepLTranslate:
+    async def updateStatus(usage, status: ServerStatus):
+        for _ in range(5):  # retry write 5 times
+            try:
+                status.translation_backend = "deepl"
+                status.deepl_character_limit = 500000
+                status.deepl_character_count = usage.character.count
+                status.save()
+            except OperationalError:
+                time.sleep(1)
+
     @staticmethod
     def translate(sentence: str) -> str:
         usage = translator.get_usage()
-
         status = ServerStatus.objects.last()
-        status.translation_backend = "deepl"
-        status.deepl_character_limit = 500000
-        status.deepl_character_count = usage.character.count
-        status.save()
+        DeepLTranslate.updateStatus(usage, status)
 
         if (
             status.difference < len(sentence)
@@ -68,12 +75,18 @@ argostranslate.package.install_from_path(simplified_mandarin.download())
 
 
 class ArgosTranslate:
+    async def update_server_status(status: ServerStatus):
+        for _ in range(5):  # retry write 5 times
+            try:
+                status.translation_backend = "argos"
+                status.save()
+            except OperationalError:
+                time.sleep(1)
+
     @staticmethod
     def translate(sentence: str) -> str:
         status = ServerStatus.objects.last()
-        status.translation_backend = "argos"
-        status.save()
-
+        ArgosTranslate.update_server_status(status)
         from_code = simplified_mandarin_code
 
         if hanzi.is_traditional(sentence):
