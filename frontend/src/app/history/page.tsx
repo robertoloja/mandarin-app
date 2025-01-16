@@ -82,6 +82,7 @@ export default function HistoryPage() {
         flexWrap="wrap"
         mb={['45vh', '20vh']}
         overflow="hidden"
+        justifyContent="center"
       >
         {fullHistory.length > 0 ? (
           fullHistory.map((historyItem, index) => (
@@ -99,6 +100,7 @@ export default function HistoryPage() {
               borderRadius="8"
               boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
               key={index}
+              w="20rem"
             >
               <Container onClick={() => viewSentence(historyItem)}>
                 <CardHeader mt="2rem" cursor="pointer">
@@ -111,7 +113,7 @@ export default function HistoryPage() {
                   <VStack divider={<StackDivider />}>
                     <Text
                       noOfLines={2}
-                      maxWidth="10rem"
+                      maxWidth="20rem"
                       minWidth="5rem"
                       fontSize="sm"
                       height="2.6rem"
@@ -125,7 +127,7 @@ export default function HistoryPage() {
                     </Text>
                     <Text
                       noOfLines={2}
-                      maxWidth="10rem"
+                      maxWidth="20rem"
                       minWidth="5rem"
                       fontSize="sm"
                       height="2.6rem"
