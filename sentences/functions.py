@@ -59,7 +59,7 @@ def create_dictionary_single_hanzi(lines: str):
         fields = line.split()
         traditional, simplified, rest = fields[0], fields[1], fields[2:]
         pronunciation = " ".join(rest).split("]")[0][1:]
-        definitions = " ".join(rest).split("/")[1:-1]
+        definitions = " / ".join(" ".join(rest[1:]).split("/")[1:-1])
         traditional = "".join([x for x in traditional if not is_punctuation(x)])
         simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
@@ -86,20 +86,19 @@ def call(n):
 def create_dictionary_n_hanzi(lines: str, length: int):
     split = lines.split("\n")
     for done, line in enumerate(split):
-        print(len(split) - done)
         if line == "":
             continue
 
         fields = line.split()
         traditional, simplified, rest = fields[0], fields[1], fields[2:]
         pronunciation = " ".join(rest).split("]")[0][1:]
-        definitions = " ".join(rest).split("/")[1:-1]
+        definitions = " / ".join(" ".join(rest[1:]).split("/")[1:-1])
         traditional = "".join([x for x in traditional if not is_punctuation(x)])
         simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
-        print(done)
-
         if len(traditional) == length and len(simplified) == length:
+            print(len(split) - done)
+            print(done)
             word = CEDictionary.objects.filter(
                 traditional=traditional,
                 simplified=simplified,
