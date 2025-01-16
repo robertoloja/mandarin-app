@@ -73,26 +73,6 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                 </Text>
               </HStack>
             </Link>
-
-            <Link
-              href="/history"
-              passHref
-              onClick={props.onClose}
-              prefetch={true}
-            >
-              <HStack>
-                <IoFolderOpenOutline size="22" />
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  Sentence History
-                </Text>
-              </HStack>
-            </Link>
-
             <Link
               href="/reading"
               passHref
@@ -111,6 +91,24 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                   }
                 >
                   Reading Room
+                </Text>
+              </HStack>
+            </Link>
+            <Link
+              href="/history"
+              passHref
+              onClick={props.onClose}
+              prefetch={true}
+            >
+              <HStack>
+                <IoFolderOpenOutline size="22" />
+                <Text
+                  _hover={{ textDecoration: 'underline' }}
+                  textShadow={
+                    colorMode === 'light' ? lightTextShadow : darkTextShadow
+                  }
+                >
+                  Sentence History
                 </Text>
               </HStack>
             </Link>
