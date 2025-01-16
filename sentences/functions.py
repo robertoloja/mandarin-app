@@ -47,7 +47,7 @@ def fix_simplified_equals_traditional():
 
 
 def is_punctuation(character: str) -> bool:
-    punctuation = "，。！？：；、“”‘’（）《》【】〔〕……—～· \u3000"
+    punctuation = ",，。！？：；、“”‘’（）《》【】〔〕……—～·\u3000"
     return character in punctuation or character in string.punctuation
 
 
