@@ -33,3 +33,23 @@ class SegmentationResponse(Schema):
     translation: str
     sentence: List[MandarinWordSchema]
     dictionary: Dict[str, ChineseDictionary]
+
+
+class KofiDataSchema(Schema):
+    verification_token: str
+    message_id: str
+    timestamp: str  # actually a datetime?
+    type: str  # "Donation" or "Subscription"
+    is_public: bool
+    from_name: str
+    message: str
+    amount: str  # money amount
+    url: str
+    email: str  # actually an email
+    currency: str  # should be "USD"
+    is_subscription_payment: bool
+    is_first_subscription_payment: bool
+    kofi_transaction_id: str
+    shop_items: None | str
+    tier_name: None | str
+    shipping: None | str

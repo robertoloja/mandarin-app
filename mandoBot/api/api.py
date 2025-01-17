@@ -11,7 +11,12 @@ from dragonmapper import hanzi
 
 from sentences.segmenters import Segmenter
 from status.models import ServerStatus
-from ..schemas import SegmentationResponse, ServerStatusSchema, UserSchema
+from ..schemas import (
+    KofiDataSchema,
+    SegmentationResponse,
+    ServerStatusSchema,
+    UserSchema,
+)
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
@@ -156,7 +161,7 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
 
 
 @api.post("/kofi")
-def receive_kofi_webhook(request, data):
+def receive_kofi_webhook(request, data: KofiDataSchema) -> str:
     """
     This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
