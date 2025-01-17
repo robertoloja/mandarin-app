@@ -157,5 +157,9 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
 
 @api.post("/kofi")
 def receive_kofi_webhook(request, data):
+    """
+    This endpoint is for Ko-Fi's webhook when an account event happens.
+    It is exempt from ValidateAPITokenMiddleware.
+    """
     print(data)
-    return 200
+    return 200, {"message": "That worked!"}
