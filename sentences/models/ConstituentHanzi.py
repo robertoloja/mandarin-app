@@ -1,5 +1,5 @@
 from django.db import models
-from .CEDictionary import CEDictionary
+from . import CEDictionary
 
 
 class ConstituentHanzi(models.Model):

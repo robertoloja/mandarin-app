@@ -1,6 +1,13 @@
 from typing import List, Dict
 from ninja import Schema, ModelSchema
 from accounts.models import MandoBotUser
+from status.models import ServerStatus
+
+
+class ServerStatusSchema(ModelSchema):
+    class Meta:
+        model = ServerStatus
+        fields = ["updated_at", "translation_backend", "mandobot_response_time"]
 
 
 class UserSchema(ModelSchema):

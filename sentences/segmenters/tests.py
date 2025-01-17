@@ -1,9 +1,9 @@
 from typing import List
 from django.test import TestCase
 
-from ..segmenters import JiebaSegmenter, Segmenter
-from ..segmenters.types import SentenceSegment
-from models import CEDictionary
+from . import JiebaSegmenter, Segmenter
+from .types import SentenceSegment
+from ..models import CEDictionary
 
 
 class SegmentationTests(TestCase):
@@ -23,12 +23,12 @@ class SegmentationTests(TestCase):
             },
         ]
 
-        concatenated_chengyu = JiebaSegmenter.try_to_concat(chengyu, 0)
+        concatenated_chengyu = Segmenter.try_to_concat(chengyu, 0)
         self.assertEqual(expected, concatenated_chengyu)
 
     def test_concatenated_chengyu_is_found(self):
         chengyu_phrase = "分久必合，合久必分"
-        segmented = JiebaSegmenter.segment_and_translate(chengyu_phrase)
+        segmented = Segmenter.segment_and_translate(chengyu_phrase)
         self.assertEqual(segmented["translation"], "foo")
 
     def test_choose_most_common_hanzi(self):
@@ -45,7 +45,7 @@ class SegmentationTests(TestCase):
         self.assertEqual(segments, ["我", "来到", "北京", "清华大学"])
 
     def test_problematic_segmentation(self):
-        foo = JiebaSegmenter.add_definitions_and_create_dictionary(
+        foo = Segmenter.add_definitions_and_create_dictionary(
             [
                 {
                     "word": "少帝",

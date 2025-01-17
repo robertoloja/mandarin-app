@@ -1,5 +1,5 @@
 from django.test import TestCase
-import CEDictionary
+from . import CEDictionary
 
 
 class DictionaryTests(TestCase):

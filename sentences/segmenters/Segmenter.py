@@ -9,8 +9,8 @@ from sentences.models.CEDictionary import CEDictionary
 from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
 from .types import SegmentedResult, SentenceSegment, MandarinDictionary
-from ..translators.Translator import Translator
-from ..segmenters.JiebaSegmenter import JiebaSegmenter
+from ..translators import Translator
+from ..segmenters import JiebaSegmenter
 
 
 class Segmenter:
