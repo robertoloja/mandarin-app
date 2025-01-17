@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from datetime import datetime
 
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,9 +13,11 @@ from dragonmapper import hanzi
 from sentences.segmenters import Segmenter
 from status.models import ServerStatus
 from ..schemas import (
+    APILoginError,
     SegmentationResponse,
     ServerStatusSchema,
     UserSchema,
+    UserPreferencesSchema,
 )
 from sentences.models import SentenceHistory
 
@@ -98,18 +101,24 @@ def server_status(request):
     return status
 
 
-@api.post("/login")
-def login_endpoint(request, payload: UserSchema) -> str:
+@api.post(
+    "/login",
+    response={200: UserPreferencesSchema, 401: APILoginError, 403: APILoginError},
+)
+def login_endpoint(request, payload: Form[UserSchema]) -> str:
     user = authenticate(username=payload.username, password=payload.password)
 
     if user is not None:
-        login(request, user)
         User = get_user_model()
         user_object = User.objects.get(username=user.username)
-        response = JsonResponse(
-            {"user": user_object.username, "email": user_object.email}
-        )
-        return response
+
+        if user_object.subscription_is_active():
+            login(request, user)
+            response = {"username": user_object.username, "email": user_object.email}
+
+            return response
+        else:
+            return 403, {"error": "Subscription has expired"}
     else:
         return 401, {"error": "Invalid credentials"}
 
@@ -120,6 +129,22 @@ def logout_endpoint(request) -> str:
     response = JsonResponse({"message": "Logged out successfully"})
     response.delete_cookie("csrftoken", path="/", domain=None)
     return response
+
+
+@api.post("/register")
+def register(request):
+    # TODO
+    return "foo"
+
+
+@api.get("/user_settings", response=UserPreferencesSchema)
+def user_settings(request):
+    if request.user.is_authenticated:
+        User = get_user_model()
+        user = User.objects.get(username=request.user.username)
+        return user
+    else:
+        return "booo"
 
 
 @api.get("/shared", response=SegmentationResponse)
@@ -165,5 +190,30 @@ def receive_kofi_webhook(request, data: Form[str]) -> str:
     This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
     """
-    print(json.loads(data))
+
+    """
+    1 - Find the User by e-mail.
+    2 - Update last_payment date.
+    3 - Ensure status is active
+    4 - If first subscription, send registration e-mail TODO
+    """
+    json_data = json.loads(data)
+
+    user_email = json_data["email"]
+    timestamp = json_data["timestamp"]
+    first_subscription = json_data["is_first_subscription_payment"]
+
+    dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+    payment_date = dt.date()
+
+    if first_subscription:
+        # TODO: Send registration e-mail
+        return 200, {"message": "Send registration e-mail"}
+
+    else:
+        User = get_user_model()
+        user = User.objects.get(email=user_email)
+        user.last_payment = payment_date
+        user.save()
+
     return 200, {"message": "That worked!"}
