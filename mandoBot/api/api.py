@@ -1,7 +1,6 @@
 import json
 import logging
 import time
-import urllib.parse
 
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
