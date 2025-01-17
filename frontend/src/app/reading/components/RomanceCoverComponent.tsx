@@ -1,13 +1,15 @@
 'use client';
 
 import { Box, Heading, VStack } from '@chakra-ui/react';
-import { Cinzel, Yuji_Mai } from "next/font/google";
+import { Cinzel, Yuji_Mai } from 'next/font/google';
 
 const cinzel = Cinzel({
+  subsets: ['latin'],
   weight: ['400'],
 });
 
 const yujiMai = Yuji_Mai({
+  subsets: ['latin'],
   weight: ['400'],
 });
 
