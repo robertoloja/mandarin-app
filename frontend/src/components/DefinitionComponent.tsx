@@ -65,8 +65,8 @@ function Definition(props: {
                   <HStack key={hanziIndex}>
                     {!dictionary[hanzi] ? (
                       <>
-                        {console.log(`Missing ${hanzi} in dictionary`)}
-                        {console.log(props.word)}
+                        {/* {console.log(`Missing ${hanzi} in dictionary`)}
+                        {console.log(props.word)} */}
                       </>
                     ) : (
                       <>

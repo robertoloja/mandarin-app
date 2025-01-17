@@ -1,15 +1,7 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import {
-  Center,
-  Box,
-  Text,
-  useColorMode,
-  Select,
-  HStack,
-  VStack,
-} from '@chakra-ui/react';
+import React, { useRef } from 'react';
+import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { RootState, store } from '@/utils/store/store';
 import { setTranslationPanelHeight } from '@/utils/store/mandarinSentenceSlice';
