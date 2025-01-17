@@ -1,38 +1,42 @@
-import os
-from typing import List, TypedDict
-from concurrent.futures import ThreadPoolExecutor
-import requests
 import re
-
-import jieba
-from dragonmapper import hanzi
+from concurrent.futures import ThreadPoolExecutor
+from typing import List
 from django.db.models import Q
+from dragonmapper import hanzi as hanzi_utils
 
-from mandoBot.settings import BASE_DIR
-from sentences.models import CEDictionary, ConstituentHanzi
-from sentences.translators import DefaultTranslator
+from sentences.dictionaries.WiktionaryScraper import WiktionaryScraper
+from sentences.models.CEDictionary import CEDictionary
+from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
-from sentences.dictionaries import WiktionaryScraper
-
-
-class SentenceSegment(TypedDict):
-    word: str
-    piyin: List[str]
-    zhuyin: List[str]
-    definitions: List[str]
-
-
-class WordProperty(TypedDict):
-    english: List[str]
-    pinyin: List[str]
-    zhuyin: List[str]
-
-
-class MandarinDictionary(TypedDict):
-    word: WordProperty
+from .types import SegmentedResult, SentenceSegment, MandarinDictionary
+from ..translators.Translator import Translator
+from ..segmenters.JiebaSegmenter import JiebaSegmenter
 
 
 class Segmenter:
+    @staticmethod
+    def segment_and_translate(sentence: str) -> SegmentedResult:
+        sentence = sentence.replace("\u3000", "").strip()
+
+        with ThreadPoolExecutor() as executor:
+            future_segmented = executor.submit(JiebaSegmenter.segment, sentence)
+            future_translation = executor.submit(Translator.translate, sentence)
+
+            segmented = future_segmented.result()
+            translated = future_translation.result()
+
+        segmented_list: List[SentenceSegment] = Segmenter.add_pronunciations(segmented)
+        segmented_sentence, dictionary = (
+            Segmenter.add_definitions_and_create_dictionary(segmented_list)
+        )
+        result: SegmentedResult = {
+            "translation": translated,
+            "sentence": segmented_sentence,
+            "dictionary": dictionary,
+        }
+
+        return result
+
     def most_frequent_pronunciation(hanzi5: str) -> CEDictionary:
         """
         When a hanzi has a 5th tone and we have to guess which regular tone
@@ -58,17 +62,19 @@ class Segmenter:
         return most_common
 
     def add_pronunciations(segmented_sentence: List[str]) -> List[SentenceSegment]:
-        pronunciation = [hanzi.to_pinyin(x, accented=False) for x in segmented_sentence]
+        pronunciation = [
+            hanzi_utils.to_pinyin(x, accented=False) for x in segmented_sentence
+        ]
         response: List[SentenceSegment] = []
 
         for i in range(len(segmented_sentence)):
             pinyin = ""
 
-            if hanzi.has_chinese(segmented_sentence[i]) and not is_punctuation(
+            if hanzi_utils.has_chinese(segmented_sentence[i]) and not is_punctuation(
                 segmented_sentence[i]
             ):
                 pinyin = re.findall(r"[a-zA-Z]+(?:\d+)?", pronunciation[i])
-                zhuyin = [hanzi.pinyin_to_zhuyin(x) for x in pinyin]
+                zhuyin = [hanzi_utils.pinyin_to_zhuyin(x) for x in pinyin]
             else:
                 pinyin = [segmented_sentence[i]]
                 zhuyin = [segmented_sentence[i]]
@@ -92,7 +98,7 @@ class Segmenter:
         stored in the database with a comma between their two parts.
         """
         if (
-            len(segmented_sentence) < 3
+            len(segmented_sentence[index:]) < 3
             or "，" in segmented_sentence[index]
             or "," in segmented_sentence[index]
             or len(segmented_sentence[index]) > 8
@@ -103,7 +109,6 @@ class Segmenter:
         if segmented_sentence[index + 1]["word"] in [",", "，"]:
             compounded_word = "".join(
                 segmented_sentence[index]["word"]
-                + ","
                 + segmented_sentence[index + 2]["word"]
             )
 
@@ -153,7 +158,9 @@ class Segmenter:
         dictionary = {}
 
         for index, item in enumerate(segmented_sentence):
-            if is_punctuation(item["word"]) or not hanzi.has_chinese(item["word"]):
+            if is_punctuation(item["word"]) or not hanzi_utils.has_chinese(
+                item["word"]
+            ):
                 continue
 
             db_result = CEDictionary.objects.filter(
@@ -237,7 +244,7 @@ class Segmenter:
                     )
                 else:
                     # TODO: Try to segment again before machine translating
-                    item["definitions"] = [DefaultTranslator.translate(item["word"])]
+                    item["definitions"] = [Translator.translate(item["word"])]
 
                     # TODO: Rewrite this to use CEDictionary.get_hanzi()
                     for index, single_hanzi in enumerate(item["word"]):
@@ -258,7 +265,7 @@ class Segmenter:
                             ],
                             "pinyin": [pinyin],
                             "zhuyin": [
-                                hanzi.pinyin_to_zhuyin(zhuyin)
+                                hanzi_utils.pinyin_to_zhuyin(zhuyin)
                                 for zhuyin in db_hanzi.values_list(
                                     "pronunciation", flat=True
                                 )
@@ -284,7 +291,7 @@ class Segmenter:
                             "english": [single_hanzi.definitions],
                             "pinyin": [single_hanzi.pronunciation],
                             "zhuyin": [
-                                hanzi.pinyin_to_zhuyin(single_hanzi.pronunciation)
+                                hanzi_utils.pinyin_to_zhuyin(single_hanzi.pronunciation)
                             ],
                         }
                 else:
@@ -296,63 +303,7 @@ class Segmenter:
                     dictionary[the_hanzi] = {
                         "english": [entry.definitions],
                         "pinyin": [entry.pronunciation],
-                        "zhuyin": [hanzi.pinyin_to_zhuyin(entry.pronunciation)],
+                        "zhuyin": [hanzi_utils.pinyin_to_zhuyin(entry.pronunciation)],
                     }
 
         return (segmented_sentence, dictionary)
-
-    @staticmethod
-    def segment_and_translate(sentence: str) -> dict:
-        sentence = sentence.replace("\u3000", "").strip()
-
-        with ThreadPoolExecutor() as executor:
-            future_segmented = executor.submit(DefaultSegmenter.segment, sentence)
-            future_translation = executor.submit(DefaultTranslator.translate, sentence)
-
-            segmented = future_segmented.result()
-            translated = future_translation.result()
-
-        segmented = Segmenter.add_pronunciations(segmented)
-        segmented, dictionary = Segmenter.add_definitions_and_create_dictionary(
-            segmented
-        )
-
-        return {
-            "translation": translated,
-            "sentence": segmented,
-            "dictionary": dictionary,
-        }
-
-
-class JiebaSegmenter(Segmenter):
-    dictionary_initialized = False
-
-    @staticmethod
-    def segment(sentence: str) -> List[str]:
-        if not JiebaSegmenter.dictionary_initialized:
-            dictionary_path = os.path.join(
-                BASE_DIR, "sentences/~cedict_edited_for_jieba.u8"
-            )
-            jieba.load_userdict(dictionary_path)
-            JiebaSegmenter.dictionary_initialized = True
-
-        segments = jieba.cut(sentence, cut_all=False)
-        clean_segments: filter[str] = filter(lambda x: x != " ", segments)
-
-        return list(clean_segments)
-
-
-class ExternalRenderAPISegmenter(Segmenter):
-    @staticmethod
-    def segment(sentence: str) -> List[str]:
-        api_url = "https://segmenter.onrender.com/segment"
-
-        try:
-            response = requests.post(api_url, json={"text": sentence})
-            response.raise_for_status()
-            return response.json().get("segmented_sentence")
-        except requests.exceptions.RequestException as e:
-            return e
-
-
-DefaultSegmenter = JiebaSegmenter

@@ -1,9 +1,9 @@
 import string
 from django.db.utils import IntegrityError
-from django.db.models import F, Q
+from django.db.models import Q
 
 from .models import CEDictionary, ConstituentHanzi
-from sentences.cedict_ts import mandarin_dict_unstructured
+from sentences.dictionaries.cedict_ts import mandarin_dict_unstructured
 
 
 def fix_commas():
@@ -39,11 +39,11 @@ def fix_commas():
                 word.save()
 
 
-def fix_simplified_equals_traditional():
-    distinct_hanzi = CEDictionary.objects.exclude(
-        traditional=F("simplified"), word_length=1
-    )
-    pass
+# def fix_simplified_equals_traditional():
+#     distinct_hanzi = CEDictionary.objects.exclude(
+#         traditional=F("simplified"), word_length=1
+#     )
+#     pass
 
 
 def is_punctuation(character: str) -> bool:
@@ -85,6 +85,7 @@ def call(n):
 
 def create_dictionary_n_hanzi(lines: str, length: int):
     split = lines.split("\n")
+    split_length = len(split)
     for done, line in enumerate(split):
         if line == "":
             continue
@@ -97,8 +98,7 @@ def create_dictionary_n_hanzi(lines: str, length: int):
         simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
         if len(traditional) == length and len(simplified) == length:
-            print(len(split) - done)
-            print(done)
+            print(split_length - done)
             word = CEDictionary.objects.filter(
                 traditional=traditional,
                 simplified=simplified,

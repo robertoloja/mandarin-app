@@ -1,20 +1,10 @@
 import re
-from typing import Dict, TypedDict
+from typing import Dict
 import requests
 from bs4 import BeautifulSoup
 from dragonmapper import hanzi
 
-from sentences.functions import is_punctuation
-
-
-class WiktionaryDefinition(TypedDict):
-    pronunciation: str
-    definition: str
-
-
-class WiktionaryError(TypedDict):
-    error: str
-
+from .types import WiktionaryDefinition, WiktionaryError
 
 # TODO: Cleanup this file
 class WiktionaryScraper:
