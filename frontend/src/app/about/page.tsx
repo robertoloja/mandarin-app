@@ -7,7 +7,6 @@ import {
   Flex,
   Heading,
   HStack,
-  Image,
   ListItem,
   OrderedList,
   Text,
