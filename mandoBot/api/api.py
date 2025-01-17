@@ -166,7 +166,5 @@ def receive_kofi_webhook(request, data: Form[str]) -> str:
     This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
     """
-    raw_request = urllib.parse.unquote(data).split("data=")[1]
-    json_request = json.loads(raw_request)
-    print(json_request)
+    print(data)
     return 200, {"message": "That worked!"}
