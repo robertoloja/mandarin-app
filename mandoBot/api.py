@@ -9,8 +9,7 @@ from django.http import JsonResponse
 from ninja import NinjaAPI
 from dragonmapper import hanzi
 
-from sentences.segmenters import DefaultSegmenter
-
+from sentences.segmenters.Segmenter import Segmenter
 from status.models import ServerStatus
 from .schemas import SegmentationResponse, UserSchema
 from sentences.models import SentenceHistory
@@ -24,86 +23,14 @@ emptyResponse = {
     "sentence": [{"word": "", "pinyin": [], "zhuyin": [], "definitions": []}],
 }
 
+
 # TODO: Respond with HTTP status codes
-
-
-@api.get("/status")
-def server_status(request):
-    status = ServerStatus.objects.last()
-    return {
-        "updated_at": status.updated_at,
-        "translation_backend": status.translation_backend,
-        "average_response_time": status.mandobot_response_time,
-    }
-
-
-@api.post("/login")
-def login_endpoint(request, payload: UserSchema) -> str:
-    user = authenticate(username=payload.username, password=payload.password)
-
-    if user is not None:
-        login(request, user)
-        User = get_user_model()
-        user_object = User.objects.get(username=user.username)
-        response = JsonResponse(
-            {"user": user_object.username, "email": user_object.email}
-        )
-        return response
-    else:
-        return JsonResponse({"error": "Invalid credentials"}, status=401)
-
-
-@api.post("/logout")
-def logout_view(request) -> str:
-    logout(request)
-    response = JsonResponse({"message": "Logged out successfully"})
-    response.delete_cookie("csrftoken", path="/", domain=None)
-    return response
-
-
-@api.get("/shared", response=SegmentationResponse)
-async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
-    """
-    Receives a sentence_id, retrieves the stored JSON of a segmented sentence,
-    and returns it so it can immediately populate the client.
-    """
-    try:
-        db_entry = await SentenceHistory.objects.aget(sentence_id=share_id)
-    except ObjectDoesNotExist:
-        logger.error(f"No SentenceHistory object with sentence_id: {share_id}")
-        return emptyResponse
-    except Error:
-        logger.error(
-            f"Database error while getting SentenceHistory.sentence_id: {share_id}"
-        )
-        return emptyResponse
-    return json.loads(db_entry.json_data)
-
-
-@api.post("/share", response=str)
-async def share(request, data: SegmentationResponse) -> str:
-    """
-    Receives a full JSON of a segmentation, retrieves or creates it, then returns
-    the corresponding sentence_id to be used by the /shared endpoint.
-    """
-    try:
-        db_entry, _ = await SentenceHistory.objects.aget_or_create(
-            json_data=data.dict()
-        )
-    except Error:
-        logger.error(
-            f"""Database error while getting/creating
-            SentenceHistory entry for {''.join([word for word in data.sentence])}"""
-        )
-    return db_entry.sentence_id
-
-
 @api.post("/segment", response=SegmentationResponse)
 def segment(request, data: str) -> SegmentationResponse:
     timer = Timer()
     timer.start()
 
-    MAX_CHARS_FREE = 501
+    MAX_CHARS_FREE = 200
     if request.user.is_authenticated:
         text_to_segment = data
     else:
@@ -115,7 +42,7 @@ def segment(request, data: str) -> SegmentationResponse:
     if not hanzi.has_chinese(data):
         return handle_non_chinese(data)
 
-    segmented_data = DefaultSegmenter.segment_and_translate(text_to_segment)
+    segmented_data = Segmenter.segment_and_translate(text_to_segment)
     timer.stop()
     return segmented_data
 
@@ -153,3 +80,74 @@ def handle_non_chinese(data: str) -> dict:
         "sentence": [word],
         "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
     }
+
+
+@api.get("/status")
+def server_status(request):
+    status = ServerStatus.objects.last()
+    return {
+        "updated_at": status.updated_at,
+        "translation_backend": status.translation_backend,
+        "average_response_time": status.mandobot_response_time,
+    }
+
+
+@api.post("/login")
+def login_endpoint(request, payload: UserSchema) -> str:
+    user = authenticate(username=payload.username, password=payload.password)
+
+    if user is not None:
+        login(request, user)
+        User = get_user_model()
+        user_object = User.objects.get(username=user.username)
+        response = JsonResponse(
+            {"user": user_object.username, "email": user_object.email}
+        )
+        return response
+    else:
+        return JsonResponse({"error": "Invalid credentials"}, status=401)
+
+
+@api.post("/logout")
+def logout_endpoint(request) -> str:
+    logout(request)
+    response = JsonResponse({"message": "Logged out successfully"})
+    response.delete_cookie("csrftoken", path="/", domain=None)
+    return response
+
+
+@api.get("/shared", response=SegmentationResponse)
+async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
+    """
+    Receives a sentence_id, retrieves the stored JSON of a segmented sentence,
+    and returns it so it can immediately populate the client.
+    """
+    try:
+        db_entry = await SentenceHistory.objects.aget(sentence_id=share_id)
+    except ObjectDoesNotExist:
+        logger.error(f"No SentenceHistory object with sentence_id: {share_id}")
+        return emptyResponse
+    except Error:
+        logger.error(
+            f"Database error while getting SentenceHistory.sentence_id: {share_id}"
+        )
+        return emptyResponse
+    return json.loads(db_entry.json_data)
+
+
+@api.post("/share", response=str)
+async def create_share_link(request, data: SegmentationResponse) -> str:
+    """
+    Receives a full JSON of a segmentation, retrieves or creates it, then returns
+    the corresponding sentence_id to be used by the /shared endpoint.
+    """
+    try:
+        db_entry, _ = await SentenceHistory.objects.aget_or_create(
+            json_data=data.dict()
+        )
+    except Error:
+        logger.error(
+            f"""Database error while getting/creating
+            SentenceHistory entry for {''.join([word for word in data.sentence])}"""
+        )
+    return db_entry.sentence_id

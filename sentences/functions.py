@@ -1,20 +1,53 @@
 import string
 from django.db.utils import IntegrityError
-from django.db.models import F
+from django.db.models import Q
 
 from .models import CEDictionary, ConstituentHanzi
-from sentences.cedict_ts import mandarin_dict_unstructured
+from sentences.dictionaries.cedict_ts import mandarin_dict_unstructured
 
 
-def fix_simplified_equals_traditional():
-    distinct_hanzi = CEDictionary.objects.exclude(
-        traditional=F("simplified"), word_length=1
+def fix_commas():
+    query = (
+        CEDictionary.objects.filter(
+            Q(pronunciation__contains=",") | Q(pronunciation__contains="，")
+        )
+        .exclude(traditional__contains=",")
+        .exclude(traditional__contains="，")
     )
-    pass
+    for index, word in enumerate(query):
+        for i in range(len(word.pronunciation.split(" "))):
+            if (
+                "," == word.pronunciation.split(" ")[i]
+                or "，" == word.pronunciation.split(" ")[i]
+            ) and "," not in word.traditional:
+                print(word)
+                word.traditional = (
+                    word.traditional[:i]
+                    + word.pronunciation.split(" ")[i]
+                    + word.traditional[i:]
+                )
+                word.simplified = (
+                    word.simplified[:i]
+                    + word.pronunciation.split(" ")[i]
+                    + word.simplified[i:]
+                )
+                print(word)
+                print(f"{index} of {query.count()}")
+                choice = input("continue?")
+                if choice == "n":
+                    continue
+                word.save()
+
+
+# def fix_simplified_equals_traditional():
+#     distinct_hanzi = CEDictionary.objects.exclude(
+#         traditional=F("simplified"), word_length=1
+#     )
+#     pass
 
 
 def is_punctuation(character: str) -> bool:
-    punctuation = "，。！？：；、“”‘’（）《》【】〔〕……—～· \u3000"
+    punctuation = ",，。！？：；、“”‘’（）《》【】〔〕……—～·\u3000"
     return character in punctuation or character in string.punctuation
 
 
@@ -26,7 +59,7 @@ def create_dictionary_single_hanzi(lines: str):
         fields = line.split()
         traditional, simplified, rest = fields[0], fields[1], fields[2:]
         pronunciation = " ".join(rest).split("]")[0][1:]
-        definitions = " ".join(rest).split("/")[1:-1]
+        definitions = " / ".join(" ".join(rest[1:]).split("/")[1:-1])
         traditional = "".join([x for x in traditional if not is_punctuation(x)])
         simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
@@ -52,21 +85,20 @@ def call(n):
 
 def create_dictionary_n_hanzi(lines: str, length: int):
     split = lines.split("\n")
+    split_length = len(split)
     for done, line in enumerate(split):
-        print(len(split) - done)
         if line == "":
             continue
 
         fields = line.split()
         traditional, simplified, rest = fields[0], fields[1], fields[2:]
         pronunciation = " ".join(rest).split("]")[0][1:]
-        definitions = " ".join(rest).split("/")[1:-1]
+        definitions = " / ".join(" ".join(rest[1:]).split("/")[1:-1])
         traditional = "".join([x for x in traditional if not is_punctuation(x)])
         simplified = "".join([x for x in simplified if not is_punctuation(x)])
 
-        print(done)
-
         if len(traditional) == length and len(simplified) == length:
+            print(split_length - done)
             word = CEDictionary.objects.filter(
                 traditional=traditional,
                 simplified=simplified,

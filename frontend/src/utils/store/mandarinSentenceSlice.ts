@@ -10,12 +10,14 @@ interface MandarinSentenceState {
   mandarinSentence: MandarinSentenceType;
   mandarinDictionary: ChineseDictionary;
   shareLink: string;
+  translationPanelHeight: number;
 }
 
 const initialState: MandarinSentenceState = {
   mandarinSentence: emptySentence,
   mandarinDictionary: {} as ChineseDictionary,
   shareLink: '',
+  translationPanelHeight: 300,
 };
 
 const mandarinSentenceSlice = createSlice({
@@ -64,6 +66,9 @@ const mandarinSentenceSlice = createSlice({
     setShareLink(state, action: PayloadAction<string>) {
       state.shareLink = action.payload;
     },
+    setTranslationPanelHeight(state, action: PayloadAction<number>) {
+      state.translationPanelHeight = action.payload;
+    },
   },
 });
 
@@ -73,5 +78,6 @@ export const {
   appendToMandarinDictionary,
   clearMandarinDictionary,
   setShareLink,
+  setTranslationPanelHeight,
 } = mandarinSentenceSlice.actions;
 export default mandarinSentenceSlice.reducer;
