@@ -228,7 +228,7 @@ class Segmenter:
                                         ]
                                     ).first()
 
-                                if h.count() > 1:
+                                elif h.count() > 1:
                                     h = Segmenter.most_frequent_pronunciation(
                                         item["word"][i]
                                     )

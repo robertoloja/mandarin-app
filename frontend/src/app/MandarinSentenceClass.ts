@@ -169,10 +169,6 @@ export class MandarinSentenceClass {
 
     if (rawHistory) local = JSON.parse(rawHistory);
     for (let i = 0; i < local.length; i++) {
-      console.log(
-        this.mandarin === local[i].mandarin ||
-          this.shareURL === local[i].shareURL,
-      );
       if (
         this.mandarin === local[i].mandarin ||
         this.shareURL === local[i].shareURL

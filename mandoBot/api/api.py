@@ -11,7 +11,7 @@ from dragonmapper import hanzi
 
 from sentences.segmenters import Segmenter
 from status.models import ServerStatus
-from .schemas import SegmentationResponse, ServerStatusSchema, UserSchema
+from ..schemas import SegmentationResponse, ServerStatusSchema, UserSchema
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
@@ -107,7 +107,7 @@ def login_endpoint(request, payload: UserSchema) -> str:
         )
         return response
     else:
-        return JsonResponse({"error": "Invalid credentials"}, status=401)
+        return 401, {"error": "Invalid credentials"}
 
 
 @api.post("/logout")
@@ -153,3 +153,9 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
             SentenceHistory entry for {''.join([word for word in data.sentence])}"""
         )
     return db_entry.sentence_id
+
+
+@api.post("/kofi")
+def receive_kofi_webhook(request, data):
+    print(data)
+    return 200
