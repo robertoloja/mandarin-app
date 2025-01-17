@@ -28,7 +28,8 @@ const BackToTop: React.FC = () => {
   return (
     <Box
       position="fixed"
-      bottom={['89%', '6rem']}
+      bottom={[null, '6rem']}
+      top={['3rem', null]}
       right={['1rem', '2.5%']}
       zIndex="1000"
     >
