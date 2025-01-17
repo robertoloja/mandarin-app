@@ -7,7 +7,7 @@ from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
-from ninja import NinjaAPI
+from ninja import NinjaAPI, Form
 from dragonmapper import hanzi
 
 from sentences.segmenters import Segmenter
@@ -161,7 +161,7 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
 
 
 @api.post("/kofi")
-def receive_kofi_webhook(request, data: str) -> str:
+def receive_kofi_webhook(request, data: Form[str]) -> str:
     """
     This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
