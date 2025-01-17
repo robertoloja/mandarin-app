@@ -1,17 +1,22 @@
 import json
 import logging
 import time
+import urllib.parse
 
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
-from ninja import NinjaAPI
+from ninja import NinjaAPI, Form
 from dragonmapper import hanzi
 
-from sentences.segmenters.Segmenter import Segmenter
+from sentences.segmenters import Segmenter
 from status.models import ServerStatus
-from .schemas import SegmentationResponse, UserSchema
+from ..schemas import (
+    SegmentationResponse,
+    ServerStatusSchema,
+    UserSchema,
+)
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
@@ -27,6 +32,12 @@ emptyResponse = {
 # TODO: Respond with HTTP status codes
 @api.post("/segment", response=SegmentationResponse)
 def segment(request, data: str) -> SegmentationResponse:
+    """
+    Accepts a string in Mandarin, and returns the same string but segmented into
+    individual words, each of which includes pronunciation and definitions. The
+    response also includes a dictionary containing every hanzi in the input sentence,
+    as well as a machine translation of the entire sentence.
+    """
     timer = Timer()
     timer.start()
 
@@ -82,14 +93,10 @@ def handle_non_chinese(data: str) -> dict:
     }
 
 
-@api.get("/status")
+@api.get("/status", response=ServerStatusSchema)
 def server_status(request):
     status = ServerStatus.objects.last()
-    return {
-        "updated_at": status.updated_at,
-        "translation_backend": status.translation_backend,
-        "average_response_time": status.mandobot_response_time,
-    }
+    return status
 
 
 @api.post("/login")
@@ -105,7 +112,7 @@ def login_endpoint(request, payload: UserSchema) -> str:
         )
         return response
     else:
-        return JsonResponse({"error": "Invalid credentials"}, status=401)
+        return 401, {"error": "Invalid credentials"}
 
 
 @api.post("/logout")
@@ -151,3 +158,13 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
             SentenceHistory entry for {''.join([word for word in data.sentence])}"""
         )
     return db_entry.sentence_id
+
+
+@api.post("/kofi")
+def receive_kofi_webhook(request, data: Form[str]) -> str:
+    """
+    This endpoint is for Ko-Fi's webhook when an account event happens.
+    It is exempt from ValidateAPITokenMiddleware.
+    """
+    print(data)
+    return 200, {"message": "That worked!"}

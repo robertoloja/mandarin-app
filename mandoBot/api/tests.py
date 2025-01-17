@@ -7,7 +7,7 @@ django.setup()  # this is here for VSCode test discovery
 from django.test import TestCase  # noqa: E402
 from ninja.testing import TestClient  # noqa: E402
 from dragonmapper import hanzi  # noqa: E402
-from mandoBot.api import api  # noqa: E402
+from mandoBot.api.api import api  # noqa: E402
 from sentences.functions import is_punctuation  # noqa: E402
 
 

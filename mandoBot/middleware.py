@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from django.http import JsonResponse
 from django.conf import settings
+from django.urls import resolve
 import jwt
 from jwt.exceptions import InvalidTokenError, ExpiredSignatureError
 
@@ -12,6 +13,9 @@ class ValidateAPITokenMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        if resolve(request.path_info).route == "api/kofi":
+            return self.get_response(request)
+
         if not settings.DEBUG:
             x_nf_sign = request.headers.get("x-nf-sign")
 

@@ -1,35 +1,38 @@
 from typing import List
 from django.test import TestCase
 
-from ..segmenters import JiebaSegmenter, Segmenter
-from ..segmenters.types import SentenceSegment
-from models import CEDictionary
+from . import JiebaSegmenter, Segmenter
+from .types import SentenceSegment
+from ..models import CEDictionary
 
 
 class SegmentationTests(TestCase):
     def test_chengyu(self):
         chengyu = [
-            {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["1"], "definitions": []},
+            {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["A"], "definitions": []},
             {"word": "，", "pinyin": ["2"], "zhuyin": ["2"], "definitions": []},
-            {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["3"], "definitions": []},
+            {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["B"], "definitions": []},
         ]
 
         expected: List[SentenceSegment] = [
             {
-                "word": "分久必合,合久必分",
-                "pinyin": ["1", "2", "3"],
-                "zhuyin": ["1", "2", "3"],
+                "word": "分久必合合久必分",
+                "pinyin": ["1", ",", "3"],
+                "zhuyin": ["A", ",", "B"],
                 "definitions": [],
             },
         ]
 
-        concatenated_chengyu = JiebaSegmenter.try_to_concat(chengyu, 0)
+        concatenated_chengyu = Segmenter.try_to_concat(chengyu, 0)
         self.assertEqual(expected, concatenated_chengyu)
 
     def test_concatenated_chengyu_is_found(self):
         chengyu_phrase = "分久必合，合久必分"
-        segmented = JiebaSegmenter.segment_and_translate(chengyu_phrase)
-        self.assertEqual(segmented["translation"], "foo")
+        segmented = Segmenter.segment_and_translate(chengyu_phrase)
+        expected = [
+            "lit. that which is long divided must unify, and that which is long unified must divide (idiom, from 三國演義|三国演义[San1 guo2 Yan3 yi4]) / fig. things are constantly changing"
+        ]
+        self.assertEqual(segmented["sentence"][0]["definitions"], expected)
 
     def test_choose_most_common_hanzi(self):
         test_hanzi = "上"
@@ -45,7 +48,7 @@ class SegmentationTests(TestCase):
         self.assertEqual(segments, ["我", "来到", "北京", "清华大学"])
 
     def test_problematic_segmentation(self):
-        foo = JiebaSegmenter.add_definitions_and_create_dictionary(
+        foo = Segmenter.add_definitions_and_create_dictionary(
             [
                 {
                     "word": "少帝",

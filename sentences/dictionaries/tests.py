@@ -1,5 +1,5 @@
 from django.test import TestCase
-import WiktionaryScraper
+from . import WiktionaryScraper
 
 
 class WiktionaryTests(TestCase):

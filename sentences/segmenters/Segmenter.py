@@ -9,8 +9,8 @@ from sentences.models.CEDictionary import CEDictionary
 from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
 from .types import SegmentedResult, SentenceSegment, MandarinDictionary
-from ..translators.Translator import Translator
-from ..segmenters.JiebaSegmenter import JiebaSegmenter
+from ..translators import Translator
+from ..segmenters import JiebaSegmenter
 
 
 class Segmenter:
@@ -125,7 +125,7 @@ class Segmenter:
 
                 zhuyin: List[str] = (
                     segmented_sentence[index]["zhuyin"]
-                    + segmented_sentence[index + 1]["zhuyin"]
+                    + [","]
                     + segmented_sentence[index + 2]["zhuyin"]
                 )
 
@@ -228,7 +228,7 @@ class Segmenter:
                                         ]
                                     ).first()
 
-                                if h.count() > 1:
+                                elif h.count() > 1:
                                     h = Segmenter.most_frequent_pronunciation(
                                         item["word"][i]
                                     )
@@ -272,16 +272,12 @@ class Segmenter:
                             ],
                         }
 
-            results = [result for result in db_result]
-
-            for entry in results:
+            for entry in db_result:
                 item["definitions"] += [entry.definitions]
                 constituent_hanzi = entry.get_hanzi()
 
                 if constituent_hanzi:
-                    hanzi_list = [h for h in constituent_hanzi]
-
-                    for single_hanzi in hanzi_list:
+                    for single_hanzi in constituent_hanzi:
                         if item["word"] == entry.traditional:
                             the_hanzi = single_hanzi.traditional
                         else:
