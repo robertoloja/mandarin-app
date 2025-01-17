@@ -1,3 +1,4 @@
+from typing import List
 from django.db import models
 from .validators import is_pinyin, is_simplified, is_traditional
 
@@ -20,7 +21,7 @@ class CEDictionary(models.Model):
         symmetrical=False,
     )
 
-    def get_hanzi(self):
+    def get_hanzi(self) -> List["CEDictionary"]:
         """
         Returns an ordered QuerySet of the CEDictionary objects corresponding
         the hanzi in the CEDictionary object being manipulated.

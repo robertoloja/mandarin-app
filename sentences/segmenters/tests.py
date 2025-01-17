@@ -9,16 +9,16 @@ from ..models import CEDictionary
 class SegmentationTests(TestCase):
     def test_chengyu(self):
         chengyu = [
-            {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["1"], "definitions": []},
+            {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["A"], "definitions": []},
             {"word": "，", "pinyin": ["2"], "zhuyin": ["2"], "definitions": []},
-            {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["3"], "definitions": []},
+            {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["B"], "definitions": []},
         ]
 
         expected: List[SentenceSegment] = [
             {
-                "word": "分久必合,合久必分",
-                "pinyin": ["1", "2", "3"],
-                "zhuyin": ["1", "2", "3"],
+                "word": "分久必合合久必分",
+                "pinyin": ["1", ",", "3"],
+                "zhuyin": ["A", ",", "B"],
                 "definitions": [],
             },
         ]
@@ -29,7 +29,10 @@ class SegmentationTests(TestCase):
     def test_concatenated_chengyu_is_found(self):
         chengyu_phrase = "分久必合，合久必分"
         segmented = Segmenter.segment_and_translate(chengyu_phrase)
-        self.assertEqual(segmented["translation"], "foo")
+        expected = [
+            "lit. that which is long divided must unify, and that which is long unified must divide (idiom, from 三國演義|三国演义[San1 guo2 Yan3 yi4]) / fig. things are constantly changing"
+        ]
+        self.assertEqual(segmented["sentence"][0]["definitions"], expected)
 
     def test_choose_most_common_hanzi(self):
         test_hanzi = "上"
