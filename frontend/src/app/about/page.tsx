@@ -174,7 +174,7 @@ const ProjectSupportCard = () => {
           budget. While every optimization is used to maintain good performance,
           free hosting can only go so far. If you experience any issues at all,
           please{' '}
-          <Link href="mailto:robertoloja+mandobot@gmail.com">
+          <Link href="mailto:mandobotserver@gmail.com">
             <u>contact me</u>
           </Link>
           , or{' '}
