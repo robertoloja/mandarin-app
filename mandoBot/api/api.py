@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import urllib.parse
 
 from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
@@ -12,7 +13,6 @@ from dragonmapper import hanzi
 from sentences.segmenters import Segmenter
 from status.models import ServerStatus
 from ..schemas import (
-    KofiDataSchema,
     SegmentationResponse,
     ServerStatusSchema,
     UserSchema,
@@ -161,10 +161,12 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
 
 
 @api.post("/kofi")
-def receive_kofi_webhook(request, data: KofiDataSchema) -> str:
+def receive_kofi_webhook(request, data: str) -> str:
     """
     This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
     """
-    print(data)
+    raw_request = urllib.parse.unquote(data).split("data=")[1]
+    json_request = json.loads(raw_request)
+    print(json_request)
     return 200, {"message": "That worked!"}
