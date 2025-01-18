@@ -45,7 +45,7 @@ def segment(request, data: str) -> SegmentationResponse:
     timer = Timer()
     timer.start()
 
-    MAX_CHARS_FREE = 200
+    MAX_CHARS_FREE = 200 if not settings.DEBUG else 10000
     if request.user.is_authenticated:
         text_to_segment = data
     else:
@@ -201,7 +201,7 @@ def receive_kofi_webhook(request, data: Form[str]) -> str:
     dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
     payment_date = dt.date()
 
-    if first_subscription and not settings.DEBUG:
+    if first_subscription:
         # TODO: Include rendered e-mail template
         send_mail(
             "Welcome!",

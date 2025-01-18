@@ -60,7 +60,7 @@ class SubscriptionTests(TestCase):
         response = Client().post(
             "/api/kofi", {"data": self.kofi_data(first_subscription=True)}
         )
-        expected = {"message": "Send registration e-mail"}
+        expected = {"message": "Sent registration e-mail"}
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), expected)
 
@@ -171,8 +171,6 @@ class SegmentationAPITest(TestCase):
             response = self.client.post(f"/segment?data={request_data}")
 
             for character in request_data:
-                if character not in response.data["dictionary"]:
-                    pass
                 if hanzi.has_chinese(character) and not is_punctuation(character):
                     self.assertTrue(character in response.data["dictionary"])
                     # TODO: Test pinyin also

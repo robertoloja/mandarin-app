@@ -43,6 +43,13 @@ class SegmentationTests(TestCase):
     def test_jieba_loads_dict(self):
         JiebaSegmenter.segment("不列顛保衛戰")
 
+    def test_dictionary_only_includes_single_hanzi(self):
+        phrase = "話說天下大勢分久必合，合久必分。周末，七國分爭，並入于秦。及，秦滅之後，楚、漢分爭，又並入於漢。漢朝自高祖斬白蛇而起義一統天下。後來，光武中興。傳至獻帝，遂分為三國。推其致亂之由，殆始於桓、靈二帝。"
+        sentence = Segmenter.segment_and_translate(phrase)
+
+        for hanzi in sentence["dictionary"]:
+            self.assertEqual(len(hanzi), 1)
+
     def test_easy_segmentation(self):
         segments = JiebaSegmenter.segment("我来到北京清华大学")
         self.assertEqual(segments, ["我", "来到", "北京", "清华大学"])

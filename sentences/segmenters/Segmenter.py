@@ -133,7 +133,7 @@ class Segmenter:
                     "word": compounded_word,
                     "pinyin": pinyin,
                     "zhuyin": zhuyin,
-                    "definitions": [],  # since definitions haven't been added yet
+                    "definitions": [],
                 }
 
                 new_sentence = (
@@ -168,6 +168,9 @@ class Segmenter:
                 pronunciation__iexact=" ".join(item["pinyin"]),
                 word_length=len(item["word"]),
             )
+
+            if "失" in item["word"]:
+                pass
 
             if not db_result.exists():
                 concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
@@ -246,7 +249,6 @@ class Segmenter:
                     # TODO: Try to segment again before machine translating
                     item["definitions"] = [Translator.translate(item["word"])]
 
-                    # TODO: Rewrite this to use CEDictionary.get_hanzi()
                     for index, single_hanzi in enumerate(item["word"]):
                         pinyin = item["pinyin"][index]
 
@@ -291,15 +293,54 @@ class Segmenter:
                             ],
                         }
                 else:
-                    if item["word"] == entry.traditional:
-                        the_hanzi = entry.traditional
-                    else:
-                        the_hanzi = entry.simplified
+                    for index, hanzi in enumerate(item["word"]):
+                        if item["word"] == entry.traditional:
+                            db_hanzi = CEDictionary.objects.filter(
+                                traditional=hanzi, pronunciation=item["pinyin"][index]
+                            )
+                        else:
+                            db_hanzi = CEDictionary.objects.filter(
+                                simplified=hanzi, pronunciation=item["pinyin"][index]
+                            )
+                        if not db_hanzi.exists():
+                            if item["word"] == entry.traditional:
+                                db_hanzi = CEDictionary.objects.filter(
+                                    traditional=hanzi,
+                                    pronunciation__iexact=item["pinyin"][index],
+                                )
+                            else:
+                                db_hanzi = CEDictionary.objects.filter(
+                                    simplified=hanzi,
+                                    pronunciation__iexact=item["pinyin"][index],
+                                )
+                        if not db_hanzi.exists():
+                            if item["word"] == entry.traditional:
+                                db_hanzi = CEDictionary.objects.filter(
+                                    traditional=hanzi,
+                                    pronunciation=item["pinyin"][index][:-1],
+                                )
+                            else:
+                                db_hanzi = CEDictionary.objects.filter(
+                                    simplified=hanzi,
+                                    pronunciation=item["pinyin"][index][:-1],
+                                )
 
-                    dictionary[the_hanzi] = {
-                        "english": [entry.definitions],
-                        "pinyin": [entry.pronunciation],
-                        "zhuyin": [hanzi_utils.pinyin_to_zhuyin(entry.pronunciation)],
-                    }
+                        if item["word"] == entry.traditional:
+                            the_hanzi = db_hanzi.first().traditional
+                            # likely a bug? should check for multiple results
+                        else:
+                            the_hanzi = (
+                                db_hanzi.first().simplified
+                            )  # likely a bug? should check for multiple results
+
+                        dictionary[the_hanzi] = {
+                            "english": [db_hanzi.first().definitions],
+                            "pinyin": [db_hanzi.first().pronunciation],
+                            "zhuyin": [
+                                hanzi_utils.pinyin_to_zhuyin(
+                                    db_hanzi.first().pronunciation
+                                )
+                            ],
+                        }
 
         return (segmented_sentence, dictionary)
