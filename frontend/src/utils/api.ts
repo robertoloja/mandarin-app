@@ -98,7 +98,7 @@ export const MandoBotAPI = {
   ): Promise<{ user: string; email: string }> {
     const response = await api.post(
       '/login',
-      { username, password },
+      new URLSearchParams({ username, password }),
       {
         withCredentials: true,
       },
