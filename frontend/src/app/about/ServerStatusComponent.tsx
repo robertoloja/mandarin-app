@@ -46,9 +46,10 @@ export default function ServerStatusComponent() {
           minute: 'numeric',
         });
         setLastUpdate(`${localTime}`);
-        setResponseTime(response.average_response_time);
+        setResponseTime(response.mandobot_response_time);
         setBackend(response.translation_backend);
         setServerStatus(true);
+        console.log(response);
       })
       .catch(() => {
         setServerStatus(false);

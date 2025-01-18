@@ -73,7 +73,7 @@ class Timer:
 
         server_status = ServerStatus.objects.last()
         server_status.mandobot_response_time = (
-            (server_status.mandobot_response_time) + (end_time - self.start_time)
+            (server_status.mandobot_response_time or 10) + (end_time - self.start_time)
         ) / 2
         server_status.save()
 
@@ -100,6 +100,7 @@ def handle_non_chinese(data: str) -> dict:
 @api.get("/status", response=ServerStatusSchema)
 def server_status(request):
     status = ServerStatus.objects.last()
+    print(status)
     return status
 
 

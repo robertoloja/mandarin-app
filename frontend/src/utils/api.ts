@@ -129,7 +129,7 @@ export const MandoBotAPI = {
   status: async function (): Promise<{
     updated_at: string;
     translation_backend: string;
-    average_response_time: number;
+    mandobot_response_time: number;
   }> {
     const response = await api.get('/status');
     return response.data;
