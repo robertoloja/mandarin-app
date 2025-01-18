@@ -7,6 +7,8 @@ from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.conf import settings
 from ninja import NinjaAPI, Form
 from dragonmapper import hanzi
 
@@ -190,13 +192,6 @@ def receive_kofi_webhook(request, data: Form[str]) -> str:
     This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
     """
-
-    """
-    1 - Find the User by e-mail.
-    2 - Update last_payment date.
-    3 - Ensure status is active
-    4 - If first subscription, send registration e-mail TODO
-    """
     json_data = json.loads(data)
 
     user_email = json_data["email"]
@@ -206,9 +201,15 @@ def receive_kofi_webhook(request, data: Form[str]) -> str:
     dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
     payment_date = dt.date()
 
-    if first_subscription:
-        # TODO: Send registration e-mail
-        return 200, {"message": "Send registration e-mail"}
+    if first_subscription and not settings.DEBUG:
+        # TODO: Include rendered e-mail template
+        send_mail(
+            "Welcome!",
+            "Here's your registration link",
+            "mandobotserver@gmail.com",
+            [user_email],
+        )
+        return 200, {"message": "Sent registration e-mail"}
 
     else:
         User = get_user_model()

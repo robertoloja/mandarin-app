@@ -4,7 +4,7 @@ from typing import List
 from django.db.models import Q
 from dragonmapper import hanzi as hanzi_utils
 
-from sentences.dictionaries.WiktionaryScraper import WiktionaryScraper
+from sentences.dictionaries import WiktionaryScraper
 from sentences.models.CEDictionary import CEDictionary
 from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
