@@ -1,6 +1,6 @@
 'use client';
 
-import ServerStatusComponent from '@/components/ServerStatusComponent';
+import ServerStatusComponent from '@/app/about/ServerStatusComponent';
 import {
   Box,
   Center,

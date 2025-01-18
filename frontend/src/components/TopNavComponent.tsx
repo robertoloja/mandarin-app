@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   useDisclosure,
   IconButton,
@@ -16,6 +16,9 @@ import ShareButton from './ShareButtonComponent';
 import LanguageMenu from './LanguageMenuComponent';
 import ErrorButton from './ErrorButtonComponent';
 import Link from 'next/link';
+import { RootState, store } from '@/utils/store/store';
+import { useSelector } from 'react-redux';
+import { toggleTheme } from '@/utils/store/settingsSlice';
 
 function TopNav() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,6 +34,16 @@ function TopNav() {
   defineStyleConfig({
     variants: { buttonStyle },
   });
+  const toggleThemeSetting = () => {
+    store.dispatch(toggleTheme());
+    toggleColorMode();
+    //TODO: Also change in the API
+  };
+  const theme = useSelector((state: RootState) => state.settings.theme);
+  useEffect(() => {
+    if (theme == 'light' && colorMode == 'dark') toggleColorMode();
+    if (theme == 'dark' && colorMode == 'light') toggleColorMode();
+  }, []);
 
   const iconSize = 20;
   return (
@@ -81,7 +94,7 @@ function TopNav() {
               <IoSunny size={iconSize} />
             )
           }
-          onClick={toggleColorMode}
+          onClick={toggleThemeSetting}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
           mr="2rem"
         />

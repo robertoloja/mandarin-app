@@ -35,3 +35,5 @@ export const emptySentence: MandarinSentenceType = {
   dictionary: {},
   shareURL: '',
 };
+
+export type PronunciationPreference = 'zhuyin' | 'pinyin_acc' | 'pinyin_num';

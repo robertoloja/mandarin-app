@@ -20,21 +20,23 @@ const LoginForm: React.FC = () => {
   return (
     <Container>
       <Heading>Login</Heading>
-      <Input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button onClick={handleLogin} disabled={authState.loading}>
-        {authState.loading ? 'Logging in...' : 'Login'}
-      </Button>
+      <form onSubmit={handleLogin}>
+        <Input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button disabled={authState.loading} type="submit">
+          {authState.loading ? 'Logging in...' : 'Login'}
+        </Button>
+      </form>
       {authState.error && <p style={{ color: 'red' }}>{authState.error}</p>}
     </Container>
   );

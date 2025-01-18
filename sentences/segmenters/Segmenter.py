@@ -163,6 +163,9 @@ class Segmenter:
             ):
                 continue
 
+            if item["definitions"] != []:
+                continue
+
             db_result = CEDictionary.objects.filter(
                 Q(traditional=item["word"]) | Q(simplified=item["word"]),
                 pronunciation__iexact=" ".join(item["pinyin"]),
@@ -202,7 +205,7 @@ class Segmenter:
                                 pronunciation=" ".join(
                                     wiki_definitions[key]["pronunciation"]
                                 ),
-                                definitions=[wiki_definitions[key]["definition"]],
+                                definitions=wiki_definitions[key]["definition"],
                             )
 
                         elif new_cedictionary.count() > 1:

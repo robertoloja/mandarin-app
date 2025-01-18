@@ -34,6 +34,14 @@ class SegmentationTests(TestCase):
         ]
         self.assertEqual(segmented["sentence"][0]["definitions"], expected)
 
+    def test_does_not_duplicate_definitions_before_chengyu(self):
+        sentence = "話說天下大勢分久必合，合久必分"
+        segmented = Segmenter.segment_and_translate(sentence)
+        for word in segmented["sentence"]:
+            if len(word["definitions"]) == 2:
+                print(word["definitions"])
+            self.assertEqual(len(word["definitions"]), 1)
+
     def test_choose_most_common_hanzi(self):
         test_hanzi = "上"
         answer = Segmenter.most_frequent_pronunciation(test_hanzi)
