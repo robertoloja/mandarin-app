@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { SegmentResponseType } from './types';
+import { PronunciationPreference, SegmentResponseType } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUsername } from './store/authSlice';
 import { MAX_LENGTH_FREE } from 'constant_variables';
+import { setPreferences } from './store/settingsSlice';
 
 export function getCookie(name: string): string | null {
   const cookieValue = document.cookie
@@ -95,15 +96,26 @@ export const MandoBotAPI = {
   login: async function (
     username: string,
     password: string,
-  ): Promise<{ user: string; email: string }> {
+  ): Promise<{
+    user: string;
+    email: string;
+    pronunciation_preference: PronunciationPreference;
+    theme_preference: number;
+  }> {
     const response = await api.post(
       '/login',
-      { username, password },
+      new URLSearchParams({ username, password }),
       {
         withCredentials: true,
       },
     );
     store.dispatch(setUsername(response.data.username));
+    store.dispatch(
+      setPreferences({
+        pronunciation_preference: response.data.pronunciation_preference,
+        theme_preference: response.data.theme_preference,
+      }),
+    );
     return response.data;
   },
 
@@ -117,7 +129,7 @@ export const MandoBotAPI = {
   status: async function (): Promise<{
     updated_at: string;
     translation_backend: string;
-    average_response_time: number;
+    mandobot_response_time: number;
   }> {
     const response = await api.get('/status');
     return response.data;

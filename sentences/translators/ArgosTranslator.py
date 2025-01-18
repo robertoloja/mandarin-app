@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import time
 
 from django.db import OperationalError
@@ -33,7 +34,7 @@ argostranslate.package.install_from_path(simplified_mandarin.download())
 
 
 class ArgosTranslate:
-    async def update_server_status(status: ServerStatus):
+    def update_server_status(status: ServerStatus):
         for _ in range(5):
             try:
                 status.translation_backend = "argos"
@@ -44,11 +45,13 @@ class ArgosTranslate:
     @staticmethod
     def translate(sentence: str) -> str:
         status = ServerStatus.objects.last()
-        ArgosTranslate.update_server_status(status)
+
+        with ThreadPoolExecutor() as executor:
+            executor.submit(ArgosTranslate.update_server_status, status)
+
         from_code = simplified_mandarin_code
 
         if hanzi_utils.is_traditional(sentence):
             from_code = traditional_mandarin_code
 
         return argostranslate.translate.translate(sentence, from_code, english_code)
-

@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import os
 import time
 
@@ -5,13 +6,14 @@ from django.db import OperationalError
 import deepl
 
 from status.models import ServerStatus
-from sentences.translators import ArgosTranslator
+from sentences.translators import ArgosTranslate
 
 translator = deepl.Translator(os.getenv("DEEPL_API_KEY"))
 
+
 class DeepLTranslate:
 
-    async def updateStatus(usage, status: ServerStatus):
+    def updateStatus(usage, status: ServerStatus):
         for _ in range(5):
             try:
                 status.translation_backend = "deepl"
@@ -25,14 +27,16 @@ class DeepLTranslate:
     def translate(sentence: str) -> str:
         usage = translator.get_usage()
         status = ServerStatus.objects.last()
-        DeepLTranslate.updateStatus(usage, status)
+
+        with ThreadPoolExecutor() as executor:
+            executor.submit(DeepLTranslate.updateStatus, usage, status)
 
         if (
             status.difference < len(sentence)
             or usage.any_limit_reached
             or usage.any_limit_exceeded
         ):
-            return ArgosTranslator.translate(sentence)
+            return ArgosTranslate.translate(sentence)
 
         return translator.translate_text(
             sentence, source_lang="ZH", target_lang="EN-US"

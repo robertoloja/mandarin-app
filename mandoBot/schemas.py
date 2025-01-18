@@ -16,6 +16,17 @@ class UserSchema(ModelSchema):
         fields = ["username", "password"]
 
 
+class UserPreferencesSchema(ModelSchema):
+    class Meta:
+        model = MandoBotUser
+        fields = [
+            "username",
+            "email",
+            "pronunciation_preference",
+            "theme_preference",
+        ]
+
+
 class ChineseDictionary(Schema):
     english: List[str]
     pinyin: List[str]
@@ -33,3 +44,7 @@ class SegmentationResponse(Schema):
     translation: str
     sentence: List[MandarinWordSchema]
     dictionary: Dict[str, ChineseDictionary]
+
+
+class APILoginError(Schema):
+    error: str
