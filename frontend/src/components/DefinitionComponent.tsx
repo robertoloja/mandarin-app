@@ -80,7 +80,7 @@ function Definition(props: {
                               : dictionary[hanzi].zhuyin[0]
                           }
                         />
-                        <Text>{dictionary[hanzi].english}</Text>{' '}
+                        <Text>{dictionary[hanzi].english.join(' / ')}</Text>
                       </>
                     )}
                   </HStack>
