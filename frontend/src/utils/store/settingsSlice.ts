@@ -8,7 +8,7 @@ interface SettingsState {
 }
 
 const initialState: SettingsState = {
-  theme: 'light',
+  theme: 'dark',
   pronunciation: 'pinyin',
   pinyin_type: 'pinyin_acc',
 };
