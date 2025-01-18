@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Box,
-  Heading,
-  VStack,
-  Text,
-  OrderedList,
-  ListItem,
-} from '@chakra-ui/react';
+import { Box, VStack, Text } from '@chakra-ui/react';
 import { Cinzel, Yuji_Mai } from 'next/font/google';
 
 const cinzel = Cinzel({

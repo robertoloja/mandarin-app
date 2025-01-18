@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PronunciationPreference } from '../types';
-import { useColorMode } from '@chakra-ui/react';
 
 interface SettingsState {
   theme: 'light' | 'dark';
