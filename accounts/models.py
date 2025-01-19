@@ -53,6 +53,7 @@ class PaidButUnregistered(models.Model):
     registration_id = models.CharField(max_length=20, unique=True, editable=False)
     user_email = models.TextField(unique=True, editable=False)
     registered = models.BooleanField(default=False)
+    emailed = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.registration_id:

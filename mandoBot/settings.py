@@ -11,12 +11,21 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+if "test" in sys.argv:
+    DATABASES = DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
+        }
+    }
+    PYTHONDONTWRITEBYTECODE = 1
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -159,7 +168,7 @@ PYTHON_ANYWHERE = {
 #     DATABASES = PYTHON_ANYWHERE
 if os.getenv("DOCKER") == "TRUE":
     DATABASES = DOCKER
-else:
+elif "test" not in sys.argv:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

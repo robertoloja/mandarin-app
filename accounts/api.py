@@ -31,7 +31,11 @@ def login_endpoint(request, payload: Form[UserSchema]) -> str:
         User = get_user_model()
         user_object = User.objects.get(username=user.username)
 
-        if user_object.subscription_is_active():
+        if (
+            user_object.subscription_is_active()
+            or user_object.is_staff
+            or user_object.is_superuser
+        ):
             login(request, user)
             response = {"username": user_object.username, "email": user_object.email}
 
