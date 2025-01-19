@@ -261,6 +261,14 @@ class Segmenter:
                             word_length=1,
                         )
 
+                        if not db_hanzi.exists():
+                            db_hanzi = CEDictionary.objects.filter(
+                                Q(traditional=single_hanzi)
+                                | Q(simplified=single_hanzi),
+                                pronunciation__startswith=pinyin[:-1],
+                                word_length=1,
+                            )
+
                         dictionary[single_hanzi] = {
                             "english": [
                                 definition
@@ -297,45 +305,9 @@ class Segmenter:
                         }
                 else:
                     for index, hanzi in enumerate(item["word"]):
-                        if item["word"] == entry.traditional:
-                            db_hanzi = CEDictionary.objects.filter(
-                                traditional=hanzi, pronunciation=item["pinyin"][index]
-                            )
-                        else:
-                            db_hanzi = CEDictionary.objects.filter(
-                                simplified=hanzi, pronunciation=item["pinyin"][index]
-                            )
-                        if not db_hanzi.exists():
-                            if item["word"] == entry.traditional:
-                                db_hanzi = CEDictionary.objects.filter(
-                                    traditional=hanzi,
-                                    pronunciation__iexact=item["pinyin"][index],
-                                )
-                            else:
-                                db_hanzi = CEDictionary.objects.filter(
-                                    simplified=hanzi,
-                                    pronunciation__iexact=item["pinyin"][index],
-                                )
-                        if not db_hanzi.exists():
-                            if item["word"] == entry.traditional:
-                                db_hanzi = CEDictionary.objects.filter(
-                                    traditional=hanzi,
-                                    pronunciation=item["pinyin"][index][:-1],
-                                )
-                            else:
-                                db_hanzi = CEDictionary.objects.filter(
-                                    simplified=hanzi,
-                                    pronunciation=item["pinyin"][index][:-1],
-                                )
-
-                        if item["word"] == entry.traditional:
-                            the_hanzi = db_hanzi.first().traditional
-                            # likely a bug? should check for multiple results
-                        else:
-                            the_hanzi = (
-                                db_hanzi.first().simplified
-                            )  # likely a bug? should check for multiple results
-
+                        the_hanzi = Segmenter.attempt_to_get_hanzi(
+                            hanzi, item, index, entry
+                        )
                         dictionary[the_hanzi] = {
                             "english": [db_hanzi.first().definitions],
                             "pinyin": [db_hanzi.first().pronunciation],
@@ -345,5 +317,47 @@ class Segmenter:
                                 )
                             ],
                         }
-
         return (segmented_sentence, dictionary)
+
+    def attempt_to_get_hanzi(
+        hanzi: str, item: SentenceSegment, index: int, entry: CEDictionary
+    ):
+        if item["word"] == entry.traditional:
+            db_hanzi = CEDictionary.objects.filter(
+                traditional=hanzi, pronunciation=item["pinyin"][index]
+            )
+        else:
+            db_hanzi = CEDictionary.objects.filter(
+                simplified=hanzi, pronunciation=item["pinyin"][index]
+            )
+        if not db_hanzi.exists():
+            if item["word"] == entry.traditional:
+                db_hanzi = CEDictionary.objects.filter(
+                    traditional=hanzi,
+                    pronunciation__iexact=item["pinyin"][index],
+                )
+            else:
+                db_hanzi = CEDictionary.objects.filter(
+                    simplified=hanzi,
+                    pronunciation__iexact=item["pinyin"][index],
+                )
+        if not db_hanzi.exists():
+            if item["word"] == entry.traditional:
+                db_hanzi = CEDictionary.objects.filter(
+                    traditional=hanzi,
+                    pronunciation=item["pinyin"][index][:-1],
+                )
+            else:
+                db_hanzi = CEDictionary.objects.filter(
+                    simplified=hanzi,
+                    pronunciation=item["pinyin"][index][:-1],
+                )
+
+        if item["word"] == entry.traditional:
+            the_hanzi = db_hanzi.first().traditional
+            # likely a bug? should check for multiple results
+        else:
+            the_hanzi = (
+                db_hanzi.first().simplified
+            )  # likely a bug? should check for multiple results
+        return the_hanzi
