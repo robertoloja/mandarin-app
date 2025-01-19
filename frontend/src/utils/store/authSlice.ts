@@ -7,7 +7,7 @@ interface LoginPayload {
 }
 
 interface LoginResponse {
-  user: string;
+  username: string;
   email: string;
 }
 
@@ -25,12 +25,14 @@ export const login = createAsyncThunk<LoginResponse, LoginPayload>(
 
 interface AuthState {
   user: string | null;
+  email: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
   user: null,
+  email: null,
   loading: false,
   error: null,
 };
@@ -39,12 +41,15 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUsername(state, action) {
-      state.user = action.payload;
+    setUserDetails(state, action) {
+      state.user = action.payload.username;
+      state.email = action.payload.email;
     },
     logout(state) {
-      console.log('set user to null: ');
       state.user = null;
+      state.email = null;
+      state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
@@ -55,7 +60,8 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload.username;
+        state.email = action.payload.email;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -64,5 +70,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, setUsername } = authSlice.actions;
+export const { logout, setUserDetails } = authSlice.actions;
 export default authSlice.reducer;

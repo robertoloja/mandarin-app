@@ -46,5 +46,16 @@ class SegmentationResponse(Schema):
     dictionary: Dict[str, ChineseDictionary]
 
 
-class APILoginError(Schema):
+class APIError(Schema):
     error: str
+
+
+class RegisterSchema(Schema):
+    username: str
+    email: str
+    password: str
+
+
+class RegisterResponseSchema(Schema):
+    success: bool
+    message: str

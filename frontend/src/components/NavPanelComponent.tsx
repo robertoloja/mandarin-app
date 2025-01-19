@@ -12,6 +12,7 @@ import {
   Text,
   Spacer,
   useColorMode,
+  useToast,
 } from '@chakra-ui/react';
 import {
   IoFolderOpenOutline,
@@ -27,8 +28,11 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import SettingsButton from './SettingsButtonComponent';
+import { useRouter } from 'next/navigation';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
+  const toast = useToast();
+  const router = useRouter();
   const { colorMode } = useColorMode();
   const user = useSelector((state: RootState) => state.auth.user);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
@@ -38,7 +42,14 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
     if (user) {
       e.preventDefault();
       MandoBotAPI.logout().then((response) => {
-        console.log(response);
+        router.push('/');
+        toast({
+          title: 'Logged out',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+        props.onClose();
       });
     } else {
       props.onClose();

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { PronunciationPreference, SegmentResponseType } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
-import { logout, setUsername } from './store/authSlice';
+import { logout, setUserDetails } from './store/authSlice';
 import { MAX_LENGTH_FREE } from 'constant_variables';
 import { setPreferences } from './store/settingsSlice';
 
@@ -36,13 +36,13 @@ const errorHandler = (error: {
     );
   }
 
-  if (statusCode === 403) {
+  if (statusCode && statusCode === 403) {
     store.dispatch(
       setError('Authentication error: CSRF token validation failed.'),
     );
   }
 
-  if (statusCode && statusCode !== 401) {
+  if (statusCode && ![401, 404, 409].includes(statusCode)) {
     store.dispatch(
       setError(
         'There has been an error connecting to the server. Please try again soon',
@@ -97,19 +97,18 @@ export const MandoBotAPI = {
     username: string,
     password: string,
   ): Promise<{
-    user: string;
+    username: string;
     email: string;
     pronunciation_preference: PronunciationPreference;
     theme_preference: number;
   }> {
     const response = await api.post(
-      '/login',
+      '/accounts/login',
       new URLSearchParams({ username, password }),
       {
         withCredentials: true,
       },
     );
-    store.dispatch(setUsername(response.data.username));
     store.dispatch(
       setPreferences({
         pronunciation_preference: response.data.pronunciation_preference,
@@ -120,8 +119,11 @@ export const MandoBotAPI = {
   },
 
   logout: async function (): Promise<string> {
-    const response = await api.post('/logout', {}, { withCredentials: true });
-    console.log(response.data);
+    const response = await api.post(
+      '/accounts/logout',
+      {},
+      { withCredentials: true },
+    );
     store.dispatch(logout());
     return response.data;
   },
@@ -132,6 +134,26 @@ export const MandoBotAPI = {
     mandobot_response_time: number;
   }> {
     const response = await api.get('/status');
+    return response.data;
+  },
+
+  register: async function (
+    username: string,
+    password: string,
+    email: string,
+  ): Promise<{ success: boolean; message: string }> {
+    const response = await api.post(
+      '/accounts/register',
+      new URLSearchParams({ username, password, email }),
+      { withCredentials: true },
+    );
+    return response.data;
+  },
+
+  registerId: async function (registerId: string): Promise<string> {
+    const response = await api.get(
+      `/accounts/registerId?register_id=${registerId}`,
+    );
     return response.data;
   },
 };
