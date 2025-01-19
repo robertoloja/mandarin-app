@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model  # noqa: E402
 from django.test import TestCase  # noqa: E402
 from ninja.testing import TestClient  # noqa: E402
 from mandoBot.api import api  # noqa: E402
+from accounts.models import PaidButUnregistered  # noqa: E402
 
 
 class AccountAPITests(TestCase):
@@ -38,7 +39,8 @@ class AccountAPITests(TestCase):
 
         # 2 - Send payment to /kofi
         response = Client().post(
-            "/api/accounts/kofi", {"data": self.kofi_data(first_subscription=False)}
+            "/api/accounts/kofi",
+            {"data": self.kofi_data(first_subscription=False, email=self.email)},
         )
         self.assertEqual(response.status_code, 200)
 
@@ -59,14 +61,36 @@ class AccountAPITests(TestCase):
             self.User.objects.get(email=self.email).subscription_is_active()
         )
 
-    def test_first_payment_creates_registration_link(self):
-        # TODO: Is it possible to actually check the e-mail sending
+    def test_cannot_register_without_kofi_subscription(self):
         response = Client().post(
-            "/api/accounts/kofi", {"data": self.kofi_data(first_subscription=True)}
+            "/api/accounts/register",
+            {"username": "user", "password": "pass", "email": "email"},
         )
+        self.assertEqual(response.status_code, 404)
+
+    def test_first_payment_creates_registration_link(self):
+        username = "foo"
+        password = "password"
+        email = "some@email.net"
+        response = Client().post(
+            "/api/accounts/kofi",
+            {"data": self.kofi_data(first_subscription=True, email=email)},
+        )
+        link = PaidButUnregistered.objects.get(user_email=email)
         expected = {"message": "Sent registration e-mail"}
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), expected)
+        self.assertEqual(link.user_email, email)
+        self.assertFalse(link.registered)
+
+        registration_response = Client().post(
+            "/api/accounts/register",
+            {"username": username, "password": password, "email": email},
+        )
+        self.assertEqual(registration_response.status_code, 200)
+        User = get_user_model()
+        test_user = User.objects.get(email=email)
+        self.assertEqual(test_user.email, email)
 
     def test_inactive_user_gets_error(self):
         forty_days_ago = date.today() - timedelta(days=40)
@@ -100,7 +124,7 @@ class AccountAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), expected)
 
-    def kofi_data(self, first_subscription: bool):
+    def kofi_data(self, first_subscription: bool, email: str):
         now = datetime.now(timezone.utc)
         date_string = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         return json.dumps(
@@ -114,7 +138,7 @@ class AccountAPITests(TestCase):
                 "message": "Good luck with the integration!",
                 "amount": "3.00",
                 "url": "https://ko-fi.com/Home/CoffeeShop?txid=00000000-1111-2222-3333-444444444444",
-                "email": self.email,
+                "email": email,
                 "currency": "USD",
                 "is_subscription_payment": True,
                 "is_first_subscription_payment": first_subscription,

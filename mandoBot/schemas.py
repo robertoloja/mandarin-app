@@ -46,7 +46,7 @@ class SegmentationResponse(Schema):
     dictionary: Dict[str, ChineseDictionary]
 
 
-class APILoginError(Schema):
+class APIError(Schema):
     error: str
 
 

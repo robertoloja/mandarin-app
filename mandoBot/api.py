@@ -11,7 +11,7 @@ from accounts.api import router as accounts_router
 
 from sentences.segmenters import Segmenter
 from status.models import ServerStatus
-from ..schemas import (
+from .schemas import (
     SegmentationResponse,
     ServerStatusSchema,
 )

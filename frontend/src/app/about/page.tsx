@@ -91,7 +91,7 @@ const ProjectSupportCard = () => {
                 }
                 size="sm"
               >
-                $5 / month
+                $2 / month
               </Heading>
               <KoFiButton />
             </HStack>

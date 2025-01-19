@@ -3,18 +3,23 @@ import { login } from '@/utils/store/authSlice';
 import { useSelector } from 'react-redux';
 import { Button, Container, Heading, Input } from '@chakra-ui/react';
 import { RootState, store } from '@/utils/store/store';
+import { useRouter } from 'next/navigation';
 
 const LoginForm: React.FC = () => {
+  const router = useRouter();
   const authState = useSelector((state: RootState) => state.auth);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async () => {
-    const response = await store
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    await store
       .dispatch(login({ username, password }))
-      .unwrap();
-    console.log(response);
+      .unwrap()
+      .then(() => {
+        router.push('/settings');
+      });
   };
 
   return (
