@@ -7,6 +7,41 @@ from ..models import CEDictionary
 
 
 class SegmentationTests(TestCase):
+    def test_find_umlaut(self):
+        word = "女"
+        result = Segmenter.segment_and_translate(word)
+        expected = {
+            "dictionary": {
+                "女": {
+                    "english": ["female / woman / daughter"],
+                    "pinyin": ["nü3"],
+                    "zhuyin": ["ㄋㄩˇ"],
+                }
+            },
+            "sentence": [
+                {
+                    "definitions": ["female / woman / daughter"],
+                    "pinyin": ["nü3"],
+                    "word": "女",
+                    "zhuyin": ["ㄋㄩˇ"],
+                }
+            ],
+            "translation": "Women",
+        }
+        self.assertEqual(result, expected)
+
+    def test_umlaut_pronunciation(self):
+        word = "旅游"
+        pronunciation = [x["pinyin"][0] for x in Segmenter.add_pronunciations(word)]
+        expected = ["lü3", "you2"]
+        self.assertEqual(pronunciation, expected)
+
+    def test_pinyin_colon_to_umlaut(self):
+        pinyin = "nu:3"
+        converted = Segmenter.pinyin_to_zhuyin(pinyin)
+        expected = "ㄋㄩˇ"
+        self.assertEqual(converted, expected)
+
     def test_problematic_hanzi(self):
         sentence = "巴賽族"
         result = Segmenter.segment_and_translate(sentence)

@@ -1,6 +1,6 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
-from typing import List
+from typing import List, Tuple
 from django.db.models import Q
 from dragonmapper import hanzi as hanzi_utils
 
@@ -73,8 +73,8 @@ class Segmenter:
             if hanzi_utils.has_chinese(segmented_sentence[i]) and not is_punctuation(
                 segmented_sentence[i]
             ):
-                pinyin = re.findall(r"[a-zA-Z]+(?:\d+)?", pronunciation[i])
-                zhuyin = [hanzi_utils.pinyin_to_zhuyin(x) for x in pinyin]
+                pinyin = re.findall(r"[a-zA-Zü]+(?:\d+)?", pronunciation[i])
+                zhuyin = [Segmenter.pinyin_to_zhuyin(x) for x in pinyin]
             else:
                 pinyin = [segmented_sentence[i]]
                 zhuyin = [segmented_sentence[i]]
@@ -166,14 +166,16 @@ class Segmenter:
             if item["definitions"] != []:
                 continue
 
+            if "ü" in " ".join(item["pinyin"]):
+                pinyin_to_search = " ".join(item["pinyin"]).replace("ü", "u:")
+            else:
+                pinyin_to_search = " ".join(item["pinyin"])
+
             db_result = CEDictionary.objects.filter(
                 Q(traditional=item["word"]) | Q(simplified=item["word"]),
-                pronunciation__iexact=" ".join(item["pinyin"]),
+                pronunciation__iexact=pinyin_to_search,
                 word_length=len(item["word"]),
             )
-
-            if "失" in item["word"]:
-                pass
 
             if not db_result.exists():
                 concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
@@ -276,9 +278,9 @@ class Segmenter:
                                     "definitions", flat=True
                                 )
                             ],
-                            "pinyin": [pinyin],
+                            "pinyin": [pinyin.replace("u:", "ü")],
                             "zhuyin": [
-                                hanzi_utils.pinyin_to_zhuyin(zhuyin)
+                                Segmenter.pinyin_to_zhuyin(zhuyin)
                                 for zhuyin in db_hanzi.values_list(
                                     "pronunciation", flat=True
                                 )
@@ -298,21 +300,23 @@ class Segmenter:
 
                         dictionary[the_hanzi] = {
                             "english": [single_hanzi.definitions],
-                            "pinyin": [single_hanzi.pronunciation],
+                            "pinyin": [single_hanzi.pronunciation.replace("u:", "ü")],
                             "zhuyin": [
-                                hanzi_utils.pinyin_to_zhuyin(single_hanzi.pronunciation)
+                                Segmenter.pinyin_to_zhuyin(single_hanzi.pronunciation)
                             ],
                         }
                 else:
                     for index, hanzi in enumerate(item["word"]):
-                        the_hanzi = Segmenter.attempt_to_get_hanzi(
+                        the_hanzi, db_hanzi = Segmenter.attempt_to_get_hanzi(
                             hanzi, item, index, entry
                         )
                         dictionary[the_hanzi] = {
                             "english": [db_hanzi.first().definitions],
-                            "pinyin": [db_hanzi.first().pronunciation],
+                            "pinyin": [
+                                db_hanzi.first().pronunciation.replace("u:", "ü")
+                            ],
                             "zhuyin": [
-                                hanzi_utils.pinyin_to_zhuyin(
+                                Segmenter.pinyin_to_zhuyin(
                                     db_hanzi.first().pronunciation
                                 )
                             ],
@@ -321,36 +325,39 @@ class Segmenter:
 
     def attempt_to_get_hanzi(
         hanzi: str, item: SentenceSegment, index: int, entry: CEDictionary
-    ):
+    ) -> Tuple[str, CEDictionary]:
+        if "ü" in item["pinyin"][index]:
+            pinyin_to_search = item["pinyin"][index].replace("ü", "u:")
+        else:
+            pinyin_to_search = item["pinyin"][index]
+
         if item["word"] == entry.traditional:
             db_hanzi = CEDictionary.objects.filter(
-                traditional=hanzi, pronunciation=item["pinyin"][index]
+                traditional=hanzi, pronunciation=pinyin_to_search
             )
         else:
             db_hanzi = CEDictionary.objects.filter(
-                simplified=hanzi, pronunciation=item["pinyin"][index]
+                simplified=hanzi, pronunciation=pinyin_to_search
             )
         if not db_hanzi.exists():
             if item["word"] == entry.traditional:
                 db_hanzi = CEDictionary.objects.filter(
-                    traditional=hanzi,
-                    pronunciation__iexact=item["pinyin"][index],
+                    traditional=hanzi, pronunciation__iexact=pinyin_to_search
                 )
             else:
                 db_hanzi = CEDictionary.objects.filter(
-                    simplified=hanzi,
-                    pronunciation__iexact=item["pinyin"][index],
+                    simplified=hanzi, pronunciation__iexact=pinyin_to_search
                 )
         if not db_hanzi.exists():
             if item["word"] == entry.traditional:
                 db_hanzi = CEDictionary.objects.filter(
                     traditional=hanzi,
-                    pronunciation=item["pinyin"][index][:-1],
+                    pronunciation=pinyin_to_search[:-1],
                 )
             else:
                 db_hanzi = CEDictionary.objects.filter(
                     simplified=hanzi,
-                    pronunciation=item["pinyin"][index][:-1],
+                    pronunciation=pinyin_to_search[:-1],
                 )
 
         if item["word"] == entry.traditional:
@@ -360,4 +367,14 @@ class Segmenter:
             the_hanzi = (
                 db_hanzi.first().simplified
             )  # likely a bug? should check for multiple results
-        return the_hanzi
+        return the_hanzi, db_hanzi
+
+    def pinyin_to_zhuyin(pinyin: str) -> str:
+        """Only works for single hanzi"""
+        if ":" not in pinyin:
+            return hanzi_utils.pinyin_to_zhuyin(pinyin)
+
+        umlaut = "ü"
+        number = pinyin[-1]
+        result = hanzi_utils.pinyin_to_zhuyin(pinyin[:-3] + umlaut + number)
+        return result
