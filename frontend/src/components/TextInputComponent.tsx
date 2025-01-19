@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { RefObject, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { MAX_LENGTH_FREE } from 'constant_variables';
+import { MAX_LENGTH, MAX_LENGTH_FREE } from 'constant_variables';
 import Link from 'next/link';
 
 export default function TextInput(props: {
@@ -24,12 +24,15 @@ export default function TextInput(props: {
   const [charCount, setCharCount] = useState(0);
   const [popoverIsOpen, setPopoverIsOpen] = useState(false);
   const [previousText, setPreviousText] = useState('');
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const handleTextChange = () => {
     if (props.inputRef.current) {
       const input = props.inputRef.current.value;
-      if (input.length > MAX_LENGTH_FREE) {
+      if (!user && input.length > MAX_LENGTH_FREE) {
         setPopoverIsOpen(true);
+        props.inputRef.current.value = previousText;
+      } else if (user && input.length > MAX_LENGTH) {
         props.inputRef.current.value = previousText;
       } else {
         setPreviousText(input);
