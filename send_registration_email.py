@@ -19,7 +19,7 @@ def send_email(registration: PaidButUnregistered):
     message = f"""
 Thank you for supporting the MandoBot project!
 
-Please complete your registration by creating a user account <a href="{registration_link}">here</a>.
+Please complete your registration by creating a user account here: {registration_link}.
 
 This e-mail was automatically generated, but this e-mail address is monitored by real people. If you would like
 to get in touch with the developer, just reply to this e-mail.
