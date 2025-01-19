@@ -39,9 +39,7 @@ export default function RegistrationPage() {
 
       MandoBotAPI.register(username, password, email)
         .then(async () => {
-          const response = await store
-            .dispatch(login({ username, password }))
-            .unwrap();
+          await store.dispatch(login({ username, password })).unwrap();
 
           toast({
             title: 'Account created!',

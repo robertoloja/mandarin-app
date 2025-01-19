@@ -41,7 +41,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const handleAuthClick = (e: any) => {
     if (user) {
       e.preventDefault();
-      MandoBotAPI.logout().then((response) => {
+      MandoBotAPI.logout().then(() => {
         router.push('/');
         toast({
           title: 'Logged out',
