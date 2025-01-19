@@ -118,7 +118,9 @@ export default function ServerStatusComponent() {
               >
                 Average First Response Time
               </Heading>
-              <Text fontSize="lg">{responseTime} seconds</Text>
+              <Text fontSize="lg">
+                {Math.trunc(responseTime * 100) / 100} seconds
+              </Text>
               <Text fontSize="sm" whiteSpace="nowrap">
                 Last Update: {localDateTime}
               </Text>
