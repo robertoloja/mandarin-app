@@ -2,7 +2,7 @@ import axios from 'axios';
 import { PronunciationPreference, SegmentResponseType } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
-import { logout, setUserDetails } from './store/authSlice';
+import { logout } from './store/authSlice';
 import { MAX_LENGTH_FREE } from 'constant_variables';
 import { setPreferences } from './store/settingsSlice';
 
