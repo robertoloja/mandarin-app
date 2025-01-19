@@ -1,30 +1,40 @@
 import json
 import logging
 import time
-from datetime import datetime
 
-from django.db import Error
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.http import JsonResponse
-from django.core.mail import send_mail
+from django.db import Error
 from django.conf import settings
-from ninja import NinjaAPI, Form
+from ninja import NinjaAPI
 from dragonmapper import hanzi
+from accounts.api import router as accounts_router
 
 from sentences.segmenters import Segmenter
 from status.models import ServerStatus
 from ..schemas import (
-    APILoginError,
     SegmentationResponse,
     ServerStatusSchema,
-    UserSchema,
-    UserPreferencesSchema,
 )
 from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
-api = NinjaAPI()
+api = NinjaAPI(
+    title="MandoBotAPI",
+    description="""Handles sentence segmentation, translation,
+    and sharing of mandarin sentences.""",
+    version="0.9.0",
+    servers=[
+        {
+            "url": "http://localhost:8000",
+            "description": "Default server address for local development.",
+        },
+        {
+            "url": "https://mandobot.pythonanywhere.com",
+            "description": "Free host, first host of the mandoBot API.",
+        },
+    ],
+)
+api.add_router("/accounts/", accounts_router)
 
 emptyResponse = {
     "translation": "",
@@ -104,52 +114,6 @@ def server_status(request):
     return status
 
 
-@api.post(
-    "/login",
-    response={200: UserPreferencesSchema, 401: APILoginError, 403: APILoginError},
-)
-def login_endpoint(request, payload: Form[UserSchema]) -> str:
-    user = authenticate(username=payload.username, password=payload.password)
-
-    if user is not None:
-        User = get_user_model()
-        user_object = User.objects.get(username=user.username)
-
-        if user_object.subscription_is_active():
-            login(request, user)
-            response = {"username": user_object.username, "email": user_object.email}
-
-            return response
-        else:
-            return 403, {"error": "Subscription has expired"}
-    else:
-        return 401, {"error": "Invalid credentials"}
-
-
-@api.post("/logout")
-def logout_endpoint(request) -> str:
-    logout(request)
-    response = JsonResponse({"message": "Logged out successfully"})
-    response.delete_cookie("csrftoken", path="/", domain=None)
-    return response
-
-
-@api.post("/register")
-def register(request):
-    # TODO
-    return "foo"
-
-
-@api.get("/user_settings", response=UserPreferencesSchema)
-def user_settings(request):
-    if request.user.is_authenticated:
-        User = get_user_model()
-        user = User.objects.get(username=request.user.username)
-        return user
-    else:
-        return "booo"
-
-
 @api.get("/shared", response=SegmentationResponse)
 async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
     """
@@ -185,37 +149,3 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
             SentenceHistory entry for {''.join([word for word in data.sentence])}"""
         )
     return db_entry.sentence_id
-
-
-@api.post("/kofi")
-def receive_kofi_webhook(request, data: Form[str]) -> str:
-    """
-    This endpoint is for Ko-Fi's webhook when an account event happens.
-    It is exempt from ValidateAPITokenMiddleware.
-    """
-    json_data = json.loads(data)
-
-    user_email = json_data["email"]
-    timestamp = json_data["timestamp"]
-    first_subscription = json_data["is_first_subscription_payment"]
-
-    dt = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-    payment_date = dt.date()
-
-    if first_subscription:
-        # TODO: Include rendered e-mail template
-        send_mail(
-            "Welcome!",
-            "Here's your registration link",
-            "mandobotserver@gmail.com",
-            [user_email],
-        )
-        return 200, {"message": "Sent registration e-mail"}
-
-    else:
-        User = get_user_model()
-        user = User.objects.get(email=user_email)
-        user.last_payment = payment_date
-        user.save()
-
-    return 200, {"message": "That worked!"}

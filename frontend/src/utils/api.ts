@@ -121,7 +121,6 @@ export const MandoBotAPI = {
 
   logout: async function (): Promise<string> {
     const response = await api.post('/logout', {}, { withCredentials: true });
-    console.log(response.data);
     store.dispatch(logout());
     return response.data;
   },
@@ -132,6 +131,16 @@ export const MandoBotAPI = {
     mandobot_response_time: number;
   }> {
     const response = await api.get('/status');
+    return response.data;
+  },
+
+  register: async function (): Promise<{ success: boolean; message: string }> {
+    const response = await api.post('/register');
+    return response.data;
+  },
+
+  registerId: async function (registerId: string): Promise<string> {
+    const response = await api.get(`/registerId/?register_id=${registerId}`);
     return response.data;
   },
 };

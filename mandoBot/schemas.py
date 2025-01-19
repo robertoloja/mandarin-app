@@ -48,3 +48,14 @@ class SegmentationResponse(Schema):
 
 class APILoginError(Schema):
     error: str
+
+
+class RegisterSchema(Schema):
+    username: str
+    email: str
+    password: str
+
+
+class RegisterResponseSchema(Schema):
+    success: bool
+    message: str

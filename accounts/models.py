@@ -2,6 +2,7 @@ from datetime import date, timedelta
 from enum import Enum
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils.timezone import now
 
 
 class PronunciationPreference(Enum):
@@ -33,7 +34,7 @@ class MandoBotUser(AbstractUser):
         default=1,
     )
 
-    last_payment = models.DateField(null=True)
+    last_payment = models.DateField(default=now)
     subscription_active = models.BooleanField(default=True)
 
     def subscription_is_active(self) -> bool:
@@ -47,3 +48,9 @@ class MandoBotUser(AbstractUser):
             self.subscription_active = True
             self.save()
             return True
+
+
+class PaidButUnregistered(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    registration_id = models.CharField(max_length=20)
+    user_email = models.TextField()
