@@ -76,14 +76,14 @@ class Timer:
     start_time = 0
 
     def start(self):
-        self.start_time = time.time()
+        self.start_time = time.perf_counter()
 
     def stop(self):
-        end_time = time.time()
+        end_time = time.perf_counter()
 
         server_status = ServerStatus.objects.last()
         server_status.mandobot_response_time = (
-            (server_status.mandobot_response_time or 10) + (end_time - self.start_time)
+            (server_status.mandobot_response_time or 4) + (end_time - self.start_time)
         ) / 2
         server_status.save()
 
