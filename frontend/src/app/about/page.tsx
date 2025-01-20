@@ -79,7 +79,7 @@ const PrivacyPolicyCard = () => {
         </Heading>
         <Text mb={4}>
           This is a privacy preserving application. We collect no personal
-          information or usage information, except for the user's provided
+          information or usage information, except for the user&apos;s provided
           e-mail address and the mandarin sentences entered into the
           application. User e-mail is only used to create and manage the
           account, no unsolicited e-mails are ever sent to the user, and this
@@ -128,11 +128,12 @@ const PrivacyPolicyCard = () => {
           right to remove content that violates these Terms.
         </Text>
         <Text mb={2}>
-          5. Limitation of Liability: MandoBot is provided on an "as-is" and
-          "as-available" basis. We make no warranties of any kind regarding the
-          service's reliability, availability, or suitability for your purposes.
-          To the extent permitted by law, we disclaim all liability for damages
-          resulting from your use of the app.
+          5. Limitation of Liability: MandoBot is provided on an
+          &quot;as-is&quot; and &quot;as-available&quot; basis. We make no
+          warranties of any kind regarding the service&apos;s reliability,
+          availability, or suitability for your purposes. To the extent
+          permitted by law, we disclaim all liability for damages resulting from
+          your use of the app.
         </Text>
         <Text mb={2}>
           6. Termination: We reserve the right to suspend or terminate your
