@@ -29,6 +29,7 @@ export default function RegistrationPage() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -37,6 +38,8 @@ export default function RegistrationPage() {
       setUsername(usernameRef.current.value);
       setPassword(passwordRef.current.value);
 
+      setLoading(true);
+      console.log(`${username}, ${email}`);
       MandoBotAPI.register(username, password, email)
         .then(async () => {
           await store.dispatch(login({ username, password })).unwrap();
@@ -113,7 +116,11 @@ export default function RegistrationPage() {
         </HStack>
 
         <Center>
-          <Button mt="0.5rem" type="submit" disabled={linkError ? true : false}>
+          <Button
+            mt="0.5rem"
+            type="submit"
+            disabled={linkError || loading ? true : false}
+          >
             Register
           </Button>
         </Center>

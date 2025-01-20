@@ -11,7 +11,7 @@ class ServerStatus(models.Model):
         max_length=10, choices=TRANSLATION_BACKEND_OPTIONS
     )
 
-    mandobot_response_time = models.PositiveSmallIntegerField(default=100)
+    mandobot_response_time = models.FloatField(default=2.0)
 
     def __str__(self) -> str:
         return f"{self.translation_backend}, responding in {self.mandobot_response_time}, updated at {self.updated_at}"
