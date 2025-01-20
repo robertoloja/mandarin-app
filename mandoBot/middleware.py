@@ -14,7 +14,7 @@ class ValidateAPITokenMiddleware:
 
     def __call__(self, request):
         url_path = resolve(request.path_info).route
-        if url_path == "api/kofi":
+        if url_path == "api/accounts/kofi":
             return self.get_response(request)
 
         if not settings.DEBUG:
