@@ -39,6 +39,7 @@ export default function RegistrationPage() {
       setPassword(passwordRef.current.value);
 
       setLoading(true);
+      console.log(`${username}, ${email}`);
       MandoBotAPI.register(username, password, email)
         .then(async () => {
           await store.dispatch(login({ username, password })).unwrap();
