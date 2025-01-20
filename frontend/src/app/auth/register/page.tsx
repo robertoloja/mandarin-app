@@ -18,12 +18,10 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export default function RegistrationPage() {
   const router = useRouter();
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const usernameRef = useRef<HTMLInputElement>(null);
   const [linkError, setLinkError] = useState('');
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
@@ -32,33 +30,37 @@ export default function RegistrationPage() {
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
+  const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setUsername(event.target.value);
+  };
+
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);
+  };
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (passwordRef.current && usernameRef.current) {
-      setUsername(usernameRef.current.value);
-      setPassword(passwordRef.current.value);
 
-      setLoading(true);
-      console.log(`${username}, ${email}`);
-      MandoBotAPI.register(username, password, email)
-        .then(async () => {
-          await store.dispatch(login({ username, password })).unwrap();
+    setLoading(true);
+    console.log(`${username}, ${email}`);
+    MandoBotAPI.register(username, password, email)
+      .then(async () => {
+        await store.dispatch(login({ username, password })).unwrap();
 
-          toast({
-            title: 'Account created!',
-            description: 'Redirecting you to the user preferences page',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-          });
-          setTimeout(() => {
-            router.push('/settings');
-          }, 5000);
-        })
-        .catch((error) => {
-          setError(error.response.data.error);
+        toast({
+          title: 'Account created!',
+          description: 'Redirecting you to the user preferences page',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
         });
-    }
+        setTimeout(() => {
+          router.push('/settings');
+        }, 5000);
+      })
+      .catch((error) => {
+        setError(error.response.data.error);
+      });
   };
 
   const urlRegisterId = useSearchParams().get('register_id') || '';
@@ -103,7 +105,7 @@ export default function RegistrationPage() {
               type="text"
               placeholder="Username"
               required
-              ref={usernameRef}
+              onChange={handleUsernameChange}
             />
           </InputGroup>
         </HStack>
@@ -112,7 +114,7 @@ export default function RegistrationPage() {
           <Text w="7rem" textAlign="right">
             Password:
           </Text>
-          <PasswordInput passwordRef={passwordRef} />
+          <PasswordInput handlePasswordChange={handlePasswordChange} />
         </HStack>
 
         <Center>
@@ -152,9 +154,7 @@ export default function RegistrationPage() {
   );
 }
 
-function PasswordInput(props: {
-  passwordRef: RefObject<HTMLInputElement | null>;
-}) {
+function PasswordInput(props: { handlePasswordChange: (event: any) => void }) {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -164,7 +164,7 @@ function PasswordInput(props: {
         pr="4.5rem"
         type={show ? 'text' : 'password'}
         placeholder="Enter password"
-        ref={props.passwordRef}
+        onChange={props.handlePasswordChange}
       />
       <InputRightElement width="4.5rem">
         <Button h="1.75rem" size="sm" onClick={handleClick}>
