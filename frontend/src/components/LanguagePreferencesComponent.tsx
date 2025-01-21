@@ -4,7 +4,7 @@ import { MandoBotAPI } from '@/utils/api';
 import {
   togglePinyin,
   togglePronunciation,
-  toggleTheme,
+  // toggleTheme,
 } from '@/utils/store/settingsSlice';
 import { RootState, store } from '@/utils/store/store';
 import { Grid, Text, Switch } from '@chakra-ui/react';
@@ -19,7 +19,7 @@ export default function LanguagePreferencesComponent() {
     (state: RootState) => state.settings.pinyin_type,
   );
   const username = useSelector((state: RootState) => state.auth.username);
-  const localTheme = useSelector((state: RootState) => state.settings.theme);
+  // const localTheme = useSelector((state: RootState) => state.settings.theme);
 
   useEffect(() => {
     console.log('localPronunciation updated:', localPronunciation);

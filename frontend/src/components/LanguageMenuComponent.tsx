@@ -13,25 +13,10 @@ import {
 } from '@chakra-ui/react';
 import { IoLanguageOutline } from 'react-icons/io5';
 
-import { togglePronunciation, togglePinyin } from '@/utils/store/settingsSlice';
-import { RootState, store } from '@/utils/store/store';
-import { useSelector } from 'react-redux';
 import LanguagePreferencesComponent from './LanguagePreferencesComponent';
 
 export default function LanguageMenu(props: { iconSize: number }) {
   const { colorMode } = useColorMode();
-  const pronunciation = useSelector(
-    (state: RootState) => state.settings.pronunciation,
-  );
-  const pinyinType = useSelector(
-    (state: RootState) => state.settings.pinyin_type,
-  );
-  const togglePron = () => {
-    store.dispatch(togglePronunciation());
-  };
-  const togglePin = () => {
-    store.dispatch(togglePinyin());
-  };
 
   return (
     <Popover>
