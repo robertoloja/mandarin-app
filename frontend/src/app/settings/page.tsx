@@ -1,27 +1,96 @@
 'use client';
 
-// import { MandoBotAPI } from '@/utils/api';
-// import { setUserDetails } from '@/utils/store/authSlice';
-// import { setPreferences } from '@/utils/store/settingsSlice';
-// import { store } from '@/utils/store/store';
-// import { RootState } from '@/utils/store/store';
-// import { useSelector } from 'react-redux';
-import { Box, Button, Heading } from '@chakra-ui/react';
+import { RootState } from '@/utils/store/store';
+import { useSelector } from 'react-redux';
+import {
+  Box,
+  Text,
+  Button,
+  Center,
+  Heading,
+  VStack,
+  HStack,
+  Switch,
+  Spacer,
+  useColorMode,
+  Grid,
+  InputGroup,
+  Input,
+  InputLeftElement,
+} from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import Link from 'next/link';
+import styles from '../../themes';
+import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 
 export default function Settings() {
-  // const user = useSelector((state: RootState) => state.auth.username);
-  // const email = useSelector((state: RootState) => state.auth.email);
-  // const theme = useSelector((state: RootState) => state.settings.theme);
-  // const pronunciation = useSelector(
-  //   (state: RootState) => state.settings.pronunciation,
-  // );
+  const router = useRouter();
+  const username = useSelector((state: RootState) => state.auth.username);
+  const email = useSelector((state: RootState) => state.auth.email);
+  const { colorMode } = useColorMode();
+
+  useEffect(() => {
+    if (!username) {
+      router.push('/');
+    }
+  });
+
+  if (!username) {
+    return <></>;
+  }
 
   return (
-    <Box border="1px solid #AAA">
-      <Heading>Settings</Heading>
-      <Box>
-        <Button>foo</Button>
+    <VStack>
+      <Heading p={5}>Settings</Heading>
+
+      <Box
+        __css={styles.darkBox[colorMode]}
+        p={5}
+        m={2}
+        w="auto"
+        minW={['80vw', '30rem']}
+      >
+        <Text>User Information</Text>
+        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+          <Text>Username: {username}</Text>
+          <Text>E-mail: {email}</Text>
+          <Text>
+            <Link href="">
+              <u>Change Password</u>
+            </Link>
+          </Text>
+        </Box>
+
+        <Spacer m={5} />
+
+        <Text>Pronunciation Preferences</Text>
+        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+          <LanguagePreferencesComponent />
+        </Box>
+
+        <Spacer m={5} />
+
+        <Text>Color Theme Preferences</Text>
+        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+          <Center>
+            <HStack>
+              <Text>Light</Text>
+              <Switch />
+              <Text>Dark</Text>
+            </HStack>
+          </Center>
+        </Box>
+
+        <Spacer m={5} />
+
+        <Text>Account</Text>
+        <Box __css={styles.lightBox[colorMode]} p={5} m={2}>
+          <Center>
+            <Button color="red">Permanently Delete</Button>
+          </Center>
+        </Box>
       </Box>
-    </Box>
+    </VStack>
   );
 }

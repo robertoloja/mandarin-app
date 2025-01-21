@@ -15,6 +15,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import Link from 'next/link';
+import styles from '../../themes';
 
 export default function AboutPage() {
   return (
@@ -50,16 +51,11 @@ const PrivacyPolicyCard = () => {
   return (
     <Box id="policies" mt={4}>
       <Box
+        __css={styles.darkBox[colorMode]}
         justifyContent="center"
         w="fit-content"
         m={2}
-        border={
-          colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
-        }
         p={5}
-        borderRadius={8}
-        backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
-        boxShadow="1px 1px 1px rgba(0, 0, 0, 0.3)"
         // minWidth="30vw"
         width="100%"
         boxSizing="border-box"
@@ -162,26 +158,17 @@ const ProjectSupportCard = () => {
         textAlign="center"
         mb={4}
         whiteSpace="nowrap"
-        textShadow={
-          colorMode === 'light'
-            ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-            : '1px 1px 1px #222'
-        }
+        __css={styles.heading[colorMode]}
       >
         Support This Project
       </Heading>
 
       <Box
+        __css={styles.darkBox[colorMode]}
         justifyContent="center"
         w="fit-content"
         m={2}
-        border={
-          colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
-        }
         p={5}
-        borderRadius={8}
-        backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
-        boxShadow="1px 1px 1px rgba(0, 0, 0, 0.3)"
         minWidth="30vw"
       >
         <Text mb={4}>
@@ -192,38 +179,14 @@ const ProjectSupportCard = () => {
         <Center>
           <VStack>
             <HStack>
-              <Heading
-                textShadow={
-                  colorMode === 'light'
-                    ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-                    : '1px 1px 1px #222'
-                }
-                size="sm"
-              >
+              <Heading __css={styles.heading[colorMode]} size="sm">
                 $2 / month
               </Heading>
               <KoFiButton />
             </HStack>
-            <Box
-              p={3}
-              mb={5}
-              borderRadius={8}
-              boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-              backgroundColor={colorMode === 'light' ? '#85E2FF' : '#495255'}
-              border={
-                colorMode === 'light'
-                  ? '1px solid #468DA4'
-                  : '1px solid #1e282c'
-              }
-            >
+            <Box p={3} mb={5} __css={styles.lightBox[colorMode]}>
               <OrderedList p={4}>
-                <ListItem
-                  textShadow={
-                    colorMode === 'light'
-                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-                      : '1px 1px 1px #222'
-                  }
-                >
+                <ListItem __css={styles.heading[colorMode]}>
                   <b>Increased Segmentation Limit</b>
                 </ListItem>
                 <UnorderedList mb={3}>
@@ -234,13 +197,7 @@ const ProjectSupportCard = () => {
                   <ListItem>Free users are limited to 200 characters</ListItem>
                 </UnorderedList>
 
-                <ListItem
-                  textShadow={
-                    colorMode === 'light'
-                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-                      : '1px 1px 1px #222'
-                  }
-                >
+                <ListItem __css={styles.heading[colorMode]}>
                   <b>Always the best available translation</b>
                 </ListItem>
                 <UnorderedList mb={3}>
@@ -254,13 +211,7 @@ const ProjectSupportCard = () => {
                   </ListItem>
                 </UnorderedList>
 
-                <ListItem
-                  textShadow={
-                    colorMode === 'light'
-                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-                      : '1px 1px 1px #222'
-                  }
-                >
+                <ListItem __css={styles.heading[colorMode]}>
                   <b>
                     Advance Access to Reading Room and Prioritized Suggestions
                   </b>

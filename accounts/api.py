@@ -1,16 +1,16 @@
 from datetime import datetime
 import json
-from typing import Dict
+from typing import Dict, Literal
 
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.hashers import make_password
-from django.http import JsonResponse
 from django.db import IntegrityError
 from django.middleware.csrf import get_token
 from ninja import Router, Form
 
 from mandoBot.schemas import (
     APIError,
+    PronunciationPreferenceSchema,
     RegisterResponseSchema,
     RegisterSchema,
     UserSchema,
@@ -94,9 +94,30 @@ def register(request, payload: Form[RegisterSchema]) -> RegisterResponseSchema:
         return 404, {"error": "Could not find subscription information for this e-mail"}
 
 
+@router.post("/pronunciation_preference", response={200: None, 404: APIError})
+def post_user_pronunciation_preference(request, data: PronunciationPreferenceSchema):
+    if request.user.is_authenticated:
+        User = get_user_model()
+        user = User.objects.get(username=request.user.username)
+        user.pronunciation_preference = data.preference
+        user.save()
+        return 200
+    return 404, {"error": "User not found"}
+
+
+@router.post("/theme_preference", response={200: None, 404: APIError})
+def post_user_theme_preference(request, theme: Literal[0, 1]):
+    if request.user.is_authenticated:
+        User = get_user_model()
+        user = User.objects.get(username=request.user.username)
+        user.theme_preference = theme
+        user.save()
+        return 200
+    return 404, {"error": "User not found"}
+
+
 @router.get("/user_settings", response={200: UserPreferencesSchema, 404: APIError})
 def user_settings(request):
-    print(request.user)
     if request.user.is_authenticated:
         User = get_user_model()
         user = User.objects.get(username=request.user.username)

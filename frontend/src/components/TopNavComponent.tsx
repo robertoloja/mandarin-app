@@ -43,7 +43,7 @@ function TopNav() {
   useEffect(() => {
     if (theme == 'light' && colorMode == 'dark') toggleColorMode();
     if (theme == 'dark' && colorMode == 'light') toggleColorMode();
-  }, []);
+  });
 
   const iconSize = 20;
   return (

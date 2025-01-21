@@ -1,4 +1,5 @@
 'use client';
+import styles from '@/themes';
 import { MandoBotAPI } from '@/utils/api';
 import { clearError, setError } from '@/utils/store/errorSlice';
 import { store } from '@/utils/store/store';
@@ -65,11 +66,7 @@ export default function ServerStatusComponent() {
           size="md"
           textAlign="center"
           mb={1}
-          textShadow={
-            colorMode === 'light'
-              ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-              : '1px 1px 1px #222'
-          }
+          __css={styles.heading[colorMode]}
         >
           Server Status
         </Heading>
@@ -95,25 +92,12 @@ export default function ServerStatusComponent() {
           backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
           boxSizing="border-box"
         >
-          <Box
-            m={2}
-            border={
-              colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
-            }
-            p={5}
-            borderRadius={8}
-            boxShadow="1px 1px 1px rgba(0, 0, 0, 0.3)"
-            backgroundColor={colorMode === 'light' ? '#85E2FF' : '#495255'}
-          >
+          <Box m={2} p={5} __css={styles.lightBox[colorMode]}>
             <VStack>
               <Heading
                 size="sm"
                 whiteSpace="nowrap"
-                textShadow={
-                  colorMode === 'light'
-                    ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-                    : '1px 1px 1px #222'
-                }
+                __css={styles.heading[colorMode]}
               >
                 Average First Response Time
               </Heading>
@@ -126,26 +110,13 @@ export default function ServerStatusComponent() {
             </VStack>
           </Box>
 
-          <Box
-            m={2}
-            border={
-              colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
-            }
-            backgroundColor={colorMode === 'light' ? '#85E2FF' : '#495255'}
-            p={5}
-            borderRadius={8}
-            boxShadow="1px 1px 1px rgba(0, 0, 0, 0.3)"
-          >
+          <Box m={2} p={5} __css={styles.lightBox[colorMode]}>
             <VStack mb={3} mx={2}>
               <HStack>
                 <Heading
                   size="sm"
                   whiteSpace="nowrap"
-                  textShadow={
-                    colorMode === 'light'
-                      ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-                      : '1px 1px 1px #222'
-                  }
+                  __css={styles.heading[colorMode]}
                 >
                   Current Translation Backend
                 </Heading>
@@ -243,6 +214,7 @@ const TranslationBackendComponent = (props: { shortName: string }) => {
     >
       <Center>
         <Image
+          alt="Translator logo"
           src={
             props.shortName === 'deepl'
               ? '/deepl_logo.svg'

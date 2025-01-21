@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Literal
 from ninja import Schema, ModelSchema
 from accounts.models import MandoBotUser
 from status.models import ServerStatus
@@ -59,3 +59,7 @@ class RegisterSchema(Schema):
 class RegisterResponseSchema(Schema):
     success: bool
     message: str
+
+
+class PronunciationPreferenceSchema(Schema):
+    preference: Literal["zhuyin", "pinyin_acc", "pinyin_num"]

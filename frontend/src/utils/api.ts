@@ -1,10 +1,19 @@
 import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios';
-import { SegmentResponseType, UserPreferences } from './types';
+import {
+  PronunciationPreference,
+  SegmentResponseType,
+  UserPreferences,
+} from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
-import { logout } from './store/authSlice';
+import { logout, setUserDetails } from './store/authSlice';
 import { MAX_LENGTH_FREE } from 'constant_variables';
-import { setPreferences } from './store/settingsSlice';
+import {
+  setPreferences,
+  togglePinyin,
+  togglePronunciation,
+  toggleTheme,
+} from './store/settingsSlice';
 
 export function getCookie(name: string): string | null {
   const cookieValue = document.cookie
@@ -158,15 +167,70 @@ export const MandoBotAPI = {
   },
 
   updateCSRF: async function () {
-    const response = await api.get('/accounts/csrf', { withCredentials: true });
-    document.cookie = `csrfToken=${response.data}; path=/`;
+    await api
+      .get('/accounts/csrf', { withCredentials: true })
+      .then((response) => {
+        document.cookie = `csrfToken=${response.data}; path=/`;
+      });
   },
 
-  userSettings: async function (): Promise<UserPreferences> {
-    const response = await api.get('/accounts/user_settings', {
-      withCredentials: true,
-    });
-    const userPreferences = response.data;
-    return userPreferences;
+  /**
+   * Gets user preferences and sets user info and preferences
+   * in the redux store, if user is logged in.
+   * @returns Promise<boolean>
+   */
+  getUserSettings: async function (): Promise<boolean> {
+    let result = false;
+    await api
+      .get('/accounts/user_settings', {
+        withCredentials: true,
+      })
+      .then((response) => {
+        store.dispatch(
+          setUserDetails({
+            username: response.data.username,
+            email: response.data.email,
+          }),
+        );
+        store.dispatch(
+          setPreferences({
+            pronunciation_preference: response.data.pronunciation_preference,
+            theme_preference: response.data.theme_preference,
+          }),
+        );
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
+  },
+
+  pronunciationPreference: async function (
+    preference: PronunciationPreference,
+  ): Promise<boolean> {
+    let result = false;
+    await api
+      .post('/accounts/pronunciation_preference', { preference })
+      .then(() => {
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
+  },
+
+  themePreference: async function (preference: 0 | 1): Promise<boolean> {
+    let result = false;
+    await api
+      .post('/accounts/theme_preference', { preference })
+      .then(() => {
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
   },
 };

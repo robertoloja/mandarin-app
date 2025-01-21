@@ -39,7 +39,7 @@ export default function Home() {
       if (mandarinSentence.mandarin && inputRef.current)
         inputRef.current.value = mandarinSentence.mandarin;
     }
-  }, []);
+  });
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();

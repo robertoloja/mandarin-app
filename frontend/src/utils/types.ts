@@ -41,6 +41,6 @@ export type PronunciationPreference = 'zhuyin' | 'pinyin_acc' | 'pinyin_num';
 export type UserPreferences = {
   username: string;
   email: string;
-  pronunciation_preference: 'zhuyin' | 'pinyin_acc' | 'pinyin_num';
+  pronunciation_preference: PronunciationPreference;
   theme_preference: 0 | 1;
 };
