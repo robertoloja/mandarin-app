@@ -13,10 +13,6 @@ import {
   Switch,
   Spacer,
   useColorMode,
-  Grid,
-  InputGroup,
-  Input,
-  InputLeftElement,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
