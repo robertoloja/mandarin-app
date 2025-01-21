@@ -22,17 +22,16 @@ import { useEffect } from 'react';
 
 export default function Settings() {
   const router = useRouter();
-
+  const email = useSelector((state: RootState) => state.auth.email);
   const username = useSelector((state: RootState) => state.auth.username);
+  const { colorMode } = useColorMode();
+
   useEffect(() => {
     if (!username) {
       router.push('/');
     }
   }, []);
   if (!username) return <></>;
-
-  const email = useSelector((state: RootState) => state.auth.email);
-  const { colorMode } = useColorMode();
 
   return (
     <VStack>
