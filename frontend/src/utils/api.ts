@@ -2,7 +2,7 @@ import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios';
 import { SegmentResponseType, UserPreferences } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
-import { logout } from './store/authSlice';
+import { logout, setUserDetails } from './store/authSlice';
 import { MAX_LENGTH_FREE } from 'constant_variables';
 import { setPreferences } from './store/settingsSlice';
 
@@ -158,15 +158,36 @@ export const MandoBotAPI = {
   },
 
   updateCSRF: async function () {
-    const response = await api.get('/accounts/csrf', { withCredentials: true });
-    document.cookie = `csrfToken=${response.data}; path=/`;
+    const response = await api
+      .get('/accounts/csrf', { withCredentials: true })
+      .then((response) => {
+        document.cookie = `csrfToken=${response.data}; path=/`;
+      });
   },
 
-  userSettings: async function (): Promise<UserPreferences> {
-    const response = await api.get('/accounts/user_settings', {
-      withCredentials: true,
-    });
-    const userPreferences = response.data;
-    return userPreferences;
+  /**
+   * Gets user preferences and sets user info and preferences
+   * in the redux store. Assumes user is logged in.
+   */
+  getUserSettings: async function () {
+    await api
+      .get('/accounts/user_settings', {
+        withCredentials: true,
+      })
+      .then((response) => {
+        store.dispatch(
+          setUserDetails({
+            username: response.data.username,
+            email: response.data.email,
+          }),
+        );
+        store.dispatch(
+          setPreferences({
+            pronunciation_preference: response.data.pronunciation_preference,
+            theme_preference: response.data.theme_preference,
+          }),
+        );
+      })
+      .catch(() => {});
   },
 };

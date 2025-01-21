@@ -31,11 +31,9 @@ if "test" in sys.argv:
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 load_dotenv()
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 API_ACCESS_TOKEN = os.getenv("API_ACCESS_TOKEN")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG") == "True"
 
 LOGGING = {
@@ -73,6 +71,7 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_TRUSTED_ORIGINS = ["https://mandobot.netlify.app"]
+SECURE_SSL_REDIRECT = True
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS += ["http://localhost:3000"]
