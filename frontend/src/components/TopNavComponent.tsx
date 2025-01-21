@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useRef } from 'react';
 import {
   useDisclosure,
@@ -20,6 +21,7 @@ import { RootState, store } from '@/utils/store/store';
 import { useSelector } from 'react-redux';
 import { toggleTheme } from '@/utils/store/settingsSlice';
 import { usePathname } from 'next/navigation';
+import BackToTop from './BackToTopComponent';
 
 function TopNav() {
   const pathname = usePathname();
@@ -88,6 +90,7 @@ function TopNav() {
         <ErrorButton iconSize={iconSize} />
         {pathname === '/' && (
           <>
+            <BackToTop iconSize={iconSize} />
             <LanguageMenu iconSize={iconSize} />
             <ShareButton iconSize={iconSize} />
           </>
