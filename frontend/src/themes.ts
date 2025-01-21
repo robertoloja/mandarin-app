@@ -1,25 +1,13 @@
 import { SystemStyleObject } from '@chakra-ui/react';
 
 interface Styles {
-  card: Record<'light' | 'dark', SystemStyleObject>;
   vstack: Record<'light' | 'dark', SystemStyleObject>;
+  lightBox: Record<'light' | 'dark', SystemStyleObject>;
+  darkBox: Record<'light' | 'dark', SystemStyleObject>;
+  heading: Record<'light' | 'dark', SystemStyleObject>;
 }
 
 const styles: Styles = {
-  card: {
-    light: {
-      border: '1px solid #468DA4',
-      backgroundColor: '#B8EEFF',
-      boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.25)',
-      borderRadius: '4',
-    },
-    dark: {
-      border: '1px solid #1e282c',
-      backgroundColor: '#333c40',
-      boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.25)',
-      borderRadius: '4',
-    },
-  },
   vstack: {
     light: {
       backgroundColor: '#85E2FF',
@@ -28,6 +16,45 @@ const styles: Styles = {
     dark: {
       backgroundColor: '#495255',
       border: 'solid 1px #282828',
+    },
+  },
+
+  darkBox: {
+    light: {
+      borderRadius: 8,
+      border: '1px solid #468DA4',
+      backgroundColor: '#B8EEFF',
+      boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
+    },
+    dark: {
+      borderRadius: 8,
+      border: '1px solid #1e282c',
+      backgroundColor: '#333c40',
+      boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
+    },
+  },
+
+  lightBox: {
+    light: {
+      borderRadius: 8,
+      border: '1px solid #468DA4',
+      backgroundColor: '#85E2FF',
+      boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
+    },
+    dark: {
+      borderRadius: 8,
+      border: '1px solid #1e282c',
+      backgroundColor: '#495255',
+      boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
+    },
+  },
+
+  heading: {
+    light: {
+      textShadow: '1px 1px 1px rgba(0, 0, 0, 0.2)',
+    },
+    dark: {
+      textShadow: '1px 1px 1px #222',
     },
   },
 };

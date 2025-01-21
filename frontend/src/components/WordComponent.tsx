@@ -14,13 +14,14 @@ import {
   useDisclosure,
   useColorMode,
 } from '@chakra-ui/react';
+import styles from '@/themes';
 
 function Word(props: {
   word: MandarinWordType;
   pronunciation: string[];
   definitions: string[];
 }) {
-  // TODO: Account for compound words (e.g. 軍事將領)
+  // TODO: Account for compound words (e.g. 軍事將領, and 成語)
   const punctuation =
     props.word.word === props.pronunciation[0] || props.word.word === '';
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -30,17 +31,11 @@ function Word(props: {
     <>
       {!punctuation ? (
         <Card
-          variant="unstyled"
-          backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
           margin="0.1rem"
           marginBottom="0.5rem"
           padding="0.2rem"
-          border={
-            colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
-          }
-          borderRadius="4"
-          boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
           onClick={onOpen}
+          __css={styles.darkBox[colorMode]}
         >
           <Definition
             pronunciations={props.pronunciation}
