@@ -66,11 +66,11 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "Lax"
 
-SESSION_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_TRUSTED_ORIGINS = ["https://mandobot.netlify.app"]
 
@@ -79,8 +79,9 @@ if DEBUG:
     ALLOWED_HOSTS += ["192.168.1.8", "127.0.0.1", "localhost", "0.0.0.0", "testserver"]
     CORS_ALLOWED_ORIGINS += [
         "http://127.0.0.1:3000",
-        "http://localhost:3000",
+        "https://localhost:3000",
         "http://0.0.0.0",
+        "http://192.168.1.8:3000",
     ]
     CORS_ALLOW_ALL_ORIGINS = True
 

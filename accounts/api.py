@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
 from django.db import IntegrityError
+from django.middleware.csrf import get_token
 from ninja import Router, Form
 
 from mandoBot.schemas import (
@@ -18,6 +19,11 @@ from mandoBot.schemas import (
 from .models import PaidButUnregistered
 
 router = Router(tags=["accounts"])
+
+
+@router.get("/csrf")
+def csrf_endpoint(request):
+    return get_token(request)
 
 
 @router.post(
@@ -49,9 +55,9 @@ def login_endpoint(request, payload: Form[UserSchema]) -> str:
 @router.post("/logout", response={200: dict})
 def logout_endpoint(request) -> str:
     logout(request)
-    response = JsonResponse({"message": "Logged out successfully"})
-    response.delete_cookie("csrftoken", path="/", domain=None)
-    return 200, response
+    # response = JsonResponse()
+    # response.delete_cookie("csrftoken", path="/", domain=None)
+    return 200, {"message": "Logged out successfully"}
 
 
 @router.get("/registerId", response={200: str, 404: APIError, 409: APIError})
@@ -90,6 +96,7 @@ def register(request, payload: Form[RegisterSchema]) -> RegisterResponseSchema:
 
 @router.get("/user_settings", response={200: UserPreferencesSchema, 404: APIError})
 def user_settings(request):
+    print(request.user)
     if request.user.is_authenticated:
         User = get_user_model()
         user = User.objects.get(username=request.user.username)
