@@ -24,14 +24,14 @@ export const login = createAsyncThunk<LoginResponse, LoginPayload>(
 );
 
 interface AuthState {
-  user: string | null;
+  username: string | null;
   email: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
-  user: null,
+  username: null,
   email: null,
   loading: false,
   error: null,
@@ -42,11 +42,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setUserDetails(state, action) {
-      state.user = action.payload.username;
+      state.username = action.payload.username;
       state.email = action.payload.email;
     },
     logout(state) {
-      state.user = null;
+      state.username = null;
       state.email = null;
       state.loading = false;
       state.error = null;
@@ -60,7 +60,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.username;
+        state.username = action.payload.username;
         state.email = action.payload.email;
       })
       .addCase(login.rejected, (state, action) => {

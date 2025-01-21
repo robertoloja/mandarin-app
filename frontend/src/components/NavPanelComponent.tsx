@@ -34,12 +34,12 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const user = useSelector((state: RootState) => state.auth.user);
+  const username = useSelector((state: RootState) => state.auth.username);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
 
   const handleAuthClick = (e: any) => {
-    if (user) {
+    if (username) {
       e.preventDefault();
       MandoBotAPI.logout().then(() => {
         router.push('/');
@@ -167,7 +167,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
 
             <Link href="/auth" passHref onClick={handleAuthClick}>
               <HStack>
-                {user ? (
+                {username ? (
                   <IoLogOutOutline size="22" />
                 ) : (
                   <IoLogInOutline size="22" />
@@ -178,7 +178,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  {user ? 'Log Out' : 'Log In'}
+                  {username ? 'Log Out' : 'Log In'}
                 </Text>
               </HStack>
             </Link>

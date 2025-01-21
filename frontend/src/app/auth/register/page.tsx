@@ -42,7 +42,6 @@ export default function RegistrationPage() {
     event.preventDefault();
 
     setLoading(true);
-    console.log(`${username}, ${email}`);
     MandoBotAPI.register(username, password, email)
       .then(async () => {
         await store.dispatch(login({ username, password })).unwrap();

@@ -24,7 +24,7 @@ export default function TextInput(props: {
   const [charCount, setCharCount] = useState(0);
   const [popoverIsOpen, setPopoverIsOpen] = useState(false);
   const [previousText, setPreviousText] = useState('');
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.username);
 
   const handleTextChange = () => {
     if (props.inputRef.current) {

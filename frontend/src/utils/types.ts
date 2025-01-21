@@ -37,3 +37,10 @@ export const emptySentence: MandarinSentenceType = {
 };
 
 export type PronunciationPreference = 'zhuyin' | 'pinyin_acc' | 'pinyin_num';
+
+export type UserPreferences = {
+  username: string;
+  email: string;
+  pronunciation_preference: 'zhuyin' | 'pinyin_acc' | 'pinyin_num';
+  theme_preference: 0 | 1;
+};

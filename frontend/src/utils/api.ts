@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { PronunciationPreference, SegmentResponseType } from './types';
+import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios';
+import { SegmentResponseType, UserPreferences } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout } from './store/authSlice';
@@ -13,9 +13,10 @@ export function getCookie(name: string): string | null {
     ?.split('=')[1];
   return cookieValue ? decodeURIComponent(cookieValue) : null;
 }
+
 const API_BASE_URL =
   process.env.NODE_ENV === 'development'
-    ? 'http://192.168.1.8:8000/api'
+    ? 'https://localhost:8000/api'
     : '/api';
 
 const api = axios.create({
@@ -24,6 +25,7 @@ const api = axios.create({
   timeout: 20000,
 });
 
+// The response interceptor uses these error handlers.
 const errorHandler = (error: {
   message: string;
   response: { status: any };
@@ -52,6 +54,7 @@ const errorHandler = (error: {
   return Promise.reject(error);
 };
 
+// Response Interceptor: Handle errors
 api.interceptors.response.use(
   (response) => {
     store.dispatch(clearError());
@@ -62,14 +65,19 @@ api.interceptors.response.use(
   },
 );
 
-api.interceptors.request.use((config) => {
-  const csrfToken = getCookie('csrftoken');
+// Request Interceptor: Sets or gets CSRF token
+api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
+  let csrfToken = getCookie('csrftoken');
+  if (!csrfToken) {
+    csrfToken = await MandoBotAPI.updateCSRF();
+  }
   if (csrfToken) {
-    config.headers['X-CSRFToken'] = csrfToken;
+    (config.headers as AxiosRequestHeaders)['X-CSRFToken'] = csrfToken;
   }
   return config;
 });
 
+// API endpoints
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
     const response = await api.post(
@@ -96,12 +104,7 @@ export const MandoBotAPI = {
   login: async function (
     username: string,
     password: string,
-  ): Promise<{
-    username: string;
-    email: string;
-    pronunciation_preference: PronunciationPreference;
-    theme_preference: number;
-  }> {
+  ): Promise<UserPreferences> {
     const response = await api.post(
       '/accounts/login',
       new URLSearchParams({ username, password }),
@@ -155,5 +158,18 @@ export const MandoBotAPI = {
       `/accounts/registerId?register_id=${registerId}`,
     );
     return response.data;
+  },
+
+  updateCSRF: async function (): Promise<string> {
+    const response = await api.get('/accounts/csrf', { withCredentials: true });
+    return response.data;
+  },
+
+  userSettings: async function (): Promise<UserPreferences> {
+    const response = await api.get('/accounts/user_settings', {
+      withCredentials: true,
+    });
+    const userPreferences = response.data;
+    return userPreferences;
   },
 };

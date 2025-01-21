@@ -9,7 +9,7 @@ import { RootState } from '@/utils/store/store';
 
 export default function SettingsButton(props: { onClose: () => void }) {
   const { colorMode } = useColorMode();
-  const user = useSelector((state: RootState) => state.auth.user);
+  const username = useSelector((state: RootState) => state.auth.username);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
 
@@ -17,7 +17,7 @@ export default function SettingsButton(props: { onClose: () => void }) {
     <>
       <Spacer mt="3.5rem" />
       <Link href="/settings" passHref prefetch={true} onClick={props.onClose}>
-        <HStack visibility={user ? 'visible' : 'hidden'}>
+        <HStack visibility={username ? 'visible' : 'hidden'}>
           <IoSettingsOutline size="22" />
           <Text
             textShadow={

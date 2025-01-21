@@ -49,7 +49,6 @@ export default function ServerStatusComponent() {
         setResponseTime(response.mandobot_response_time);
         setBackend(response.translation_backend);
         setServerStatus(true);
-        console.log(response);
       })
       .catch(() => {
         setServerStatus(false);
