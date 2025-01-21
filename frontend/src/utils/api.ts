@@ -67,7 +67,7 @@ api.interceptors.response.use(
 
 // Request Interceptor: Sets or gets CSRF token
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  let csrfToken = getCookie('csrftoken');
+  const csrfToken = getCookie('csrftoken');
   if (!csrfToken) {
     MandoBotAPI.updateCSRF().then((resolve) => {
       (config.headers as AxiosRequestHeaders)['X-CSRFToken'] = resolve;
