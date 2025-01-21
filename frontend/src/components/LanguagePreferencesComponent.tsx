@@ -8,7 +8,6 @@ import {
 } from '@/utils/store/settingsSlice';
 import { RootState, store } from '@/utils/store/store';
 import { Grid, Text, Switch } from '@chakra-ui/react';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 export default function LanguagePreferencesComponent() {
@@ -21,20 +20,21 @@ export default function LanguagePreferencesComponent() {
   const username = useSelector((state: RootState) => state.auth.username);
   // const localTheme = useSelector((state: RootState) => state.settings.theme);
 
-  useEffect(() => {
-    console.log('localPronunciation updated:', localPronunciation);
+  const togglePronun = () => {
+    store.dispatch(togglePronunciation());
     if (username) {
       MandoBotAPI.pronunciationPreference(
         localPronunciation === 'zhuyin' ? 'zhuyin' : localPinyinType,
       );
     }
-  }, [localPronunciation]);
+  };
 
-  useEffect(() => {
+  const togglePin = () => {
+    store.dispatch(togglePinyin());
     if (username) {
       MandoBotAPI.pronunciationPreference(localPinyinType);
     }
-  }, [localPinyinType]);
+  };
 
   // const toggleThem = () => {
   //   if (!username) {
@@ -50,9 +50,7 @@ export default function LanguagePreferencesComponent() {
         {localPinyinType === 'pinyin_acc' ? 'pīnyīn' : 'pin1yin1'}
       </Text>
       <Switch
-        onChange={() => {
-          store.dispatch(togglePronunciation());
-        }}
+        onChange={togglePronun}
         isChecked={localPronunciation === 'zhuyin'}
       />
       <Text>ㄅㄆㄇㄈ</Text>
@@ -61,9 +59,7 @@ export default function LanguagePreferencesComponent() {
         <>
           <Text align="right">pīnyīn</Text>
           <Switch
-            onChange={() => {
-              store.dispatch(togglePinyin());
-            }}
+            onChange={togglePin}
             isChecked={localPinyinType === 'pinyin_num'}
           />
           <Text>pin1yin1</Text>
