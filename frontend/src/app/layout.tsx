@@ -25,24 +25,26 @@ export default function RootLayout({
   });
 
   useEffect(() => {
-    MandoBotAPI.userSettings()
-      .then((response) => {
-        store.dispatch(
-          setUserDetails({
-            username: response.username,
-            email: response.email,
-          }),
-        );
-        store.dispatch(
-          setPreferences({
-            pronunciation_preference: response.pronunciation_preference,
-            theme_preference: response.theme_preference,
-          }),
-        );
-      })
-      .catch(() => {
-        router.push('/');
-      });
+    MandoBotAPI.updateCSRF().then(() => {
+      MandoBotAPI.userSettings()
+        .then((response) => {
+          store.dispatch(
+            setUserDetails({
+              username: response.username,
+              email: response.email,
+            }),
+          );
+          store.dispatch(
+            setPreferences({
+              pronunciation_preference: response.pronunciation_preference,
+              theme_preference: response.theme_preference,
+            }),
+          );
+        })
+        .catch(() => {
+          router.push('/');
+        });
+    });
   }, []);
 
   return (

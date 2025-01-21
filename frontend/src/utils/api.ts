@@ -68,12 +68,6 @@ api.interceptors.response.use(
 // Request Interceptor: Sets or gets CSRF token
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const csrfToken = getCookie('csrftoken');
-  if (!csrfToken) {
-    MandoBotAPI.updateCSRF().then((resolve) => {
-      (config.headers as AxiosRequestHeaders)['X-CSRFToken'] = resolve;
-      return config;
-    });
-  }
   if (csrfToken) {
     (config.headers as AxiosRequestHeaders)['X-CSRFToken'] = csrfToken;
   }
@@ -163,9 +157,9 @@ export const MandoBotAPI = {
     return response.data;
   },
 
-  updateCSRF: async function (): Promise<string> {
+  updateCSRF: async function () {
     const response = await api.get('/accounts/csrf', { withCredentials: true });
-    return response.data;
+    document.cookie = `csrfToken=${response.data}; path=/`;
   },
 
   userSettings: async function (): Promise<UserPreferences> {
