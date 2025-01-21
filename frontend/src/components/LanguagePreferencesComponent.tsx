@@ -36,13 +36,13 @@ export default function LanguagePreferencesComponent() {
     }
   }, [localPinyinType]);
 
-  const toggleThem = () => {
-    if (!username) {
-      store.dispatch(toggleTheme());
-    } else {
-      MandoBotAPI.themePreference(localTheme === 'light' ? 1 : 0);
-    }
-  };
+  // const toggleThem = () => {
+  //   if (!username) {
+  //     store.dispatch(toggleTheme());
+  //   } else {
+  //     MandoBotAPI.themePreference(localTheme === 'light' ? 1 : 0);
+  //   }
+  // };
 
   return (
     <Grid templateColumns="1fr auto 1fr" gap={2} alignItems="center">

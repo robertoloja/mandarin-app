@@ -1,9 +1,7 @@
 'use client';
 
 import {
-  Switch,
   IconButton,
-  Text,
   useColorMode,
   Popover,
   PopoverTrigger,
@@ -12,8 +10,6 @@ import {
   PopoverBody,
   PopoverHeader,
   Center,
-  VStack,
-  Grid,
 } from '@chakra-ui/react';
 import { IoLanguageOutline } from 'react-icons/io5';
 
