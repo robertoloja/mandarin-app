@@ -1,9 +1,9 @@
 'use client';
 
-import { MandoBotAPI } from '@/utils/api';
-import { setUserDetails } from '@/utils/store/authSlice';
-import { setPreferences } from '@/utils/store/settingsSlice';
-import { store } from '@/utils/store/store';
+// import { MandoBotAPI } from '@/utils/api';
+// import { setUserDetails } from '@/utils/store/authSlice';
+// import { setPreferences } from '@/utils/store/settingsSlice';
+// import { store } from '@/utils/store/store';
 // import { RootState } from '@/utils/store/store';
 // import { useSelector } from 'react-redux';
 import { Box, Button, Heading } from '@chakra-ui/react';

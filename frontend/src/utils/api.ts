@@ -1,9 +1,5 @@
 import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios';
-import {
-  PronunciationPreference,
-  SegmentResponseType,
-  UserPreferences,
-} from './types';
+import { SegmentResponseType, UserPreferences } from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout } from './store/authSlice';
