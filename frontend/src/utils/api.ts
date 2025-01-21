@@ -158,7 +158,7 @@ export const MandoBotAPI = {
   },
 
   updateCSRF: async function () {
-    const response = await api
+    await api
       .get('/accounts/csrf', { withCredentials: true })
       .then((response) => {
         document.cookie = `csrfToken=${response.data}; path=/`;

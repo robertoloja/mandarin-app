@@ -73,7 +73,7 @@ export default function RegistrationPage() {
           setLinkError(error.response.data.error);
         });
     }
-  }, []);
+  });
 
   return (
     <Container>

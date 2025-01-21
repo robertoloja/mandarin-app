@@ -243,6 +243,7 @@ const TranslationBackendComponent = (props: { shortName: string }) => {
     >
       <Center>
         <Image
+          alt="Translator logo"
           src={
             props.shortName === 'deepl'
               ? '/deepl_logo.svg'
