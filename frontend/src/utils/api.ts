@@ -1,10 +1,19 @@
 import axios, { AxiosRequestHeaders, InternalAxiosRequestConfig } from 'axios';
-import { SegmentResponseType, UserPreferences } from './types';
+import {
+  PronunciationPreference,
+  SegmentResponseType,
+  UserPreferences,
+} from './types';
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUserDetails } from './store/authSlice';
 import { MAX_LENGTH_FREE } from 'constant_variables';
-import { setPreferences } from './store/settingsSlice';
+import {
+  setPreferences,
+  togglePinyin,
+  togglePronunciation,
+  toggleTheme,
+} from './store/settingsSlice';
 
 export function getCookie(name: string): string | null {
   const cookieValue = document.cookie
@@ -167,9 +176,11 @@ export const MandoBotAPI = {
 
   /**
    * Gets user preferences and sets user info and preferences
-   * in the redux store. Assumes user is logged in.
+   * in the redux store, if user is logged in.
+   * @returns Promise<boolean>
    */
-  getUserSettings: async function () {
+  getUserSettings: async function (): Promise<boolean> {
+    let result = false;
     await api
       .get('/accounts/user_settings', {
         withCredentials: true,
@@ -187,7 +198,39 @@ export const MandoBotAPI = {
             theme_preference: response.data.theme_preference,
           }),
         );
+        result = true;
       })
-      .catch(() => {});
+      .catch(() => {
+        result = false;
+      });
+    return result;
+  },
+
+  pronunciationPreference: async function (
+    preference: PronunciationPreference,
+  ): Promise<boolean> {
+    let result = false;
+    await api
+      .post('/accounts/pronunciation_preference', { preference })
+      .then(() => {
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
+  },
+
+  themePreference: async function (preference: 0 | 1): Promise<boolean> {
+    let result = false;
+    await api
+      .post('/accounts/theme_preference', { preference })
+      .then(() => {
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
   },
 };

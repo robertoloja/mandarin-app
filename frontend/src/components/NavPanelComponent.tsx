@@ -67,10 +67,10 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-
         <DrawerBody ml="-4rem">
           <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
             <SettingsButton onClose={props.onClose} />
+
             <Link href="/" passHref onClick={props.onClose} prefetch={true}>
               <HStack>
                 <IoHomeOutline size="22" />

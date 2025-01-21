@@ -13,11 +13,16 @@ import {
   Switch,
   Spacer,
   useColorMode,
+  Grid,
+  InputGroup,
+  Input,
+  InputLeftElement,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import styles from '../../themes';
+import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 
 export default function Settings() {
   const router = useRouter();
@@ -39,10 +44,16 @@ export default function Settings() {
     <VStack>
       <Heading p={5}>Settings</Heading>
 
-      <Box __css={styles.darkBox[colorMode]} p={5} m={2} maxW="80rem">
+      <Box
+        __css={styles.darkBox[colorMode]}
+        p={5}
+        m={2}
+        w="auto"
+        minW={['80vw', '30rem']}
+      >
         <Text>User Information</Text>
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
-          <Text>User: {username}</Text>
+          <Text>Username: {username}</Text>
           <Text>E-mail: {email}</Text>
           <Text>
             <Link href="">
@@ -55,13 +66,7 @@ export default function Settings() {
 
         <Text>Pronunciation Preferences</Text>
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
-          <Center>
-            <HStack>
-              <Text>pīnyīn</Text>
-              <Switch />
-              <Text>ㄅㄆㄇㄈ</Text>
-            </HStack>
-          </Center>
+          <LanguagePreferencesComponent />
         </Box>
 
         <Spacer m={5} />
@@ -80,8 +85,10 @@ export default function Settings() {
         <Spacer m={5} />
 
         <Text>Account</Text>
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
-          <Button color="red">Permanently Delete</Button>
+        <Box __css={styles.lightBox[colorMode]} p={5} m={2}>
+          <Center>
+            <Button color="red">Permanently Delete</Button>
+          </Center>
         </Box>
       </Box>
     </VStack>

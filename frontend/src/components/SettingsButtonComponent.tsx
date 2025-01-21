@@ -23,6 +23,7 @@ export default function SettingsButton(props: { onClose: () => void }) {
             textShadow={
               colorMode === 'light' ? lightTextShadow : darkTextShadow
             }
+            _hover={{ textDecoration: 'underline' }}
           >
             Settings
           </Text>

@@ -30,7 +30,7 @@ class MandoBotUser(AbstractUser):
     )
     theme_preference = models.IntegerField(
         choices=THEME,
-        default=1,
+        default=0,
     )
     last_payment = models.DateField(default=now)
     subscription_active = models.BooleanField(default=True)
