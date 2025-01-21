@@ -57,7 +57,7 @@ export default function ServerStatusComponent() {
           setError('Server currently unreachable. Please try again soon.'),
         );
       });
-  }, []);
+  });
 
   return (
     <Box justifyContent="center">
