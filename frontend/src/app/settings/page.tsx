@@ -18,15 +18,19 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from '../../themes';
 import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
+import { useEffect } from 'react';
 
 export default function Settings() {
   const router = useRouter();
 
   const username = useSelector((state: RootState) => state.auth.username);
-  if (!username) {
-    router.push('/');
-    return <></>;
-  }
+  useEffect(() => {
+    if (!username) {
+      router.push('/');
+    }
+  }, []);
+  if (!username) return <></>;
+
   const email = useSelector((state: RootState) => state.auth.email);
   const { colorMode } = useColorMode();
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import { RootState, store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
