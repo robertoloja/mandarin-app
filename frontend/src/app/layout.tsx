@@ -1,8 +1,8 @@
 'use client';
 
-import { Suspense, useEffect } from 'react';
-import { Provider } from 'react-redux';
-import { store } from '../utils/store/store';
+import { Suspense } from 'react';
+import { Provider, useSelector } from 'react-redux';
+import { RootState, store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import TopNav from '@/components/TopNavComponent';
 import BackToTop from '@/components/BackToTopComponent';
@@ -20,12 +20,6 @@ export default function RootLayout({
     },
   });
 
-  useEffect(() => {
-    MandoBotAPI.updateCSRF().then(() => {
-      MandoBotAPI.getUserSettings();
-    });
-  }, []);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -34,6 +28,7 @@ export default function RootLayout({
       <Provider store={store}>
         <body>
           <ChakraProvider resetCSS theme={theme}>
+            <UpdateUserSettings />
             <TopNav />
             <Suspense>{children}</Suspense>
             <BackToTop />
@@ -43,3 +38,11 @@ export default function RootLayout({
     </html>
   );
 }
+
+const UpdateUserSettings = () => {
+  const username = useSelector((state: RootState) => state.auth.username);
+  MandoBotAPI.updateCSRF().then(() => {
+    if (username) MandoBotAPI.getUserSettings();
+  });
+  return null;
+};

@@ -15,26 +15,23 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import Link from 'next/link';
 import styles from '../../themes';
 import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
+import { useEffect } from 'react';
 
 export default function Settings() {
   const router = useRouter();
-  const username = useSelector((state: RootState) => state.auth.username);
   const email = useSelector((state: RootState) => state.auth.email);
+  const username = useSelector((state: RootState) => state.auth.username);
   const { colorMode } = useColorMode();
 
   useEffect(() => {
     if (!username) {
       router.push('/');
     }
-  });
-
-  if (!username) {
-    return <></>;
-  }
+  }, []);
+  if (!username) return <></>;
 
   return (
     <VStack>

@@ -19,8 +19,10 @@ import Link from 'next/link';
 import { RootState, store } from '@/utils/store/store';
 import { useSelector } from 'react-redux';
 import { toggleTheme } from '@/utils/store/settingsSlice';
+import { usePathname } from 'next/navigation';
 
 function TopNav() {
+  const pathname = usePathname();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -43,7 +45,7 @@ function TopNav() {
   useEffect(() => {
     if (theme == 'light' && colorMode == 'dark') toggleColorMode();
     if (theme == 'dark' && colorMode == 'light') toggleColorMode();
-  });
+  }, []);
 
   const iconSize = 20;
   return (
@@ -71,33 +73,41 @@ function TopNav() {
           mb={0.5}
         />
 
-        <Link href="/" prefetch={true}>
-          <IconButton
-            aria-label="Text options"
-            icon={<IoHomeOutline size={iconSize} />}
-            bg={colorMode === 'light' ? 'white' : 'gray.800'}
-          />
-        </Link>
+        {pathname !== '/' && (
+          <Link href="/" prefetch={true}>
+            <IconButton
+              aria-label="Text options"
+              icon={<IoHomeOutline size={iconSize} />}
+              bg={colorMode === 'light' ? 'white' : 'gray.800'}
+            />
+          </Link>
+        )}
       </HStack>
 
       <HStack justifyContent="right" w="100%">
         <ErrorButton iconSize={iconSize} />
-        <LanguageMenu iconSize={iconSize} />
-        <ShareButton iconSize={iconSize} />
+        {pathname === '/' && (
+          <>
+            <LanguageMenu iconSize={iconSize} />
+            <ShareButton iconSize={iconSize} />
+          </>
+        )}
 
-        <IconButton
-          aria-label="Change color mode"
-          icon={
-            colorMode === 'light' ? (
-              <IoMoon size={iconSize} />
-            ) : (
-              <IoSunny size={iconSize} />
-            )
-          }
-          onClick={toggleThemeSetting}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-          mr="2rem"
-        />
+        {pathname !== '/settings' && (
+          <IconButton
+            aria-label="Change color mode"
+            icon={
+              colorMode === 'light' ? (
+                <IoMoon size={iconSize} />
+              ) : (
+                <IoSunny size={iconSize} />
+              )
+            }
+            onClick={toggleThemeSetting}
+            bg={colorMode === 'light' ? 'white' : 'gray.800'}
+            mr="2rem"
+          />
+        )}
       </HStack>
     </HStack>
   );

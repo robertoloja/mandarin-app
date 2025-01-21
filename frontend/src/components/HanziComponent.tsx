@@ -21,7 +21,7 @@ function Hanzi(props: { hanzi: string; pronunciation: string }) {
           </Text>
 
           {props.pronunciation ? (
-            <Text fontSize="l">{props.pronunciation.toLowerCase()}</Text>
+            <Text>{props.pronunciation.toLowerCase()}</Text>
           ) : null}
         </VStack>
       )}

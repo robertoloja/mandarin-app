@@ -35,7 +35,7 @@ const BackToTop: React.FC = () => {
     >
       <IconButton
         aria-label="Back to top"
-        icon={<IoArrowUpCircleOutline size="lg" color="#ccc" />}
+        icon={<IoArrowUpCircleOutline size="48" color="#ccc" />}
         size="lg"
         opacity={isVisible ? '1' : '0'}
         isRound

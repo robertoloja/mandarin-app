@@ -71,7 +71,7 @@ SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_SAMESITE = "Lax"
 
 CSRF_TRUSTED_ORIGINS = ["https://mandobot.netlify.app"]
-SECURE_SSL_REDIRECT = True
+# SECURE_SSL_REDIRECT = True
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS += ["http://localhost:3000"]
