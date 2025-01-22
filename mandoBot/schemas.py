@@ -16,6 +16,11 @@ class UserSchema(ModelSchema):
         fields = ["username", "password"]
 
 
+class ChangePasswordSchema(UserSchema):
+    new_password: str
+    password_confirmation: str
+
+
 class UserPreferencesSchema(ModelSchema):
     class Meta:
         model = MandoBotUser
