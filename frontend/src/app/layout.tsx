@@ -38,9 +38,8 @@ export default function RootLayout({
 }
 
 const UpdateUserSettings = () => {
-  const username = useSelector((state: RootState) => state.auth.username);
   MandoBotAPI.updateCSRF().then(() => {
-    if (username) MandoBotAPI.getUserSettings();
+    MandoBotAPI.getUserSettings();
   });
   return null;
 };

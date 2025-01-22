@@ -179,18 +179,20 @@ export const MandoBotAPI = {
         withCredentials: true,
       })
       .then((response) => {
-        store.dispatch(
-          setUserDetails({
-            username: response.data.username,
-            email: response.data.email,
-          }),
-        );
-        store.dispatch(
-          setPreferences({
-            pronunciation_preference: response.data.pronunciation_preference,
-            theme_preference: response.data.theme_preference,
-          }),
-        );
+        if (response.data.username) {
+          store.dispatch(
+            setUserDetails({
+              username: response.data.username,
+              email: response.data.email,
+            }),
+          );
+          store.dispatch(
+            setPreferences({
+              pronunciation_preference: response.data.pronunciation_preference,
+              theme_preference: response.data.theme_preference,
+            }),
+          );
+        }
         result = true;
       })
       .catch(() => {
