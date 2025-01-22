@@ -35,7 +35,7 @@ def csrf_endpoint(request):
     "/login",
     response={200: UserPreferencesSchema, 401: APIError, 403: APIError},
 )
-def login_endpoint(request, payload: Form[UserSchema]) -> str:
+def login_endpoint(request, payload: Form[UserSchema]) -> UserPreferencesSchema:
     user = authenticate(username=payload.username, password=payload.password)
 
     if user is not None:
@@ -134,14 +134,16 @@ def post_user_theme_preference(request, theme: Literal[0, 1]):
     return 404, {"error": "User not found"}
 
 
-@router.get("/user_settings", response={200: UserPreferencesSchema, 404: APIError})
+@router.get(
+    "/user_settings", response={200: UserPreferencesSchema, 204: None}
+)  # , 204: APIError})
 def user_settings(request):
     if request.user.is_authenticated:
         User = get_user_model()
         user = User.objects.get(username=request.user.username)
         return user
     else:
-        return 404, {"error": "User not found"}
+        return 204, {"username": None}
 
 
 @router.post("/kofi", response={200: Dict[str, str]})

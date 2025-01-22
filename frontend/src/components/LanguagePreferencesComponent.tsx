@@ -21,18 +21,26 @@ export default function LanguagePreferencesComponent() {
   // const localTheme = useSelector((state: RootState) => state.settings.theme);
 
   const togglePronun = () => {
-    store.dispatch(togglePronunciation());
     if (username) {
       MandoBotAPI.pronunciationPreference(
-        localPronunciation === 'zhuyin' ? 'zhuyin' : localPinyinType,
-      );
+        localPronunciation === 'zhuyin' ? localPinyinType : 'zhuyin',
+      ).then(() => {
+        store.dispatch(togglePronunciation());
+      });
+    } else {
+      store.dispatch(togglePronunciation());
     }
   };
 
   const togglePin = () => {
-    store.dispatch(togglePinyin());
     if (username) {
-      MandoBotAPI.pronunciationPreference(localPinyinType);
+      MandoBotAPI.pronunciationPreference(
+        localPinyinType === 'pinyin_acc' ? 'pinyin_num' : 'pinyin_acc',
+      ).then(() => {
+        store.dispatch(togglePinyin());
+      });
+    } else {
+      store.dispatch(togglePinyin());
     }
   };
 
