@@ -41,7 +41,7 @@ function Definition(props: {
   const pronunciation = (hanzi: string): string => {
     if (pronunciationSetting === 'pinyin') {
       if (pinyinSetting === 'pinyin_acc') {
-        return Pinyin(dictionary[hanzi].pinyin[0]);
+        return Pinyin(dictionary[hanzi].pinyin[0].toLowerCase());
       } else {
         return dictionary[hanzi].pinyin[0];
       }
@@ -61,7 +61,10 @@ function Definition(props: {
 
             {/* The current pronunciation */}
             <Heading size="sm">
-              {props.word.split('').map((x) => pronunciation(x))}
+              {props.word
+                .split('')
+                .map((x) => pronunciation(x))
+                .join(' ')}
             </Heading>
 
             {/* Each definition of the word */}

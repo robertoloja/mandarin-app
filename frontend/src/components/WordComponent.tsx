@@ -41,7 +41,7 @@ function Word(props: {
   const pronunciation = (hanzi: string): string => {
     if (pronunciationSetting === 'pinyin') {
       if (pinyinSetting === 'pinyin_acc') {
-        return Pinyin(dictionary[hanzi].pinyin[0]);
+        return Pinyin(dictionary[hanzi].pinyin[0].toLowerCase());
       } else {
         return dictionary[hanzi].pinyin[0];
       }
@@ -57,6 +57,7 @@ function Word(props: {
           padding="0.2rem"
           onClick={onOpen}
           __css={styles.darkBox[colorMode]}
+          cursor="pointer"
         >
           <Definition
             pronunciations={props.pronunciation}
