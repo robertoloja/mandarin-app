@@ -33,8 +33,49 @@ class AccountAPITests(TestCase):
         self.client = None
         os.environ.pop("TEST", None)
 
+    def test_change_password(self):
+        client = Client()
+        response = client.post(
+            "/api/accounts/login",
+            {"username": self.username, "password": self.password},
+        )
+        self.assertEqual(200, response.status_code)
+
+        response = client.post(
+            "/api/accounts/change_password",
+            {
+                "username": self.username,
+                "password": "1234556abcde",
+                "new_password": "1234",
+                "password_confirmation": "5678",
+            },
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertListEqual(
+            json.loads(response.content)["error"],
+            [
+                "Current password incorrect",
+                "New password does not match password confirmation",
+                "This password is too short. It must contain at least 8 characters.",
+                "This password is too common.",
+                "This password is entirely numeric.",
+            ],
+        )
+
+        response = client.post(
+            "/api/accounts/change_password",
+            {
+                "username": self.username,
+                "password": self.password,
+                "new_password": "PrettyGoodPassw0rd?",
+                "password_confirmation": "PrettyGoodPassw0rd?",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
     def test_short_password_returns_error(self):
-        response = Client().post(
+        client = Client()
+        response = client.post(
             "/api/accounts/register",
             {"username": self.username, "password": "1234", "email": self.email},
         )
@@ -47,14 +88,15 @@ class AccountAPITests(TestCase):
         self.assertFalse(self.test_user.subscription_is_active())
 
         # 2 - Send payment to /kofi
-        response = Client().post(
+        client = Client()
+        response = client.post(
             "/api/accounts/kofi",
             {"data": self.kofi_data(first_subscription=False, email=self.email)},
         )
         self.assertEqual(response.status_code, 200)
 
         # 3 - Login
-        response = Client().post(
+        response = client.post(
             "/api/accounts/login",
             {"username": self.username, "password": self.password},
         )
@@ -82,10 +124,11 @@ class AccountAPITests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_first_payment_creates_registration_link(self):
+        client = Client()
         username = "foo"
         password = "AreallyGOODpassword"
         email = "some@email.net"
-        response = Client().post(
+        response = client.post(
             "/api/accounts/kofi",
             {"data": self.kofi_data(first_subscription=True, email=email)},
         )
@@ -96,7 +139,7 @@ class AccountAPITests(TestCase):
         self.assertEqual(link.user_email, email)
         self.assertFalse(link.registered)
 
-        registration_response = Client().post(
+        registration_response = client.post(
             "/api/accounts/register",
             {"username": username, "password": password, "email": email},
         )

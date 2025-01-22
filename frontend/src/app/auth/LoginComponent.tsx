@@ -1,11 +1,14 @@
+'use client';
+
 import React, { useState } from 'react';
 import { login } from '@/utils/store/authSlice';
 import { useSelector } from 'react-redux';
 import { Button, Container, Heading, Input } from '@chakra-ui/react';
 import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
+import PasswordInputComponent from './PasswordInputComponent';
 
-const LoginForm: React.FC = () => {
+export default function LoginForm() {
   const router = useRouter();
   const authState = useSelector((state: RootState) => state.auth);
 
@@ -33,12 +36,8 @@ const LoginForm: React.FC = () => {
           required
           onChange={(e) => setUsername(e.target.value)}
         />
-        <Input
-          type="password"
-          placeholder="Password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+        <PasswordInputComponent
+          handlePasswordChange={(e) => setPassword(e.target.value)}
         />
         <Button disabled={authState.loading} type="submit">
           {authState.loading ? 'Logging in...' : 'Login'}
@@ -47,6 +46,4 @@ const LoginForm: React.FC = () => {
       {authState.error && <p style={{ color: 'red' }}>{authState.error}</p>}
     </Container>
   );
-};
-
-export default LoginForm;
+}

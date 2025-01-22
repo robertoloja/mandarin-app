@@ -18,15 +18,18 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from '../../themes';
 import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import PasswordChangeComponent from '../auth/PasswordChangeComponent';
 
 export default function Settings() {
   const router = useRouter();
   const email = useSelector((state: RootState) => state.auth.email);
   const username = useSelector((state: RootState) => state.auth.username);
-  const { colorMode } = useColorMode();
+  const [changePassword, showChangePassword] = useState(false);
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
+    // TODO: This is triggering when the user is logged in
     if (!username) {
       router.push('/');
     }
@@ -44,19 +47,6 @@ export default function Settings() {
         w="auto"
         minW={['80vw', '30rem']}
       >
-        <Text>User Information</Text>
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
-          <Text>Username: {username}</Text>
-          <Text>E-mail: {email}</Text>
-          <Text>
-            <Link href="">
-              <u>Change Password</u>
-            </Link>
-          </Text>
-        </Box>
-
-        <Spacer m={5} />
-
         <Text>Pronunciation Preferences</Text>
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
           <LanguagePreferencesComponent />
@@ -69,7 +59,10 @@ export default function Settings() {
           <Center>
             <HStack>
               <Text>Light</Text>
-              <Switch />
+              <Switch
+                isChecked={colorMode === 'dark'}
+                onChange={toggleColorMode}
+              />
               <Text>Dark</Text>
             </HStack>
           </Center>
@@ -78,9 +71,29 @@ export default function Settings() {
         <Spacer m={5} />
 
         <Text>Account</Text>
+        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+          <Text>Username: {username}</Text>
+          <Text>E-mail: {email}</Text>
+          <Text as="u">
+            <Link href="" onClick={() => showChangePassword(!changePassword)}>
+              Change Password
+            </Link>
+          </Text>
+          {changePassword && (
+            <PasswordChangeComponent
+              changed={() => {
+                showChangePassword(false);
+              }}
+            />
+          )}
+        </Box>
+
+        <Spacer m={5} />
         <Box __css={styles.lightBox[colorMode]} p={5} m={2}>
           <Center>
-            <Button color="red">Permanently Delete</Button>
+            <Button color="red" disabled>
+              Delete Account
+            </Button>
           </Center>
         </Box>
       </Box>

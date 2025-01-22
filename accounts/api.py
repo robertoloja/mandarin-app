@@ -6,7 +6,7 @@ from typing import Dict, Literal
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.db import IntegrityError
 from django.middleware.csrf import get_token
 from ninja import Router, Form
@@ -14,6 +14,7 @@ from ninja import Router, Form
 from mandoBot.schemas import (
     APIError,
     APIPasswordError,
+    ChangePasswordSchema,
     PronunciationPreferenceSchema,
     RegisterResponseSchema,
     RegisterSchema,
@@ -29,6 +30,30 @@ router = Router(tags=["accounts"])
 @router.get("/csrf")
 def csrf_endpoint(request):
     return get_token(request)
+
+
+@router.post("/change_password", response={200: str, 400: APIPasswordError})
+def change_password(request, new_password: Form[ChangePasswordSchema]):
+    user = request.user
+    errors = []
+
+    if not check_password(new_password.password, user.password):
+        errors += ["Current password incorrect"]
+    if new_password.new_password != new_password.password_confirmation:
+        errors += ["New password does not match password confirmation"]
+    try:
+        validate_password(new_password.new_password)
+    except ValidationError as e:
+        errors += e.messages
+    if len(errors) != 0:
+        print(errors)
+        return 400, {"error": errors}
+
+    user.set_password(new_password.new_password)
+    user.save()
+    login(request, user)
+
+    return 200, "Password changed"
 
 
 @router.post(

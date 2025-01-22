@@ -31,9 +31,23 @@ function Definition(props: {
   const pronunciationSetting = useSelector(
     (state: RootState) => state.settings.pronunciation,
   );
+  const pinyinSetting = useSelector(
+    (state: RootState) => state.settings.pinyin_type,
+  );
   const dictionary = useSelector(
     (state: RootState) => state.sentence.mandarinDictionary,
   );
+
+  const pronunciation = (hanzi: string): string => {
+    if (pronunciationSetting === 'pinyin') {
+      if (pinyinSetting === 'pinyin_acc') {
+        return Pinyin(dictionary[hanzi].pinyin[0].toLowerCase());
+      } else {
+        return dictionary[hanzi].pinyin[0];
+      }
+    }
+    return dictionary[hanzi].zhuyin[0];
+  };
 
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
@@ -46,7 +60,12 @@ function Definition(props: {
             <Heading>{props.word}</Heading>
 
             {/* The current pronunciation */}
-            <Heading size="sm">{props.pronunciations.join(' ')}</Heading>
+            <Heading size="sm">
+              {props.word
+                .split('')
+                .map((x) => pronunciation(x))
+                .join(' ')}
+            </Heading>
 
             {/* Each definition of the word */}
             {props.definitions.map((definition, index) => (
@@ -72,13 +91,7 @@ function Definition(props: {
                       <>
                         <Hanzi
                           hanzi={hanzi}
-                          pronunciation={
-                            pronunciationSetting == 'pinyin'
-                              ? Pinyin(
-                                  dictionary[hanzi].pinyin[0],
-                                ) /* COULD CAUSE BUGS */
-                              : dictionary[hanzi].zhuyin[0]
-                          }
+                          pronunciation={pronunciation(hanzi)}
                         />
                         <Text>{dictionary[hanzi].english.join(' / ')}</Text>
                       </>

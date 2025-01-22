@@ -11,7 +11,6 @@ import {
   HStack,
   Input,
   InputGroup,
-  InputRightElement,
   Link,
   ListItem,
   Text,
@@ -21,6 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
+import PasswordInputComponent from '../PasswordInputComponent';
 
 export default function RegistrationPage() {
   const router = useRouter();
@@ -124,7 +124,7 @@ export default function RegistrationPage() {
           <Text w="7rem" textAlign="right">
             Password:
           </Text>
-          <PasswordInput handlePasswordChange={handlePasswordChange} />
+          <PasswordInputComponent handlePasswordChange={handlePasswordChange} />
         </HStack>
 
         <Center>
@@ -160,37 +160,13 @@ export default function RegistrationPage() {
         <Center mt="1rem">
           <VStack>
             <Text ml="1.5rem">A user with this e-mail already exists.</Text>
-            <Text>
+            <Text as="u">
               If you have forgotten your password,{' '}
-              <Link>
-                <u>click here to reset it</u> {/* TODO */}
-              </Link>
-              .
+              <Link>click here to reset it</Link>.
             </Text>
           </VStack>
         </Center>
       )}
     </Container>
-  );
-}
-
-function PasswordInput(props: { handlePasswordChange: (event: any) => void }) {
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
-
-  return (
-    <InputGroup>
-      <Input
-        pr="4.5rem"
-        type={show ? 'text' : 'password'}
-        placeholder="Enter password"
-        onChange={props.handlePasswordChange}
-      />
-      <InputRightElement width="4.5rem">
-        <Button h="1.75rem" size="sm" onClick={handleClick}>
-          {show ? 'Hide' : 'Show'}
-        </Button>
-      </InputRightElement>
-    </InputGroup>
   );
 }
