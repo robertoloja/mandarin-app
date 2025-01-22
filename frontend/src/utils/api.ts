@@ -228,4 +228,30 @@ export const MandoBotAPI = {
       });
     return result;
   },
+
+  changePassword: async function (
+    username: string,
+    password: string,
+    new_password: string,
+    password_confirmation: string,
+  ): Promise<boolean> {
+    let result = false;
+    await api
+      .post(
+        '/accounts/change_password',
+        new URLSearchParams({
+          username,
+          password,
+          new_password,
+          password_confirmation,
+        }),
+        {
+          withCredentials: true,
+        },
+      )
+      .then((response) => {
+        result = true;
+      });
+    return result;
+  },
 };

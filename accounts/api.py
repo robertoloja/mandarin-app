@@ -46,10 +46,12 @@ def change_password(request, new_password: Form[ChangePasswordSchema]):
     except ValidationError as e:
         errors += e.messages
     if len(errors) != 0:
+        print(errors)
         return 400, {"error": errors}
 
     user.set_password(new_password.new_password)
     user.save()
+    login(request, user)
 
     return 200, "Password changed"
 

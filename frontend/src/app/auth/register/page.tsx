@@ -160,12 +160,9 @@ export default function RegistrationPage() {
         <Center mt="1rem">
           <VStack>
             <Text ml="1.5rem">A user with this e-mail already exists.</Text>
-            <Text>
+            <Text as="u">
               If you have forgotten your password,{' '}
-              <Link>
-                <u>click here to reset it</u> {/* TODO */}
-              </Link>
-              .
+              <Link>click here to reset it</Link>.
             </Text>
           </VStack>
         </Center>
@@ -174,7 +171,11 @@ export default function RegistrationPage() {
   );
 }
 
-function PasswordInput(props: { handlePasswordChange: (event: any) => void }) {
+export function PasswordInput(props: {
+  handlePasswordChange: (event: any) => void;
+  placeHolderText?: string;
+  invalid?: boolean;
+}) {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
 
@@ -183,8 +184,10 @@ function PasswordInput(props: { handlePasswordChange: (event: any) => void }) {
       <Input
         pr="4.5rem"
         type={show ? 'text' : 'password'}
-        placeholder="Enter password"
+        placeholder={props.placeHolderText || 'Enter password'}
         onChange={props.handlePasswordChange}
+        border={props.invalid ? '1px solid red' : undefined}
+        transition="border 0.2s ease"
       />
       <InputRightElement width="4.5rem">
         <Button h="1.75rem" size="sm" onClick={handleClick}>

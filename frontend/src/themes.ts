@@ -7,7 +7,7 @@ interface Styles {
   heading: Record<'light' | 'dark', SystemStyleObject>;
 }
 
-const styles: Styles = {
+export const styles: Styles = {
   vstack: {
     light: {
       backgroundColor: '#85E2FF',
