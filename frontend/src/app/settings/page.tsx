@@ -25,8 +25,8 @@ export default function Settings() {
   const router = useRouter();
   const email = useSelector((state: RootState) => state.auth.email);
   const username = useSelector((state: RootState) => state.auth.username);
-  const { colorMode } = useColorMode();
   const [changePassword, showChangePassword] = useState(false);
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     // TODO: This is triggering when the user is logged in
@@ -59,7 +59,10 @@ export default function Settings() {
           <Center>
             <HStack>
               <Text>Light</Text>
-              <Switch />
+              <Switch
+                isChecked={colorMode === 'dark'}
+                onChange={toggleColorMode}
+              />
               <Text>Dark</Text>
             </HStack>
           </Center>
@@ -77,7 +80,11 @@ export default function Settings() {
             </Link>
           </Text>
           {changePassword && (
-            <PasswordChangeComponent changed={showChangePassword} />
+            <PasswordChangeComponent
+              changed={() => {
+                showChangePassword(false);
+              }}
+            />
           )}
         </Box>
 

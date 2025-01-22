@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { Button, Container, Heading, Input } from '@chakra-ui/react';
 import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
-import { PasswordInput } from './register/page';
+import PasswordInputComponent from './PasswordInputComponent';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function LoginForm() {
           required
           onChange={(e) => setUsername(e.target.value)}
         />
-        <PasswordInput
+        <PasswordInputComponent
           handlePasswordChange={(e) => setPassword(e.target.value)}
         />
         <Button disabled={authState.loading} type="submit">

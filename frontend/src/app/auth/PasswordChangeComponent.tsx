@@ -11,13 +11,13 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { PasswordInput } from './register/page';
 import { useState } from 'react';
 import { MandoBotAPI } from '@/utils/api';
 import { RootState } from '@/utils/store/store';
 import { useSelector } from 'react-redux';
+import PasswordInputComponent from './PasswordInputComponent';
 
-export default function PasswordResetForm(props: { changed: () => {} }) {
+export default function PasswordResetForm(props: { changed: () => void }) {
   const username = useSelector((state: RootState) => state.auth.username);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -58,34 +58,36 @@ export default function PasswordResetForm(props: { changed: () => {} }) {
       }, 5000);
       return;
     }
-    setLoading(true);
-    MandoBotAPI.changePassword(
-      username,
-      currentPassword,
-      newPassword,
-      confirmation,
-    )
-      .then((response) => {
-        setLoading(false);
-        toast({
-          title: 'Password changed successfully!',
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
+    if (username) {
+      setLoading(true);
+      MandoBotAPI.changePassword(
+        username,
+        currentPassword,
+        newPassword,
+        confirmation,
+      )
+        .then(() => {
+          setLoading(false);
+          toast({
+            title: 'Password changed successfully!',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+          props.changed();
+        })
+        .catch((error) => {
+          setLoading(false);
+          setErrors(error.response.data.error);
+          toast({
+            title: 'Failed to change password',
+            description: errors.join('\n'),
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
         });
-        props.changed();
-      })
-      .catch((error) => {
-        setLoading(false);
-        setErrors(error.response.data.error);
-        toast({
-          title: 'Failed to change password',
-          description: errors.join('\n'),
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
+    }
   };
 
   return (
@@ -99,7 +101,7 @@ export default function PasswordResetForm(props: { changed: () => {} }) {
         <GridItem colSpan={1} pt={2}>
           <Text>Current Password:</Text>
         </GridItem>
-        <PasswordInput
+        <PasswordInputComponent
           placeHolderText="Enter current password"
           handlePasswordChange={(e) => setCurrentPassword(e.target.value)}
         />
@@ -107,7 +109,7 @@ export default function PasswordResetForm(props: { changed: () => {} }) {
         <GridItem colSpan={1} pt={2}>
           <Text>New Password: </Text>
         </GridItem>
-        <PasswordInput
+        <PasswordInputComponent
           placeHolderText="Enter new password"
           handlePasswordChange={(e) => setNewPassword(e.target.value)}
           invalid={invalid}
@@ -116,7 +118,7 @@ export default function PasswordResetForm(props: { changed: () => {} }) {
         <GridItem colSpan={1} pt={2}>
           <Text>Confirm New Password: </Text>
         </GridItem>
-        <PasswordInput
+        <PasswordInputComponent
           placeHolderText="Confirm new password"
           handlePasswordChange={(e) => setConfirmation(e.target.value)}
           invalid={invalid}

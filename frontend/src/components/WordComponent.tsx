@@ -13,7 +13,6 @@ import {
   CardFooter,
   useDisclosure,
   useColorMode,
-  border,
 } from '@chakra-ui/react';
 import styles from '@/themes';
 import { useSelector } from 'react-redux';

@@ -249,7 +249,7 @@ export const MandoBotAPI = {
           withCredentials: true,
         },
       )
-      .then((response) => {
+      .then(() => {
         result = true;
       });
     return result;
