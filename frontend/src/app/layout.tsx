@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense } from 'react';
-import { Provider, useSelector } from 'react-redux';
-import { RootState, store } from '../utils/store/store';
+import { Provider } from 'react-redux';
+import { store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import TopNav from '@/components/TopNavComponent';
 import { MandoBotAPI } from '@/utils/api';
