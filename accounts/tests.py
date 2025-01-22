@@ -16,6 +16,7 @@ from accounts.models import PaidButUnregistered  # noqa: E402
 
 class AccountAPITests(TestCase):
     def setUp(self):
+        os.environ["TEST"] = "True"
         api.urls_namespace = api.urls_namespace + "1"  # new namespace for each test
         self.client = TestClient(api)
 
@@ -30,6 +31,14 @@ class AccountAPITests(TestCase):
 
     def tearDown(self):
         self.client = None
+        os.environ.pop("TEST", None)
+
+    def test_short_password_returns_error(self):
+        response = Client().post(
+            "/api/accounts/register",
+            {"username": self.username, "password": "1234", "email": self.email},
+        )
+        self.assertEqual(response.status_code, 400)
 
     def test_inactive_user_becomes_active_on_payment(self):
         # 1 - Set user to inactive
@@ -53,7 +62,7 @@ class AccountAPITests(TestCase):
             "username": self.username,
             "email": self.email,
             "pronunciation_preference": "pinyin_acc",
-            "theme_preference": 1,
+            "theme_preference": 0,
         }
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), expected)
@@ -64,13 +73,17 @@ class AccountAPITests(TestCase):
     def test_cannot_register_without_kofi_subscription(self):
         response = Client().post(
             "/api/accounts/register",
-            {"username": "user", "password": "pass", "email": "email"},
+            {
+                "username": "user",
+                "password": "aReallyGoodPassword",
+                "email": "email",
+            },
         )
         self.assertEqual(response.status_code, 404)
 
     def test_first_payment_creates_registration_link(self):
         username = "foo"
-        password = "password"
+        password = "AreallyGOODpassword"
         email = "some@email.net"
         response = Client().post(
             "/api/accounts/kofi",
@@ -119,7 +132,7 @@ class AccountAPITests(TestCase):
             "username": self.username,
             "email": self.email,
             "pronunciation_preference": "pinyin_acc",
-            "theme_preference": 1,
+            "theme_preference": 0,
         }
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), expected)

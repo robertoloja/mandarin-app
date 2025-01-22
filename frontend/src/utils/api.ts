@@ -19,9 +19,7 @@ export function getCookie(name: string): string | null {
 }
 
 const API_BASE_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'https://localhost:8000/api'
-    : '/api';
+  process.env.NODE_ENV === 'development' ? 'http://localhost:8000/api' : '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -48,7 +46,7 @@ const errorHandler = (error: {
     );
   }
 
-  if (statusCode && ![401, 404, 409].includes(statusCode)) {
+  if (statusCode && ![401, 404, 409, 400].includes(statusCode)) {
     store.dispatch(
       setError(
         'There has been an error connecting to the server. Please try again soon',

@@ -5,7 +5,6 @@ import { Provider, useSelector } from 'react-redux';
 import { RootState, store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import TopNav from '@/components/TopNavComponent';
-import BackToTop from '@/components/BackToTopComponent';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function RootLayout({
@@ -31,7 +30,6 @@ export default function RootLayout({
             <UpdateUserSettings />
             <TopNav />
             <Suspense>{children}</Suspense>
-            <BackToTop />
           </ChakraProvider>
         </body>
       </Provider>

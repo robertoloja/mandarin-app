@@ -1,8 +1,11 @@
+import os
 from datetime import datetime
 import json
 from typing import Dict, Literal
 
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 from django.middleware.csrf import get_token
@@ -10,12 +13,14 @@ from ninja import Router, Form
 
 from mandoBot.schemas import (
     APIError,
+    APIPasswordError,
     PronunciationPreferenceSchema,
     RegisterResponseSchema,
     RegisterSchema,
     UserSchema,
     UserPreferencesSchema,
 )
+from mandoBot.settings import DEBUG
 from .models import PaidButUnregistered
 
 router = Router(tags=["accounts"])
@@ -74,24 +79,37 @@ def register_id(request, register_id: str) -> Dict[int, str]:
 
 
 @router.post(
-    "/register", response={200: RegisterResponseSchema, 409: APIError, 404: APIError}
+    "/register",
+    response={
+        200: RegisterResponseSchema,
+        409: APIError,
+        404: APIError,
+        400: APIPasswordError,
+    },
 )
 def register(request, payload: Form[RegisterSchema]) -> RegisterResponseSchema:
     try:
+        validate_password(payload.password)
+
         User = get_user_model()
         User.objects.create(
             username=payload.username,
             email=payload.email,
             password=make_password(payload.password),
         )
-        registration_link = PaidButUnregistered.objects.get(user_email=payload.email)
-        registration_link.registered = True
-        registration_link.save()
+        if not DEBUG or os.getenv("TEST"):
+            registration_link = PaidButUnregistered.objects.get(
+                user_email=payload.email
+            )
+            registration_link.registered = True
+            registration_link.save()
         return 200, {"success": True, "message": "User created"}
     except IntegrityError:
         return 409, {"error": "User with this username or email already exists"}
     except PaidButUnregistered.DoesNotExist:
         return 404, {"error": "Could not find subscription information for this e-mail"}
+    except ValidationError as e:
+        return 400, {"error": e.messages}
 
 
 @router.post("/pronunciation_preference", response={200: None, 404: APIError})

@@ -64,14 +64,13 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
 
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
 
 CSRF_TRUSTED_ORIGINS = ["https://mandobot.netlify.app"]
-# SECURE_SSL_REDIRECT = True
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS += ["http://localhost:3000"]
@@ -187,6 +186,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 8},
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",

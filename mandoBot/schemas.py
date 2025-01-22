@@ -50,6 +50,10 @@ class APIError(Schema):
     error: str
 
 
+class APIPasswordError(Schema):
+    error: List[str]
+
+
 class RegisterSchema(Schema):
     username: str
     email: str
