@@ -13,7 +13,9 @@ import {
   InputGroup,
   InputRightElement,
   Link,
+  ListItem,
   Text,
+  UnorderedList,
   useToast,
   VStack,
 } from '@chakra-ui/react';
@@ -24,6 +26,7 @@ export default function RegistrationPage() {
   const router = useRouter();
   const [linkError, setLinkError] = useState('');
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState([]);
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -45,6 +48,9 @@ export default function RegistrationPage() {
     MandoBotAPI.register(username, password, email)
       .then(async () => {
         await store.dispatch(login({ username, password })).unwrap();
+        setError('');
+        setLinkError('');
+        setPasswordError([]);
 
         toast({
           title: 'Account created!',
@@ -58,7 +64,12 @@ export default function RegistrationPage() {
         }, 5000);
       })
       .catch((error) => {
-        setError(error.response.data.error);
+        if (error.status === 400) {
+          setPasswordError(error.response.data.error);
+        } else {
+          setError(error.response.data.error);
+        }
+        setLoading(false);
       });
   };
 
@@ -126,6 +137,16 @@ export default function RegistrationPage() {
           </Button>
         </Center>
       </form>
+
+      {passwordError && (
+        <Center>
+          <UnorderedList>
+            {passwordError.map((x, i) => (
+              <ListItem key={i}>{x}</ListItem>
+            ))}
+          </UnorderedList>
+        </Center>
+      )}
 
       {linkError && (
         <Center>
