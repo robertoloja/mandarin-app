@@ -13,6 +13,8 @@ import {
   Switch,
   Spacer,
   useColorMode,
+  useDisclosure,
+  Collapse,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -27,6 +29,7 @@ export default function Settings() {
   const username = useSelector((state: RootState) => state.auth.username);
   const [changePassword, showChangePassword] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
+  const { isOpen, onToggle } = useDisclosure();
 
   useEffect(() => {
     // TODO: This is triggering when the user is logged in
@@ -44,9 +47,20 @@ export default function Settings() {
         __css={styles.darkBox[colorMode]}
         p={5}
         m={2}
-        w="auto"
-        minW={['80vw', '30rem']}
+        minW={['91vw', '30rem']}
       >
+        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+          <Text>Username: {username}</Text>
+          <Text>E-mail: {email}</Text>
+          <Text as="u">
+            <Link href="" onClick={onToggle}>
+              Change Password
+            </Link>
+          </Text>
+          <Collapse in={isOpen}>
+            <PasswordChangeComponent changed={onToggle} />
+          </Collapse>
+        </Box>
         <Text>Pronunciation Preferences</Text>
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
           <LanguagePreferencesComponent />
@@ -71,22 +85,6 @@ export default function Settings() {
         <Spacer m={5} />
 
         <Text>Account</Text>
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
-          <Text>Username: {username}</Text>
-          <Text>E-mail: {email}</Text>
-          <Text as="u">
-            <Link href="" onClick={() => showChangePassword(!changePassword)}>
-              Change Password
-            </Link>
-          </Text>
-          {changePassword && (
-            <PasswordChangeComponent
-              changed={() => {
-                showChangePassword(false);
-              }}
-            />
-          )}
-        </Box>
 
         <Spacer m={5} />
         <Box __css={styles.lightBox[colorMode]} p={5} m={2}>
