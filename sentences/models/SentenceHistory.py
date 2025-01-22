@@ -12,6 +12,7 @@ class SentenceHistory(models.Model):
     user = models.ForeignKey(
         MandoBotUser, on_delete=models.CASCADE, related_name="history", null=True
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self, **kwargs):
         return f"{self.sentence_id}"

@@ -28,6 +28,10 @@ export type MandarinSentenceType = {
   shareURL: string;
 };
 
+export type SentenceHistoryType = MandarinSentenceType & {
+  date: Date;
+};
+
 export const emptySentence: MandarinSentenceType = {
   mandarin: '',
   segments: [],

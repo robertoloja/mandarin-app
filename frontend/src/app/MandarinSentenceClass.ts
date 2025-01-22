@@ -157,6 +157,7 @@ export class MandarinSentenceClass {
         dictionary: this.dictionary,
         translation: this.translation,
         shareURL: this.shareURL,
+        date: new Date(),
       },
     ];
     localStorage.setItem('history', JSON.stringify(newHistory));

@@ -19,14 +19,15 @@ import {
 import { useEffect, useState } from 'react';
 import { IoTrashOutline } from 'react-icons/io5';
 
-import { MandarinSentenceType } from '@/utils/types';
+import { SentenceHistoryType } from '@/utils/types';
 import { useRouter } from 'next/navigation';
 import { MandarinSentenceClass } from '../MandarinSentenceClass';
 import ShareButton from '@/components/ShareButtonComponent';
+import styles from '@/themes';
 
 export default function HistoryPage() {
   const router = useRouter();
-  const [fullHistory, setSentences] = useState<MandarinSentenceType[]>([]);
+  const [fullHistory, setSentences] = useState<SentenceHistoryType[]>([]);
   const { colorMode } = useColorMode();
 
   useEffect(() => {
@@ -40,14 +41,15 @@ export default function HistoryPage() {
     }
   };
 
-  const unpackSentence = (sentenceHistory: MandarinSentenceType) => {
+  const unpackSentence = (sentenceHistory: SentenceHistoryType) => {
     return {
       sentence: sentenceHistory.segments.map((x) => x.word).join(''),
       translation: sentenceHistory.translation,
+      date: sentenceHistory.date,
     };
   };
 
-  const viewSentence = (historyItem: MandarinSentenceType) => {
+  const viewSentence = (historyItem: SentenceHistoryType) => {
     const historySentence = new MandarinSentenceClass(
       '',
       historyItem.segments,
@@ -59,7 +61,7 @@ export default function HistoryPage() {
     router.push('/');
   };
 
-  const deleteFromHistory = (historyItem: MandarinSentenceType) => {
+  const deleteFromHistory = (historyItem: SentenceHistoryType) => {
     const historySentence = new MandarinSentenceClass(
       '',
       historyItem.segments,
@@ -70,6 +72,17 @@ export default function HistoryPage() {
     historySentence.deleteFromHistory();
     resetHistory();
     router.refresh();
+  };
+
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
   };
 
   return (
@@ -85,82 +98,93 @@ export default function HistoryPage() {
         justifyContent="center"
       >
         {fullHistory.length > 0 ? (
-          fullHistory.map((historyItem, index) => (
-            <Card
-              variant="unstyled"
-              backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
-              margin="0.1rem"
-              marginBottom="0.5rem"
-              padding="0.6rem"
-              border={
-                colorMode === 'light'
-                  ? '1px solid #468DA4'
-                  : '1px solid #1e282c'
-              }
-              borderRadius="8"
-              boxShadow="1px 1px 1px rgba(0, 0, 0, 0.25)"
-              key={index}
-              w="20rem"
-            >
-              <Container onClick={() => viewSentence(historyItem)}>
-                <CardHeader mt="2rem" cursor="pointer">
-                  <Center>
-                    <Heading size="md">Sentence {index + 1}</Heading>
-                  </Center>
-                </CardHeader>
+          fullHistory
+            .slice()
+            .reverse()
+            .map((historyItem, index) => (
+              <Card
+                margin="0.1rem"
+                marginBottom="0.5rem"
+                padding="0.6rem"
+                __css={styles.darkBox[colorMode]}
+                key={index}
+                w="20rem"
+              >
+                <Container onClick={() => viewSentence(historyItem)}>
+                  <CardHeader my="0.5rem" cursor="pointer">
+                    <VStack>
+                      <Heading size="md">
+                        {new Date(historyItem.date).toLocaleString(
+                          undefined,
+                          dateOptions,
+                        )}
+                      </Heading>
+                      <Text>
+                        {new Date(historyItem.date).toLocaleString(
+                          undefined,
+                          timeOptions,
+                        )}
+                      </Text>
+                    </VStack>
+                  </CardHeader>
 
-                <CardBody p="1rem" cursor="pointer">
-                  <VStack divider={<StackDivider />}>
-                    <Text
-                      noOfLines={2}
-                      maxWidth="20rem"
-                      minWidth="5rem"
-                      fontSize="sm"
-                      height="2.6rem"
-                      marginTop="0.5rem"
-                      marginBottom="0.5rem"
-                      textAlign="center"
-                      cursor="pointer"
-                      zIndex={5}
-                    >
-                      {unpackSentence(historyItem).sentence}
-                    </Text>
-                    <Text
-                      noOfLines={2}
-                      maxWidth="20rem"
-                      minWidth="5rem"
-                      fontSize="sm"
-                      height="2.6rem"
-                      marginTop="0.5rem"
-                      marginBottom="0.5rem"
-                      textAlign="center"
-                    >
-                      {unpackSentence(historyItem).translation}
-                    </Text>
-                  </VStack>
-                </CardBody>
-              </Container>
-              <CardFooter>
-                <IconButton
-                  aria-label="Delete sentence"
-                  icon={<IoTrashOutline />}
-                  zIndex={10}
-                  transition="background-color 0.3s ease"
-                  _hover={{ bg: 'rgba(200, 60, 60, 1)' }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    deleteFromHistory(historyItem);
-                  }}
-                />
-                <Spacer />
-                <ShareButton
-                  iconSize={15}
-                  shareLink={historyItem.shareURL}
-                  defaultStyles={true}
-                />
-              </CardFooter>
-            </Card>
-          ))
+                  <CardBody
+                    p="0.5rem"
+                    mb="0.5rem"
+                    cursor="pointer"
+                    __css={styles.lightBox[colorMode]}
+                  >
+                    <VStack divider={<StackDivider />}>
+                      <Text
+                        noOfLines={2}
+                        maxWidth="20rem"
+                        minWidth="5rem"
+                        fontSize="sm"
+                        height="2.6rem"
+                        marginTop="0.5rem"
+                        marginBottom="0.5rem"
+                        textAlign="center"
+                        cursor="pointer"
+                        zIndex={5}
+                      >
+                        {unpackSentence(historyItem).sentence}
+                      </Text>
+                      <Text
+                        noOfLines={2}
+                        maxWidth="20rem"
+                        minWidth="5rem"
+                        fontSize="sm"
+                        height="2.6rem"
+                        marginTop="0.2rem"
+                        marginBottom="0.2rem"
+                        textAlign="center"
+                      >
+                        {unpackSentence(historyItem).translation}
+                      </Text>
+                    </VStack>
+                  </CardBody>
+                </Container>
+                <CardFooter>
+                  <IconButton
+                    aria-label="Delete sentence"
+                    icon={<IoTrashOutline />}
+                    zIndex={10}
+                    transition="background-color 0.3s ease"
+                    _hover={{ bg: 'rgba(200, 60, 60, 1)' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      deleteFromHistory(historyItem);
+                    }}
+                  />
+                  <Spacer />
+                  <ShareButton
+                    iconSize={15}
+                    shareLink={historyItem.shareURL}
+                    defaultStyles={true}
+                  />
+                </CardFooter>
+              </Card>
+            ))
         ) : (
           <Center>
             <Text>No history found</Text>

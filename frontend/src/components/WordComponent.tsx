@@ -13,6 +13,7 @@ import {
   CardFooter,
   useDisclosure,
   useColorMode,
+  border,
 } from '@chakra-ui/react';
 import styles from '@/themes';
 import { useSelector } from 'react-redux';
@@ -58,6 +59,7 @@ function Word(props: {
           onClick={onOpen}
           __css={styles.darkBox[colorMode]}
           cursor="pointer"
+          _hover={{ borderColor: '#999' }}
         >
           <Definition
             pronunciations={props.pronunciation}
