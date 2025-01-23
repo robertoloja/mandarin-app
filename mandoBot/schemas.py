@@ -11,6 +11,9 @@ class ServerStatusSchema(ModelSchema):
 
 
 class UserSchema(ModelSchema):
+    username: str
+    password: str
+
     class Meta:
         model = MandoBotUser
         fields = ["username", "password"]
@@ -65,8 +68,7 @@ class RegisterSchema(Schema):
     password: str
 
 
-class RegisterResponseSchema(Schema):
-    success: bool
+class SuccessResponseSchema(Schema):
     message: str
 
 

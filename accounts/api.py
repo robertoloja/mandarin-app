@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 import json
-from typing import Dict, Literal
+from typing import Dict, List, Literal, Tuple, TYPE_CHECKING
 
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.password_validation import validate_password
@@ -16,15 +16,81 @@ from mandoBot.schemas import (
     APIPasswordError,
     ChangePasswordSchema,
     PronunciationPreferenceSchema,
-    RegisterResponseSchema,
+    SuccessResponseSchema,
     RegisterSchema,
     UserSchema,
     UserPreferencesSchema,
 )
 from mandoBot.settings import DEBUG
-from .models import PaidButUnregistered
+from .models import MandoBotUser, PaidButUnregistered, ResetPasswordRequest
+
+if TYPE_CHECKING:
+    User: type[MandoBotUser]
+else:
+    User = get_user_model()
 
 router = Router(tags=["accounts"])
+
+
+def set_new_password(
+    request,
+    user: MandoBotUser,
+    new_password: str,
+    confirmation: str,
+    current_password: str = "",
+) -> (
+    Tuple[Literal[200], Dict[Literal["message"], str]]
+    | Tuple[Literal[400], Dict[Literal["error"], List[str]]]
+):
+    errors: List[str] = []
+
+    if current_password and not check_password(current_password, user.password):
+        errors += ["Current password incorrect"]
+
+    if new_password != confirmation:
+        errors += ["New password does not match password confirmation"]
+
+    try:
+        validate_password(new_password)
+    except ValidationError as e:
+        errors += e.messages
+
+    if errors:
+        return 400, {"error": errors}
+
+    user.set_password(new_password)
+    user.save()
+    login(request, user)
+
+    return 200, {"message": "Password changed"}
+
+
+@router.post(
+    "/reset_password", response={200: SuccessResponseSchema, 404: APIPasswordError}
+)
+def reset_password(
+    request, reset_token: Form[str], new_password: Form[str], confirmation: Form[str]
+):
+    try:
+        entry = ResetPasswordRequest.objects.get(reset_token=reset_token)
+        return set_new_password(request, entry.user, new_password, confirmation)
+    except ResetPasswordRequest.DoesNotExist:
+        return 404, {"error": "Couldn't find this password reset request."}
+
+
+@router.post(
+    "/reset_password_request", response={200: SuccessResponseSchema, 404: APIError}
+)
+def reset_password_request(request, email: Form[str]):
+
+    try:
+        user = User.objects.get(email=email)
+        entry = ResetPasswordRequest(user=user)
+        entry.save()
+        return 200, {"message": "Password reset e-mail will be sent."}
+
+    except User.DoesNotExist:
+        return 404, {"error": "Couldn't find user with given e-mail address."}
 
 
 @router.get("/csrf")
@@ -32,39 +98,31 @@ def csrf_endpoint(request):
     return get_token(request)
 
 
-@router.post("/change_password", response={200: str, 400: APIPasswordError})
+@router.post(
+    "/change_password", response={200: SuccessResponseSchema, 400: APIPasswordError}
+)
 def change_password(request, new_password: Form[ChangePasswordSchema]):
-    user = request.user
-    errors = []
+    user: MandoBotUser = request.user
 
-    if not check_password(new_password.password, user.password):
-        errors += ["Current password incorrect"]
-    if new_password.new_password != new_password.password_confirmation:
-        errors += ["New password does not match password confirmation"]
-    try:
-        validate_password(new_password.new_password)
-    except ValidationError as e:
-        errors += e.messages
-    if len(errors) != 0:
-        print(errors)
-        return 400, {"error": errors}
-
-    user.set_password(new_password.new_password)
-    user.save()
-    login(request, user)
-
-    return 200, "Password changed"
+    return set_new_password(
+        request,
+        user,
+        new_password.new_password,
+        new_password.password_confirmation,
+        new_password.password,
+    )
 
 
 @router.post(
     "/login",
     response={200: UserPreferencesSchema, 401: APIError, 403: APIError},
 )
-def login_endpoint(request, payload: Form[UserSchema]) -> UserPreferencesSchema:
+def login_endpoint(
+    request, payload: Form[UserSchema]
+) -> Dict[str, str] | Tuple[int, APIError]:
     user = authenticate(username=payload.username, password=payload.password)
 
     if user is not None:
-        User = get_user_model()
         user_object = User.objects.get(username=user.username)
 
         if (
@@ -77,13 +135,13 @@ def login_endpoint(request, payload: Form[UserSchema]) -> UserPreferencesSchema:
 
             return response
         else:
-            return 403, {"error": "Subscription has expired"}
+            return 403, APIError(error="Subscription has expired")
     else:
-        return 401, {"error": "Invalid credentials"}
+        return 401, APIError(error="Invalid credentials")
 
 
-@router.post("/logout", response={200: dict})
-def logout_endpoint(request) -> str:
+@router.post("/logout", response={200: SuccessResponseSchema})
+def logout_endpoint(request) -> Tuple[int, Dict[str, str]]:
     logout(request)
     # response = JsonResponse()
     # response.delete_cookie("csrftoken", path="/", domain=None)
@@ -91,32 +149,37 @@ def logout_endpoint(request) -> str:
 
 
 @router.get("/registerId", response={200: str, 404: APIError, 409: APIError})
-def register_id(request, register_id: str) -> Dict[int, str]:
+def register_id(request, register_id: str) -> Tuple[int, str] | Tuple[int, APIError]:
     try:
         email = PaidButUnregistered.objects.get(registration_id=register_id)
 
         if not email.registered:
             return 200, email.user_email
         else:
-            return 409, {"error": "User with this e-mail has already registered."}
+            return 409, APIError(error="User with this e-mail has already registered.")
     except PaidButUnregistered.DoesNotExist:
-        return 404, {"error": "Registration ID not found"}
+        return 404, APIError(error="Registration ID not found")
 
 
 @router.post(
     "/register",
     response={
-        200: RegisterResponseSchema,
+        200: SuccessResponseSchema,
         409: APIError,
         404: APIError,
         400: APIPasswordError,
     },
 )
-def register(request, payload: Form[RegisterSchema]) -> RegisterResponseSchema:
+def register(
+    request, payload: Form[RegisterSchema]
+) -> (
+    Tuple[int, SuccessResponseSchema]
+    | Tuple[int, APIError]
+    | Tuple[int, APIPasswordError]
+):
     try:
         validate_password(payload.password)
 
-        User = get_user_model()
         User.objects.create(
             username=payload.username,
             email=payload.email,
@@ -128,19 +191,28 @@ def register(request, payload: Form[RegisterSchema]) -> RegisterResponseSchema:
             )
             registration_link.registered = True
             registration_link.save()
-        return 200, {"success": True, "message": "User created"}
+        return 200, SuccessResponseSchema(message="User created")
     except IntegrityError:
-        return 409, {"error": "User with this username or email already exists"}
+        return 409, APIError(error="User with this username or email already exists")
     except PaidButUnregistered.DoesNotExist:
-        return 404, {"error": "Could not find subscription information for this e-mail"}
+        return 404, APIError(
+            error="Could not find subscription information for this e-mail"
+        )
     except ValidationError as e:
-        return 400, {"error": e.messages}
+        return 400, APIPasswordError(error=e.messages)
 
 
 @router.post("/pronunciation_preference", response={200: None, 404: APIError})
-def post_user_pronunciation_preference(request, data: PronunciationPreferenceSchema):
+def post_user_pronunciation_preference(
+    request, data: PronunciationPreferenceSchema
+) -> int | Tuple[int, Dict[Literal["error"], str]]:
+    """Set authenticated user's pronunciation preference.
+
+    Returns:
+        int | Tuple[int, Dict[Literal["error"], str]]: Either a success status code,
+        or a 404 and APIError
+    """
     if request.user.is_authenticated:
-        User = get_user_model()
         user = User.objects.get(username=request.user.username)
         user.pronunciation_preference = data.preference
         user.save()
@@ -149,9 +221,20 @@ def post_user_pronunciation_preference(request, data: PronunciationPreferenceSch
 
 
 @router.post("/theme_preference", response={200: None, 404: APIError})
-def post_user_theme_preference(request, theme: Literal[0, 1]):
+def post_user_theme_preference(
+    request, theme: Literal[0, 1]
+) -> int | Tuple[int, Dict[Literal["error"], str]]:
+    """Change user's theme preference in the API.
+
+    Args:
+        request (HTTPRequest): A modified HTTPRequest from django-ninja
+        theme (Literal[0, 1]): 0 is Dark and 1 is Light
+
+    Returns:
+        int | Tuple[int, Dict[Literal["error"], str]]: Either a success status code,
+        or a 404 and APIError.
+    """
     if request.user.is_authenticated:
-        User = get_user_model()
         user = User.objects.get(username=request.user.username)
         user.theme_preference = theme
         user.save()
@@ -160,23 +243,41 @@ def post_user_theme_preference(request, theme: Literal[0, 1]):
 
 
 @router.get(
-    "/user_settings", response={200: UserPreferencesSchema, 204: None}
-)  # , 204: APIError})
-def user_settings(request):
+    "/user_settings",
+    response={200: UserPreferencesSchema, 204: APIError},
+)
+def user_settings(request) -> Tuple[int, MandoBotUser] | Tuple[int, Dict[str, str]]:
+    """Finds and returns the contents of the MandoBotUser for the
+    currently authenticated user.
+
+    Args:
+        request (HTTPRequest): A modified HTTPRequest from django-ninja
+
+    Returns:
+        Tuple[int, UserPreferencesSchema] | Tuple[int, APIError]: Either
+        a status code and the contents of a MandoBotUserObject, or a 204
+        error code and APIError.
+    """
     if request.user.is_authenticated:
-        User = get_user_model()
         user = User.objects.get(username=request.user.username)
-        return user
+        return 200, user
     else:
-        return 204, {"username": None}
+        return 204, {"error": "Couldn't find user"}
 
 
-@router.post("/kofi", response={200: Dict[str, str]})
-def receive_kofi_webhook(request, data: Form[str]) -> str:
-    """
-    This endpoint is for Ko-Fi's webhook when an account event happens.
+@router.post("/kofi", response={200: SuccessResponseSchema})
+def receive_kofi_webhook(request, data: Form[str]) -> Tuple[int, Dict[str, str]]:
+    """This endpoint is for Ko-Fi's webhook when an account event happens.
     It is exempt from ValidateAPITokenMiddleware.
+
+    Args:
+        request (HTTPRequest): A modified HTTPRequest from django-ninja
+        data (Form[str]): JSON string. See accompanying test for format.
+
+    Returns:
+        Tuple[int, Dict[str, str]]: Status code and dict with success message.
     """
+
     json_data = json.loads(data)
 
     user_email = json_data["email"]
@@ -191,7 +292,6 @@ def receive_kofi_webhook(request, data: Form[str]) -> str:
         return 200, {"message": "Sent registration e-mail"}
 
     else:
-        User = get_user_model()
         user = User.objects.get(email=user_email)
         user.last_payment = payment_date
         user.save()

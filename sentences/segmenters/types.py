@@ -3,7 +3,7 @@ from typing import List, TypedDict
 
 class SentenceSegment(TypedDict):
     word: str
-    piyin: List[str]
+    pinyin: List[str]
     zhuyin: List[str]
     definitions: List[str]
 

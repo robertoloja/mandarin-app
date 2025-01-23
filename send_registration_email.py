@@ -29,7 +29,11 @@ MandoBot
 """
 
     send_mail(
-        subject, message, "mandobotserver@gmail.com", [registration.user_email], False
+        subject,
+        message,
+        "mandoBot <mandobotserver@gmail.com>",
+        [registration.user_email],
+        False,
     )
     registration.emailed = True
     registration.save()

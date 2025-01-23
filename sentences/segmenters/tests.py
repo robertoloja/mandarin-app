@@ -31,7 +31,7 @@ class SegmentationTests(TestCase):
         self.assertEqual(result, expected)
 
     def test_umlaut_pronunciation(self):
-        word = "旅游"
+        word = ["旅游"]
         pronunciation = [x["pinyin"][0] for x in Segmenter.add_pronunciations(word)]
         expected = ["lü3", "you2"]
         self.assertEqual(pronunciation, expected)
@@ -52,7 +52,7 @@ class SegmentationTests(TestCase):
             self.assertNotEqual(result["dictionary"][word]["zhuyin"], [])
 
     def test_chengyu(self):
-        chengyu = [
+        chengyu: List[SentenceSegment] = [
             {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["A"], "definitions": []},
             {"word": "，", "pinyin": ["2"], "zhuyin": ["2"], "definitions": []},
             {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["B"], "definitions": []},
