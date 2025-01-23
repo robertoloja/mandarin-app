@@ -1,3 +1,4 @@
+from dataclasses import fields
 import secrets
 from datetime import date, timedelta
 from enum import Enum
@@ -46,6 +47,21 @@ class MandoBotUser(AbstractUser):
             self.subscription_active = True
             self.save()
             return True
+
+
+class ResetPasswordRequest(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(MandoBotUser, on_delete=models.CASCADE)
+    emailed = models.BooleanField(default=False)
+    reset_token = models.CharField(max_length=20, unique=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.reset_token:
+            self.reset_token = secrets.token_urlsafe(20)
+        super().save(*args, **kwargs)
+
+    def is_expired(self):
+        return self.created_at < (date.today() - timedelta(days=1))
 
 
 class PaidButUnregistered(models.Model):

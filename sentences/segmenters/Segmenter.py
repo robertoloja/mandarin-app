@@ -1,6 +1,6 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
-from typing import List, Tuple
+from typing import List, Tuple, cast
 from django.db.models import Q
 from dragonmapper import hanzi as hanzi_utils
 
@@ -37,6 +37,7 @@ class Segmenter:
 
         return result
 
+    @staticmethod
     def most_frequent_pronunciation(hanzi5: str) -> CEDictionary:
         """
         When a hanzi has a 5th tone and we have to guess which regular tone
@@ -50,7 +51,9 @@ class Segmenter:
             # TODO: Find this hanzi using dictionary classes and return it
             pass
         if hanzi_regular.count() == 1:
-            return hanzi_regular
+            hanzi = hanzi_regular.first()
+            if hanzi is not None:
+                return hanzi
         if hanzi_regular.count() > 1:
             max_count = 0
 
@@ -61,6 +64,7 @@ class Segmenter:
                     most_common = candidate
         return most_common
 
+    @staticmethod
     def add_pronunciations(segmented_sentence: List[str]) -> List[SentenceSegment]:
         pronunciation = [
             hanzi_utils.to_pinyin(x, accented=False) for x in segmented_sentence
@@ -79,7 +83,7 @@ class Segmenter:
                 pinyin = [segmented_sentence[i]]
                 zhuyin = [segmented_sentence[i]]
 
-            response += [
+            new_word: List[SentenceSegment] = [
                 {
                     "word": segmented_sentence[i],
                     "pinyin": pinyin,
@@ -87,8 +91,10 @@ class Segmenter:
                     "definitions": [],
                 }
             ]
+            response += new_word
         return response
 
+    @staticmethod
     def try_to_concat(
         segmented_sentence: List[SentenceSegment], index: int
     ) -> List[SentenceSegment] | None:
@@ -144,6 +150,7 @@ class Segmenter:
                 return new_sentence
         return
 
+    @staticmethod
     def add_definitions_and_create_dictionary(
         segmented_sentence: List[SentenceSegment],
     ) -> tuple[List[SentenceSegment], MandarinDictionary]:
@@ -155,7 +162,7 @@ class Segmenter:
         :param segmented_sentence: The list of SentenceSegments being worked on.
         :return: A tuple containing the sentence, and the mandarin dictionary.
         """
-        dictionary = {}
+        dictionary = cast(MandarinDictionary, {})
 
         for index, item in enumerate(segmented_sentence):
             if is_punctuation(item["word"]) or not hanzi_utils.has_chinese(
@@ -323,6 +330,7 @@ class Segmenter:
                         }
         return (segmented_sentence, dictionary)
 
+    @staticmethod
     def attempt_to_get_hanzi(
         hanzi: str, item: SentenceSegment, index: int, entry: CEDictionary
     ) -> Tuple[str, CEDictionary]:
@@ -369,6 +377,7 @@ class Segmenter:
             )  # likely a bug? should check for multiple results
         return the_hanzi, db_hanzi
 
+    @staticmethod
     def pinyin_to_zhuyin(pinyin: str) -> str:
         """Only works for single hanzi"""
         if ":" not in pinyin:

@@ -97,6 +97,7 @@ export default function PasswordResetForm(props: { changed: () => void }) {
         mt={2}
         p={2}
         gap={2}
+        width="100%"
       >
         <GridItem colSpan={1} pt={2}>
           <Text>Current Password:</Text>

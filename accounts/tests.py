@@ -1,37 +1,74 @@
 import os
 import django
+from datetime import datetime, date, timedelta, timezone
+import json
+from typing import TYPE_CHECKING
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mandoBot.settings")
 django.setup()  # this is here for VSCode test discovery
 
-from datetime import datetime, date, timedelta, timezone  # noqa: E402
-import json  # noqa: E402
 from django.test.client import Client  # noqa: E402
 from django.contrib.auth import get_user_model  # noqa: E402
+from django.contrib.auth.hashers import check_password  # noqa: E402
 from django.test import TestCase  # noqa: E402
 from ninja.testing import TestClient  # noqa: E402
+
 from mandoBot.api import api  # noqa: E402
-from accounts.models import PaidButUnregistered  # noqa: E402
+from accounts.models import (  # noqa: E402
+    PaidButUnregistered,
+    ResetPasswordRequest,
+    MandoBotUser,
+)
+
+if TYPE_CHECKING:
+    User: type[MandoBotUser]
+else:
+    User = get_user_model()
 
 
 class AccountAPITests(TestCase):
     def setUp(self):
         os.environ["TEST"] = "True"
         api.urls_namespace = api.urls_namespace + "1"  # new namespace for each test
-        self.client = TestClient(api)
+        self.client: TestClient = TestClient(api)
 
         self.username = "test"
         self.password = "password123"
         self.email = "test@test.com"
 
-        self.User = get_user_model()
-        self.test_user = self.User.objects.create_user(
+        self.test_user = User.objects.create_user(
             self.username, self.email, self.password
         )
 
     def tearDown(self):
-        self.client = None
         os.environ.pop("TEST", None)
+
+    def test_password_reset(self):
+        client = Client()
+        response = client.post(
+            "/api/accounts/reset_password_request", {"email": "foo@bar.ca"}
+        )
+        self.assertEqual(response.status_code, 404)
+
+        response = client.post(
+            "/api/accounts/reset_password_request", {"email": self.email}
+        )
+        self.assertEqual(response.status_code, 200)
+        entry = ResetPasswordRequest.objects.get(user=self.test_user)
+        new_password = "foo123bar"
+
+        response = client.post(
+            "/api/accounts/reset_password",
+            {
+                "reset_token": entry.reset_token,
+                "new_password": new_password,
+                "confirmation": new_password,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+
+        updated_user = User.objects.get(email=self.email)
+        self.assertTrue(check_password(new_password, updated_user.password))
 
     def test_change_password(self):
         client = Client()
@@ -109,7 +146,7 @@ class AccountAPITests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response.content), expected)
         self.assertTrue(  # have to fetch the user again
-            self.User.objects.get(email=self.email).subscription_is_active()
+            User.objects.get(email=self.email).subscription_is_active()
         )
 
     def test_cannot_register_without_kofi_subscription(self):
@@ -144,7 +181,6 @@ class AccountAPITests(TestCase):
             {"username": username, "password": password, "email": email},
         )
         self.assertEqual(registration_response.status_code, 200)
-        User = get_user_model()
         test_user = User.objects.get(email=email)
         self.assertEqual(test_user.email, email)
 
@@ -208,7 +244,6 @@ class AccountAPITests(TestCase):
 
 class MandoBotUserTests(TestCase):
     def test_create_user(self):
-        User = get_user_model()
         user = User.objects.create_user(
             username="will", email="will@email.com", password="testpass123"
         )
@@ -219,7 +254,6 @@ class MandoBotUserTests(TestCase):
         self.assertFalse(user.is_superuser)
 
     def test_create_superuser(self):
-        User = get_user_model()
         admin_user = User.objects.create_superuser(
             username="superadmin", email="superadmin@email.com", password="testpass123"
         )
@@ -230,7 +264,6 @@ class MandoBotUserTests(TestCase):
         self.assertTrue(admin_user.is_superuser)
 
     def test_subscription_is_active(self):
-        User = get_user_model()
         user = User.objects.create_user(
             username="Test", email="test@test.com", password="test123"
         )

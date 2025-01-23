@@ -1,4 +1,4 @@
-from django.test import Client, TestCase
+from django.test import TestCase
 from ninja.testing import TestClient
 from dragonmapper import hanzi
 from mandoBot.api import api
@@ -8,7 +8,7 @@ from sentences.functions import is_punctuation
 class SegmentationAPITest(TestCase):
     def setUp(self):
         api.urls_namespace = api.urls_namespace + "1"  # new namespace for each test
-        self.client = TestClient(api)
+        self.client: TestClient = TestClient(api)
         self.emptyResponse = {
             "translation": "",
             "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
