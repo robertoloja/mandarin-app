@@ -27,7 +27,6 @@ export default function Settings() {
   const router = useRouter();
   const email = useSelector((state: RootState) => state.auth.email);
   const username = useSelector((state: RootState) => state.auth.username);
-  const [changePassword, showChangePassword] = useState(false);
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onToggle } = useDisclosure();
 
