@@ -32,7 +32,7 @@ class SegmentationTests(TestCase):
 
     def test_umlaut_pronunciation(self):
         word = ["旅游"]
-        pronunciation = [x["pinyin"][0] for x in Segmenter.add_pronunciations(word)]
+        pronunciation = Segmenter.add_pronunciations(word)[0]["pinyin"]
         expected = ["lü3", "you2"]
         self.assertEqual(pronunciation, expected)
 
