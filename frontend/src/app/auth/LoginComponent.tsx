@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { login } from '@/utils/store/authSlice';
 import { useSelector } from 'react-redux';
-import { Button, Container, Heading, Input } from '@chakra-ui/react';
+import { Button, Container, Heading, Input, useToast } from '@chakra-ui/react';
 import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
 import PasswordInputComponent from './PasswordInputComponent';
@@ -14,6 +14,7 @@ export default function LoginForm() {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const toast = useToast();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -22,6 +23,14 @@ export default function LoginForm() {
       .unwrap()
       .then(() => {
         router.push('/settings');
+      })
+      .catch((error) => {
+        toast({
+          title: error.error,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       });
   };
 
@@ -43,7 +52,6 @@ export default function LoginForm() {
           {authState.loading ? 'Logging in...' : 'Login'}
         </Button>
       </form>
-      {authState.error && <p style={{ color: 'red' }}>{authState.error}</p>}
     </Container>
   );
 }
