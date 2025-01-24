@@ -1,7 +1,7 @@
 'use client';
 import { Box, Button, Text, HStack } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { MandarinSentenceClass } from './MandarinSentenceClass';
 import MandarinSentence from '@/components/MandarinSentenceComponent';
