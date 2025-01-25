@@ -19,7 +19,9 @@ export function getCookie(name: string): string | null {
 }
 
 const API_BASE_URL =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:8000/api' : '/api';
+  process.env.NODE_ENV === 'development'
+    ? 'http://192.168.1.8:8000/api'
+    : '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
