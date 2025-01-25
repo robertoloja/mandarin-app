@@ -199,7 +199,7 @@ class AccountAPITests(TestCase):
             "/api/accounts/register",
             {"username": username, "password": password, "email": email},
         )
-        self.assertEqual(registration_response.status_code, 200)
+        self.assertEqual(registration_response.status_code, 201)
         test_user = User.objects.get(email=email)
         self.assertEqual(test_user.email, email)
 
