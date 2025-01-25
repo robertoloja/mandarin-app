@@ -31,7 +31,6 @@ export default function PasswordResetPage() {
   const urlPasswordToken = useSearchParams().get('token') || '';
 
   if (urlPasswordToken === '') {
-    const router = useRouter();
     router.push('/');
     return <></>;
   }

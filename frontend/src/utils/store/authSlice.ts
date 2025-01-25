@@ -9,13 +9,14 @@ interface LoginPayload {
 interface LoginResponse {
   username: string;
   email: string;
+  error: string;
 }
 
 export const login = createAsyncThunk<
   LoginResponse,
   LoginPayload,
   { rejectValue: { error: string } }
->('auth/login', async ({ username, password }, thunkAPI) => {
+>('auth/login', async ({ username, password }) => {
   try {
     const response = await MandoBotAPI.login(username, password);
     return response;
@@ -66,7 +67,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        if (action.payload) state.error = action.payload.error as string;
       });
   },
 });

@@ -16,7 +16,6 @@ import {
 import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
 import PasswordInputComponent from './PasswordInputComponent';
-import Link from 'next/link';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function LoginPage() {
@@ -96,7 +95,7 @@ export default function LoginPage() {
     } else {
       setUsernameError(false);
     }
-    MandoBotAPI.resetPasswordRequest(username).then((response) => {
+    MandoBotAPI.resetPasswordRequest(username).then(() => {
       toast({
         title: 'Password reset e-mail will be sent.',
         status: 'success',
