@@ -29,22 +29,24 @@ const yujiMai = Yuji_Mai({
 
 export default function RomanceCoverComponent() {
   const { colorMode } = useColorMode();
-  const chapters = [
-    ['一', 'Oath in the Peach Garden'],
+  const chapters_1 = [
+    ['一', 'Oath in the Peach Garden', 'actual text'],
     ['二', "Zhang Fei's Anger"],
     ['三', 'Dong Zhuo'],
     ['四', 'Fall of Han'],
     ['五', 'The Rise of Cao Cao'],
     ['六', 'The Palace Fire'],
     ['七', 'Fight at the Pan River'],
-    ['八', 'Fight at the Pan River'],
-    // ['九', 'Fight at the Pan River'],
-    // ['十', 'Fight at the Pan River'],
-    // ['十一', 'Fight at the Pan River'],
-    // ['十二', 'Fight at the Pan River'],
-    // ['十三', 'Fight at the Pan River'],
-    // ['十四', 'Fight at the Pan River'],
-    // ['十五', 'Fight at the Pan River'],
+    ['八', 'Interlinked Stratagems'],
+  ];
+  const chapters_2 = [
+    ['九', 'Fight at the Pan River'],
+    ['十', 'Fight at the Pan River'],
+    ['十一', 'Fight at the Pan River'],
+    ['十二', 'Fight at the Pan River'],
+    ['十三', 'Fight at the Pan River'],
+    ['十四', 'Fight at the Pan River'],
+    ['十五', 'Fight at the Pan River'],
   ];
 
   return (
@@ -113,14 +115,17 @@ export default function RomanceCoverComponent() {
             </VStack>
           </Center>
           <OrderedList styleType="none" mt={4}>
-            {chapters.map((chapter, i) => (
+            {chapters_1.map((chapter, i) => (
               <ListItem
                 pl={['5rem', '2rem']}
                 ml={chapter[0].length === 1 ? '1rem' : undefined}
                 mt={3}
                 key={i}
               >
-                <HStack cursor="pointer">
+                <HStack
+                  cursor={chapter[2] ? 'pointer' : 'not-allowed'}
+                  textColor={chapter[2] ? undefined : 'gray'}
+                >
                   <Text className={yujiMai.className}>{chapter[0]}</Text>
                   <Text
                     fontSize="0.9rem"
@@ -135,6 +140,15 @@ export default function RomanceCoverComponent() {
           </OrderedList>
         </Box>
       </Box>
+      <Text
+        position="absolute"
+        bottom="0.5rem"
+        right="0.8rem"
+        cursor="pointer"
+        _hover={{ textDecoration: 'underline' }}
+      >
+        下 Next
+      </Text>
     </Flex>
   );
 }
