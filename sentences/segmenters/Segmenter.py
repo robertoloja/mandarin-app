@@ -153,6 +153,7 @@ class Segmenter:
     @staticmethod
     def add_definitions_and_create_dictionary(
         segmented_sentence: List[SentenceSegment],
+        dictionary: MandarinDictionary = cast(MandarinDictionary, {}),
     ) -> tuple[List[SentenceSegment], MandarinDictionary]:
         """
         Modifies 'segmented_sentence' and returns a tuple containing
@@ -162,8 +163,6 @@ class Segmenter:
         :param segmented_sentence: The list of SentenceSegments being worked on.
         :return: A tuple containing the sentence, and the mandarin dictionary.
         """
-        dictionary = cast(MandarinDictionary, {})
-
         for index, item in enumerate(segmented_sentence):
             if is_punctuation(item["word"]) or not hanzi_utils.has_chinese(
                 item["word"]
@@ -188,7 +187,7 @@ class Segmenter:
                 concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
                 if concat_attempt:
                     return Segmenter.add_definitions_and_create_dictionary(
-                        concat_attempt
+                        concat_attempt, dictionary
                     )
 
                 wikitionary = WiktionaryScraper()
@@ -318,14 +317,10 @@ class Segmenter:
                             hanzi, item, index, entry
                         )
                         dictionary[the_hanzi] = {
-                            "english": [db_hanzi.first().definitions],
-                            "pinyin": [
-                                db_hanzi.first().pronunciation.replace("u:", "ü")
-                            ],
+                            "english": [db_hanzi.definitions],
+                            "pinyin": [db_hanzi.pronunciation.replace("u:", "ü")],
                             "zhuyin": [
-                                Segmenter.pinyin_to_zhuyin(
-                                    db_hanzi.first().pronunciation
-                                )
+                                Segmenter.pinyin_to_zhuyin(db_hanzi.pronunciation)
                             ],
                         }
         return (segmented_sentence, dictionary)
@@ -375,7 +370,7 @@ class Segmenter:
             the_hanzi = (
                 db_hanzi.first().simplified
             )  # likely a bug? should check for multiple results
-        return the_hanzi, db_hanzi
+        return the_hanzi, db_hanzi.first()
 
     @staticmethod
     def pinyin_to_zhuyin(pinyin: str) -> str:

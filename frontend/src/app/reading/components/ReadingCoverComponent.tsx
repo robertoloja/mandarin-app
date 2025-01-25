@@ -54,14 +54,15 @@ export default function ReadingCoverComponent({
     <Box
       position="relative"
       width={['98%', '96%', '40rem']}
-      height={['48rem', '34rem']}
+      height={
+        chapters[0][0].length > 3 ? ['48rem', '34rem'] : ['35rem', '25rem']
+      }
       borderRadius={8}
       overflow="hidden"
       backgroundImage={background}
       backgroundSize={['contain', 'cover']}
       backgroundPosition={['top', 'left']}
       m={[1, 4]}
-      mb="8"
       mt="4"
       __css={styles.darkBox[colorMode]}
     >
@@ -143,7 +144,10 @@ export default function ReadingCoverComponent({
                           textColor={chapter[2] ? undefined : 'gray'}
                         >
                           {/* List Number */}
-                          <Text className={yujiMai.className}>
+                          <Text
+                            className={yujiMai.className}
+                            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
+                          >
                             {chapter[0]}
                           </Text>
 
@@ -152,6 +156,7 @@ export default function ReadingCoverComponent({
                             fontSize={['1rem', '0.9rem']}
                             className={cinzel.className}
                             _hover={{ textDecoration: 'underline' }}
+                            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
                           >
                             {chapter.length === 3 ? (
                               <Link href={`/?share_id=${chapter[2]}`}>
@@ -166,7 +171,7 @@ export default function ReadingCoverComponent({
 
                       {/* Sub-chapters */}
                       {chapter.length > 3 ? (
-                        <AccordionPanel mb="1rem">
+                        <AccordionPanel mb="0">
                           <VStack m="0" ml={['-7rem', '-4rem']} p="0">
                             {chapter.slice(2).map((x, i) => (
                               <Link href={`/?share_id=${x}`} key={i}>
@@ -193,6 +198,7 @@ export default function ReadingCoverComponent({
             bottom={['3rem', '1.5rem']}
             right={['78%', '18rem']}
             cursor="pointer"
+            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
             _hover={{ textDecoration: 'underline' }}
             onClick={() => {
               setActivePage(activePage - 1);
@@ -208,6 +214,7 @@ export default function ReadingCoverComponent({
             bottom={['3rem', '1.5rem']}
             right={['1rem']}
             cursor="pointer"
+            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
             _hover={{ textDecoration: 'underline' }}
             onClick={() => {
               setActivePage(activePage + 1);

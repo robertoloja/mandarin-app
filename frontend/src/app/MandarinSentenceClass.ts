@@ -116,6 +116,14 @@ export class MandarinSentenceClass {
           this.segments = response.sentence;
           this.dictionary = response.dictionary;
           this.translation = response.translation;
+
+          if (process.env.NODE_ENV === 'development') {
+            for (let hanzi of this.mandarin) {
+              if (!Object.keys(this.dictionary).includes(hanzi)) {
+                console.log(hanzi);
+              }
+            }
+          }
         },
       );
       await MandoBotAPI.share({

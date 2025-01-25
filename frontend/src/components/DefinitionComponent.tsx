@@ -48,7 +48,6 @@ function Definition(props: {
     }
     return dictionary[hanzi].zhuyin[0];
   };
-
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />

@@ -25,7 +25,7 @@ api = NinjaAPI(
     version="0.9.0",
     servers=[
         {
-            "url": "http://localhost:8000",
+            "url": "https://localhost:8000",
             "description": "Default server address for local development.",
         },
         {
@@ -55,9 +55,9 @@ def segment(request, data: str) -> SegmentationResponse:
     timer = Timer()
     timer.start()
 
-    MAX_CHARS_FREE = 200 if not settings.DEBUG else 10000
+    MAX_CHARS_FREE = 200 if not settings.DEBUG else 1000
     if request.user.is_authenticated:
-        text_to_segment = data
+        text_to_segment = data[:1000]
     else:
         text_to_segment = data[:MAX_CHARS_FREE]
 

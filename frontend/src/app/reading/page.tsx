@@ -5,7 +5,17 @@ import ReadingCoverComponent from './components/ReadingCoverComponent';
 
 export default function ReadingPage() {
   const chapters_1 = [
-    ['一', 'Oath in the Peach Garden', 'wSE4FONhWj', 'ArFsAP9TMb'],
+    [
+      '一',
+      'Oath in the Peach Garden',
+      'wSE4FONhWj',
+      'hErMG8iNOo',
+      'RMY5TrW0T6',
+      'MbGAhlo54Y',
+      'Q7GnxMzcNw',
+      '59Yb0VElht',
+      'S6c9Ie5ZkS',
+    ],
     ['二', "Zhang Fei's Anger"],
     ['三', 'Dong Zhuo'],
     ['四', 'Fall of Han'],
@@ -15,15 +25,15 @@ export default function ReadingPage() {
     ['六', 'The Palace Fire'],
     ['七', 'Fight at the Pan River'],
     ['八', 'Interlinked Stratagems'],
-    ['九', 'Fight at the Pan River'],
-    ['十', 'Fight at the Pan River'],
+    ['九', "Attack on Chang'an"],
+    ['十', "Cao Cao's Revenge"],
   ];
   const chapters_3 = [
-    ['十一', 'Fight at the Pan River'],
-    ['十二', 'Fight at the Pan River'],
-    ['十三', 'Fight at the Pan River'],
-    ['十四', 'Fight at the Pan River'],
-    ['十五', 'Fight at the Pan River'],
+    ['十一', "Cao Cao's Defeat"],
+    ['十二', 'Cao Cao and Lü Bu'],
+    ['十三', "The Emperor's Rescue"],
+    ['十四', 'Cao Cao and the Emperor'],
+    ['十五', 'An Oath, Remembered'],
   ];
 
   const romance = {
@@ -35,20 +45,21 @@ export default function ReadingPage() {
   };
 
   const chap1 = [
-    ['一', 'Very Good Moon', 'rXMx5WVp7T'],
-    ['二', 'No Moonlight Whatsoever'],
+    ['零', 'Two Brothers', 'n7BkE79Q-_'],
+    ['一', 'A Very Good Moon', 'rXMx5WVp7T'],
+    ['二', 'No Moonlight Whatsoever', 'IlzDKJkIWL'],
     ['三', "Couldn't Fall Asleep"],
     ['四', 'Sat Quietly for a While'],
-    ['五', 'A Step Back'],
   ];
   const chap2 = [
+    ['五', 'A Step Back'],
     ['六', 'Pitch Black'],
     ['七', 'Their Methods'],
     ['八', 'Somebody Came'],
     ['九', 'They Want to Eat People'],
-    ['十', 'Early in the Morning'],
   ];
   const chap3 = [
+    ['十', 'Early in the Morning'],
     ['十一', 'The Sun Has Not Come Out'],
     ['十二', 'I Cannot Think About It'],
     ['十三', 'Perhaps...'],
@@ -72,8 +83,8 @@ export default function ReadingPage() {
       overflow="hidden"
       justifyContent="center"
     >
-      <ReadingCoverComponent {...romance} />
       <ReadingCoverComponent {...diary} />
+      <ReadingCoverComponent {...romance} />
     </Flex>
   );
 }
