@@ -187,7 +187,7 @@ def register_id(request, register_id: str) -> Tuple[int, str] | APIErrorResponse
 @router.post(
     "/register",
     response={
-        200: SuccessResponseSchema,
+        201: SuccessResponseSchema,
         409: APIError,
         404: APIError,
         400: APIPasswordError,
