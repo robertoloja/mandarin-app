@@ -7,8 +7,9 @@ django.setup()
 
 from accounts.models import PaidButUnregistered, ResetPasswordRequest  # noqa: E402
 from django.core.mail import send_mail  # noqa: E402
+from mandoBot.settings import DEBUG  # noqa: E402
 
-BASE_URL = "https://mandobot.netlify.app"
+BASE_URL = "https://mandobot.netlify.app" if not DEBUG else "http://localhost:3000"
 MANDOBOT_EMAIL = "mandoBot <mandobotserver@gmail.com>"
 
 
@@ -29,11 +30,12 @@ to get in touch with the developer, just reply to this e-mail.
 Best regards,
 mandoBot
 """
+    email_to_send = registration.user_email if not DEBUG else "robertoloja@gmail.com"
     send_mail(
         subject,
         message,
         MANDOBOT_EMAIL,
-        [registration.user_email],
+        [email_to_send],
         False,
     )
     registration.emailed = True
@@ -56,11 +58,12 @@ Best regards,
 mandoBot
 """
 
+    email_to_send = email.user.email if not DEBUG else "robertoloja@gmail.com"
     send_mail(
         subject,
         message,
         MANDOBOT_EMAIL,
-        [email.user.email],
+        [email_to_send],
         False,
     )
     email.emailed = True

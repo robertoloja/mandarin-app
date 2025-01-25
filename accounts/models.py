@@ -53,6 +53,7 @@ class ResetPasswordRequest(models.Model):
     user = models.ForeignKey(MandoBotUser, on_delete=models.CASCADE)
     emailed = models.BooleanField(default=False)
     reset_token = models.CharField(max_length=20, unique=True, editable=False)
+    used = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.reset_token:

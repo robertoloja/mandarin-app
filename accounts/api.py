@@ -63,43 +63,51 @@ def set_new_password(
 
     user.set_password(new_password)
     user.save()
-    login(request, user)
 
-    return 200, SuccessResponseSchema(message="Password changed")
+    return 200, SuccessResponseSchema(message=user.username)
 
 
-@router.post(
-    "/reset_password", response={200: SuccessResponseSchema, 404: APIPasswordError}
-)
+@router.post("/reset_password", response={200: SuccessResponseSchema, 404: APIError})
 def reset_password(
     request, reset_token: Form[str], new_password: Form[str], confirmation: Form[str]
 ) -> APISuccessResponse | APIPasswordErrorResponse | APIErrorResponse:
+    """
+    Users can reset their password, given a valid token which will have been sent
+    over e-mail.
+    """
     try:
-        entry = ResetPasswordRequest.objects.get(reset_token=reset_token)
-        return set_new_password(request, entry.user, new_password, confirmation)
+        entry = ResetPasswordRequest.objects.get(reset_token=reset_token, used=False)
+        response = set_new_password(request, entry.user, new_password, confirmation)
+        if response[0] == 200:
+            entry.used = True
+            entry.save()
+        return response
     except ResetPasswordRequest.DoesNotExist:
-        return 404, APIError(error="Couldn't find this password reset request.")
+        return 404, APIError(
+            error="Couldn't find this password reset request, \
+                             or it has already been used."
+        )
 
 
 @router.post(
     "/reset_password_request", response={200: SuccessResponseSchema, 404: APIError}
 )
 def reset_password_request(
-    request, email: Form[str]
+    request, username: Form[str]
 ) -> APISuccessResponse | APIErrorResponse:
     """
-    Hit by client when clicking on "forgot password" link. Creates a ResetPasswordReset
+    Hit by client when clicking on "forgot password" link. Creates a ResetPasswordRequest
     for the given e-mail, if matching user exists.
     """
-
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(username=username)
         entry = ResetPasswordRequest(user=user)
         entry.save()
         return 200, SuccessResponseSchema(message="Password reset e-mail will be sent.")
 
     except User.DoesNotExist:
         # Give no indication whether a user with this e-mail exists.
+        # TODO: Log these attempts: Username and datetime
         return 200, SuccessResponseSchema(message="Password reset e-mail will be sent.")
 
 
@@ -253,7 +261,7 @@ def post_user_theme_preference(request, theme: Literal[0, 1]) -> int | APIErrorR
 
 @router.get(
     "/user_settings",
-    response={200: UserPreferencesSchema, 204: APIError},
+    response={200: UserPreferencesSchema, 404: APIError},
 )
 def user_settings(request) -> APIUserSuccessResponse | APIErrorResponse:
     """

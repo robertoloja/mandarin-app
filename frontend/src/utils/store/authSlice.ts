@@ -11,17 +11,18 @@ interface LoginResponse {
   email: string;
 }
 
-export const login = createAsyncThunk<LoginResponse, LoginPayload>(
-  'auth/login',
-  async ({ username, password }, thunkAPI) => {
-    try {
-      const response = await MandoBotAPI.login(username, password);
-      return response;
-    } catch (error: any) {
-      return thunkAPI.rejectWithValue(error.response?.data || 'login failed');
-    }
-  },
-);
+export const login = createAsyncThunk<
+  LoginResponse,
+  LoginPayload,
+  { rejectValue: { error: string } }
+>('auth/login', async ({ username, password }, thunkAPI) => {
+  try {
+    const response = await MandoBotAPI.login(username, password);
+    return response;
+  } catch (error: any) {
+    if (error.response) return error.response.data;
+  }
+});
 
 interface AuthState {
   username: string | null;
