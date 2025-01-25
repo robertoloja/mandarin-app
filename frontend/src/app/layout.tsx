@@ -6,6 +6,7 @@ import { store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import TopNav from '@/components/TopNavComponent';
 import { MandoBotAPI } from '@/utils/api';
+import { accordionTheme } from './reading/components/Accordion';
 
 export default function RootLayout({
   children,
@@ -13,6 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const theme = extendTheme({
+    components: { Accordion: accordionTheme },
     config: {
       initialColorMode: 'dark',
       useSystemColorMode: true,

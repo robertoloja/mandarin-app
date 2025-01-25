@@ -10,10 +10,14 @@ import {
   ListItem,
   OrderedList,
   HStack,
-  Flex,
-  textDecoration,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
 } from '@chakra-ui/react';
 import { Cinzel, Yuji_Mai } from 'next/font/google';
+import Link from 'next/link';
+import { useState } from 'react';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -27,39 +31,35 @@ const yujiMai = Yuji_Mai({
   display: 'swap',
 });
 
-export default function RomanceCoverComponent() {
+interface ReadingProps {
+  mandarinTitle: string;
+  englishTitle: string;
+  chapters: string[][][];
+  background: string;
+}
+
+export default function RomanceCoverComponent({
+  mandarinTitle,
+  englishTitle,
+  chapters,
+  background,
+}: ReadingProps) {
   const { colorMode } = useColorMode();
-  const chapters_1 = [
-    ['一', 'Oath in the Peach Garden', 'actual text'],
-    ['二', "Zhang Fei's Anger"],
-    ['三', 'Dong Zhuo'],
-    ['四', 'Fall of Han'],
-    ['五', 'The Rise of Cao Cao'],
-    ['六', 'The Palace Fire'],
-    ['七', 'Fight at the Pan River'],
-    ['八', 'Interlinked Stratagems'],
-  ];
-  const chapters_2 = [
-    ['九', 'Fight at the Pan River'],
-    ['十', 'Fight at the Pan River'],
-    ['十一', 'Fight at the Pan River'],
-    ['十二', 'Fight at the Pan River'],
-    ['十三', 'Fight at the Pan River'],
-    ['十四', 'Fight at the Pan River'],
-    ['十五', 'Fight at the Pan River'],
-  ];
+  const [activePage, setActivePage] = useState(0);
 
   return (
-    <Flex
+    <Box
       position="relative"
-      width={['98%', '96%', '47rem']}
-      height={['48rem', '30rem']} // Set card height
+      width={['98%', '96%', '40rem']}
+      height={['48rem', '30rem']}
       borderRadius={8}
       overflow="hidden"
-      backgroundImage="romance-cover.jpg" // Replace with your image URL
+      backgroundImage={background}
       backgroundSize={['contain', 'cover']}
       backgroundPosition={['top', 'left']}
       m={[1, 4]}
+      mb="8"
+      mt="4"
       __css={styles.darkBox[colorMode]}
     >
       {/* Right-side solid panel with gradient */}
@@ -101,7 +101,7 @@ export default function RomanceCoverComponent() {
                 className={yujiMai.className}
                 textShadow="2px 2px 2px rgba(70, 70, 70, 0.9)"
               >
-                三國演義
+                {mandarinTitle}
               </Text>
               <Text
                 mt={-5}
@@ -110,45 +110,92 @@ export default function RomanceCoverComponent() {
                 className={cinzel.className}
                 textShadow="1px 1px 1px rgba(50, 50, 50, 0.9)"
               >
-                Romance of the Three Kingdoms
+                {englishTitle}
               </Text>
             </VStack>
           </Center>
-          <OrderedList styleType="none" mt={4}>
-            {chapters_1.map((chapter, i) => (
-              <ListItem
-                pl={['5rem', '2rem']}
-                ml={chapter[0].length === 1 ? '1rem' : undefined}
-                mt={3}
-                key={i}
-              >
-                <HStack
-                  cursor={chapter[2] ? 'pointer' : 'not-allowed'}
-                  textColor={chapter[2] ? undefined : 'gray'}
-                >
-                  <Text className={yujiMai.className}>{chapter[0]}</Text>
-                  <Text
-                    fontSize="0.9rem"
-                    className={cinzel.className}
-                    _hover={{ textDecoration: 'underline' }}
+
+          <OrderedList styleType="none" mt={3}>
+            <Accordion variant="outline" allowToggle>
+              <>
+                {chapters[activePage].map((chapter, i) => (
+                  <ListItem
+                    pl={['5rem', '2rem']}
+                    ml={chapter[0].length === 1 ? '1rem' : undefined}
+                    key={i}
                   >
-                    {chapter[1]}
-                  </Text>
-                </HStack>
-              </ListItem>
-            ))}
+                    <AccordionItem>
+                      <AccordionButton>
+                        <HStack
+                          cursor={chapter[2] ? 'pointer' : 'not-allowed'}
+                          textColor={chapter[2] ? undefined : 'gray'}
+                        >
+                          <Text className={yujiMai.className}>
+                            {chapter[0]}
+                          </Text>
+                          <Text
+                            fontSize="0.9rem"
+                            className={cinzel.className}
+                            _hover={{ textDecoration: 'underline' }}
+                          >
+                            {chapter.length <= 3 ? (
+                              <Link href={`/?share_id=${chapter[2]}`}>
+                                {chapter[1]}
+                              </Link>
+                            ) : (
+                              `${chapter[1]}`
+                            )}
+                          </Text>
+                        </HStack>
+                      </AccordionButton>
+
+                      {chapter.length > 3 ? (
+                        <AccordionPanel mb="1rem">
+                          <VStack m="0" ml="-4rem" p="0">
+                            {chapter.slice(2).map((x, i) => (
+                              <Link href={`/?share_id=${x}`} key={i}>
+                                <Text _hover={{ textDecoration: 'underline' }}>
+                                  Sub-chapter {i + 1}
+                                </Text>
+                              </Link>
+                            ))}
+                          </VStack>
+                        </AccordionPanel>
+                      ) : undefined}
+                    </AccordionItem>
+                  </ListItem>
+                ))}
+              </>
+            </Accordion>
           </OrderedList>
         </Box>
       </Box>
-      <Text
-        position="absolute"
-        bottom="0.5rem"
-        right="0.8rem"
-        cursor="pointer"
-        _hover={{ textDecoration: 'underline' }}
-      >
-        下 Next
-      </Text>
-    </Flex>
+      <HStack>
+        {activePage > 0 && (
+          <Text
+            position="absolute"
+            bottom="2rem"
+            right="16rem"
+            cursor="pointer"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => setActivePage(activePage - 1)}
+          >
+            上 Previous
+          </Text>
+        )}
+        {activePage < chapters.length - 1 && (
+          <Text
+            position="absolute"
+            bottom="2rem"
+            right="3rem"
+            cursor="pointer"
+            _hover={{ textDecoration: 'underline' }}
+            onClick={() => setActivePage(activePage + 1)}
+          >
+            下 Next
+          </Text>
+        )}
+      </HStack>
+    </Box>
   );
 }
