@@ -45,13 +45,18 @@ class AccountAPITests(TestCase):
 
     def test_password_reset(self):
         client = Client()
+
+        # nonexistent username will not create a ResetPasswordReset
         response = client.post(
-            "/api/accounts/reset_password_request", {"email": "foo@bar.ca"}
+            "/api/accounts/reset_password_request", {"username": "whoever"}
         )
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
+
+        with self.assertRaises(ResetPasswordRequest.DoesNotExist):
+            ResetPasswordRequest.objects.get()
 
         response = client.post(
-            "/api/accounts/reset_password_request", {"email": self.email}
+            "/api/accounts/reset_password_request", {"username": self.username}
         )
         self.assertEqual(response.status_code, 200)
         entry = ResetPasswordRequest.objects.get(user=self.test_user)
@@ -69,6 +74,17 @@ class AccountAPITests(TestCase):
 
         updated_user = User.objects.get(email=self.email)
         self.assertTrue(check_password(new_password, updated_user.password))
+
+        # Link can't be used again
+        response = client.post(
+            "/api/accounts/reset_password",
+            {
+                "reset_token": entry.reset_token,
+                "new_password": new_password,
+                "confirmation": new_password,
+            },
+        )
+        self.assertTrue(response.status_code, 404)
 
     def test_change_password(self):
         client = Client()
@@ -99,16 +115,19 @@ class AccountAPITests(TestCase):
             ],
         )
 
+        new_password = "PrettyGoodPassw0rd?"
         response = client.post(
             "/api/accounts/change_password",
             {
                 "username": self.username,
                 "password": self.password,
-                "new_password": "PrettyGoodPassw0rd?",
-                "password_confirmation": "PrettyGoodPassw0rd?",
+                "new_password": new_password,
+                "password_confirmation": new_password,
             },
         )
         self.assertEqual(response.status_code, 200)
+        user = User.objects.get(email=self.email)
+        self.assertTrue(check_password(new_password, user.password))
 
     def test_short_password_returns_error(self):
         client = Client()

@@ -143,7 +143,7 @@ export const MandoBotAPI = {
     username: string,
     password: string,
     email: string,
-  ): Promise<{ success: boolean; message: string }> {
+  ): Promise<{ message: string }> {
     const response = await api.post(
       '/accounts/register',
       new URLSearchParams({ username, password, email }),
@@ -253,5 +253,34 @@ export const MandoBotAPI = {
         result = true;
       });
     return result;
+  },
+
+  resetPasswordRequest: async function (
+    username: string,
+  ): Promise<{ message: string }> {
+    const response = await api.post(
+      '/accounts/reset_password_request',
+      new URLSearchParams({
+        username,
+      }),
+      { withCredentials: true },
+    );
+    return response.data;
+  },
+
+  resetPassword: async function (
+    reset_token: string,
+    new_password: string,
+    confirmation: string,
+  ): Promise<{ message: string }> {
+    const response = await api.post(
+      '/accounts/reset_password',
+      new URLSearchParams({
+        reset_token,
+        new_password,
+        confirmation,
+      }),
+    );
+    return response.data;
   },
 };
