@@ -138,7 +138,7 @@ export default function RomanceCoverComponent({
                             className={cinzel.className}
                             _hover={{ textDecoration: 'underline' }}
                           >
-                            {chapter.length <= 3 ? (
+                            {chapter.length === 3 ? (
                               <Link href={`/?share_id=${chapter[2]}`}>
                                 {chapter[1]}
                               </Link>
