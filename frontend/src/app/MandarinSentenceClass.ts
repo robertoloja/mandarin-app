@@ -118,7 +118,7 @@ export class MandarinSentenceClass {
           this.translation = response.translation;
 
           if (process.env.NODE_ENV === 'development') {
-            for (let hanzi of this.mandarin) {
+            for (const hanzi of this.mandarin) {
               if (!Object.keys(this.dictionary).includes(hanzi)) {
                 console.log(hanzi);
               }
