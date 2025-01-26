@@ -18,6 +18,7 @@ import {
 import { Cinzel, Yuji_Mai } from 'next/font/google';
 import Link from 'next/link';
 import { useState } from 'react';
+import AttributionPopover from './AttributionPopover';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -37,6 +38,10 @@ interface ReadingProps {
   englishTitle: string;
   chapters: string[][][];
   background: string;
+  attribution: {
+    image: string;
+    text: string;
+  };
 }
 
 export default function ReadingCoverComponent({
@@ -45,6 +50,7 @@ export default function ReadingCoverComponent({
   englishTitle,
   chapters,
   background,
+  attribution,
 }: ReadingProps) {
   const { colorMode } = useColorMode();
   const [activePage, setActivePage] = useState(0);
@@ -66,6 +72,8 @@ export default function ReadingCoverComponent({
       mt="4"
       __css={styles.darkBox[colorMode]}
     >
+      <AttributionPopover text={attribution.text} image={attribution.image} />
+
       {/* Right-side solid panel with gradient */}
       <Box
         position="absolute"

@@ -42,6 +42,12 @@ export default function ReadingPage() {
     englishTitle: 'Romance of the Three Kingdoms',
     chapters: [chapters_1, chapters_2, chapters_3],
     background: 'romance-cover.jpg',
+    attribution: {
+      image: `Cover image from 三国演义, published 1957 by 上海人民美术出. Painting by 刘锡永 and 徐正平.`,
+      text: `Translation by Wikisource, presented here under the Creative Commons 
+      Attribution-ShareAlike 2.0 Generic license. 
+      https://en.wikisource.org/wiki/Translation:Romance_of_the_Three_Kingdoms`,
+    },
   };
 
   const chap1 = [
@@ -71,6 +77,12 @@ export default function ReadingPage() {
     englishTitle: 'Diary of a Madman',
     chapters: [chap1, chap2, chap3],
     background: 'lu-xun.jpg',
+    attribution: {
+      image: `Cover image is 永不休战 by 汤小铭, published in 1973.`,
+      text: `Translation by Wikisource, presented here under the Creative Commons 
+      Attribution-ShareAlike 2.0 Generic license. 
+      https://en.m.wikisource.org/wiki/Translation:Call_to_Arms_(Lu_Xun)/A_Madman%27s_Diary`,
+    },
   };
 
   return (
