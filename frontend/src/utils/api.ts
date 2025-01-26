@@ -7,7 +7,6 @@ import {
 import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUserDetails } from './store/authSlice';
-import { MAX_LENGTH_FREE } from 'constant_variables';
 import { setPreferences } from './store/settingsSlice';
 
 export function getCookie(name: string): string | null {
@@ -19,12 +18,15 @@ export function getCookie(name: string): string | null {
 }
 
 const API_BASE_URL =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:8000/api' : '/api';
+  process.env.NODE_ENV === 'development'
+    ? 'https://localhost:8000/api'
+    : '/api';
+const TIMEOUT = process.env.NODE_ENV === 'development' ? 100000 : 20000;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  timeout: 20000,
+  timeout: TIMEOUT,
 });
 
 // The response interceptor uses these error handlers.
@@ -80,10 +82,11 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
     const response = await api.post(
-      `/segment?data=${sentence.slice(0, MAX_LENGTH_FREE)}`,
+      `/segment?data=${sentence}`,
       {
         sentence: sentence,
       },
+      { withCredentials: true },
     );
     return response.data;
   },

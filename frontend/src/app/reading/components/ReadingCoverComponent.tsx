@@ -33,32 +33,36 @@ const yujiMai = Yuji_Mai({
 
 interface ReadingProps {
   mandarinTitle: string;
+  titleLink: string;
   englishTitle: string;
   chapters: string[][][];
   background: string;
 }
 
-export default function RomanceCoverComponent({
+export default function ReadingCoverComponent({
   mandarinTitle,
+  titleLink,
   englishTitle,
   chapters,
   background,
 }: ReadingProps) {
   const { colorMode } = useColorMode();
   const [activePage, setActivePage] = useState(0);
+  const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
 
   return (
     <Box
       position="relative"
       width={['98%', '96%', '40rem']}
-      height={['48rem', '30rem']}
+      height={
+        chapters[0][0].length > 3 ? ['48rem', '34rem'] : ['35rem', '25rem']
+      }
       borderRadius={8}
       overflow="hidden"
       backgroundImage={background}
       backgroundSize={['contain', 'cover']}
       backgroundPosition={['top', 'left']}
       m={[1, 4]}
-      mb="8"
       mt="4"
       __css={styles.darkBox[colorMode]}
     >
@@ -96,19 +100,23 @@ export default function RomanceCoverComponent({
         >
           <Center>
             <VStack>
+              <Link href={`/?share_id=${titleLink}`}>
+                <Text
+                  mt={['-4.8rem', -5]}
+                  fontSize="5rem"
+                  className={yujiMai.className}
+                  textShadow={['3px 3px 5px rgba(20, 20, 20, 1)']}
+                  _hover={{ textDecoration: 'underline' }}
+                >
+                  {mandarinTitle}
+                </Text>
+              </Link>
               <Text
-                fontSize="5rem"
-                className={yujiMai.className}
-                textShadow="2px 2px 2px rgba(70, 70, 70, 0.9)"
-              >
-                {mandarinTitle}
-              </Text>
-              <Text
-                mt={-5}
+                mt={['-1.5rem', -5]}
                 fontWeight="extrabold"
-                fontSize="1.1rem"
+                fontSize="1.2rem"
                 className={cinzel.className}
-                textShadow="1px 1px 1px rgba(50, 50, 50, 0.9)"
+                textShadow={['3px 3px 5px rgba(20, 20, 20, 1)']}
               >
                 {englishTitle}
               </Text>
@@ -116,11 +124,16 @@ export default function RomanceCoverComponent({
           </Center>
 
           <OrderedList styleType="none" mt={3}>
-            <Accordion variant="outline" allowToggle>
+            <Accordion
+              variant="outline"
+              allowToggle
+              index={accordionIndex}
+              onChange={setAccordionIndex}
+            >
               <>
                 {chapters[activePage].map((chapter, i) => (
                   <ListItem
-                    pl={['5rem', '2rem']}
+                    pl={['4rem', '2rem']}
                     ml={chapter[0].length === 1 ? '1rem' : undefined}
                     key={i}
                   >
@@ -130,13 +143,20 @@ export default function RomanceCoverComponent({
                           cursor={chapter[2] ? 'pointer' : 'not-allowed'}
                           textColor={chapter[2] ? undefined : 'gray'}
                         >
-                          <Text className={yujiMai.className}>
+                          {/* List Number */}
+                          <Text
+                            className={yujiMai.className}
+                            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
+                          >
                             {chapter[0]}
                           </Text>
+
+                          {/* English Chapter Title */}
                           <Text
-                            fontSize="0.9rem"
+                            fontSize={['1rem', '0.9rem']}
                             className={cinzel.className}
                             _hover={{ textDecoration: 'underline' }}
+                            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
                           >
                             {chapter.length === 3 ? (
                               <Link href={`/?share_id=${chapter[2]}`}>
@@ -149,9 +169,10 @@ export default function RomanceCoverComponent({
                         </HStack>
                       </AccordionButton>
 
+                      {/* Sub-chapters */}
                       {chapter.length > 3 ? (
-                        <AccordionPanel mb="1rem">
-                          <VStack m="0" ml="-4rem" p="0">
+                        <AccordionPanel mb="0">
+                          <VStack m="0" ml={['-7rem', '-4rem']} p="0">
                             {chapter.slice(2).map((x, i) => (
                               <Link href={`/?share_id=${x}`} key={i}>
                                 <Text _hover={{ textDecoration: 'underline' }}>
@@ -174,11 +195,15 @@ export default function RomanceCoverComponent({
         {activePage > 0 && (
           <Text
             position="absolute"
-            bottom="2rem"
-            right="16rem"
+            bottom={['3rem', '1.5rem']}
+            right={['78%', '18rem']}
             cursor="pointer"
+            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
             _hover={{ textDecoration: 'underline' }}
-            onClick={() => setActivePage(activePage - 1)}
+            onClick={() => {
+              setActivePage(activePage - 1);
+              setAccordionIndex(-1);
+            }}
           >
             上 Previous
           </Text>
@@ -186,11 +211,15 @@ export default function RomanceCoverComponent({
         {activePage < chapters.length - 1 && (
           <Text
             position="absolute"
-            bottom="2rem"
-            right="3rem"
+            bottom={['3rem', '1.5rem']}
+            right={['1rem']}
             cursor="pointer"
+            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
             _hover={{ textDecoration: 'underline' }}
-            onClick={() => setActivePage(activePage + 1)}
+            onClick={() => {
+              setActivePage(activePage + 1);
+              setAccordionIndex(-1);
+            }}
           >
             下 Next
           </Text>

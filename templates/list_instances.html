@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Instances</title>
+  </head>
+  <body>
+    <h1>Model Instances</h1>
+    <ul>
+      {% for instance in instances %}
+      <li>
+        <a href="{% url 'edit_instance' instance.id %}">
+          {{ instance.sentence_id }}
+        </a>
+        - {{ instance.translation_preview }}
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>

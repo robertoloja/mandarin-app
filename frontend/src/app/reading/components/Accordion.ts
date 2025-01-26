@@ -26,8 +26,10 @@ const outline = definePartsStyle(() => {
       },
     },
     panel: {
-      margin: '-0.2rem',
+      marginLeft: '-2rem',
+      marginY: '-0.4rem',
       padding: 0,
+      paddingLeft: '-4rem',
     },
   };
 });
