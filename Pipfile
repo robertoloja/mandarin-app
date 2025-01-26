@@ -19,6 +19,7 @@ beautifulsoup4 = "*"
 pyjwt = "*"
 argostranslate = "*"
 django = "*"
+django-extensions = "*"
 
 [dev-packages]
 pysnooper = "*"
