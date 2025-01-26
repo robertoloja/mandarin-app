@@ -18,7 +18,8 @@ class SentenceHistory(models.Model):
         return f"{self.sentence_id}"
 
     def save(self, *args, **kwargs):
-        self.sentence_id = secrets.token_urlsafe(10)[:10]
+        if not self.sentence_id:
+            self.sentence_id = secrets.token_urlsafe(10)[:10]
 
         # Normalize JSON before saving
         if isinstance(self.json_data, dict):

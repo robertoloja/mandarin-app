@@ -45,24 +45,24 @@ export default function ReadingPage() {
   };
 
   const chap1 = [
-    ['零', 'Two Brothers', 'n7BkE79Q-_'],
-    ['一', 'A Very Good Moon', 'rXMx5WVp7T'],
+    ['零', 'Two Brothers', 'njxoalFOGc'],
+    ['一', 'A Very Good Moon', 'e8PZ8KFE5Y'],
     ['二', 'No Moonlight Whatsoever', 'IlzDKJkIWL'],
     ['三', "Couldn't Fall Asleep"],
-    ['四', 'Sat Quietly for a While'],
+    ['四', 'Sat Quietly for a While', 'xTIybS2MU9'],
   ];
   const chap2 = [
-    ['五', 'A Step Back'],
-    ['六', 'Pitch Black'],
+    ['五', 'A Step Back', 'YlfLF2_Whw'],
+    ['六', 'Pitch Black', 'NUw5_ruh3H'],
     ['七', 'Their Methods'],
-    ['八', 'Somebody Came'],
-    ['九', 'They Want to Eat People'],
+    ['八', 'Somebody Came', 'mHOt29iUOn'],
+    ['九', 'They Want to Eat People', '-GdH2hZ0h_'],
   ];
   const chap3 = [
-    ['十', 'Early in the Morning'],
-    ['十一', 'The Sun Has Not Come Out'],
-    ['十二', 'I Cannot Think About It'],
-    ['十三', 'Perhaps...'],
+    ['十', 'Early in the Morning', 'YwexFVjfJ_'],
+    ['十一', 'The Sun Has Not Come Out', 'y1YXd7xxo2'],
+    ['十二', 'I Cannot Think About It', 'rPqZ4_WGFo'],
+    ['十三', 'Perhaps...', 'wl2tMdK8X1'],
   ];
 
   const diary = {

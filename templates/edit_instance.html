@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Edit JSON</title>
+    <link
+      rel="stylesheet"
+      href="{% static 'css/jsoneditor.min.css' %}"
+      type="text/css"
+    />
+    <script src="{% static 'js/jsoneditor.min.js' %}"></script>
+  </head>
+  <body>
+    <h1>Edit JSON for {{ instance.sentence_id }}</h1>
+    <form method="post">
+      {% csrf_token %}
+      <textarea name="data" rows="20" cols="80">{{ pretty_json }}</textarea
+      ><br /><br />
+      <div id="jsoneditor" style="width: 1000px; height: 900px"></div>
+      <button type="submit">Save</button>
+    </form>
+
+    <script>
+      // create the editor
+      const container = document.getElementById("jsoneditor");
+      const options = {};
+      const editor = new JSONEditor(container, options);
+
+      // set json
+      const initialJson = "{{ pretty_json|escapejs }}";
+      editor.set(JSON.parse(initialJson));
+
+      // get json
+      const updatedJson = editor.get();
+      const form = document.querySelector("form");
+      const textarea = document.getElementById("data");
+
+      // form.addEventListener("submit", () => {
+      //   const updatedJson = editor.get();
+      //   textarea.value = JSON.stringify(updatedJson);
+      // });
+    </script>
+  </body>
+</html>
