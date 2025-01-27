@@ -61,7 +61,9 @@ export default function ReadingCoverComponent({
       position="relative"
       width={['98%', '96%', '40rem']}
       height={
-        chapters[0][0].length > 3 ? ['48rem', '34rem'] : ['35rem', '25rem']
+        chapters[0][0].length > 3 && accordionIndex !== -1
+          ? ['48rem', '34rem']
+          : ['35rem', '25rem']
       }
       borderRadius={8}
       overflow="hidden"
@@ -70,6 +72,7 @@ export default function ReadingCoverComponent({
       backgroundPosition={['top', 'left']}
       m={[1, 4]}
       mt="4"
+      transition="height 0.2s ease"
       __css={styles.darkBox[colorMode]}
     >
       <AttributionPopover text={attribution.text} image={attribution.image} />
@@ -141,7 +144,7 @@ export default function ReadingCoverComponent({
               <>
                 {chapters[activePage].map((chapter, i) => (
                   <ListItem
-                    pl={['4rem', '2rem']}
+                    pl={['3rem', '2rem']}
                     ml={chapter[0].length === 1 ? '1rem' : undefined}
                     key={i}
                   >
@@ -203,7 +206,7 @@ export default function ReadingCoverComponent({
         {activePage > 0 && (
           <Text
             position="absolute"
-            bottom={['3rem', '1.5rem']}
+            bottom={['1rem', '1.5rem']}
             right={['78%', '18rem']}
             cursor="pointer"
             textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
@@ -213,13 +216,13 @@ export default function ReadingCoverComponent({
               setAccordionIndex(-1);
             }}
           >
-            上 Previous
+            Previous 上
           </Text>
         )}
         {activePage < chapters.length - 1 && (
           <Text
             position="absolute"
-            bottom={['3rem', '1.5rem']}
+            bottom={['1rem', '1.5rem']}
             right={['1rem']}
             cursor="pointer"
             textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
