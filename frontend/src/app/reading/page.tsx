@@ -62,7 +62,7 @@ export default function ReadingPage() {
       title: 'No Moonlight Whatsoever',
       link: 'IlzDKJkIWL',
     },
-    { number: '三', title: "Couldn't Fall Asleep" },
+    { number: '三', title: "Couldn't Fall Asleep", link: 'hOu4JeH5lZ' },
     {
       number: '四',
       title: 'Sat Quietly for a While',
@@ -72,7 +72,7 @@ export default function ReadingPage() {
   const chap2: Chapter[] = [
     { number: '五', title: 'A Step Back', link: 'YlfLF2_Whw' },
     { number: '六', title: 'Pitch Black', link: 'NUw5_ruh3H' },
-    { number: '七', title: 'Their Methods' },
+    { number: '七', title: 'Their Methods', link: '9d2ulbbTOg' },
     { number: '八', title: 'Somebody Came', link: 'mHOt29iUOn' },
     { number: '九', title: 'They Want to Eat People', link: '-GdH2hZ0h_' },
   ];

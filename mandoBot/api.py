@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import Error
 from django.conf import settings
 from ninja import NinjaAPI
+from ninja.throttling import UserRateThrottle
 from dragonmapper import hanzi
 from accounts.api import router as accounts_router
 
@@ -49,7 +50,9 @@ emptyResponse = SegmentationResponse(
 )
 
 
-@api.post("/segment", response={200: SegmentationResponse})
+@api.post(
+    "/segment", response={200: SegmentationResponse}, throttle=[UserRateThrottle("2/s")]
+)
 def segment(request, data: str) -> APISegmentationSuccessResponse:
     """
     Accepts a string in Mandarin, and returns the same string but segmented into
@@ -67,7 +70,6 @@ def segment(request, data: str) -> APISegmentationSuccessResponse:
     if request.user.is_authenticated:
         text_to_segment = data[:MAX_CHARS_PAID]
         if not request.user.is_staff:
-            print("deepl")
             auth = True
     else:
         text_to_segment = data[:MAX_CHARS_FREE]

@@ -16,7 +16,9 @@ from ..segmenters import JiebaSegmenter
 
 class Segmenter:
     @staticmethod
-    def segment_and_translate(sentence: str, auth: bool) -> SegmentationResponse:
+    def segment_and_translate(
+        sentence: str, auth: bool = False
+    ) -> SegmentationResponse:
         sentence = sentence.replace("\u3000", "").strip()
 
         with ThreadPoolExecutor() as executor:
@@ -355,6 +357,11 @@ class Segmenter:
                     simplified=hanzi,
                     pronunciation=pinyin_to_search[:-1],
                 )
+        if not db_hanzi.exists():
+            if item.word == entry.traditional:
+                db_hanzi = CEDictionary.objects.filter(traditional=hanzi)
+            else:
+                db_hanzi = CEDictionary.objects.filter(simplified=hanzi)
 
         if item.word == entry.traditional:
             the_hanzi = db_hanzi.first().traditional
