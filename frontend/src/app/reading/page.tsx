@@ -14,10 +14,9 @@ export default function ReadingPage() {
         { name: 'Great Teacher', link: 'hErMG8iNOo' },
         { name: 'Yellow Turbans', link: 'RMY5TrW0T6' },
         { name: 'Meetings', link: 'MbGAhlo54Y' },
-        { name: 'Oath', link: 'MbGAhlo54Y' },
-        { name: 'placeholder', link: 'Q7GnxMzcNw' },
-        { name: 'placeholder', link: '59Yb0VElht' },
-        { name: 'placeholder', link: 'S6c9Ie5ZkS' },
+        { name: 'Oath', link: 'Q7GnxMzcNw' },
+        { name: "Liu Bei's Triumphs", link: '59Yb0VElht' }, //machine
+        { name: 'placeholder', link: 'S6c9Ie5ZkS' }, //machine
       ],
     },
     { number: '二', title: "Zhang Fei's Anger" },
