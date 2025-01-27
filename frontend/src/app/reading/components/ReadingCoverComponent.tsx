@@ -45,7 +45,6 @@ export default function ReadingCoverComponent({
   const [activePage, setActivePage] = useState(0);
   const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
   const heightModifier = () => {
-    console.log(accordionIndex);
     if (
       accordionIndex !== -1 &&
       chapters[activePage][accordionIndex].subchapters
@@ -146,7 +145,7 @@ export default function ReadingCoverComponent({
                     ml={chapter.number.length === 1 ? '1rem' : undefined}
                     key={i}
                   >
-                    <HStack>
+                    <HStack ml={['2rem', '0rem']}>
                       {chapter.subchapters ? (
                         <AccordionItem>
                           <AccordionButton>
@@ -154,7 +153,7 @@ export default function ReadingCoverComponent({
                           </AccordionButton>
 
                           <AccordionPanel mb="1rem">
-                            <VStack>
+                            <VStack alignItems="left" pl="3rem">
                               {chapter.subchapters.map((subchapter, i) => (
                                 <Link
                                   href={`/?share_id=${subchapter.link}`}
@@ -214,7 +213,7 @@ const ChapterTitle = (props: { chapter: Chapter }) => {
       </Text>
       {/* English Chapter Title */}
       <Text
-        fontSize={['1rem', '0.9rem']}
+        fontSize="1rem"
         className={cinzel.className}
         _hover={{ textDecoration: 'underline' }}
         textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
