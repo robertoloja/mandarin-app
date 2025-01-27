@@ -24,12 +24,10 @@ const outline = definePartsStyle(() => {
       _focus: {
         color: 'blue.100',
       },
+      p: 0,
     },
     panel: {
-      marginLeft: '-2rem',
-      marginY: '-0.4rem',
       padding: 0,
-      paddingLeft: '-4rem',
     },
   };
 });
