@@ -18,6 +18,8 @@ import {
 import { Cinzel, Yuji_Mai } from 'next/font/google';
 import Link from 'next/link';
 import { useState } from 'react';
+import AttributionPopover from './AttributionPopover';
+import { Chapter, ReadingProps } from '../types';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -31,31 +33,35 @@ const yujiMai = Yuji_Mai({
   display: 'swap',
 });
 
-interface ReadingProps {
-  mandarinTitle: string;
-  titleLink: string;
-  englishTitle: string;
-  chapters: string[][][];
-  background: string;
-}
-
 export default function ReadingCoverComponent({
   mandarinTitle,
   titleLink,
   englishTitle,
   chapters,
   background,
+  attribution,
 }: ReadingProps) {
   const { colorMode } = useColorMode();
   const [activePage, setActivePage] = useState(0);
   const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
-
+  const heightModifier = () => {
+    if (
+      accordionIndex !== -1 &&
+      typeof accordionIndex === 'number' &&
+      chapters[activePage][accordionIndex].subchapters
+    ) {
+      return chapters[activePage][accordionIndex].subchapters.length * 2;
+    }
+    return 16;
+  };
   return (
     <Box
       position="relative"
       width={['98%', '96%', '40rem']}
       height={
-        chapters[0][0].length > 3 ? ['48rem', '34rem'] : ['35rem', '25rem']
+        accordionIndex !== -1
+          ? [`${heightModifier() + 35}rem`, `${heightModifier() + 25}rem`]
+          : ['35rem', '25rem']
       }
       borderRadius={8}
       overflow="hidden"
@@ -64,14 +70,17 @@ export default function ReadingCoverComponent({
       backgroundPosition={['top', 'left']}
       m={[1, 4]}
       mt="4"
+      transition="height 0.2s ease"
       __css={styles.darkBox[colorMode]}
     >
+      <AttributionPopover text={attribution.text} image={attribution.image} />
+
       {/* Right-side solid panel with gradient */}
       <Box
         position="absolute"
-        top={['35%', '0']}
+        top={['14rem', '0']}
         right="0"
-        height={['65%', '100%']}
+        height="100%"
         width={['100%', '23rem']}
         bg={colorMode == 'light' ? '#85E2FF' : '#495255'}
         opacity={['100%', '97%']}
@@ -133,57 +142,38 @@ export default function ReadingCoverComponent({
               <>
                 {chapters[activePage].map((chapter, i) => (
                   <ListItem
-                    pl={['4rem', '2rem']}
-                    ml={chapter[0].length === 1 ? '1rem' : undefined}
+                    pl={['3rem', '2rem']}
+                    ml={chapter.number.length === 1 ? '1rem' : undefined}
                     key={i}
                   >
-                    <AccordionItem>
-                      <AccordionButton>
-                        <HStack
-                          cursor={chapter[2] ? 'pointer' : 'not-allowed'}
-                          textColor={chapter[2] ? undefined : 'gray'}
-                        >
-                          {/* List Number */}
-                          <Text
-                            className={yujiMai.className}
-                            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
-                          >
-                            {chapter[0]}
-                          </Text>
+                    <HStack ml={['2rem', '0rem']}>
+                      {chapter.subchapters ? (
+                        <AccordionItem>
+                          <AccordionButton>
+                            <ChapterTitle chapter={chapter} />
+                          </AccordionButton>
 
-                          {/* English Chapter Title */}
-                          <Text
-                            fontSize={['1rem', '0.9rem']}
-                            className={cinzel.className}
-                            _hover={{ textDecoration: 'underline' }}
-                            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
-                          >
-                            {chapter.length === 3 ? (
-                              <Link href={`/?share_id=${chapter[2]}`}>
-                                {chapter[1]}
-                              </Link>
-                            ) : (
-                              `${chapter[1]}`
-                            )}
-                          </Text>
-                        </HStack>
-                      </AccordionButton>
-
-                      {/* Sub-chapters */}
-                      {chapter.length > 3 ? (
-                        <AccordionPanel mb="0">
-                          <VStack m="0" ml={['-7rem', '-4rem']} p="0">
-                            {chapter.slice(2).map((x, i) => (
-                              <Link href={`/?share_id=${x}`} key={i}>
-                                <Text _hover={{ textDecoration: 'underline' }}>
-                                  Sub-chapter {i + 1}
-                                </Text>
-                              </Link>
-                            ))}
-                          </VStack>
-                        </AccordionPanel>
-                      ) : undefined}
-                    </AccordionItem>
+                          <AccordionPanel mb="1rem">
+                            <VStack alignItems="left" pl="3rem">
+                              {chapter.subchapters.map((subchapter, i) => (
+                                <Link
+                                  href={`/?share_id=${subchapter.link}`}
+                                  key={i}
+                                >
+                                  <Text
+                                    _hover={{ textDecoration: 'underline' }}
+                                  >
+                                    {subchapter.name}
+                                  </Text>
+                                </Link>
+                              ))}
+                            </VStack>
+                          </AccordionPanel>
+                        </AccordionItem>
+                      ) : (
+                        <ChapterTitle chapter={chapter} />
+                      )}
+                    </HStack>
                   </ListItem>
                 ))}
               </>
@@ -191,40 +181,96 @@ export default function ReadingCoverComponent({
           </OrderedList>
         </Box>
       </Box>
-      <HStack>
-        {activePage > 0 && (
-          <Text
-            position="absolute"
-            bottom={['3rem', '1.5rem']}
-            right={['78%', '18rem']}
-            cursor="pointer"
-            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
-            _hover={{ textDecoration: 'underline' }}
-            onClick={() => {
-              setActivePage(activePage - 1);
-              setAccordionIndex(-1);
-            }}
-          >
-            上 Previous
-          </Text>
-        )}
-        {activePage < chapters.length - 1 && (
-          <Text
-            position="absolute"
-            bottom={['3rem', '1.5rem']}
-            right={['1rem']}
-            cursor="pointer"
-            textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
-            _hover={{ textDecoration: 'underline' }}
-            onClick={() => {
-              setActivePage(activePage + 1);
-              setAccordionIndex(-1);
-            }}
-          >
-            下 Next
-          </Text>
-        )}
-      </HStack>
+      <NavArrows
+        activePage={activePage}
+        chapters={chapters}
+        setActivePage={setActivePage}
+        setAccordionIndex={setAccordionIndex}
+      />
     </Box>
   );
 }
+
+const ChapterTitle = (props: { chapter: Chapter }) => {
+  return (
+    <HStack
+      py="0.5rem"
+      textColor={
+        props.chapter.link || props.chapter.subchapters ? undefined : 'gray'
+      }
+      cursor={
+        props.chapter.link || props.chapter.subchapters
+          ? 'pointer'
+          : 'not-allowed'
+      }
+    >
+      {/* List Number */}
+      <Text
+        fontSize={['1rem', '0.9rem']}
+        className={yujiMai.className}
+        textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
+      >
+        {props.chapter.number}
+      </Text>
+      {/* English Chapter Title */}
+      <Text
+        fontSize="1rem"
+        className={cinzel.className}
+        _hover={{ textDecoration: 'underline' }}
+        textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
+      >
+        {props.chapter.link ? (
+          <Link href={`/?share_id=${props.chapter.link}`}>
+            {props.chapter.title}
+          </Link>
+        ) : (
+          `${props.chapter.title}`
+        )}
+      </Text>
+    </HStack>
+  );
+};
+
+const NavArrows = (props: {
+  activePage: number;
+  chapters: Chapter[][];
+  setActivePage: (activePage: number) => void;
+  setAccordionIndex: (num: number) => void;
+}) => {
+  return (
+    <HStack>
+      {props.activePage > 0 && (
+        <Text
+          position="absolute"
+          bottom={['1rem', '1.5rem']}
+          right={['78%', '18rem']}
+          cursor="pointer"
+          textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
+          _hover={{ textDecoration: 'underline' }}
+          onClick={() => {
+            props.setActivePage(props.activePage - 1);
+            props.setAccordionIndex(-1);
+          }}
+        >
+          Previous 上
+        </Text>
+      )}
+      {props.activePage < props.chapters.length - 1 && (
+        <Text
+          position="absolute"
+          bottom={['1rem', '1.5rem']}
+          right={['1rem']}
+          cursor="pointer"
+          textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
+          _hover={{ textDecoration: 'underline' }}
+          onClick={() => {
+            props.setActivePage(props.activePage + 1);
+            props.setAccordionIndex(-1);
+          }}
+        >
+          下 Next
+        </Text>
+      )}
+    </HStack>
+  );
+};

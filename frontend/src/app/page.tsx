@@ -25,15 +25,18 @@ export default function Home() {
   useEffect(() => {
     if (urlShareId !== '') {
       MandoBotAPI.shared(urlShareId).then((response: SegmentResponseType) => {
-        const sharedSentenced = new MandarinSentenceClass(
-          '',
-          response.sentence,
-          response.dictionary,
-          response.translation,
-          urlShareId,
-        );
-        sharedSentenced.setActive();
-        if (inputRef.current) inputRef.current.value = sharedSentenced.mandarin;
+        if (response.translation !== '') {
+          const sharedSentenced = new MandarinSentenceClass(
+            '',
+            response.sentence,
+            response.dictionary,
+            response.translation,
+            urlShareId,
+          );
+          sharedSentenced.setActive();
+          if (inputRef.current)
+            inputRef.current.value = sharedSentenced.mandarin;
+        }
       });
     } else {
       if (mandarinSentence.mandarin && inputRef.current)

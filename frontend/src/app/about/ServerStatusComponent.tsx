@@ -2,7 +2,7 @@
 import styles from '@/themes';
 import { MandoBotAPI } from '@/utils/api';
 import { clearError, setError } from '@/utils/store/errorSlice';
-import { store } from '@/utils/store/store';
+import { RootState, store } from '@/utils/store/store';
 import {
   Center,
   Heading,
@@ -26,6 +26,7 @@ import {
   IoCheckmarkCircleOutline,
   IoInformationCircleOutline,
 } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
 
 export default function ServerStatusComponent() {
   const { colorMode } = useColorMode();
@@ -124,11 +125,7 @@ export default function ServerStatusComponent() {
                   <InformationPopover />
                 )}
               </HStack>
-              {serverStatus ? (
-                <TranslationBackendComponent shortName={translationBackend} />
-              ) : (
-                <Text>-</Text>
-              )}
+              {serverStatus ? <TranslationBackendComponent /> : <Text>-</Text>}
             </VStack>
           </Box>
         </Flex>
@@ -203,27 +200,22 @@ const InformationPopover = () => {
   );
 };
 
-const TranslationBackendComponent = (props: { shortName: string }) => {
+const TranslationBackendComponent = () => {
+  const username = useSelector((state: RootState) => state.auth.username);
   return (
     <Link
       href={
-        props.shortName === 'deepl'
-          ? 'https://www.deepl.com'
-          : 'https://www.argosopentech.com/'
+        username ? 'https://www.deepl.com' : 'https://www.argosopentech.com/'
       }
     >
       <Center>
         <Image
           alt="Translator logo"
-          src={
-            props.shortName === 'deepl'
-              ? '/deepl_logo.svg'
-              : 'argos_translate_logo.png'
-          }
+          src={username ? '/deepl_logo.svg' : 'argos_translate_logo.png'}
           boxSize={10}
         />
         <Text ml={2} _hover={{ textDecoration: 'underline' }}>
-          {props.shortName == 'deepl' ? 'DeepL' : 'Argos Translate'}
+          {username ? 'DeepL' : 'Argos Translate'}
         </Text>
       </Center>
     </Link>

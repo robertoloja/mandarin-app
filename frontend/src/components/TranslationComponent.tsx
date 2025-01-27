@@ -82,6 +82,7 @@ function Translation(props: { text: string }) {
       width={['100%', '80%']}
       overflowY="scroll"
       height={`${height}px`}
+      maxHeight="50%"
       shadow="md"
       bg={colorMode === 'light' ? 'white' : '#282828'}
       zIndex={1}

@@ -43,11 +43,7 @@ class SegmentationAPITest(TestCase):
         pass  # TODO: Finish
 
     def test_dictionary_includes_all_characters(self):
-        test_sentences = [
-            # "特徵",
-            # "少帝",
-            "沛國譙郡人也"
-        ]
+        test_sentences = ["特徵", "少帝", "沛國譙郡人也"]
         for index, sentence in enumerate(test_sentences):
             response = self.client.post(f"/segment?data={sentence}")
             for character in sentence:
