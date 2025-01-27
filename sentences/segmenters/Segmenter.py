@@ -9,18 +9,22 @@ from sentences.dictionaries import WiktionaryScraper
 from sentences.models.CEDictionary import CEDictionary
 from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
+from sentences.translators import DeepLTranslate
 from ..translators import Translator
 from ..segmenters import JiebaSegmenter
 
 
 class Segmenter:
     @staticmethod
-    def segment_and_translate(sentence: str) -> SegmentationResponse:
+    def segment_and_translate(sentence: str, auth: bool) -> SegmentationResponse:
         sentence = sentence.replace("\u3000", "").strip()
 
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(JiebaSegmenter.segment, sentence)
-            future_translation = executor.submit(Translator.translate, sentence)
+            if auth:
+                future_translation = executor.submit(DeepLTranslate.translate, sentence)
+            else:
+                future_translation = executor.submit(Translator.translate, sentence)
 
             segmented = future_segmented.result()
             translated = future_translation.result()

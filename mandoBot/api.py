@@ -49,7 +49,6 @@ emptyResponse = SegmentationResponse(
 )
 
 
-# TODO: Respond with HTTP status codes
 @api.post("/segment", response={200: SegmentationResponse})
 def segment(request, data: str) -> APISegmentationSuccessResponse:
     """
@@ -61,9 +60,15 @@ def segment(request, data: str) -> APISegmentationSuccessResponse:
     timer = Timer()
     timer.start()
 
-    MAX_CHARS_FREE = 200 if not settings.DEBUG else 1000
+    auth = False
+    MAX_CHARS_FREE = 200 if not settings.DEBUG else 10000
+    MAX_CHARS_PAID = 1000
+
     if request.user.is_authenticated:
-        text_to_segment = data[:1000]
+        text_to_segment = data[:MAX_CHARS_PAID]
+        if not request.user.is_staff:
+            print("deepl")
+            auth = True
     else:
         text_to_segment = data[:MAX_CHARS_FREE]
 
@@ -73,7 +78,7 @@ def segment(request, data: str) -> APISegmentationSuccessResponse:
     if not hanzi.has_chinese(data):
         return 200, handle_non_chinese(data)
 
-    segmented_data = Segmenter.segment_and_translate(text_to_segment)
+    segmented_data = Segmenter.segment_and_translate(text_to_segment, auth)
     timer.stop()
     return 200, segmented_data
 
@@ -108,7 +113,6 @@ def handle_non_chinese(data: str) -> SegmentationResponse:
         sentence=[word],
         dictionary=dictionary,
     )
-
     return foo
 
 
