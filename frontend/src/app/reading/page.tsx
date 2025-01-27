@@ -8,15 +8,15 @@ export default function ReadingPage() {
   const chapters_1: Chapter[] = [
     {
       number: '一',
-      title: 'Oath in the Peach Garden',
+      title: 'Oath of the Peach Garden',
       subchapters: [
         { name: 'Poem', link: 'wSE4FONhWj' },
         { name: 'Great Teacher', link: 'hErMG8iNOo' },
         { name: 'Yellow Turbans', link: 'RMY5TrW0T6' },
         { name: 'Meetings', link: 'MbGAhlo54Y' },
-        { name: 'Oath', link: 'Q7GnxMzcNw' },
-        { name: "Liu Bei's Triumphs", link: '59Yb0VElht' }, //machine
-        { name: 'placeholder', link: 'S6c9Ie5ZkS' }, //machine
+        { name: 'The Oath', link: 'Q7GnxMzcNw' },
+        { name: "Liu Bei's Triumphs", link: '59Yb0VElht' },
+        { name: "Dong Zhuo's Betrayal", link: 'S6c9Ie5ZkS' },
       ],
     },
     { number: '二', title: "Zhang Fei's Anger" },
