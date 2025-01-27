@@ -1,10 +1,9 @@
-from typing import List
 from django.test import TestCase
 
+from mandoBot.schemas import ChineseDictionary, MandarinWordSchema, SegmentationResponse
 from sentences.functions import is_punctuation
 
 from . import JiebaSegmenter, Segmenter
-from .types import SentenceSegment
 from ..models import CEDictionary
 
 
@@ -12,29 +11,29 @@ class SegmentationTests(TestCase):
     def test_find_umlaut(self):
         word = "女"
         result = Segmenter.segment_and_translate(word)
-        expected = {
-            "dictionary": {
-                "女": {
-                    "english": ["female / woman / daughter"],
-                    "pinyin": ["nü3"],
-                    "zhuyin": ["ㄋㄩˇ"],
-                }
+        expected = SegmentationResponse(
+            dictionary={
+                "女": ChineseDictionary(
+                    english=["female / woman / daughter"],
+                    pinyin=["nü3"],
+                    zhuyin=["ㄋㄩˇ"],
+                )
             },
-            "sentence": [
-                {
-                    "definitions": ["female / woman / daughter"],
-                    "pinyin": ["nü3"],
-                    "word": "女",
-                    "zhuyin": ["ㄋㄩˇ"],
-                }
+            sentence=[
+                MandarinWordSchema(
+                    definitions=["female / woman / daughter"],
+                    pinyin=["nü3"],
+                    word="女",
+                    zhuyin=["ㄋㄩˇ"],
+                )
             ],
-            "translation": "Women",
-        }
+            translation="Women",
+        )
         self.assertEqual(result, expected)
 
     def test_umlaut_pronunciation(self):
         word = ["旅游"]
-        pronunciation = Segmenter.add_pronunciations(word)[0]["pinyin"]
+        pronunciation = Segmenter.add_pronunciations(word)[0].pinyin
         expected = ["lü3", "you2"]
         self.assertEqual(pronunciation, expected)
 
@@ -48,25 +47,29 @@ class SegmentationTests(TestCase):
         sentence = "巴賽族"
         result = Segmenter.segment_and_translate(sentence)
 
-        for word in result["dictionary"]:
-            self.assertNotEqual(result["dictionary"][word]["english"], [])
-            self.assertNotEqual(result["dictionary"][word]["pinyin"], [])
-            self.assertNotEqual(result["dictionary"][word]["zhuyin"], [])
+        for word in result.dictionary:
+            self.assertNotEqual(result.dictionary[word].english, [])
+            self.assertNotEqual(result.dictionary[word].pinyin, [])
+            self.assertNotEqual(result.dictionary[word].zhuyin, [])
 
     def test_chengyu(self):
-        chengyu: List[SentenceSegment] = [
-            {"word": "分久必合", "pinyin": ["1"], "zhuyin": ["A"], "definitions": []},
-            {"word": "，", "pinyin": ["2"], "zhuyin": ["2"], "definitions": []},
-            {"word": "合久必分", "pinyin": ["3"], "zhuyin": ["B"], "definitions": []},
+        chengyu = [
+            MandarinWordSchema(
+                word="分久必合", pinyin=["1"], zhuyin=["A"], definitions=[]
+            ),
+            MandarinWordSchema(word="，", pinyin=["2"], zhuyin=["B"], definitions=[]),
+            MandarinWordSchema(
+                word="合久必分", pinyin=["3"], zhuyin=["C"], definitions=[]
+            ),
         ]
 
-        expected: List[SentenceSegment] = [
-            {
-                "word": "分久必合合久必分",
-                "pinyin": ["1", ",", "3"],
-                "zhuyin": ["A", ",", "B"],
-                "definitions": [],
-            },
+        expected = [
+            MandarinWordSchema(
+                word="分久必合合久必分",
+                pinyin=["1", ",", "3"],
+                zhuyin=["A", ",", "C"],
+                definitions=[],
+            ),
         ]
 
         concatenated_chengyu = Segmenter.try_to_concat(chengyu, 0)
@@ -78,18 +81,18 @@ class SegmentationTests(TestCase):
         expected = [
             "lit. that which is long divided must unify, and that which is long unified must divide (idiom, from 三國演義|三国演义[San1 guo2 Yan3 yi4]) / fig. things are constantly changing"
         ]
-        self.assertEqual(segmented["sentence"][0]["definitions"], expected)
+        self.assertEqual(segmented.sentence[0].definitions, expected)
 
     def test_does_not_duplicate_definitions_before_chengyu(self):
         sentence = "話說天下大勢分久必合，合久必分"
         segmented = Segmenter.segment_and_translate(sentence)
 
-        for word in segmented["sentence"]:
-            self.assertEqual(len(word["definitions"]), 1)
+        for word in segmented.sentence:
+            self.assertEqual(len(word.definitions), 1)
 
         for hanzi in sentence:
             if not is_punctuation(hanzi):
-                self.assertTrue(hanzi in segmented["dictionary"])
+                self.assertTrue(hanzi in segmented.dictionary)
 
     def test_choose_most_common_hanzi(self):
         test_hanzi = "上"
@@ -101,7 +104,7 @@ class SegmentationTests(TestCase):
         phrase = "話說天下大勢分久必合，合久必分。"
         sentence = Segmenter.segment_and_translate(phrase)
 
-        for hanzi in sentence["dictionary"]:
+        for hanzi in sentence.dictionary:
             self.assertEqual(len(hanzi), 1)
 
     def test_easy_segmentation(self):

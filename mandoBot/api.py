@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+from typing import cast
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import Error
@@ -10,8 +11,13 @@ from dragonmapper import hanzi
 from accounts.api import router as accounts_router
 
 from sentences.segmenters import Segmenter
+from sentences.segmenters.types import (
+    APISegmentationSuccessResponse,
+)
 from status.models import ServerStatus
 from .schemas import (
+    ChineseDictionary,
+    MandarinWordSchema,
     SegmentationResponse,
     ServerStatusSchema,
 )
@@ -36,16 +42,16 @@ api = NinjaAPI(
 )
 api.add_router("/accounts/", accounts_router)
 
-emptyResponse = {
-    "translation": "",
-    "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
-    "sentence": [{"word": "", "pinyin": [], "zhuyin": [], "definitions": []}],
-}
+emptyDictionary = {"word": ChineseDictionary(english=[], pinyin=[], zhuyin=[])}
+emptyWord = MandarinWordSchema(word="", pinyin=[], zhuyin=[], definitions=[])
+emptyResponse = SegmentationResponse(
+    translation="", dictionary=emptyDictionary, sentence=[emptyWord]
+)
 
 
 # TODO: Respond with HTTP status codes
-@api.post("/segment", response=SegmentationResponse)
-def segment(request, data: str) -> SegmentationResponse:
+@api.post("/segment", response={200: SegmentationResponse})
+def segment(request, data: str) -> APISegmentationSuccessResponse:
     """
     Accepts a string in Mandarin, and returns the same string but segmented into
     individual words, each of which includes pronunciation and definitions. The
@@ -62,14 +68,14 @@ def segment(request, data: str) -> SegmentationResponse:
         text_to_segment = data[:MAX_CHARS_FREE]
 
     if not data:
-        return emptyResponse
+        return 200, cast(SegmentationResponse, emptyResponse)
 
     if not hanzi.has_chinese(data):
-        return handle_non_chinese(data)
+        return 200, handle_non_chinese(data)
 
     segmented_data = Segmenter.segment_and_translate(text_to_segment)
     timer.stop()
-    return segmented_data
+    return 200, segmented_data
 
 
 class Timer:
@@ -88,23 +94,22 @@ class Timer:
         server_status.save()
 
 
-def handle_non_chinese(data: str) -> dict:
+def handle_non_chinese(data: str) -> SegmentationResponse:
     """
     When the "word" and the only item in "sentence" are equal,
     the frontend recognizes that this is punctuation.
     """
-    word = {
-        "word": data,
-        "pinyin": [data],
-        "zhuyin": [data],
-        "definitions": [],
-    }
+    word = MandarinWordSchema(word=data, pinyin=[data], zhuyin=[data], definitions=[])
+    chinese_dictionary = ChineseDictionary(english=[], pinyin=[], zhuyin=[])
+    dictionary: dict[str, ChineseDictionary] = {"word": chinese_dictionary}
 
-    return {
-        "translation": data,
-        "sentence": [word],
-        "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
-    }
+    foo = SegmentationResponse(
+        translation=data,
+        sentence=[word],
+        dictionary=dictionary,
+    )
+
+    return foo
 
 
 @api.get("/status", response=ServerStatusSchema)
