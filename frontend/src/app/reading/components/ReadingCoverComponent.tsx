@@ -47,6 +47,7 @@ export default function ReadingCoverComponent({
   const heightModifier = () => {
     if (
       accordionIndex !== -1 &&
+      typeof accordionIndex === 'number' &&
       chapters[activePage][accordionIndex].subchapters
     ) {
       return chapters[activePage][accordionIndex].subchapters.length * 2;

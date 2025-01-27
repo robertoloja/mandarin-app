@@ -125,11 +125,7 @@ export default function ServerStatusComponent() {
                   <InformationPopover />
                 )}
               </HStack>
-              {serverStatus ? (
-                <TranslationBackendComponent shortName={translationBackend} />
-              ) : (
-                <Text>-</Text>
-              )}
+              {serverStatus ? <TranslationBackendComponent /> : <Text>-</Text>}
             </VStack>
           </Box>
         </Flex>

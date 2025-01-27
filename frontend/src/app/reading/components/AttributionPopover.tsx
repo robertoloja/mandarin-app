@@ -16,7 +16,7 @@ interface AttributionProps {
   image: string;
 }
 
-export default function ({ text, image }: AttributionProps) {
+export default function AttributionPopover({ text, image }: AttributionProps) {
   return (
     <Box m={2}>
       <Popover>
