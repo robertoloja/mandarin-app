@@ -192,9 +192,6 @@ class Segmenter:
 
                 if wiki_definitions and "error" not in wiki_definitions:
                     for key in wiki_definitions:
-                        if len(wiki_definitions) == 1:
-                            item.definitions = wiki_definitions[key]["pronunciation"]
-
                         new_cedictionary = CEDictionary.objects.filter(
                             traditional=item.word,
                             simplified=item.word,

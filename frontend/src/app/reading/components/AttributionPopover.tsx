@@ -18,7 +18,7 @@ interface AttributionProps {
 
 export default function AttributionPopover({ text, image }: AttributionProps) {
   return (
-    <Box m={2}>
+    <Box m={2} textColor="rgb(231, 231, 230)">
       <Popover>
         <PopoverTrigger>
           <IoInformationCircleOutline size={25} cursor="pointer" />

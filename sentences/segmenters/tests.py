@@ -31,6 +31,24 @@ class SegmentationTests(TestCase):
         )
         self.assertEqual(result, expected)
 
+    def test_add_defs(self):
+        manually_segmented = ["無關大體"]
+        bar = Segmenter.add_pronunciations(manually_segmented)
+        sentence, dictionary = Segmenter.add_definitions_and_create_dictionary(bar)
+        json_sentence = [x.model_dump_json() for x in sentence]
+        expected = [
+            '{"word":"無關大體","pinyin":["wu2","guan1","da4","ti3"],"zhuyin":["ㄨˊ","ㄍㄨㄢ","ㄉㄚˋ","ㄊㄧˇ"],"definitions":["to have no bearing or influence on the overall situation"]}'
+        ]
+        word_in_db = CEDictionary.objects.filter(traditional=manually_segmented[0])
+        self.assertTrue(word_in_db.exists())
+        self.assertEqual(json_sentence, expected)
+
+        for hanzi in manually_segmented[0]:
+            self.assertIn(hanzi, dictionary.keys())
+
+        # with open("output.txt", "w") as file:
+        #     file.write("[" + ",".join(json_sentence) + "]")
+
     def test_umlaut_pronunciation(self):
         word = ["旅游"]
         pronunciation = Segmenter.add_pronunciations(word)[0].pinyin
