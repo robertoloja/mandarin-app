@@ -7,6 +7,17 @@ interface Styles {
   heading: Record<'light' | 'dark', SystemStyleObject>;
 }
 
+export const bgColor = {
+  back: {
+    light: '#B8EEFF',
+    dark: '#333c40',
+  },
+  front: {
+    light: '#85E2FF',
+    dark: '#495255',
+  },
+};
+
 export const styles: Styles = {
   vstack: {
     light: {
@@ -23,13 +34,13 @@ export const styles: Styles = {
     light: {
       borderRadius: 8,
       border: '1px solid #468DA4',
-      backgroundColor: '#B8EEFF',
+      backgroundColor: bgColor.back.light,
       boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
     },
     dark: {
       borderRadius: 8,
       border: '1px solid #1e282c',
-      backgroundColor: '#333c40',
+      backgroundColor: bgColor.back.dark,
       boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
     },
   },
@@ -38,13 +49,13 @@ export const styles: Styles = {
     light: {
       borderRadius: 8,
       border: '1px solid #468DA4',
-      backgroundColor: '#85E2FF',
+      backgroundColor: bgColor.front.light,
       boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
     },
     dark: {
       borderRadius: 8,
       border: '1px solid #1e282c',
-      backgroundColor: '#495255',
+      backgroundColor: bgColor.front.dark,
       boxShadow: '1px 1px 1px rgba(0, 0, 0, 0.3)',
     },
   },

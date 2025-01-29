@@ -12,3 +12,4 @@ ca_cert.crt
 localhost-cert.pem
 localhost-key.pem
 snoop.log
+output.txt
