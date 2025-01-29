@@ -5,7 +5,6 @@ import {
   Box,
   VStack,
   Text,
-  useColorMode,
   Center,
   ListItem,
   OrderedList,
@@ -41,7 +40,6 @@ export default function ReadingCoverComponent({
   background,
   attribution,
 }: ReadingProps) {
-  const { colorMode } = useColorMode();
   const [activePage, setActivePage] = useState(0);
   const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
   const heightModifier = () => {
