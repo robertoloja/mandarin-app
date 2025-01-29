@@ -71,7 +71,7 @@ export default function ReadingCoverComponent({
       m={[1, 4]}
       mt="4"
       transition="height 0.2s ease"
-      __css={styles.darkBox[colorMode]}
+      __css={styles.darkBox.dark}
     >
       <AttributionPopover text={attribution.text} image={attribution.image} />
 
@@ -82,8 +82,9 @@ export default function ReadingCoverComponent({
         right="0"
         height="100%"
         width={['100%', '23rem']}
-        bg={colorMode == 'light' ? '#85E2FF' : '#495255'}
+        bg="#495255"
         opacity={['100%', '97%']}
+        textColor="rgb(231, 231, 230)"
         _before={{
           content: '""',
           position: 'absolute',
@@ -91,10 +92,7 @@ export default function ReadingCoverComponent({
           left: '-40%',
           height: '100%',
           width: '40%',
-          bgGradient:
-            colorMode == 'light'
-              ? 'linear(to-l, #85E2FF, rgba(133,226,255, 0))'
-              : 'linear(to-l, #495255, rgba(73,82,85, 0))',
+          bgGradient: 'linear(to-l, #495255, rgba(73,82,85, 0))',
         }}
       >
         <Box
@@ -103,7 +101,7 @@ export default function ReadingCoverComponent({
           display="flex"
           flexDirection="column"
           justifyContent="flex-start"
-          __css={styles.lightBox[colorMode]}
+          __css={styles.lightBox.dark}
           border="none"
           shadow="none"
         >
@@ -238,7 +236,7 @@ const NavArrows = (props: {
   setAccordionIndex: (num: number) => void;
 }) => {
   return (
-    <HStack>
+    <HStack textColor="rgb(231, 231, 230)">
       {props.activePage > 0 && (
         <Text
           position="absolute"

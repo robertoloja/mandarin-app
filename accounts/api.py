@@ -261,9 +261,9 @@ def post_user_theme_preference(request, theme: Literal[0, 1]) -> int | APIErrorR
 
 @router.get(
     "/user_settings",
-    response={200: UserPreferencesSchema, 404: APIError},
+    response={200: UserPreferencesSchema, 204: None},
 )
-def user_settings(request) -> APIUserSuccessResponse | APIErrorResponse:
+def user_settings(request) -> APIUserSuccessResponse | APISuccessResponse:
     """
     Returns the MandoBotUser object for currently authenticated user.
     """
@@ -271,7 +271,7 @@ def user_settings(request) -> APIUserSuccessResponse | APIErrorResponse:
         user = User.objects.get(username=request.user.username)
         return 200, user
     else:
-        return 404, APIError(error="Couldn't find user")
+        return 204, None
 
 
 @router.post("/kofi", response={200: SuccessResponseSchema})
