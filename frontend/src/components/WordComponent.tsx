@@ -59,6 +59,7 @@ function Word(props: {
           __css={styles.darkBox[colorMode]}
           cursor="pointer"
           _hover={{ borderColor: '#999' }}
+          aria-label={`word card: ${props.word.word}`}
         >
           <Definition
             pronunciations={props.pronunciation}

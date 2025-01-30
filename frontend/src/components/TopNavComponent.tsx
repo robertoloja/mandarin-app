@@ -65,7 +65,7 @@ function TopNav() {
       <HStack justifyContent="left">
         <NavPanel isOpen={isOpen} onClose={onClose} />
         <IconButton
-          aria-label="Open Navigation"
+          aria-label="open Navigation"
           icon={<IoMenuOutline size={iconSize + 7} />}
           ref={btnRef}
           onClick={onOpen}

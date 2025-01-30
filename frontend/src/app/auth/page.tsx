@@ -119,6 +119,7 @@ export default function LoginPage() {
             setUsernameError(false);
           }}
           mb={2}
+          aria-label="username input"
         />
         <PasswordInputComponent
           invalid={passwordError || false}
@@ -132,6 +133,7 @@ export default function LoginPage() {
             <Button
               disabled={authState.loading || submitDisabled}
               type="submit"
+              aria-label="submit button"
             >
               {authState.loading ? 'Logging in...' : 'Login'}
             </Button>
@@ -141,6 +143,7 @@ export default function LoginPage() {
               _hover={{ textDecor: 'underline' }}
               cursor="pointer"
               onClick={handleForgotPassword}
+              aria-label="forgot password link"
             >
               Forgot Password?
             </Text>

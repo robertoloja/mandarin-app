@@ -10,11 +10,14 @@ import { logout, setUserDetails } from './store/authSlice';
 import { setPreferences } from './store/settingsSlice';
 
 export function getCookie(name: string): string | null {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith(`${name}=`))
-    ?.split('=')[1];
-  return cookieValue ? decodeURIComponent(cookieValue) : null;
+  if (typeof document !== undefined) {
+    const cookieValue = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith(`${name}=`))
+      ?.split('=')[1];
+    return cookieValue ? decodeURIComponent(cookieValue) : null;
+  }
+  return null;
 }
 
 const API_BASE_URL =

@@ -47,6 +47,7 @@ export default function TextInput(props: {
   return (
     <HStack>
       <Input
+        name="sentence-input"
         type="text"
         placeholder="Enter Mandarin text to translate and segment"
         ref={props.inputRef}
@@ -82,7 +83,10 @@ export default function TextInput(props: {
               <Text>
                 Unregistered users are limited to {MAX_LENGTH_FREE} characters
                 per usage.{' '}
-                <Link href="/about#support">
+                <Link
+                  href="/about#support"
+                  aria-label="subscription information link"
+                >
                   <u>More info.</u>
                 </Link>
               </Text>

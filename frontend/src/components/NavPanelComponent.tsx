@@ -66,12 +66,18 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
     >
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerCloseButton />
+        <DrawerCloseButton aria-label="close nav panel" />
         <DrawerBody ml="-4rem">
           <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
             <SettingsButton onClose={props.onClose} />
 
-            <Link href="/" passHref onClick={props.onClose} prefetch={true}>
+            <Link
+              href="/"
+              passHref
+              onClick={props.onClose}
+              prefetch={true}
+              aria-label="home link"
+            >
               <HStack>
                 <IoHomeOutline size="22" />
                 <Text
@@ -89,6 +95,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               passHref
               onClick={props.onClose}
               prefetch={true}
+              aria-label="reading room link"
             >
               <HStack>
                 <IoLibraryOutline
@@ -110,6 +117,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               passHref
               onClick={props.onClose}
               prefetch={true}
+              aria-label="sentence history link"
             >
               <HStack>
                 <IoFolderOpenOutline size="22" />
@@ -133,6 +141,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               passHref
               onClick={props.onClose}
               prefetch={true}
+              aria-label="about page link"
             >
               <HStack>
                 <IoInformationCircleOutline size="22" />
@@ -151,6 +160,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               href="https://forms.gle/j89uiVM2xv3CeK7HA"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="bug report link"
             >
               <HStack>
                 <IoBugOutline size="22" />
@@ -165,7 +175,12 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
               </HStack>
             </Link>
 
-            <Link href="/auth" passHref onClick={handleAuthClick}>
+            <Link
+              href="/auth"
+              passHref
+              onClick={handleAuthClick}
+              aria-label="login page link"
+            >
               <HStack>
                 {username ? (
                   <IoLogOutOutline size="22" />

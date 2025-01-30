@@ -72,6 +72,7 @@ export default function Home() {
             colorScheme="teal"
             m={2}
             isDisabled={percentLoaded < 100}
+            aria-label="submit sentence"
           >
             Submit
           </Button>
