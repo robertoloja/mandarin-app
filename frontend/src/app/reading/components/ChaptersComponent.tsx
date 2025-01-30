@@ -12,7 +12,7 @@ import {
 import { ChapterTitle } from './ChapterTitleComponent';
 import Link from 'next/link';
 import { Chapter } from '../types';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 export const Chapters = (props: {
   chapters: Chapter[][];
