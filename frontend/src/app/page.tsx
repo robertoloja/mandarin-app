@@ -8,9 +8,10 @@ import MandarinSentence from '@/components/MandarinSentenceComponent';
 import Translation from '@/components/TranslationComponent';
 import ProgressBar from '@/components/ProgressBarComponent';
 import { SegmentResponseType } from '@/utils/types';
-import { RootState } from '@/utils/store/store';
+import { RootState, store } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import TextInput from '@/components/TextInputComponent';
+import { updateLoading } from '@/utils/store/loadingSlice';
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +25,12 @@ export default function Home() {
   const urlShareId = useSearchParams().get('share_id') || '';
   useEffect(() => {
     if (urlShareId !== '') {
+      store.dispatch(updateLoading({ percent: 0 }));
+      const sharedSentence = new MandarinSentenceClass('');
+      sharedSentence.setActive();
+
       MandoBotAPI.shared(urlShareId).then((response: SegmentResponseType) => {
+        store.dispatch(updateLoading({ percent: 100 }));
         if (response.translation !== '') {
           const sharedSentenced = new MandarinSentenceClass(
             '',

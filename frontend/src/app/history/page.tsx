@@ -1,5 +1,5 @@
 'use client';
-import { Box, Center, Flex, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 import { SentenceHistoryType } from '@/utils/types';
