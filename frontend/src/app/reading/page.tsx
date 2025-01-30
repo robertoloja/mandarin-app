@@ -105,6 +105,7 @@ export default function ReadingPage() {
       flexWrap="wrap"
       overflow="hidden"
       justifyContent="center"
+      aria-label="text container"
     >
       <ReadingCoverComponent {...diary} />
       <ReadingCoverComponent {...romance} />
