@@ -21,7 +21,7 @@ import Link from 'next/link';
 import styles from '../../themes';
 import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 import { useEffect } from 'react';
-import PasswordChangeComponent from '../auth/PasswordChangeComponent';
+import PasswordChangeComponent from '../auth/components/PasswordChangeComponent';
 
 export default function Settings() {
   const router = useRouter();

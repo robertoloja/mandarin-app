@@ -1,24 +1,14 @@
 'use client';
 
-import styles from '@/themes';
-import {
-  Box,
-  VStack,
-  Text,
-  Center,
-  ListItem,
-  OrderedList,
-  HStack,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-} from '@chakra-ui/react';
+import styles, { bgColor } from '@/themes';
+import { Box, VStack, Text, Center } from '@chakra-ui/react';
 import { Cinzel, Yuji_Mai } from 'next/font/google';
 import Link from 'next/link';
 import { useState } from 'react';
 import AttributionPopover from './AttributionPopover';
-import { Chapter, ReadingProps } from '../types';
+import { ReadingProps } from '../types';
+import { NavArrows } from './NavArrowsComponent';
+import { Chapters } from './ChaptersComponent';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -80,7 +70,7 @@ export default function ReadingCoverComponent({
         right="0"
         height="100%"
         width={['100%', '23rem']}
-        bg="#495255"
+        bg={bgColor.front.dark}
         opacity={['100%', '97%']}
         textColor="rgb(231, 231, 230)"
         _before={{
@@ -90,7 +80,7 @@ export default function ReadingCoverComponent({
           left: '-40%',
           height: '100%',
           width: '40%',
-          bgGradient: 'linear(to-l, #495255, rgba(73,82,85, 0))',
+          bgGradient: `linear(to-l, ${bgColor.front.dark}, rgba(73,82,85, 0))`,
         }}
       >
         <Box
@@ -128,53 +118,12 @@ export default function ReadingCoverComponent({
             </VStack>
           </Center>
 
-          <OrderedList styleType="none" mt={3}>
-            <Accordion
-              variant="outline"
-              allowToggle
-              index={accordionIndex}
-              onChange={setAccordionIndex}
-            >
-              <>
-                {chapters[activePage].map((chapter, i) => (
-                  <ListItem
-                    pl={['3rem', '2rem']}
-                    ml={chapter.number.length === 1 ? '1rem' : undefined}
-                    key={i}
-                  >
-                    <HStack ml={['2rem', '0rem']}>
-                      {chapter.subchapters ? (
-                        <AccordionItem>
-                          <AccordionButton>
-                            <ChapterTitle chapter={chapter} />
-                          </AccordionButton>
-
-                          <AccordionPanel mb="1rem">
-                            <VStack alignItems="left" pl="3rem">
-                              {chapter.subchapters.map((subchapter, i) => (
-                                <Link
-                                  href={`/?share_id=${subchapter.link}`}
-                                  key={i}
-                                >
-                                  <Text
-                                    _hover={{ textDecoration: 'underline' }}
-                                  >
-                                    {subchapter.name}
-                                  </Text>
-                                </Link>
-                              ))}
-                            </VStack>
-                          </AccordionPanel>
-                        </AccordionItem>
-                      ) : (
-                        <ChapterTitle chapter={chapter} />
-                      )}
-                    </HStack>
-                  </ListItem>
-                ))}
-              </>
-            </Accordion>
-          </OrderedList>
+          <Chapters
+            accordionIndex={accordionIndex}
+            chapters={chapters}
+            setAccordionIndex={setAccordionIndex}
+            activePage={activePage}
+          />
         </Box>
       </Box>
       <NavArrows
@@ -186,87 +135,3 @@ export default function ReadingCoverComponent({
     </Box>
   );
 }
-
-const ChapterTitle = (props: { chapter: Chapter }) => {
-  return (
-    <HStack
-      py="0.5rem"
-      textColor={
-        props.chapter.link || props.chapter.subchapters ? undefined : 'gray'
-      }
-      cursor={
-        props.chapter.link || props.chapter.subchapters
-          ? 'pointer'
-          : 'not-allowed'
-      }
-    >
-      {/* List Number */}
-      <Text
-        fontSize={['1rem', '0.9rem']}
-        className={yujiMai.className}
-        textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
-      >
-        {props.chapter.number}
-      </Text>
-      {/* English Chapter Title */}
-      <Text
-        fontSize="1rem"
-        className={cinzel.className}
-        _hover={{ textDecoration: 'underline' }}
-        textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
-      >
-        {props.chapter.link ? (
-          <Link href={`/?share_id=${props.chapter.link}`}>
-            {props.chapter.title}
-          </Link>
-        ) : (
-          `${props.chapter.title}`
-        )}
-      </Text>
-    </HStack>
-  );
-};
-
-const NavArrows = (props: {
-  activePage: number;
-  chapters: Chapter[][];
-  setActivePage: (activePage: number) => void;
-  setAccordionIndex: (num: number) => void;
-}) => {
-  return (
-    <HStack textColor="rgb(231, 231, 230)">
-      {props.activePage > 0 && (
-        <Text
-          position="absolute"
-          bottom={['1rem', '1.5rem']}
-          right={['78%', '18rem']}
-          cursor="pointer"
-          textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
-          _hover={{ textDecoration: 'underline' }}
-          onClick={() => {
-            props.setActivePage(props.activePage - 1);
-            props.setAccordionIndex(-1);
-          }}
-        >
-          Previous 上
-        </Text>
-      )}
-      {props.activePage < props.chapters.length - 1 && (
-        <Text
-          position="absolute"
-          bottom={['1rem', '1.5rem']}
-          right={['1rem']}
-          cursor="pointer"
-          textShadow={['1px 1px 1px rgba(20, 20, 20, 0.8)']}
-          _hover={{ textDecoration: 'underline' }}
-          onClick={() => {
-            props.setActivePage(props.activePage + 1);
-            props.setAccordionIndex(-1);
-          }}
-        >
-          下 Next
-        </Text>
-      )}
-    </HStack>
-  );
-};

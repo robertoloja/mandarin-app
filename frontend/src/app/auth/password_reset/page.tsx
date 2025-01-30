@@ -14,7 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import PasswordInputComponent from '../PasswordInputComponent';
+import PasswordInputComponent from '../components/PasswordInputComponent';
 import { useState } from 'react';
 import { MandoBotAPI } from '@/utils/api';
 import { store } from '@/utils/store/store';
