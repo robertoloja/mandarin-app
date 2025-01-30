@@ -23,7 +23,7 @@ export class LoginPage {
   static logout() {
     TopNav.openNav();
     cy.contains('Log Out');
-    NavPanel.logInLink().click();
+    NavPanel.loginPageLink().click();
   }
   static forgotPasswordLink() {
     return cy.get('[aria-label="forgot password link"]');

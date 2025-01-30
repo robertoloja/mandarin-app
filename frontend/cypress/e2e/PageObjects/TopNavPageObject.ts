@@ -1,8 +1,11 @@
+import { HomePage } from './HomePageObject';
+
 export class TopNav {
   static menuButton() {
     return cy.get('[aria-label="open Navigation"]');
   }
   static openNav() {
+    HomePage.visit();
     TopNav.menuButton().click();
   }
   static languageButton() {

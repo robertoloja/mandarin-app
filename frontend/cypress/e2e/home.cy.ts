@@ -1,6 +1,6 @@
 import { MAX_LENGTH_FREE } from 'constant_variables';
-import { HomePage } from './HomePageObject';
-import { TopNav } from './TopNavPageObject';
+import { HomePage } from './PageObjects/HomePageObject';
+import { TopNav } from './PageObjects/TopNavPageObject';
 
 type HomeFixture = {
   text: string;

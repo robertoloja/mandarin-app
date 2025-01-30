@@ -1,26 +1,24 @@
+import { NavPanel } from './PageObjects/NavPanelPageObject';
+import { TopNav } from './PageObjects/TopNavPageObject';
+
 describe('nav panel', () => {
   beforeEach(() => {
-    cy.visit('/');
+    TopNav.openNav();
   });
 
   it('should be able to click every link in the nav panel', () => {
-    cy.get('[aria-label="open Navigation"]').click();
-
     const navPanelLinks = [
-      'home link',
-      'reading room link',
-      'sentence history link',
-      'about page link',
-      'bug report link',
-      'login page link',
+      NavPanel.homeLink(),
+      NavPanel.readingRoomLink(),
+      NavPanel.sentenceHistoryLink(),
+      NavPanel.aboutPageLink(),
+      NavPanel.loginPageLink(),
     ];
 
     for (const link of navPanelLinks) {
-      if (link !== 'bug report link') {
-        cy.get(`[aria-label="${link}"]`).click();
-        cy.get('[aria-label="open Navigation"]').click();
-      }
+      link.click();
+      TopNav.openNav();
     }
-    cy.get('[aria-label="close nav panel"]').click();
+    NavPanel.closeButton().click();
   });
 });
