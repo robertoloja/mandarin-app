@@ -7,18 +7,18 @@ describe('nav panel', () => {
   });
 
   it('should be able to click every link in the nav panel', () => {
-    const navPanelLinks = [
-      NavPanel.homeLink(),
-      NavPanel.readingRoomLink(),
-      NavPanel.sentenceHistoryLink(),
-      NavPanel.aboutPageLink(),
-      NavPanel.loginPageLink(),
+    const navPanelLinks: [Cypress.Chainable<JQuery<HTMLElement>>, string][] = [
+      [NavPanel.homeLink(), '/'],
+      [NavPanel.readingRoomLink(), '/reading'],
+      [NavPanel.sentenceHistoryLink(), '/history'],
+      [NavPanel.aboutPageLink(), '/about'],
+      [NavPanel.loginPageLink(), '/auth'],
     ];
 
     for (const link of navPanelLinks) {
-      link.click();
       TopNav.openNav();
+      link[0].click();
+      cy.url().should('include', link[1]);
     }
-    NavPanel.closeButton().click();
   });
 });
