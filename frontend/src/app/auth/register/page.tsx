@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
-import PasswordInputComponent from '../PasswordInputComponent';
+import PasswordInputComponent from '../components/PasswordInputComponent';
 
 export default function RegistrationPage() {
   const router = useRouter();

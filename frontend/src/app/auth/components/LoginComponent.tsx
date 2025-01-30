@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { Button, Container, Heading, Input, useToast } from '@chakra-ui/react';
 import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
-import PasswordInputComponent from './PasswordInputComponent';
+import PasswordInputComponent from './components/PasswordInputComponent';
 
 export default function LoginForm() {
   const router = useRouter();

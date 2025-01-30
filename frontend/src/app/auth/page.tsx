@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
-import PasswordInputComponent from './PasswordInputComponent';
+import PasswordInputComponent from './components/PasswordInputComponent';
 import { MandoBotAPI } from '@/utils/api';
 
 export default function LoginPage() {
