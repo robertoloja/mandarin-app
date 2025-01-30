@@ -1,4 +1,4 @@
-import { LoginPage } from './PageObjectModels';
+import { LoginPage } from './LoginPageObject';
 
 describe('login page', () => {
   beforeEach(() => {

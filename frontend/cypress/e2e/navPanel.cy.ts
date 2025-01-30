@@ -24,5 +24,3 @@ describe('nav panel', () => {
     cy.get('[aria-label="close nav panel"]').click();
   });
 });
-
-// TODO: Login, Settings, Logout

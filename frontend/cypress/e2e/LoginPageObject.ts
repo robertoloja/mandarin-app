@@ -1,26 +1,5 @@
-export class HomePage {
-  static visit() {
-    cy.visit('/');
-  }
-}
-
-export class TopNav {
-  static menuButton() {
-    return cy.get('[aria-label="open Navigation"]');
-  }
-  static openNav() {
-    TopNav.menuButton().click();
-  }
-}
-
-export class NavPanel {
-  static logInLink() {
-    return cy.get('[aria-label="login page link"]');
-  }
-  static closeButton() {
-    return cy.get('[aria-label="close nav panel"]');
-  }
-}
+import { NavPanel } from './NavPanelPageObject';
+import { TopNav } from './TopNavPageObject';
 
 export class LoginPage {
   static visit() {
