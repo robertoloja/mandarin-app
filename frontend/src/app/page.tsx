@@ -79,7 +79,7 @@ export default function Home() {
           {percentLoaded < 100 && (
             <Text color="gray.600" textAlign="center" w="60%">
               {percentLoaded == 0
-                ? 'Segmentation and translation can take several minutes.'
+                ? 'Segmentation and translation can take several seconds.'
                 : 'Your results will load one sentence at a time.'}
             </Text>
           )}
