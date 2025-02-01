@@ -60,12 +60,12 @@ export default function ReadingPage() {
       title: 'No Moonlight Whatsoever',
       link: 'IlzDKJkIWL',
     },
-    { number: '三', title: "Couldn't Fall Asleep", link: 'hOu4JeH5lZ' }, //done
+    { number: '三', title: "Couldn't Fall Asleep", link: 'hOu4JeH5lZ' },
     {
       number: '四',
       title: 'Sat Quietly for a While',
       link: 'xTIybS2MU9',
-    },
+    }, //done
   ];
   const chap2: Chapter[] = [
     { number: '五', title: 'A Step Back', link: 'YlfLF2_Whw' },
