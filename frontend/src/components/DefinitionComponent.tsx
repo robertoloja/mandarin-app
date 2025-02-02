@@ -52,7 +52,7 @@ function Definition(props: {
     <Modal isOpen={props.isOpen} onClose={props.onClose} isCentered>
       <ModalOverlay />
       <ModalContent maxWidth="90vw" maxHeight="90vh" width="auto" height="auto">
-        <ModalCloseButton />
+        <ModalCloseButton aria-label="close definition" />
         <ModalBody display="flex" p="3rem" overflow={'scroll'}>
           <VStack>
             {/* The full mandarin word */}

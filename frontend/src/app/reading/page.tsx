@@ -38,7 +38,6 @@ export default function ReadingPage() {
     { number: '十四', title: 'Cao Cao and the Emperor' },
     { number: '十五', title: 'An Oath, Remembered' },
   ];
-
   const romance: ReadingProps = {
     mandarinTitle: '三國演義',
     titleLink: 'HiCM26DDHH',
@@ -61,7 +60,7 @@ export default function ReadingPage() {
       title: 'No Moonlight Whatsoever',
       link: 'IlzDKJkIWL',
     },
-    { number: '三', title: "Couldn't Fall Asleep", link: 'hOu4JeH5lZ' }, //done
+    { number: '三', title: "Couldn't Fall Asleep", link: 'hOu4JeH5lZ' },
     {
       number: '四',
       title: 'Sat Quietly for a While',
@@ -81,7 +80,6 @@ export default function ReadingPage() {
     { number: '十二', title: 'I Cannot Think About It', link: 'rPqZ4_WGFo' },
     { number: '十三', title: 'Perhaps...', link: 'wl2tMdK8X1' },
   ];
-
   const diary = {
     mandarinTitle: '狂人日記',
     titleLink: 'oslPMkaKBS',
@@ -105,6 +103,7 @@ export default function ReadingPage() {
       flexWrap="wrap"
       overflow="hidden"
       justifyContent="center"
+      aria-label="text container"
     >
       <ReadingCoverComponent {...diary} />
       <ReadingCoverComponent {...romance} />

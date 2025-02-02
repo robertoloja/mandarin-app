@@ -50,6 +50,7 @@ export default function LanguagePreferencesComponent() {
         {localPinyinType === 'pinyin_acc' ? 'pīnyīn' : 'pin1yin1'}
       </Text>
       <Switch
+        aria-label="toggle pinyin and bopomofo"
         onChange={togglePronun}
         isChecked={localPronunciation === 'zhuyin'}
       />
@@ -59,6 +60,7 @@ export default function LanguagePreferencesComponent() {
         <>
           <Text align="right">pīnyīn</Text>
           <Switch
+            aria-label="toggle accented to numbered pinyin"
             onChange={togglePin}
             isChecked={localPinyinType === 'pinyin_num'}
           />

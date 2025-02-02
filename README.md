@@ -57,19 +57,11 @@ Create a `.vscode` directory in the root of the project, and create a `launch.js
 }
 ```
 
-## Admin credentials
-
-At [127.0.0.1:8000/admin](http://127.0.0.1:8000/admin) you can access Django's admin interface. Use the following credentials
-to login as an admin:
-
-```
-username: admin
-password: admin1234
-```
-
-From here, you can create, edit and delete users.
-
 ## Testing
+
+### E2E
+
+`npm cypress run`
 
 ### Docker
 
@@ -93,6 +85,6 @@ This should make it possible for the IDE to discover all tests, so they can be r
 
 The API documentation is available at [127.0.0.1:8000/api/docs](http://127.0.0.1:8000/api/docs).
 
-## Deploy frontend to GitHub Pages
+## Deploy frontend to Netlify Pages
 
 Make sure to remove the leading / from every address in build/index.html after running `npm run build`.

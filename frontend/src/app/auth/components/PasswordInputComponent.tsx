@@ -18,9 +18,15 @@ export default function PasswordInputComponent(props: {
         onChange={props.handlePasswordChange}
         border={props.invalid ? '1px solid red' : undefined}
         transition="border 0.2s ease"
+        aria-label="password input"
       />
       <InputRightElement width="4.5rem">
-        <Button h="1.75rem" size="sm" onClick={handleClick}>
+        <Button
+          h="1.75rem"
+          size="sm"
+          onClick={handleClick}
+          aria-label="show password button"
+        >
           {show ? 'Hide' : 'Show'}
         </Button>
       </InputRightElement>

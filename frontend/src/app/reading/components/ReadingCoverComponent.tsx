@@ -102,6 +102,7 @@ export default function ReadingCoverComponent({
                   className={yujiMai.className}
                   textShadow={['3px 3px 5px rgba(20, 20, 20, 1)']}
                   _hover={{ textDecoration: 'underline' }}
+                  aria-label="mandarin heading"
                 >
                   {mandarinTitle}
                 </Text>
@@ -112,6 +113,7 @@ export default function ReadingCoverComponent({
                 fontSize="1.2rem"
                 className={cinzel.className}
                 textShadow={['3px 3px 5px rgba(20, 20, 20, 1)']}
+                aria-label="english heading"
               >
                 {englishTitle}
               </Text>

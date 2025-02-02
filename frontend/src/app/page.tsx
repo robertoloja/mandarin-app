@@ -72,13 +72,14 @@ export default function Home() {
             colorScheme="teal"
             m={2}
             isDisabled={percentLoaded < 100}
+            aria-label="submit sentence"
           >
             Submit
           </Button>
           {percentLoaded < 100 && (
             <Text color="gray.600" textAlign="center" w="60%">
               {percentLoaded == 0
-                ? 'Segmentation and translation can take several minutes.'
+                ? 'Segmentation and translation can take several seconds.'
                 : 'Your results will load one sentence at a time.'}
             </Text>
           )}

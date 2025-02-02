@@ -54,7 +54,7 @@ export default function ShareButton(props: {
     <Popover>
       <PopoverTrigger>
         <IconButton
-          aria-label="Share segmentation"
+          aria-label="share segmentation"
           isDisabled={props.shareLink ? false : shareLink == ''}
           isLoading={percentLoaded < 100}
           icon={<IoShareSocialOutline size={props.iconSize + 2} />}
@@ -85,9 +85,10 @@ export default function ShareButton(props: {
               cursor="text"
               userSelect="text"
               onChange={() => null}
+              aria-label="share link"
             />
             <IconButton
-              aria-label="Copy link to clipboard"
+              aria-label="copy link to clipboard"
               icon={<IoClipboardOutline />}
               onClick={copyShareLink}
             />

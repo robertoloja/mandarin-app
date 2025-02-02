@@ -49,18 +49,22 @@ export default function Settings() {
         minW={['91vw', '30rem']}
       >
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
-          <Text>Username: {username}</Text>
-          <Text>E-mail: {email}</Text>
+          <Text aria-label="username display">Username: {username}</Text>
+          <Text aria-label="email display">E-mail: {email}</Text>
+
           <Text as="u">
-            <Link href="" onClick={onToggle}>
+            <Link href="" onClick={onToggle} aria-label="change password link">
               Change Password
             </Link>
           </Text>
+
           <Collapse in={isOpen}>
             <PasswordChangeComponent changed={onToggle} />
           </Collapse>
         </Box>
+
         <Text>Pronunciation Preferences</Text>
+
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
           <LanguagePreferencesComponent />
         </Box>

@@ -21,7 +21,7 @@ export const Chapters = (props: {
   accordionIndex: number | number[];
 }) => {
   return (
-    <OrderedList styleType="none" mt={3}>
+    <OrderedList styleType="none" mt={3} aria-label="chapters container">
       <Accordion
         variant="outline"
         allowToggle

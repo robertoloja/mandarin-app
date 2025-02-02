@@ -11,6 +11,7 @@ export const NavArrows = (props: {
     <HStack textColor="rgb(231, 231, 230)">
       {props.activePage > 0 && (
         <Text
+          aria-label="previous page"
           position="absolute"
           bottom={['1rem', '1.5rem']}
           right={['78%', '18rem']}
@@ -27,6 +28,7 @@ export const NavArrows = (props: {
       )}
       {props.activePage < props.chapters.length - 1 && (
         <Text
+          aria-label="next page"
           position="absolute"
           bottom={['1rem', '1.5rem']}
           right={['1rem']}

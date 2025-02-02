@@ -22,7 +22,7 @@ export default function LanguageMenu(props: { iconSize: number }) {
     <Popover>
       <PopoverTrigger>
         <IconButton
-          aria-label="Language settings"
+          aria-label="language settings"
           icon={<IoLanguageOutline size={props.iconSize + 3} />}
           bg={colorMode === 'light' ? 'white' : 'gray.800'}
           mr={1}

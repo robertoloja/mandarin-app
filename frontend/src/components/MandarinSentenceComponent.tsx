@@ -22,6 +22,7 @@ function MandarinSentence(props: SegmentResponseType) {
       flexWrap="wrap"
       mb={`${height}px`}
       overflow="hidden"
+      aria-label="mandarin sentence"
     >
       {props.sentence.map((word, index) => (
         <Word
