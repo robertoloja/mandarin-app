@@ -65,7 +65,7 @@ export default function ReadingPage() {
       number: '四',
       title: 'Sat Quietly for a While',
       link: 'xTIybS2MU9',
-    }, //done
+    },
   ];
   const chap2: Chapter[] = [
     { number: '五', title: 'A Step Back', link: 'YlfLF2_Whw' },
