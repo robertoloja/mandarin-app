@@ -20,6 +20,7 @@ pyjwt = "*"
 argostranslate = "*"
 django = "*"
 django-extensions = "*"
+opencc = "*"
 
 [dev-packages]
 pysnooper = "*"
