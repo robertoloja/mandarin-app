@@ -11,7 +11,7 @@ describe('login page', () => {
   });
 
   it('should be able to login with valid credentials, then logout', () => {
-    LoginPage.login('admin', 'adminadmin');
+    LoginPage.login('robertoloja', 'OZHk4L8G-SZJ2vHGAv-r');
     cy.contains('Settings');
     LoginPage.logout();
   });
