@@ -12,8 +12,8 @@ import {
 
 import { IoMoon, IoSunny, IoMenuOutline, IoHomeOutline } from 'react-icons/io5';
 
-import NavPanel from './NavPanelComponent';
-import ShareButton from './ShareButtonComponent';
+import NavPanel from '../NavPanelComponent';
+import ShareButton from '../ShareButtonComponent';
 import LanguageMenu from './LanguageMenuComponent';
 import ErrorButton from './ErrorButtonComponent';
 import Link from 'next/link';
@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { toggleTheme } from '@/utils/store/settingsSlice';
 import { usePathname } from 'next/navigation';
 import BackToTop from './BackToTopComponent';
+import TextMenu from './TextMenuComponent';
 
 function TopNav() {
   const pathname = usePathname();
@@ -90,6 +91,7 @@ function TopNav() {
         <ErrorButton iconSize={iconSize} />
         {pathname === '/' && (
           <>
+            <TextMenu />
             <BackToTop iconSize={iconSize} />
             <LanguageMenu iconSize={iconSize} />
             <ShareButton iconSize={iconSize} />

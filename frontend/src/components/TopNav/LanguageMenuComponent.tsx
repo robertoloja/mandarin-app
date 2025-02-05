@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { IoLanguageOutline } from 'react-icons/io5';
 
-import LanguagePreferencesComponent from './LanguagePreferencesComponent';
+import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
 
 export default function LanguageMenu(props: { iconSize: number }) {
   const { colorMode } = useColorMode();
