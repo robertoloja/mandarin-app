@@ -28,10 +28,17 @@ function Word(props: {
   const [definitionFontSize, setDefinitionFontSize] = useState(
     Number(localStorage.getItem('definitionFontSize')) || 12,
   );
+  const [pronunciationFontSize, setPronunciationFontSize] = useState(
+    Number(localStorage.getItem('pronunciationFontSize')) || 12,
+  );
 
   const handleStorageChange = (event: StorageEvent) => {
+    console.log(event.key);
     if (event.key === 'definitionFontSize') {
       setDefinitionFontSize(Number(event.newValue));
+    }
+    if (event.key === 'pronunciationFontSize') {
+      setPronunciationFontSize(Number(event.newValue));
     }
   };
 
@@ -66,6 +73,7 @@ function Word(props: {
     }
     return dictionary[hanzi].zhuyin[0];
   };
+
   return (
     <>
       {!punctuation ? (
@@ -90,7 +98,7 @@ function Word(props: {
 
           <CardBody>
             <Center>
-              <HStack spacing="0.1rem">
+              <HStack spacing="0.1rem" fontSize={pronunciationFontSize}>
                 {props.word.word.split('').map((char, index) => (
                   <Hanzi
                     hanzi={char}
@@ -104,19 +112,18 @@ function Word(props: {
 
           <Center>
             <CardFooter>
-              <Text
-                noOfLines={2}
-                maxWidth="10rem"
-                minWidth="5rem"
-                // fontSize="sm"
-                height="2.6rem"
-                marginTop="0.5rem"
-                marginBottom="0.5rem"
-                textAlign="center"
-                fontSize={definitionFontSize}
-              >
-                {props.definitions.join('; ')}
-              </Text>
+              {definitionFontSize !== 0 && (
+                <Text
+                  noOfLines={2}
+                  maxWidth="10rem"
+                  minWidth="5rem"
+                  my="0.5rem"
+                  textAlign="center"
+                  fontSize={definitionFontSize}
+                >
+                  {props.definitions.join('; ')}
+                </Text>
+              )}
             </CardFooter>
           </Center>
         </Card>

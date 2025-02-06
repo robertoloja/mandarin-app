@@ -67,11 +67,20 @@ const TextPreferences = () => {
     pronunciationFontSize: number | null,
     definitionFontSize: number | null,
   ) => {
-    if (pronunciationFontSize != null) {
+    if (pronunciationFontSize !== null) {
+      if (pronunciationFontSize !== 0)
+        setPronunciationFontSize(pronunciationFontSize);
+
       localStorage.setItem('pronunciationFontSize', `${pronunciationFontSize}`);
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: 'pronunciationFontSize',
+          newValue: String(pronunciationFontSize),
+        }),
+      );
     }
 
-    if (definitionFontSize != null) {
+    if (definitionFontSize !== null) {
       if (definitionFontSize !== 0) setDefinitionFontSize(definitionFontSize);
 
       localStorage.setItem('definitionFontSize', `${definitionFontSize}`);
@@ -96,13 +105,20 @@ const TextPreferences = () => {
 
       <GridItem rowSpan={1} colSpan={1}>
         <HStack>
-          <Text>on</Text>
+          <Text>off</Text>
           <Switch
+            isChecked={showPronunciation}
             onChange={() => {
-              setFontSize(0, 0);
+              if (showPronunciation) {
+                togglePronunciation(false);
+                setFontSize(0, null);
+              } else {
+                togglePronunciation(true);
+                setFontSize(pronunciationFontSize, null);
+              }
             }}
           />
-          <Text>off</Text>
+          <Text>on</Text>
         </HStack>
       </GridItem>
       <GridItem rowSpan={1} colSpan={1}>
@@ -116,6 +132,10 @@ const TextPreferences = () => {
             max={20}
             size="sm"
             w="5rem"
+            onChange={(e) => {
+              setFontSize(Number(e), null);
+              togglePronunciation(true);
+            }}
           >
             <NumberInputField />
             <NumberInputStepper>
@@ -137,13 +157,11 @@ const TextPreferences = () => {
             isChecked={showDefinition}
             onChange={() => {
               if (showDefinition) {
-                console.log('foo');
                 toggleDefinition(false);
                 setFontSize(null, 0);
               } else {
                 toggleDefinition(true);
                 setFontSize(null, definitionFontSize);
-                console.log('bar');
               }
             }}
           />
@@ -163,7 +181,7 @@ const TextPreferences = () => {
             size="sm"
             w="5rem"
             onChange={(e) => {
-              setFontSize(0, Number(e));
+              setFontSize(null, Number(e));
               toggleDefinition(true);
             }}
           >
