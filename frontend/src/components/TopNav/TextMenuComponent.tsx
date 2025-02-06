@@ -90,18 +90,13 @@ const TextPreferences = () => {
   }, []);
 
   return (
-    <Grid
-      templateColumns="1fr 1fr"
-      templateRows="repeast(4, 1fr)"
-      gap={4}
-      my={5}
-    >
-      <GridItem rowSpan={2} colSpan={1}>
+    <Grid templateColumns="1fr 1fr" templateRows="repeast(4, 1fr)" my={5}>
+      <GridItem rowSpan={2} colSpan={1} borderBottom="1px solid gray">
         <Text textAlign="center">Pronunciation</Text>
       </GridItem>
 
       <GridItem rowSpan={1} colSpan={1}>
-        <HStack>
+        <HStack justify="center" mb={3}>
           <Text>off</Text>
           <Switch
             isChecked={showPronunciation}
@@ -123,11 +118,9 @@ const TextPreferences = () => {
         </HStack>
       </GridItem>
 
-      <GridItem rowSpan={1} colSpan={1}>
-        <HStack>
-          <Text width="50%" textAlign="right">
-            size:
-          </Text>
+      <GridItem rowSpan={1} colSpan={1} borderBottom="1px solid gray">
+        <HStack mb={5}>
+          <Text textAlign="right">size:</Text>
           <NumberInput
             defaultValue={pronunciationFontSize || 15}
             min={10}
@@ -153,7 +146,7 @@ const TextPreferences = () => {
       </GridItem>
 
       <GridItem rowSpan={1} colSpan={1} mt={6}>
-        <HStack>
+        <HStack justify="center" mb={3}>
           <Text>off</Text>
           <Switch
             isChecked={showDefinition}
@@ -177,9 +170,7 @@ const TextPreferences = () => {
 
       <GridItem colSpan={1}>
         <HStack>
-          <Text width="50%" textAlign="right">
-            size:
-          </Text>
+          <Text textAlign="right">size:</Text>
           <NumberInput
             defaultValue={definitionFontSize || 15}
             min={10}
