@@ -144,7 +144,7 @@ const TextPreferences = () => {
             }
             min={10}
             max={20}
-            size="sm"
+            size={['lg', 'sm']}
             w="5rem"
             onChange={(e) => {
               setFontSize(Number(e), null);
@@ -194,7 +194,7 @@ const TextPreferences = () => {
             }
             min={10}
             max={20}
-            size="sm"
+            size={['lg', 'sm']}
             w="5rem"
             onChange={(e) => {
               setFontSize(null, Number(e));
