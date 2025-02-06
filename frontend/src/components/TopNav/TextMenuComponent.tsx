@@ -21,7 +21,7 @@ import {
   Text,
   useColorMode,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
 
 export default function TextMenuButton() {
@@ -51,25 +51,21 @@ export default function TextMenuButton() {
 }
 
 const TextPreferences = () => {
-  const [definitionFontSize, setDefinitionFontSize] = useState<number>(() =>
-    Number(localStorage.getItem('definitionFontSize')),
-  );
+  const [definitionFontSize, setDefinitionFontSize] = useState<number>(() => {
+    if (typeof window !== 'undefined' && localStorage) {
+      return Number(localStorage.getItem('definitionFontSize'));
+    }
+    return 15;
+  });
   const [pronunciationFontSize, setPronunciationFontSize] = useState<number>(
-    () => Number(localStorage.getItem('pronunciationFontSize')),
+    () => {
+      if (typeof window !== 'undefined' && localStorage)
+        return Number(localStorage.getItem('pronunciationFontSize'));
+      return 15;
+    },
   );
   const [showPronunciation, togglePronunciation] = useState(true);
   const [showDefinition, toggleDefinition] = useState(true);
-
-  const getFontSize = () => {
-    if (typeof window !== 'undefined' && localStorage) {
-      return {
-        pronunciationFontSize: Number(
-          localStorage.getItem('pronunciationFontSize'),
-        ),
-        definitionFontSize: Number(localStorage?.getItem('definitionFontSize')),
-      };
-    }
-  };
 
   const setFontSize = (
     value: number,
@@ -88,6 +84,11 @@ const TextPreferences = () => {
     }
   };
 
+  useEffect(() => {
+    toggleDefinition(definitionFontSize !== 0);
+    togglePronunciation(pronunciationFontSize !== 0);
+  }, []);
+
   return (
     <Grid
       templateColumns="1fr 1fr"
@@ -103,7 +104,7 @@ const TextPreferences = () => {
         <HStack>
           <Text>off</Text>
           <Switch
-            isChecked={pronunciationFontSize !== 0 && showPronunciation}
+            isChecked={showPronunciation}
             onChange={() => {
               if (showPronunciation && pronunciationFontSize !== 0) {
                 togglePronunciation(false);
@@ -155,7 +156,7 @@ const TextPreferences = () => {
         <HStack>
           <Text>off</Text>
           <Switch
-            isChecked={definitionFontSize !== 0 && showDefinition}
+            isChecked={showDefinition}
             onChange={() => {
               if (showDefinition && definitionFontSize !== 0) {
                 toggleDefinition(false);
