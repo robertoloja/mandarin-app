@@ -25,8 +25,12 @@ function Word(props: {
   pronunciation: string[];
   definitions: string[];
 }) {
-  const [definitionFontSize, setDefinitionFontSize] = useState(12);
-  const [pronunciationFontSize, setPronunciationFontSize] = useState(12);
+  const [definitionFontSize, setDefinitionFontSize] = useState<number>(() =>
+    Number(localStorage.getItem('definitionFontSize')),
+  );
+  const [pronunciationFontSize, setPronunciationFontSize] = useState<number>(
+    () => Number(localStorage.getItem('pronunciationFontSize')),
+  );
 
   const handleStorageChange = (event: StorageEvent) => {
     if (event.key === 'definitionFontSize') {
@@ -38,13 +42,8 @@ function Word(props: {
   };
 
   useEffect(() => {
-    setDefinitionFontSize(
-      Number(localStorage.getItem('definitionFontSize')) || 12,
-    );
-    setPronunciationFontSize(
-      Number(localStorage.getItem('definitionFontSize')) || 12,
-    );
     window.addEventListener('storage', handleStorageChange);
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
@@ -119,9 +118,9 @@ function Word(props: {
             </Center>
           </CardBody>
 
-          <Center>
-            <CardFooter>
-              {definitionFontSize !== 0 && (
+          {definitionFontSize !== 0 && (
+            <Center>
+              <CardFooter>
                 <Text
                   noOfLines={2}
                   maxWidth="10rem"
@@ -132,9 +131,9 @@ function Word(props: {
                 >
                   {props.definitions.join('; ')}
                 </Text>
-              )}
-            </CardFooter>
-          </Center>
+              </CardFooter>
+            </Center>
+          )}
         </Card>
       ) : (
         <Flex align="center" justify="center" h="70%" m={2}>

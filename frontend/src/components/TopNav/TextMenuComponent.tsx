@@ -24,7 +24,7 @@ import {
 import { useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
 
-export default function TextMenu() {
+export default function TextMenuButton() {
   const { colorMode } = useColorMode();
 
   return (
@@ -51,58 +51,43 @@ export default function TextMenu() {
 }
 
 const TextPreferences = () => {
-  const [definitionFontSize, setDefinitionFontSize] = useState(12);
-  const [pronunciationFontSize, setPronunciationFontSize] = useState(12);
+  const [definitionFontSize, setDefinitionFontSize] = useState<number>(() =>
+    Number(localStorage.getItem('definitionFontSize')),
+  );
+  const [pronunciationFontSize, setPronunciationFontSize] = useState<number>(
+    () => Number(localStorage.getItem('pronunciationFontSize')),
+  );
   const [showPronunciation, togglePronunciation] = useState(true);
   const [showDefinition, toggleDefinition] = useState(true);
 
   const getFontSize = () => {
     if (typeof window !== 'undefined' && localStorage) {
       return {
-        pronunciationFontSize:
-          Number(localStorage?.getItem('pronunciationFontSize')) || 12,
-        definitionFontSize:
-          Number(localStorage?.getItem('definitionFontSize')) || 12,
+        pronunciationFontSize: Number(
+          localStorage.getItem('pronunciationFontSize'),
+        ),
+        definitionFontSize: Number(localStorage?.getItem('definitionFontSize')),
       };
     }
   };
 
   const setFontSize = (
-    pronunciationFontSize: number | null,
-    definitionFontSize: number | null,
+    value: number,
+    storageKey: string,
+    setter: (val: number) => void,
   ) => {
-    if (pronunciationFontSize !== null) {
-      if (pronunciationFontSize !== 0)
-        setPronunciationFontSize(pronunciationFontSize);
-
-      if (typeof window !== 'undefined' && localStorage) {
-        localStorage.setItem(
-          'pronunciationFontSize',
-          `${pronunciationFontSize}`,
-        );
-        window.dispatchEvent(
-          new StorageEvent('storage', {
-            key: 'pronunciationFontSize',
-            newValue: String(pronunciationFontSize),
-          }),
-        );
-      }
-    }
-
-    if (definitionFontSize !== null) {
-      if (definitionFontSize !== 0) setDefinitionFontSize(definitionFontSize);
-
-      if (typeof window !== 'undefined' && localStorage) {
-        localStorage.setItem('definitionFontSize', `${definitionFontSize}`);
-        window.dispatchEvent(
-          new StorageEvent('storage', {
-            key: 'definitionFontSize',
-            newValue: String(definitionFontSize),
-          }),
-        );
-      }
+    if (value !== 0) setter(value);
+    if (typeof window !== 'undefined' && localStorage) {
+      localStorage.setItem(`${storageKey}FontSize`, `${value}`);
+      window.dispatchEvent(
+        new StorageEvent('storage', {
+          key: `${storageKey}FontSize`,
+          newValue: String(value),
+        }),
+      );
     }
   };
+
   return (
     <Grid
       templateColumns="1fr 1fr"
@@ -118,14 +103,18 @@ const TextPreferences = () => {
         <HStack>
           <Text>off</Text>
           <Switch
-            isChecked={showPronunciation}
+            isChecked={pronunciationFontSize !== 0 && showPronunciation}
             onChange={() => {
-              if (showPronunciation) {
+              if (showPronunciation && pronunciationFontSize !== 0) {
                 togglePronunciation(false);
-                setFontSize(0, null);
+                setFontSize(0, 'pronunciation', setPronunciationFontSize);
               } else {
                 togglePronunciation(true);
-                setFontSize(pronunciationFontSize, null);
+                setFontSize(
+                  pronunciationFontSize || 15,
+                  'pronunciation',
+                  setPronunciationFontSize,
+                );
               }
             }}
           />
@@ -139,15 +128,13 @@ const TextPreferences = () => {
             size:
           </Text>
           <NumberInput
-            defaultValue={
-              getFontSize() ? getFontSize()?.pronunciationFontSize : 12
-            }
+            defaultValue={pronunciationFontSize || 15}
             min={10}
             max={20}
             size={['lg', 'sm']}
             w="5rem"
             onChange={(e) => {
-              setFontSize(Number(e), null);
+              setFontSize(Number(e), 'pronunciation', setPronunciationFontSize);
               togglePronunciation(true);
             }}
           >
@@ -168,14 +155,18 @@ const TextPreferences = () => {
         <HStack>
           <Text>off</Text>
           <Switch
-            isChecked={showDefinition}
+            isChecked={definitionFontSize !== 0 && showDefinition}
             onChange={() => {
-              if (showDefinition) {
+              if (showDefinition && definitionFontSize !== 0) {
                 toggleDefinition(false);
-                setFontSize(null, 0);
+                setFontSize(0, 'definition', setDefinitionFontSize);
               } else {
                 toggleDefinition(true);
-                setFontSize(null, definitionFontSize);
+                setFontSize(
+                  definitionFontSize || 15,
+                  'definition',
+                  setDefinitionFontSize,
+                );
               }
             }}
           />
@@ -189,15 +180,13 @@ const TextPreferences = () => {
             size:
           </Text>
           <NumberInput
-            defaultValue={
-              getFontSize() ? getFontSize()?.definitionFontSize : 12
-            }
+            defaultValue={definitionFontSize || 15}
             min={10}
             max={20}
             size={['lg', 'sm']}
             w="5rem"
             onChange={(e) => {
-              setFontSize(null, Number(e));
+              setFontSize(Number(e), 'definition', setDefinitionFontSize);
               toggleDefinition(true);
             }}
           >
