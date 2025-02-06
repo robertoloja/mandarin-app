@@ -22,7 +22,7 @@ import { useSelector } from 'react-redux';
 import { toggleTheme } from '@/utils/store/settingsSlice';
 import { usePathname } from 'next/navigation';
 import BackToTop from './BackToTopComponent';
-import TextMenu from './TextMenuComponent';
+import TextMenuButton from './TextMenuComponent';
 
 function TopNav() {
   const pathname = usePathname();
@@ -91,7 +91,7 @@ function TopNav() {
         <ErrorButton iconSize={iconSize} />
         {pathname === '/' && (
           <>
-            <TextMenu />
+            <TextMenuButton />
             <BackToTop iconSize={iconSize} />
             <LanguageMenu iconSize={iconSize} />
             <ShareButton iconSize={iconSize} />
