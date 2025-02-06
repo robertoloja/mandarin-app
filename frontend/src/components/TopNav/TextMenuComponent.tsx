@@ -121,6 +121,7 @@ const TextPreferences = () => {
           <Text>on</Text>
         </HStack>
       </GridItem>
+
       <GridItem rowSpan={1} colSpan={1}>
         <HStack>
           <Text width="50%" textAlign="right">

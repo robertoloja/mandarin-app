@@ -99,13 +99,21 @@ function Word(props: {
           <CardBody>
             <Center>
               <HStack spacing="0.1rem" fontSize={pronunciationFontSize}>
-                {props.word.word.split('').map((char, index) => (
-                  <Hanzi
-                    hanzi={char}
-                    key={index}
-                    pronunciation={pronunciation(char)}
-                  />
-                ))}
+                {pronunciationFontSize !== 0 ? (
+                  props.word.word
+                    .split('')
+                    .map((char, index) => (
+                      <Hanzi
+                        hanzi={char}
+                        key={index}
+                        pronunciation={pronunciation(char)}
+                      />
+                    ))
+                ) : (
+                  <Text fontSize="32" p={2}>
+                    {props.word.word}
+                  </Text>
+                )}
               </HStack>
             </Center>
           </CardBody>
