@@ -25,15 +25,10 @@ function Word(props: {
   pronunciation: string[];
   definitions: string[];
 }) {
-  const [definitionFontSize, setDefinitionFontSize] = useState(
-    Number(localStorage.getItem('definitionFontSize')) || 12,
-  );
-  const [pronunciationFontSize, setPronunciationFontSize] = useState(
-    Number(localStorage.getItem('pronunciationFontSize')) || 12,
-  );
+  const [definitionFontSize, setDefinitionFontSize] = useState(12);
+  const [pronunciationFontSize, setPronunciationFontSize] = useState(12);
 
   const handleStorageChange = (event: StorageEvent) => {
-    console.log(event.key);
     if (event.key === 'definitionFontSize') {
       setDefinitionFontSize(Number(event.newValue));
     }
@@ -43,6 +38,12 @@ function Word(props: {
   };
 
   useEffect(() => {
+    setDefinitionFontSize(
+      Number(localStorage.getItem('definitionFontSize')) || 12,
+    );
+    setPronunciationFontSize(
+      Number(localStorage.getItem('definitionFontSize')) || 12,
+    );
     window.addEventListener('storage', handleStorageChange);
     return () => {
       window.removeEventListener('storage', handleStorageChange);

@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Center,
   Grid,
@@ -19,7 +21,7 @@ import {
   Text,
   useColorMode,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
 
 export default function TextMenu() {
@@ -55,12 +57,14 @@ const TextPreferences = () => {
   const [showDefinition, toggleDefinition] = useState(true);
 
   const getFontSize = () => {
-    return {
-      pronunciationFontSize:
-        Number(localStorage.getItem('pronunciationFontSize')) || 12,
-      definitionFontSize:
-        Number(localStorage.getItem('definitionFontSize')) || 12,
-    };
+    if (typeof window !== 'undefined' && localStorage) {
+      return {
+        pronunciationFontSize:
+          Number(localStorage?.getItem('pronunciationFontSize')) || 12,
+        definitionFontSize:
+          Number(localStorage?.getItem('definitionFontSize')) || 12,
+      };
+    }
   };
 
   const setFontSize = (
@@ -71,25 +75,32 @@ const TextPreferences = () => {
       if (pronunciationFontSize !== 0)
         setPronunciationFontSize(pronunciationFontSize);
 
-      localStorage.setItem('pronunciationFontSize', `${pronunciationFontSize}`);
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: 'pronunciationFontSize',
-          newValue: String(pronunciationFontSize),
-        }),
-      );
+      if (typeof window !== 'undefined' && localStorage) {
+        localStorage.setItem(
+          'pronunciationFontSize',
+          `${pronunciationFontSize}`,
+        );
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: 'pronunciationFontSize',
+            newValue: String(pronunciationFontSize),
+          }),
+        );
+      }
     }
 
     if (definitionFontSize !== null) {
       if (definitionFontSize !== 0) setDefinitionFontSize(definitionFontSize);
 
-      localStorage.setItem('definitionFontSize', `${definitionFontSize}`);
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: 'definitionFontSize',
-          newValue: String(definitionFontSize),
-        }),
-      );
+      if (typeof window !== 'undefined' && localStorage) {
+        localStorage.setItem('definitionFontSize', `${definitionFontSize}`);
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: 'definitionFontSize',
+            newValue: String(definitionFontSize),
+          }),
+        );
+      }
     }
   };
   return (
@@ -128,7 +139,9 @@ const TextPreferences = () => {
             size:
           </Text>
           <NumberInput
-            defaultValue={getFontSize().pronunciationFontSize}
+            defaultValue={
+              getFontSize() ? getFontSize()?.pronunciationFontSize : 12
+            }
             min={10}
             max={20}
             size="sm"
@@ -176,7 +189,9 @@ const TextPreferences = () => {
             size:
           </Text>
           <NumberInput
-            defaultValue={getFontSize().definitionFontSize}
+            defaultValue={
+              getFontSize() ? getFontSize()?.definitionFontSize : 12
+            }
             min={10}
             max={20}
             size="sm"
