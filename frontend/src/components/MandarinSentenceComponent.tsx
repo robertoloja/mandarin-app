@@ -13,6 +13,7 @@ function MandarinSentence(props: SegmentResponseType) {
   const height = useSelector(
     (state: RootState) => state.sentence.translationPanelHeight,
   );
+
   return (
     <Flex
       align="stretch"

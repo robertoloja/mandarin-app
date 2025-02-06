@@ -18,12 +18,30 @@ import styles from '@/themes';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import Pinyin from 'pinyin-tone';
+import { useEffect, useState } from 'react';
 
 function Word(props: {
   word: MandarinWordType;
   pronunciation: string[];
   definitions: string[];
 }) {
+  const [definitionFontSize, setDefinitionFontSize] = useState(
+    Number(localStorage.getItem('definitionFontSize')) || 12,
+  );
+
+  const handleStorageChange = (event: StorageEvent) => {
+    if (event.key === 'definitionFontSize') {
+      setDefinitionFontSize(Number(event.newValue));
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   // TODO: Account for compound words (e.g. 軍事將領, and 成語)
   const punctuation =
     props.word.word === props.pronunciation[0] || props.word.word === '';
@@ -90,11 +108,12 @@ function Word(props: {
                 noOfLines={2}
                 maxWidth="10rem"
                 minWidth="5rem"
-                fontSize="sm"
+                // fontSize="sm"
                 height="2.6rem"
                 marginTop="0.5rem"
                 marginBottom="0.5rem"
                 textAlign="center"
+                fontSize={definitionFontSize}
               >
                 {props.definitions.join('; ')}
               </Text>
