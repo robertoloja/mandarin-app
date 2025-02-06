@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import TopNav from '@/components/TopNavComponent';
+import TopNav from '@/components/TopNav/TopNavComponent';
 import { MandoBotAPI } from '@/utils/api';
 import { accordionTheme } from './reading/components/Accordion';
 

@@ -23,6 +23,7 @@ export default function Home() {
   );
 
   const urlShareId = useSearchParams().get('share_id') || '';
+
   useEffect(() => {
     if (urlShareId !== '') {
       store.dispatch(updateLoading({ percent: 0 }));
