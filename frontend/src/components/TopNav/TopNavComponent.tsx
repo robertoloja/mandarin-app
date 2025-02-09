@@ -91,8 +91,8 @@ function TopNav() {
         <ErrorButton iconSize={iconSize} />
         {pathname === '/' && (
           <>
-            <TextMenuButton />
             <BackToTop iconSize={iconSize} />
+            <TextMenuButton />
             <LanguageMenu iconSize={iconSize} />
             <ShareButton iconSize={iconSize} />
           </>
