@@ -1,14 +1,3 @@
-## Deploy
-
-Merging to `main` on github will initiate a deployment of the frontend. If `npm run build` worked locally, then the deployment should succeed.
-
-In the backend, deploying involves:
-
-1. Pull from remote.
-2. `python manage.py dumpscript accounts > accounts/scripts/account_data.py` to backup account information.
-3. locally, run `scp db.sqlite3 mandoBot@ssh.pythonanywhere.com:/home/mandoBot/mandarin-app/` to upload the database to the server. N.b. Delete all account data from the database before uploading.
-4. Once the upload is complete, on the server run `python manage.py runscript account_data` to re-populate user information.
-5. On the PythonAnywhere console, reload the web app and re-start the send_mail script.
 
 ## Setup, running and stopping the app
 
