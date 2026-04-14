@@ -19,6 +19,7 @@ import {
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import styles from '../../themes';
+import PronunciationPreferencesComponent from '@/components/PronunciationPreferencesComponent';
 import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 import { useEffect } from 'react';
 import PasswordChangeComponent from '../auth/components/PasswordChangeComponent';
@@ -65,6 +66,13 @@ export default function Settings() {
 
         <Text>Pronunciation Preferences</Text>
 
+        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+          <PronunciationPreferencesComponent />
+        </Box>
+
+        <Spacer m={5} />
+        
+        <Text>User Language</Text>
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
           <LanguagePreferencesComponent />
         </Box>

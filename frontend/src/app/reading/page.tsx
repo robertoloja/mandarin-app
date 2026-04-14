@@ -3,45 +3,50 @@
 import { Flex } from '@chakra-ui/react';
 import ReadingCoverComponent from './components/ReadingCoverComponent';
 import { Chapter, ReadingProps } from './types';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
+import localization from '@/localization';
 
 export default function ReadingPage() {
+  const user_language = useSelector((state: RootState) => state.settings.user_language);
+  const romance_localization = localization.reading_room.romance_of_the_three_kingdoms;
   const chapters_1: Chapter[] = [
     {
       number: '一',
-      title: 'Oath of the Peach Garden',
+      title: romance_localization.book_1.title[user_language],
       subchapters: [
-        { name: 'Poem', link: 'wSE4FONhWj' },
-        { name: 'Great Teacher', link: 'hErMG8iNOo' },
-        { name: 'Yellow Turbans', link: 'RMY5TrW0T6' },
-        { name: 'Meetings', link: 'MbGAhlo54Y' },
-        { name: 'The Oath', link: 'Q7GnxMzcNw' },
-        { name: "Liu Bei's Triumphs", link: '59Yb0VElht' },
-        { name: "Dong Zhuo's Betrayal", link: 'S6c9Ie5ZkS' },
+        { name: romance_localization.book_1.chapter_1[user_language], link: 'wSE4FONhWj' },
+        { name: romance_localization.book_1.chapter_2[user_language], link: 'hErMG8iNOo' },
+        { name: romance_localization.book_1.chapter_3[user_language], link: 'RMY5TrW0T6' },
+        { name: romance_localization.book_1.chapter_4[user_language], link: 'MbGAhlo54Y' },
+        { name: romance_localization.book_1.chapter_5[user_language], link: 'Q7GnxMzcNw' },
+        { name: romance_localization.book_1.chapter_6[user_language], link: '59Yb0VElht' },
+        { name: romance_localization.book_1.chapter_7[user_language], link: 'S6c9Ie5ZkS' },
       ],
     },
-    { number: '二', title: "Zhang Fei's Anger" },
-    { number: '三', title: 'Dong Zhuo' },
-    { number: '四', title: 'The Fall of Han' },
-    { number: '五', title: 'The Rise of Cao Cao' },
+    { number: '二', title: romance_localization.book_2[user_language] },
+    { number: '三', title: romance_localization.book_3[user_language] },
+    { number: '四', title: romance_localization.book_4[user_language] },
+    { number: '五', title: romance_localization.book_5[user_language] },
   ];
   const chapters_2: Chapter[] = [
-    { number: '六', title: 'The Palace Fire' },
-    { number: '七', title: 'Fight at the Pan River' },
-    { number: '八', title: 'Interlinked Stratagems' },
-    { number: '九', title: "Attack on Chang'an" },
-    { number: '十', title: "Cao Cao's Revenge" },
+    { number: '六', title: romance_localization.book_6[user_language] },
+    { number: '七', title: romance_localization.book_7[user_language] },
+    { number: '八', title: romance_localization.book_8[user_language] },
+    { number: '九', title: romance_localization.book_9[user_language] },
+    { number: '十', title: romance_localization.book_10[user_language] },
   ];
   const chapters_3: Chapter[] = [
-    { number: '十一', title: "Cao Cao's Defeat" },
-    { number: '十二', title: 'Cao Cao and Lü Bu' },
-    { number: '十三', title: "The Emperor's Rescue" },
-    { number: '十四', title: 'Cao Cao and the Emperor' },
-    { number: '十五', title: 'An Oath, Remembered' },
+    { number: '十一', title: romance_localization.book_11[user_language] },
+    { number: '十二', title: romance_localization.book_12[user_language] },
+    { number: '十三', title: romance_localization.book_13[user_language] },
+    { number: '十四', title: romance_localization.book_14[user_language] },
+    { number: '十五', title: romance_localization.book_15[user_language] },
   ];
   const romance: ReadingProps = {
     mandarinTitle: '三國演義',
     titleLink: 'HiCM26DDHH',
-    englishTitle: 'Romance of the Three Kingdoms',
+    title: romance_localization.title[user_language],
     chapters: [chapters_1, chapters_2, chapters_3],
     background: 'romance-cover.jpg',
     attribution: {
@@ -83,7 +88,7 @@ export default function ReadingPage() {
   const diary = {
     mandarinTitle: '狂人日記',
     titleLink: 'oslPMkaKBS',
-    englishTitle: 'Diary of a Madman',
+    title: 'Diary of a Madman',
     chapters: [chap1, chap2, chap3],
     background: 'lu-xun.jpg',
     attribution: {

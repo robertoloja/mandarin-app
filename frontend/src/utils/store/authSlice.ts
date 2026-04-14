@@ -9,19 +9,24 @@ interface LoginPayload {
 interface LoginResponse {
   username: string;
   email: string;
-  error: string;
+  pronunciation_preference: string;
+  theme_preference: number;
+  user_language: string;
 }
 
 export const login = createAsyncThunk<
   LoginResponse,
   LoginPayload,
   { rejectValue: { error: string } }
->('auth/login', async ({ username, password }) => {
+>('auth/login', async ({ username, password }, { rejectWithValue }) => {
   try {
     const response = await MandoBotAPI.login(username, password);
     return response;
   } catch (error: any) {
-    if (error.response) return error.response.data;
+    if (error.response?.data) {
+      return rejectWithValue(error.response.data);
+    }
+    return rejectWithValue({ error: 'Login failed' });
   }
 });
 

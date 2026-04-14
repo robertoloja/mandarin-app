@@ -22,7 +22,7 @@ export function getCookie(name: string): string | null {
 
 const API_BASE_URL =
   process.env.NODE_ENV === 'development'
-    ? 'https://localhost:8000/api'
+    ? 'http://127.0.0.1:8000/api'
     : '/api';
 const TIMEOUT = process.env.NODE_ENV === 'development' ? 100000 : 20000;
 
@@ -121,6 +121,7 @@ export const MandoBotAPI = {
       setPreferences({
         pronunciation_preference: response.data.pronunciation_preference,
         theme_preference: response.data.theme_preference,
+        user_language: response.data.user_language,
       }),
     );
     return response.data;
@@ -196,6 +197,7 @@ export const MandoBotAPI = {
             setPreferences({
               pronunciation_preference: response.data.pronunciation_preference,
               theme_preference: response.data.theme_preference,
+              user_language: response.data.user_language,
             }),
           );
         }
@@ -226,6 +228,21 @@ export const MandoBotAPI = {
     let result = false;
     await api
       .post('/accounts/theme_preference', { preference })
+      .then(() => {
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
+  },
+
+  languagePreference: async function (
+    language: 'en' | 'de',
+  ): Promise<boolean> {
+    let result = false;
+    await api
+      .post('/accounts/language_preference', { language })
       .then(() => {
         result = true;
       })

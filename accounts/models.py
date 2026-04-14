@@ -23,6 +23,10 @@ class MandoBotUser(AbstractUser):
         (0, "traditional"),
         (1, "simplified"),
     ]
+    LANGUAGE = [
+        ("en", "English"),
+        ("de", "German"),
+    ]
     pronunciation_preference = models.CharField(
         max_length=10,
         choices=PRONUNCIATION,
@@ -31,6 +35,11 @@ class MandoBotUser(AbstractUser):
     theme_preference = models.IntegerField(
         choices=THEME,
         default=0,
+    )
+    user_language = models.CharField(
+        max_length=2,
+        choices=LANGUAGE,
+        default="en",
     )
     last_payment = models.DateField(default=now)
     subscription_active = models.BooleanField(default=True)

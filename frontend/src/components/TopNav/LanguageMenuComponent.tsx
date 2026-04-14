@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { IoLanguageOutline } from 'react-icons/io5';
 
-import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
+import PronunciationPreferencesComponent from '../PronunciationPreferencesComponent';
 
 export default function LanguageMenu(props: { iconSize: number }) {
   const { colorMode } = useColorMode();
@@ -34,7 +34,7 @@ export default function LanguageMenu(props: { iconSize: number }) {
           <Center>Language Options</Center>
         </PopoverHeader>
         <PopoverBody>
-          <LanguagePreferencesComponent />
+          <PronunciationPreferencesComponent />
         </PopoverBody>
       </PopoverContent>
     </Popover>

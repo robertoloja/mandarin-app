@@ -32,6 +32,7 @@ class UserPreferencesSchema(ModelSchema):
             "email",
             "pronunciation_preference",
             "theme_preference",
+            "user_language",
         ]
 
 
@@ -74,3 +75,7 @@ class SuccessResponseSchema(Schema):
 
 class PronunciationPreferenceSchema(Schema):
     preference: Literal["zhuyin", "pinyin_acc", "pinyin_num"]
+
+
+class LanguagePreferenceSchema(Schema):
+    language: Literal["en", "de"]

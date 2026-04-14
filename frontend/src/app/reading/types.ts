@@ -8,7 +8,7 @@ export interface Chapter {
 export interface ReadingProps {
   mandarinTitle: string;
   titleLink: string;
-  englishTitle: string;
+  title: string;
   chapters: Chapter[][];
   background: string;
   attribution: {

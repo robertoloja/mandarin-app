@@ -1,8 +1,12 @@
+import localization from '@/localization';
 import styles from '@/themes';
+import { RootState } from '@/utils/store/store';
 import { Text, Box, Heading, useColorMode } from '@chakra-ui/react';
+import { useSelector } from 'react-redux';
 
 export const PrivacyPolicyCard = () => {
   const { colorMode } = useColorMode();
+  const user_language = useSelector((state: RootState) => state.settings.user_language);
   return (
     <Box id="policies" mt={4}>
       <Box
@@ -26,7 +30,7 @@ export const PrivacyPolicyCard = () => {
               : '1px 1px 1px #222'
           }
         >
-          Privacy Policy
+         {localization.about_status.privacy_policy.title[user_language]}
         </Heading>
         <Text mb={4}>
           This is a privacy preserving application. We collect no personal
@@ -49,7 +53,7 @@ export const PrivacyPolicyCard = () => {
               : '1px 1px 1px #222'
           }
         >
-          Terms of Use
+          {localization.about_status.terms_of_use.title[user_language]}
         </Heading>
         <Text mb={2}>
           By using this app, you agree to these Terms of Service. Please read

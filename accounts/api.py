@@ -22,6 +22,7 @@ from mandoBot.schemas import (
     APIPasswordError,
     ChangePasswordSchema,
     PronunciationPreferenceSchema,
+    LanguagePreferenceSchema,
     SuccessResponseSchema,
     RegisterSchema,
     UserSchema,
@@ -254,6 +255,21 @@ def post_user_theme_preference(request, theme: Literal[0, 1]) -> int | APIErrorR
     if request.user.is_authenticated:
         user = User.objects.get(username=request.user.username)
         user.theme_preference = theme
+        user.save()
+        return 200
+    return 404, APIError(error="User not found")
+
+
+@router.post("/language_preference", response={200: None, 404: APIError})
+def post_user_language_preference(
+    request, data: LanguagePreferenceSchema
+) -> int | APIErrorResponse:
+    """
+    Set authenticated user's language preference.
+    """
+    if request.user.is_authenticated:
+        user = User.objects.get(username=request.user.username)
+        user.user_language = data.language
         user.save()
         return 200
     return 404, APIError(error="User not found")

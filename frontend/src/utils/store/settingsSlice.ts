@@ -5,12 +5,14 @@ interface SettingsState {
   theme: 'light' | 'dark';
   pronunciation: 'pinyin' | 'zhuyin';
   pinyin_type: 'pinyin_acc' | 'pinyin_num';
+  user_language: 'en' | 'de';
 }
 
 const initialState: SettingsState = {
   theme: 'dark',
   pronunciation: 'pinyin',
   pinyin_type: 'pinyin_acc',
+  user_language: 'en',
 };
 
 const settingsSlice = createSlice({
@@ -28,11 +30,15 @@ const settingsSlice = createSlice({
       state.pinyin_type =
         state.pinyin_type === 'pinyin_acc' ? 'pinyin_num' : 'pinyin_acc';
     },
+    setUserLanguage(state, action: PayloadAction<'en' | 'de'>) {
+      state.user_language = action.payload;
+    },
     setPreferences(
       state,
       action: PayloadAction<{
         pronunciation_preference: PronunciationPreference;
         theme_preference: number;
+        user_language: 'en' | 'de';
       }>,
     ) {
       if (action.payload.pronunciation_preference.startsWith('pinyin')) {
@@ -49,6 +55,7 @@ const settingsSlice = createSlice({
       } else {
         state.theme = 'dark';
       }
+      state.user_language = action.payload.user_language;
     },
   },
 });
@@ -57,6 +64,7 @@ export const {
   toggleTheme,
   togglePronunciation,
   togglePinyin,
+  setUserLanguage,
   setPreferences,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;
