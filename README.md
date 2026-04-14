@@ -1,14 +1,3 @@
-## Deploy
-
-Merging to `main` on github will initiate a deployment of the frontend. If `npm run build` worked locally, then the deployment should succeed.
-
-In the backend, deploying involves:
-
-1. Pull from remote.
-2. `python manage.py dumpscript accounts > accounts/scripts/account_data.py` to backup account information.
-3. locally, run `scp db.sqlite3 mandoBot@ssh.pythonanywhere.com:/home/mandoBot/mandarin-app/` to upload the database to the server. N.b. Delete all account data from the database before uploading.
-4. Once the upload is complete, on the server run `python manage.py runscript account_data` to re-populate user information.
-5. On the PythonAnywhere console, reload the web app and re-start the send_mail script.
 
 ## Setup, running and stopping the app
 
@@ -84,7 +73,3 @@ This should make it possible for the IDE to discover all tests, so they can be r
 ## Documentation
 
 The API documentation is available at [127.0.0.1:8000/api/docs](http://127.0.0.1:8000/api/docs).
-
-## Deploy frontend to Netlify Pages
-
-Make sure to remove the leading / from every address in build/index.html after running `npm run build`.
