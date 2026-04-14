@@ -10,7 +10,7 @@ import { logout, setUserDetails } from './store/authSlice';
 import { setPreferences } from './store/settingsSlice';
 
 export function getCookie(name: string): string | null {
-  if (typeof document !== undefined) {
+  if (typeof document !== 'undefined') {
     const cookieValue = document.cookie
       .split('; ')
       .find((row) => row.startsWith(`${name}=`))
