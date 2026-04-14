@@ -76,7 +76,7 @@ const localization2 = {
       password_change_text_new: "Neues Passwort eingeben",
       confirmation: 'Neues Passwort bestätigen',
       reset_password: 'Passwort zurücksetzen',
-      pronunciation_preferencess: 'Aussprache-Einstellungen',
+      pronunciation_preferences: 'Aussprache-Einstellungen',
       color_theme: 'Farbschema-Einstellung',
       account: 'Konto',
       delete_account: 'Konto löschen',
