@@ -1,4 +1,4 @@
-import localization from '@/localization';
+import localization from '@/localization/main';
 import styles from '@/themes';
 import { RootState } from '@/utils/store/store';
 import { Text, Box, Heading, useColorMode } from '@chakra-ui/react';

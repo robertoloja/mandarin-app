@@ -5,7 +5,7 @@ import ReadingCoverComponent from './components/ReadingCoverComponent';
 import { Chapter, ReadingProps } from './types';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
-import localization from '@/localization';
+import localization from '@/localization/main';
 
 export default function ReadingPage() {
   const user_language = useSelector((state: RootState) => state.settings.user_language);

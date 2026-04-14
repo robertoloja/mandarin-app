@@ -1,84 +1,4 @@
-const localization = {
-  about_status: {
-    privacy_policy: {
-      title: {
-        en: 'Privacy Policy',
-        de: 'Datenschutzerklärung',
-      },
-      content: {
-        // TODO
-        en: '',
-        de: '',
-      },
-    },
-    terms_of_use: {
-      title: {
-        en: 'Terms of Use',
-        de: 'Nutzungsbedingungen',
-      },
-      content: {
-        // TODO
-        en: '',
-        de: '',
-      },
-    },
-    support_this_project: {
-      title: {
-        en: 'Support This Project',
-        de: 'Unterstütze dieses Projekt',
-      },
-      content: {
-        // TODO
-        en: '',
-        de: '',
-      },
-    },
-  },
-  nav_panel: {
-    home: {
-      en: 'Home',
-      de: 'Startseite',
-    },
-    reading_room: {
-      en: 'Reading Room',
-      de: 'Lesesaal',
-    },
-    sentence_history: {
-      en: 'Sentence History',
-      de: 'Übersetzungschronik',
-    },
-    status_about: {
-      en: 'Status / About',
-      de: 'Status / Über Uns',
-    },
-    report_bug: {
-      en: 'Report a Bug',
-      de: 'Fehlerbericht senden',
-    },
-    login: {
-      en: 'Log In',
-      de: 'Einloggen',
-    },
-    logout: {
-      en: 'Log Out',
-      de: 'Ausloggen',
-    },
-    settings: {
-      en: 'Settings',
-      de: 'Einstellungen',
-    },
-  },
-  top_nav: {
-    text_options: {
-      en: 'Text Options',
-      de: 'Texteinstellungen',
-    },
-    language_options: {
-      en: 'Language Options',
-      de: 'Spracheinstellungen',
-    },
-  },
-  reading_room: {
+const reading_room = {
     next: {
       en: 'Next',
       de: 'Nächste',
@@ -246,17 +166,6 @@ const localization = {
         de: 'Erinnerung an einen Eid',
       },
     },
-  },
-  sentence_history: {
-    share_segmented_sentence: {
-      en: 'Share Segmented Sentence',
-      de: 'Segmentierten Satz teilen',
-    },
-  },
-  languages: [
-    { code: 'en', label: { en: 'English', de: 'Englisch' } },
-    { code: 'de', label: { en: 'German', de: 'Deutsch' } },
-  ],
-};
+  }
 
-export default localization;
+  export default reading_room;

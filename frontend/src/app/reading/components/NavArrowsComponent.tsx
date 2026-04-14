@@ -1,6 +1,6 @@
 import { HStack, Text } from '@chakra-ui/react';
 import { Chapter } from '../types';
-import localization from '@/localization';
+import localization from '@/localization/main';
 
 export const NavArrows = (props: {
   activePage: number;

@@ -29,7 +29,7 @@ import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { useRouter } from 'next/navigation';
 import SettingsButton from './SettingsButtonComponent';
-import localization from '@/localization';
+import localization from '@/localization/main';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const toast = useToast();

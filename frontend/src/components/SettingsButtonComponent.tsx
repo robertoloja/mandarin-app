@@ -6,7 +6,7 @@ import { Text } from '@chakra-ui/react';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
-import localization from '@/localization';
+import localization from '@/localization/main';
 
 export default function SettingsButton(props: { onClose: () => void }) {
   const { colorMode } = useColorMode();

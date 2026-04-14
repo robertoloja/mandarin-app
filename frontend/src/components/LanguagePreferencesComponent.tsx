@@ -5,7 +5,7 @@ import { setUserLanguage } from '@/utils/store/settingsSlice';
 import { RootState, store } from '@/utils/store/store';
 import { Select } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import localization from '@/localization';
+import localization from '@/localization/main';
 
 export default function LanguagePreferencesComponent() {
   const user_language = useSelector(
