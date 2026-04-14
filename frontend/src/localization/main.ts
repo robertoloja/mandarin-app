@@ -15,14 +15,15 @@ const languages = [
 export type UserLanguage = (typeof languages)[number]['code'];
 
 const localization = {
-  home_page: home_page,
-  about_status: about_status,
-  nav_panel: nav_panel,
-  top_nav: top_nav,
-  reading_room: reading_room,
-  sentence_history: sentence_history,
-  login_page: login_page,
-  account_settings: account_settings,
+  languages,
+  home_page,
+  about_status,
+  nav_panel,
+  top_nav,
+  reading_room,
+  sentence_history,
+  login_page,
+  account_settings,
 };
 
 export default localization;

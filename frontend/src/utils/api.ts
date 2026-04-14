@@ -122,7 +122,9 @@ export const MandoBotAPI = {
       setPreferences({
         pronunciation_preference: response.data.pronunciation_preference,
         theme_preference: response.data.theme_preference,
-        user_language: response.data.user_language,
+        user_language:
+          (localStorage.getItem('user_language') as UserLanguage) ??
+          response.data.user_language,
       }),
     );
     return response.data;
@@ -198,7 +200,9 @@ export const MandoBotAPI = {
             setPreferences({
               pronunciation_preference: response.data.pronunciation_preference,
               theme_preference: response.data.theme_preference,
-              user_language: response.data.user_language,
+              user_language:
+                (localStorage.getItem('user_language') as UserLanguage) ??
+                response.data.user_language,
             }),
           );
         }
