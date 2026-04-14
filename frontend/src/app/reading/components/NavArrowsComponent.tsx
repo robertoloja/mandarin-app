@@ -1,13 +1,13 @@
 import { HStack, Text } from '@chakra-ui/react';
 import { Chapter } from '../types';
-import localization from '@/localization/main';
+import localization, { UserLanguage } from '@/localization/main';
 
 export const NavArrows = (props: {
   activePage: number;
   chapters: Chapter[][];
   setActivePage: (activePage: number) => void;
   setAccordionIndex: (num: number) => void;
-  user_language: 'en' | 'de';
+  user_language: UserLanguage;
 }) => {
   const user_language = props.user_language;
   return (

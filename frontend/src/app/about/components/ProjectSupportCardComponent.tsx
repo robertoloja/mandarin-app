@@ -13,9 +13,9 @@ import {
 } from '@chakra-ui/react';
 import { KoFiButton } from './KoFiButtonComponent';
 import Link from 'next/link';
-import localization from '@/localization/main';
+import localization, { UserLanguage } from '@/localization/main';
 
-export default function ProjectSupportCard({ user_language }: { user_language: 'en' | 'de' }) {
+export default function ProjectSupportCard({ user_language }: { user_language: UserLanguage }) {
   const { colorMode } = useColorMode();
   return (
     <Box id="support" maxW="40rem">

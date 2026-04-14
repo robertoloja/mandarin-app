@@ -8,6 +8,7 @@ import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUserDetails } from './store/authSlice';
 import { setPreferences } from './store/settingsSlice';
+import { UserLanguage } from '@/localization/main';
 
 export function getCookie(name: string): string | null {
   if (typeof document !== 'undefined') {
@@ -238,7 +239,7 @@ export const MandoBotAPI = {
   },
 
   languagePreference: async function (
-    language: 'en' | 'de',
+    language: UserLanguage,
   ): Promise<boolean> {
     let result = false;
     await api

@@ -1,18 +1,27 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PronunciationPreference } from '../types';
+import { UserLanguage } from '@/localization/main';
 
 interface SettingsState {
   theme: 'light' | 'dark';
   pronunciation: 'pinyin' | 'zhuyin';
   pinyin_type: 'pinyin_acc' | 'pinyin_num';
-  user_language: 'en' | 'de';
+  user_language: UserLanguage;
 }
+
+const getInitialUserLanguage = (): UserLanguage => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('user_language');
+    if (stored === 'en' || stored === 'de') return stored;
+  }
+  return 'en';
+};
 
 const initialState: SettingsState = {
   theme: 'dark',
   pronunciation: 'pinyin',
   pinyin_type: 'pinyin_acc',
-  user_language: 'en',
+  user_language: getInitialUserLanguage(),
 };
 
 const settingsSlice = createSlice({
@@ -30,7 +39,7 @@ const settingsSlice = createSlice({
       state.pinyin_type =
         state.pinyin_type === 'pinyin_acc' ? 'pinyin_num' : 'pinyin_acc';
     },
-    setUserLanguage(state, action: PayloadAction<'en' | 'de'>) {
+    setUserLanguage(state, action: PayloadAction<UserLanguage>) {
       state.user_language = action.payload;
     },
     setPreferences(
@@ -38,7 +47,7 @@ const settingsSlice = createSlice({
       action: PayloadAction<{
         pronunciation_preference: PronunciationPreference;
         theme_preference: number;
-        user_language: 'en' | 'de';
+        user_language: UserLanguage;
       }>,
     ) {
       if (action.payload.pronunciation_preference.startsWith('pinyin')) {

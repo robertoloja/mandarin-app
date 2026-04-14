@@ -27,9 +27,9 @@ import {
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import localization from '@/localization/main';
+import localization, { UserLanguage } from '@/localization/main';
 
-export default function ServerStatusComponent({ user_language }: { user_language: 'en' | 'de' }) {
+export default function ServerStatusComponent({ user_language }: { user_language: UserLanguage }) {
   const { colorMode } = useColorMode();
   const [localDateTime, setLastUpdate] = useState('-');
   const [translationBackend, setBackend] = useState('-');
@@ -135,7 +135,7 @@ export default function ServerStatusComponent({ user_language }: { user_language
   );
 }
 
-const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: boolean; user_language: 'en' | 'de' }) => {
+const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: boolean; user_language: UserLanguage }) => {
   return (
     <>
       {serverStatus ? (
