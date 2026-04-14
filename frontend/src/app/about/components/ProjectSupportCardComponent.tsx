@@ -13,8 +13,9 @@ import {
 } from '@chakra-ui/react';
 import { KoFiButton } from './KoFiButtonComponent';
 import Link from 'next/link';
+import localization from '@/localization/main';
 
-export default function ProjectSupportCard() {
+export default function ProjectSupportCard({ user_language }: { user_language: 'en' | 'de' }) {
   const { colorMode } = useColorMode();
   return (
     <Box id="support" maxW="40rem">
@@ -25,7 +26,7 @@ export default function ProjectSupportCard() {
         whiteSpace="nowrap"
         __css={styles.heading[colorMode]}
       >
-        Support This Project
+        {localization.about_status.support_this_project.title[user_language]}
       </Heading>
 
       <Box

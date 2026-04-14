@@ -42,7 +42,7 @@ const about_status = {
       de: 'Durchschnittliche erste Response-Zeit',
     },
     seconds: {
-      en: 'Seconds',
+      en: 'seconds',
       de: 'Sekunden',
     },
     last_update: {
