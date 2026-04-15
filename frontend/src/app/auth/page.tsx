@@ -17,10 +17,14 @@ import { RootState, store } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
 import PasswordInputComponent from './components/PasswordInputComponent';
 import { MandoBotAPI } from '@/utils/api';
+import localization from '@/localization/main';
 
 export default function LoginPage() {
   const router = useRouter();
   const authState = useSelector((state: RootState) => state.auth);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -107,11 +111,11 @@ export default function LoginPage() {
 
   return (
     <Container>
-      <Heading>Login</Heading>
+      <Heading>{localization.login_page.login[user_language]}</Heading>
       <form onSubmit={handleLogin}>
         <Input
           type="text"
-          placeholder="Username"
+          placeholder={localization.login_page.username[user_language]}
           value={username}
           border={usernameError ? '1px solid red' : undefined}
           onChange={(e) => {
@@ -122,6 +126,7 @@ export default function LoginPage() {
           aria-label="username input"
         />
         <PasswordInputComponent
+          user_language={user_language}
           invalid={passwordError || false}
           handlePasswordChange={(e) => {
             setPassword(e.target.value);
@@ -135,7 +140,7 @@ export default function LoginPage() {
               type="submit"
               aria-label="submit button"
             >
-              {authState.loading ? 'Logging in...' : 'Login'}
+              {authState.loading ? localization.login_page.logging_in[user_language] : localization.login_page.login[user_language]}
             </Button>
 
             {/* This is wrong; demand username and make API request to /api/accounts/reset_password_request */}
@@ -145,7 +150,7 @@ export default function LoginPage() {
               onClick={handleForgotPassword}
               aria-label="forgot password link"
             >
-              Forgot Password?
+              {localization.login_page.forgot_password[user_language]}
             </Text>
           </HStack>
         </Center>

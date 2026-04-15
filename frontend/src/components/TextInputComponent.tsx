@@ -17,9 +17,11 @@ import { RefObject, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MAX_LENGTH, MAX_LENGTH_FREE } from 'constant_variables';
 import Link from 'next/link';
+import localization, { UserLanguage } from '@/localization/main';
 
 export default function TextInput(props: {
   inputRef: RefObject<HTMLInputElement | null>;
+  user_language: UserLanguage
 }) {
   const [charCount, setCharCount] = useState(0);
   const [popoverIsOpen, setPopoverIsOpen] = useState(false);
@@ -49,7 +51,7 @@ export default function TextInput(props: {
       <Input
         name="sentence-input"
         type="text"
-        placeholder="Enter Mandarin text to translate and segment"
+        placeholder={localization.home_page.placeholder_text[props.user_language]}
         ref={props.inputRef}
         mb="0"
         ml="8px"
@@ -81,13 +83,13 @@ export default function TextInput(props: {
             <PopoverArrow />
             <PopoverBody>
               <Text>
-                Unregistered users are limited to {MAX_LENGTH_FREE} characters
-                per usage.{' '}
+                {localization.home_page.info[1][props.user_language] + ' ' + MAX_LENGTH_FREE + ' ' + 
+                localization.home_page.info[2][props.user_language] + ' '}
                 <Link
                   href="/about#support"
                   aria-label="subscription information link"
                 >
-                  <u>More info.</u>
+                  <u>{localization.home_page.info.link_text[props.user_language]}</u>
                 </Link>
               </Text>
             </PopoverBody>

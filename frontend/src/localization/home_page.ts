@@ -1,5 +1,5 @@
   const home_page = {
-    input_field: {
+    placeholder_text: {
       en: 'Enter Mandarin text to translate and segment',
       de: 'Text in Mandarin zur Übersetzung oder Segmentierung eingeben',
     },
@@ -8,9 +8,19 @@
       de: 'Absenden',
     },
     info: {
-      en: 'Unregistered users are limited to 200 characters per usage. More info.',
-      de: 'Nicht registrierte Nutzer sind auf 200 Zeichen per Nutzung beschränkt. Mehr Info.',
+      1: {
+        en: "Unregistered users are limited to",
+        de: "Nicht registrierte Nutzer sind auf",
+      },
+      2: {
+        en: "characters per usage.",
+        de: "Zeichen pro Nutzung beschränkt.",
+      },
+       link_text: {
+         en: 'More info.',
+         de: 'Mehr Info.',
+       },
     },
-  };
+  }
 
   export default home_page;

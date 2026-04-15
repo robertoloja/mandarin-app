@@ -22,9 +22,8 @@ export default function PasswordInputComponent(props: {
         transition="border 0.2s ease"
         aria-label="password input"
       />
-      <InputRightElement width="4.5rem">
+      <InputRightElement width="4.5rem" mr="0.3rem">
         <Button
-          mr="0.4rem"
           h="1.75rem"
           size="sm"
           onClick={handleClick}
