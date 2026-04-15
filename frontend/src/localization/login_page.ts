@@ -37,7 +37,7 @@
     },
     logging_in: {
       en: 'Logging in...',
-      de: 'Einloggen...',
+      de: 'Senden...',
     },
   };
 
