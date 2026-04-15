@@ -31,6 +31,14 @@
       en: 'Password is required',
       de: 'Passwort ist erforderlich',
     },
+    login: {
+      en: 'Login',
+      de: 'Einloggen',
+    },
+    logging_in: {
+      en: 'Logging in...',
+      de: 'Einloggen...',
+    },
   };
 
   export default login_page;

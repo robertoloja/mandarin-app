@@ -16,7 +16,7 @@ export default function PasswordInputComponent(props: {
       <Input
         pr="4.5rem"
         type={show ? 'text' : 'password'}
-        placeholder={props.placeHolderText || 'Enter password'}
+        placeholder={props.placeHolderText || localization.login_page.password[props.user_language]}
         onChange={props.handlePasswordChange}
         border={props.invalid ? '1px solid red' : undefined}
         transition="border 0.2s ease"
