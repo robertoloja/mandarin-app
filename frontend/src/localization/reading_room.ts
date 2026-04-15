@@ -68,6 +68,11 @@ const reading_room = {
         en: 'Perhaps...',
         de: 'Vielleicht...',
       },
+
+    popover: {
+      en: 'Translation by Wikisource, presented here under the Creative Commons Attribution-ShareAlike 2.0 Generic license. https://en.m.wikisource.org/wiki/Translation:Call_to_Arms_(Lu_Xun)/A_Madman%27s_Diary \n\n Cover image is 永不休战 by 汤小铭, published in 1973.',
+      de: 'Übersetzt ins Deutsche von Svenja M., nach der englischen Übersetzung auf Wikisource, verwendet unter Creative Commons Share-Alike Lizenz 2.0 (Quelle: https://en.m.wikisource.org/wiki/Translation:Call_to_Arms_(Lu_Xun)/A_Madman%27s_Diary) \n\n Titelbild: 永不休战 von 汤小铭, veröffentlicht im Jahr 1973.',
+    },
     },
     romance_of_the_three_kingdoms: {
       title: {
@@ -165,7 +170,13 @@ const reading_room = {
         en: 'An Oath, Remembered',
         de: 'Erinnerung an einen Eid',
       },
+
+    popover: {
+      en: 'Translation by Wikisource, presented here under the Creative Commons Attribution-ShareAlike 2.0 Generic license. https://en.wikisource.org/wiki/Translation:Romance_of_the_Three_Kingdoms \n\n Cover image from 三国演义, published 1957 by 上海人民美术出. Painting by 刘锡永 and 徐正平.',
+      de: 'Übersetzt ins Deutsche von Svenja M., nach der englischen Übersetzung auf Wikisource, verwendet unter Creative Commons Share-Alike Lizenz 2.0 (Quelle: https://en.wikisource.org/wiki/Translation:Romance_of_the_Three_Kingdoms) \n\n Titelbild: von 三国演义, veröffentlicht im Jahr 1957 durch 上海人民美术出. Gemälde von 刘锡永 und 徐正平.',
     },
+    },
+
   }
 
   export default reading_room;
