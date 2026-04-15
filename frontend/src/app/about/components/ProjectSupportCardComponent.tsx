@@ -38,57 +38,52 @@ export default function ProjectSupportCard({ user_language }: { user_language: U
         minWidth="30vw"
       >
         <Text mb={4}>
-          If mandoBot is useful to you, please consider supporting the project
-          with a monthly subscription. Doing so provides several benefits:
+          {localization.about_status.support_this_project.content.intro[user_language]}
         </Text>
 
         <Center>
           <VStack>
             <HStack>
               <Heading __css={styles.heading[colorMode]} size="sm">
-                $2 / month
+                {localization.about_status.support_this_project.content.amount[user_language]}
               </Heading>
-              <KoFiButton />
+              <KoFiButton user_language={user_language} />
             </HStack>
             <Box p={3} mb={5} __css={styles.lightBox[colorMode]}>
               <OrderedList p={4}>
                 <ListItem __css={styles.heading[colorMode]}>
-                  <b>Increased Segmentation Limit</b>
+                  <b>{localization.about_status.support_this_project.content[1].title[user_language]}</b>
                 </ListItem>
                 <UnorderedList mb={3}>
                   <ListItem>
-                    Project supporters can segment sentences of up to 1,000
-                    characters
+                    {localization.about_status.support_this_project.content[1].bullet_point1[user_language]}
                   </ListItem>
-                  <ListItem>Free users are limited to 200 characters</ListItem>
+                  <ListItem>{localization.about_status.support_this_project.content[1].bullet_point2[user_language]}</ListItem>
                 </UnorderedList>
 
                 <ListItem __css={styles.heading[colorMode]}>
-                  <b>Always the best available translation</b>
+                  <b>{localization.about_status.support_this_project.content[2].title[user_language]}</b>
                 </ListItem>
                 <UnorderedList mb={3}>
                   <ListItem>
-                    Project supporter translations always use DeepL, the
-                    best-in-class translation system
+                    {localization.about_status.support_this_project.content[2].bullet_point1[user_language]}
                   </ListItem>
                   <ListItem>
-                    Free users&apos; translations are performed by Argos
-                    Translate
+                    {localization.about_status.support_this_project.content[2].bullet_point2[user_language]}
                   </ListItem>
                 </UnorderedList>
 
                 <ListItem __css={styles.heading[colorMode]}>
                   <b>
-                    Advance Access to Reading Room and Prioritized Suggestions
+                    {localization.about_status.support_this_project.content[3].title[user_language]}
                   </b>
                 </ListItem>
                 <UnorderedList>
                   <ListItem>
-                    Project Supporters receive access to chapters as soon as
-                    they are created, and can request specific texts to be added
+                    {localization.about_status.support_this_project.content[3].bullet_point1[user_language]}
                   </ListItem>
                   <ListItem>
-                    Free users access new texts once all chapters are finished
+                    {localization.about_status.support_this_project.content[3].bullet_point2[user_language]}
                   </ListItem>
                 </UnorderedList>
               </OrderedList>
@@ -96,27 +91,22 @@ export default function ProjectSupportCard({ user_language }: { user_language: U
           </VStack>
         </Center>
         <Text mb={2}>
-          MandoBot is built and maintained by a single developer on a shoestring
-          budget. While every optimization is used to maintain good performance,
-          free hosting can only go so far. If you experience any issues at all,
-          please{' '}
+          {localization.about_status.support_this_project.content.end_text1[1][user_language]}
           <Link href="mailto:mandobotserver@gmail.com">
-            <u>contact me</u>
+            <u>{localization.about_status.support_this_project.content.end_text1.link_1[user_language]}</u>
           </Link>
-          , or{' '}
+            {localization.about_status.support_this_project.content.end_text1[2][user_language]}
           <Link
             href="https://forms.gle/j89uiVM2xv3CeK7HA"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <u>fill out a bug report</u>
+            <u>{localization.about_status.support_this_project.content.end_text1.link_2[user_language]}</u>
           </Link>
-          , and it will be addressed as soon as possible.
+            {localization.about_status.support_this_project.content.end_text1[3][user_language]}
         </Text>
         <Text>
-          You may cancel your subscription at any time, and if a subscription is
-          cancelled within 5 days of the most recent payment, a refund will be
-          provided.
+          {localization.about_status.support_this_project.content.end_text2[user_language]}
         </Text>
       </Box>
     </Box>
