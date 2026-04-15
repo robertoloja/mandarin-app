@@ -94,14 +94,14 @@ const about_status = {
           en: 'Always the best available translation',
           de: 'Immer die bestmögliche Übersetzung',
         },
-         bullet_point1: {
-           en: 'Project supporter translations always use DeepL, the best-in-class translation system',
-           de: 'Übersetzungen für Unterstützer dieser Anwendung werden immer durch das überlegene Übersetzungssystem DeepL durchgeführt',
-         },
-         bullet_point2: {
-           en: "Free users' translations are performed by Argos Translate",
-           de: 'Übersetzungen von freien Nutzern werden von Argos Translate durchgeführt',
-         },
+        bullet_point1: {
+          en: 'Project supporter translations always use DeepL, the best-in-class translation system',
+          de: 'Übersetzungen für Unterstützer dieser Anwendung werden immer durch das überlegene Übersetzungssystem DeepL durchgeführt',
+        },
+        bullet_point2: {
+          en: "Free users' translations are performed by Argos Translate",
+          de: 'Übersetzungen von freien Nutzern werden von Argos Translate durchgeführt',
+        },
         3: {
           title: {
             en: 'Advance Access to Reading Room and Prioritized Suggestions',
@@ -125,6 +125,7 @@ const about_status = {
           de: 'Ihr Abonnement ist jederzeit von Ihnen kündbar. Im Falle einer Kündigung innerhalb von 5 Tagen nach der letzten Zahlung erhalten Sie eine Rückerstattung.',
         },
       },
+    },
   },
   server_status: {
     server_status: {
@@ -151,22 +152,23 @@ const about_status = {
       en: 'Everything is working!',
       de: 'Alles funktioniert!',
     },
-  popup: { 
-    1: {
-      en: 'While Argos Translate is a very good open-source project, it can sometimes make egregious mistakes when translating Mandarin (such as rendering "京" as "Kyoto").',
-      de: 'Obwohl Argos Translate ein sehr gutes Open-Source-Projekt ist, kann es jedoch manchmal grobe Fehler bei der Übersetzung von Mandarin machen (wie zum Beispiel "京" als "Kyoto" darzustellen).',
-    },
-    2: {
-      en: 'Users at the Project Backer level always have access to ',
-      de: 'Registrierte Nutzer haben immer Zugriff auf ',
-    },
-    link: {
-      en: 'DeepL, ',
-      de: 'DeepL, ',
-    },
-    3: {
-      en: 'the best publicly available translation engine.',
-      de: 'der beste öffentlich verfügbare Online-Dienst für maschinelle Übersetung.',
+    popup: {
+      1: {
+        en: 'While Argos Translate is a very good open-source project, it can sometimes make egregious mistakes when translating Mandarin (such as rendering "京" as "Kyoto").',
+        de: 'Obwohl Argos Translate ein sehr gutes Open-Source-Projekt ist, kann es jedoch manchmal grobe Fehler bei der Übersetzung von Mandarin machen (wie zum Beispiel "京" als "Kyoto" darzustellen).',
+      },
+      2: {
+        en: 'Users at the Project Backer level always have access to ',
+        de: 'Registrierte Nutzer haben immer Zugriff auf ',
+      },
+      link: {
+        en: 'DeepL, ',
+        de: 'DeepL, ',
+      },
+      3: {
+        en: 'the best publicly available translation engine.',
+        de: 'der beste öffentlich verfügbare Online-Dienst für maschinelle Übersetung.',
+      },
     },
   },
 };
