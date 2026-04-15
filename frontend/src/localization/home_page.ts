@@ -21,6 +21,14 @@
          de: 'Mehr Info.',
        },
     },
+    loading_text1: {
+      en: 'Segmentation and translation can take several seconds.',
+      de: 'Die Segmentierung und Übersetzung kann mehrere Sekunden dauern.',
+    },
+    loading_text2: {
+      en: 'Your results will load one sentence at a time.',
+      de: 'Die Ergebnisse werden Satz für Satz geladen.',
+    },
   }
 
   export default home_page;
