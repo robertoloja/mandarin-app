@@ -7,7 +7,7 @@ export const KoFiButton = ({ user_language }: { user_language: UserLanguage }) =
 
   return (
     <Link
-      title={'Support this project'}
+      title={localization.about_status.support_this_project.content.alt_text[user_language]}
       style={{ backgroundColor: color, borderRadius: '5px' }}
       href="https://ko-fi.com/N4N618ZZ1N"
       target="_blank"
