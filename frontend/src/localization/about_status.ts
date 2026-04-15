@@ -118,7 +118,7 @@ const about_status = {
         },
         end_text1: {
           en: "MandoBot is built and maintained by a single developer on a shoestring budget. While every optimization is used to maintain good performance, free hosting can only go so far. If you experience any issues at all, please contact me, or fill out a bug report, and it will be addressed as soon as possible.",
-          de: 'mandoBot wird allein von einem Entwickler mit Minimalbudget betrieben und in Stand gehalten. Obwohl jede Optimierung genutzt wird um gute Leistung aufrechtzuerhalten, hat kostenloses Webhosting seine Grenzen. Sollten Sie auf Probleme jeglicher Art stoßen, zögern Sie nicht mich zu kontaktieren oder einen Problembericht zu senden; ich werde mich schnellstmöglich darum kümmern.',
+          de: 'MandoBot wird allein von einem Entwickler mit Minimalbudget betrieben und in Stand gehalten. Obwohl jede Optimierung genutzt wird um gute Leistung aufrechtzuerhalten, hat kostenloses Webhosting seine Grenzen. Sollten Sie auf Probleme jeglicher Art stoßen, zögern Sie nicht mich zu kontaktieren oder einen Problembericht zu senden; ich werde mich schnellstmöglich darum kümmern.',
         },
         end_text2: {
           en: 'You may cancel your subscription at any time, and if a subscription is cancelled within 5 days of the most recent payment, a refund will be provided.',
@@ -150,6 +150,23 @@ const about_status = {
     checkmark: {
       en: 'Everything is working!',
       de: 'Alles funktioniert!',
+    },
+  popup: { 
+    1: {
+      en: 'While Argos Translate is a very good open-source project, it can sometimes make egregious mistakes when translating Mandarin (such as rendering "京" as "Kyoto").',
+      de: 'Obwohl Argos Translate ein sehr gutes Open-Source-Projekt ist, kann es jedoch manchmal grobe Fehler bei der Übersetzung von Mandarin machen (wie zum Beispiel "京" als "Kyoto" darzustellen).',
+    },
+    2: {
+      en: 'Users at the Project Backer level always have access to ',
+      de: 'Registrierte Nutzer haben immer Zugriff auf ',
+    },
+    link: {
+      en: 'DeepL, ',
+      de: 'DeepL, ',
+    },
+    3: {
+      en: 'the best publicly available translation engine.',
+      de: 'der beste öffentlich verfügbare Online-Dienst für maschinelle Übersetung.',
     },
   },
 };
