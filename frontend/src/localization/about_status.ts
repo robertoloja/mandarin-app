@@ -170,6 +170,24 @@ const about_status = {
       en: 'Everything is working!',
       de: 'Alles funktioniert!',
     },
+    popup: {
+      1: {
+        en: 'While Argos Translate is a very good open-source project, it can sometimes make egregious mistakes when translating Mandarin (such as rendering "京" as "Kyoto").',
+        de: 'Obwohl Argos Translate ein sehr gutes Open-Source-Projekt ist, kann es jedoch manchmal grobe Fehler bei der Übersetzung von Mandarin machen (wie zum Beispiel "京" als "Kyoto" darzustellen).',
+      },
+      2: {
+        en: 'Users at the Project Backer level always have access to ',
+        de: 'Registrierte Nutzer haben immer Zugriff auf ',
+      },
+      link: {
+        en: 'DeepL, ',
+        de: 'DeepL, ',
+      },
+      3: {
+        en: 'the best publicly available translation engine.',
+        de: 'der beste öffentlich verfügbare Online-Dienst für maschinelle Übersetung.',
+      },
+    },
   },
 };
 
