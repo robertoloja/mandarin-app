@@ -71,6 +71,10 @@ const about_status = {
         en: 'Support',
         de: 'Unterstützen',
       },
+      alt_text: {
+        en: 'Support this project',
+        de: 'Dieses Projekt unterstützen',
+      },
       1: {
         title: {
           en: 'Increased Segmentation Limit',
