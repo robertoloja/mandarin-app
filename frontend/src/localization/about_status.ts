@@ -102,28 +102,46 @@ const about_status = {
           en: "Free users' translations are performed by Argos Translate",
           de: 'Übersetzungen von freien Nutzern werden von Argos Translate durchgeführt',
         },
+      },
+      3: {
+        title: {
+          en: 'Advance Access to Reading Room and Prioritized Suggestions',
+          de: 'Früherer Zugriff auf Texte im Lesesaal und priorisierte Vorschläge',
+        },
+        bullet_point1: {
+          en: 'Project Supporters receive access to chapters as soon as they are created, and can request specific texts to be added',
+          de: 'Unterstützer dieser Anwendung erhalten Zugriff auf neue Kapitel sobald diese verfügbar sind, und können zudem Vorschläge einreichen, welche Texte hinzugefügt werden sollen',
+        },
+        bullet_point2: {
+          en: 'Free users access new texts once all chapters are finished',
+          de: 'Freie Nutzer können auf Texte zugreifen, sobald alle Kapitel fertiggestellt sind',
+        },
+      },
+      end_text1: {
+        1: {
+          en: 'MandoBot is built and maintained by a single developer on a shoestring budget. While every optimization is used to maintain good performance, free hosting can only go so far. If you experience any issues at all, please ',
+          de: 'MandoBot wird allein von einem Entwickler mit Minimalbudget betrieben und in Stand gehalten. Obwohl jede Optimierung genutzt wird um gute Leistung aufrechtzuerhalten, hat kostenloses Webhosting seine Grenzen. Sollten Sie auf Probleme jeglicher Art stoßen, zögern Sie nicht  ',
+        },
+        link_1: {
+          en: 'contact me',
+          de: 'mich zu kontaktieren',
+        },
+        2: {
+          en: ', or ',
+          de: ' oder ',
+        },
+        link_2: {
+          en: 'fill out a bug report',
+          de: 'einen Problembericht zu senden',
+        },
         3: {
-          title: {
-            en: 'Advance Access to Reading Room and Prioritized Suggestions',
-            de: 'Früherer Zugriff auf Texte im Lesesaal und priorisierte Vorschläge',
-          },
-          bullet_point1: {
-            en: 'Project Supporters receive access to chapters as soon as they are created, and can request specific texts to be added',
-            de: 'Unterstützer dieser Anwendung erhalten Zugriff auf neue Kapitel sobald diese verfügbar sind, und können zudem Vorschläge einreichen, welche Texte hinzugefügt werden sollen',
-          },
-          bullet_point2: {
-            en: 'Free users access new texts once all chapters are finished',
-            de: 'Freie Nutzer können auf Texte zugreifen, sobald alle Kapitel fertiggestellt sind',
-          },
+          en: ', and it will be addressed as soon as possible.',
+          de: '; ich werde mich schnellstmöglich darum kümmern.',
         },
-        end_text1: {
-          en: "MandoBot is built and maintained by a single developer on a shoestring budget. While every optimization is used to maintain good performance, free hosting can only go so far. If you experience any issues at all, please contact me, or fill out a bug report, and it will be addressed as soon as possible.",
-          de: 'MandoBot wird allein von einem Entwickler mit Minimalbudget betrieben und in Stand gehalten. Obwohl jede Optimierung genutzt wird um gute Leistung aufrechtzuerhalten, hat kostenloses Webhosting seine Grenzen. Sollten Sie auf Probleme jeglicher Art stoßen, zögern Sie nicht mich zu kontaktieren oder einen Problembericht zu senden; ich werde mich schnellstmöglich darum kümmern.',
-        },
-        end_text2: {
-          en: 'You may cancel your subscription at any time, and if a subscription is cancelled within 5 days of the most recent payment, a refund will be provided.',
-          de: 'Ihr Abonnement ist jederzeit von Ihnen kündbar. Im Falle einer Kündigung innerhalb von 5 Tagen nach der letzten Zahlung erhalten Sie eine Rückerstattung.',
-        },
+      },
+      end_text2: {
+        en: 'You may cancel your subscription at any time, and if a subscription is cancelled within 5 days of the most recent payment, a refund will be provided.',
+        de: 'Ihr Abonnement ist jederzeit von Ihnen kündbar. Im Falle einer Kündigung innerhalb von 5 Tagen nach der letzten Zahlung erhalten Sie eine Rückerstattung.',
       },
     },
   },

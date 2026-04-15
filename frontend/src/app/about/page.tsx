@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 
 export default function AboutPage() {
-  // get user_language from redux store
   const user_language = useSelector((state: RootState) => state.settings.user_language) ;
 
   return (
@@ -33,7 +32,7 @@ export default function AboutPage() {
       >
         <ServerStatusComponent user_language={user_language} />
         <ProjectSupportCard user_language={user_language}/>
-        <PrivacyPolicyCard />
+        <PrivacyPolicyCard user_language={user_language}/>
       </Flex>
     </Box>
   );
