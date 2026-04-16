@@ -190,11 +190,11 @@ const about_status = {
     },
     server_unreachable_error: {
       en: 'Server currently unreachable. Please try again soon.',
-      de: '',
+      de: 'Server aktuell nicht erreichbar. Bitte versuchen Sie es später erneut.',
     },
     popover_server_error: {
       en: 'The segmentation server is currently unreachable. Please check your internet connection, and try again soon.',
-      de: '',
+      de: 'Der Segmentierungsserver ist aktuell nicht erreichbar. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es später erneut.',
     }
   },
 };
