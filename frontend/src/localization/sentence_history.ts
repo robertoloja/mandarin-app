@@ -3,6 +3,10 @@ const sentence_history = {
       en: 'Share Segmented Sentence',
       de: 'Segmentierten Satz teilen',
     },
+    no_history_found: {
+      en: 'No history found',
+      de: ''
+    }
   }
 
   export default sentence_history;

@@ -6,6 +6,7 @@ import sentence_history from './sentence_history';
 import home_page from './home_page';
 import login_page from './login_page';
 import account_settings from './account_settings';
+import registration_page from './registration_page';
 
 const languages = [
   { code: 'en', label: { en: 'English', de: 'Englisch' } },
@@ -24,6 +25,7 @@ const localization = {
   sentence_history,
   login_page,
   account_settings,
+  registration_page: registration_page,
 };
 
 export default localization;
