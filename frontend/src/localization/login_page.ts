@@ -39,6 +39,24 @@
       en: 'Logging in...',
       de: 'Senden...',
     },
+    toasts: {
+      username_required: {
+        en: 'Username is required',
+        de: '',
+      },
+      password_required: {
+        en: 'Password is required',
+        de: '',
+      },
+      login_success: {
+        en: 'Successfully Logged in!',
+        de: '',
+      },
+      password_reset_sent: {
+        en: 'Password reset e-mail will be sent.',
+        de: '',
+      },
+    }
   };
 
   export default login_page;
