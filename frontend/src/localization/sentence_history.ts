@@ -5,7 +5,7 @@ const sentence_history = {
     },
     no_history_found: {
       en: 'No history found',
-      de: ''
+      de: 'Keine Chronik gefunden'
     }
   }
 
