@@ -23,14 +23,6 @@
       en: 'Forgot Password?',
       de: 'Passwort vergessen?',
     },
-    error1: {
-      en: 'Username is required',
-      de: 'Benutzername ist erforderlich',
-    },
-    error2: {
-      en: 'Password is required',
-      de: 'Passwort ist erforderlich',
-    },
     login: {
       en: 'Login',
       de: 'Einloggen',
@@ -42,19 +34,19 @@
     toasts: {
       username_required: {
         en: 'Username is required',
-        de: '',
+        de: 'Benutzername erforderlich',
       },
       password_required: {
         en: 'Password is required',
-        de: '',
+        de: 'Passwort erforderlich',
       },
       login_success: {
         en: 'Successfully Logged in!',
-        de: '',
+        de: 'Anmeldung erfolgreich!',
       },
       password_reset_sent: {
         en: 'Password reset e-mail will be sent.',
-        de: '',
+        de: 'Eine E-Mail zum Zurücksetzen Ihres Passworts wird gesendet.',
       },
     }
   };
