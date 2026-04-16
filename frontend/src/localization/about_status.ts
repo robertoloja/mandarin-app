@@ -188,6 +188,14 @@ const about_status = {
         de: 'der beste öffentlich verfügbare Online-Dienst für maschinelle Übersetung.',
       },
     },
+    server_unreachable_error: {
+      en: 'Server currently unreachable. Please try again soon.',
+      de: '',
+    },
+    popover_server_error: {
+      en: 'The segmentation server is currently unreachable. Please check your internet connection, and try again soon.',
+      de: '',
+    }
   },
 };
 
