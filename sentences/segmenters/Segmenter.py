@@ -1,12 +1,14 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 from django.db.models import Q
 from dragonmapper import hanzi as hanzi_utils
 
 from mandoBot.schemas import ChineseDictionary, MandarinWordSchema, SegmentationResponse
+from mandoBot.languages import is_supported_language
 from sentences.dictionaries import WiktionaryScraper
 from sentences.models.CEDictionary import CEDictionary
+from sentences.models.CEDefinition import CEDefinition
 from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
 from sentences.translators import DeepLTranslate
@@ -17,16 +19,32 @@ from ..segmenters import JiebaSegmenter
 class Segmenter:
     @staticmethod
     def segment_and_translate(
-        sentence: str, auth: bool = False
+        sentence: str, auth: bool = False, target_language: str = 'en'
     ) -> SegmentationResponse:
+        """
+        Segments and translates a Chinese sentence.
+        
+        Args:
+            sentence: The Chinese text to segment
+            auth: Whether user is authenticated (uses DeepL if True, Argos if False)
+            target_language: Language code for definitions ('en' or 'de'). Default 'en'.
+        """
         sentence = sentence.replace("\u3000", "").strip()
+        
+        # Validate target_language
+        if not is_supported_language(target_language):
+            target_language = 'en'
 
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(JiebaSegmenter.segment, sentence)
             if auth:
-                future_translation = executor.submit(DeepLTranslate.translate, sentence)
+                future_translation = executor.submit(
+                    DeepLTranslate.translate, sentence, target_language
+                )
             else:
-                future_translation = executor.submit(Translator.translate, sentence)
+                future_translation = executor.submit(
+                    Translator.translate, sentence, target_language
+                )
 
             segmented = future_segmented.result()
             translated = future_translation.result()
@@ -35,7 +53,9 @@ class Segmenter:
             segmented
         )
         segmented_sentence, dictionary = (
-            Segmenter.add_definitions_and_create_dictionary(segmented_list)
+            Segmenter.add_definitions_and_create_dictionary(
+                segmented_list, target_language=target_language
+            )
         )
         mandarin_sentence: List[MandarinWordSchema] = segmented_sentence
 
@@ -150,9 +170,40 @@ class Segmenter:
         return
 
     @staticmethod
+    def get_definitions_by_language(
+        cedict_entry: CEDictionary, target_language: str = 'en'
+    ) -> str:
+        """
+        Get definitions for a CEDictionary entry in the target language.
+        Falls back to English (CEDictionary.definitions) if target language unavailable.
+        
+        Args:
+            cedict_entry: The CEDictionary word entry
+            target_language: Target language code ('en', 'de', etc.)
+            
+        Returns:
+            Definition string in target language, or English as fallback
+        """
+        # For English, use the original CEDictionary.definitions field
+        if target_language == 'en':
+            return cedict_entry.definitions
+        
+        # For other languages, try to get from CEDefinition table
+        try:
+            definition = CEDefinition.objects.get(
+                cedict=cedict_entry,
+                language=target_language
+            )
+            return definition.definitions
+        except CEDefinition.DoesNotExist:
+            # Fallback to English (CEDictionary.definitions)
+            return cedict_entry.definitions
+
+    @staticmethod
     def add_definitions_and_create_dictionary(
         segmented_sentence: List[MandarinWordSchema],
         dictionary: Dict[str, ChineseDictionary] = {},
+        target_language: str = 'en',
     ) -> tuple[List[MandarinWordSchema], dict[str, ChineseDictionary]]:
         """
         Modifies 'segmented_sentence' and returns a tuple containing
@@ -160,6 +211,7 @@ class Segmenter:
         in the sentence.
 
         :param segmented_sentence: The list of MandarinWordSchema objects being worked on.
+        :param target_language: Language code for definitions ('en' or 'de')
         :return: A tuple containing the sentence, and the mandarin dictionary.
         """
         for index, item in enumerate(segmented_sentence):
@@ -184,7 +236,7 @@ class Segmenter:
                 concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
                 if concat_attempt:
                     return Segmenter.add_definitions_and_create_dictionary(
-                        concat_attempt, dictionary
+                        concat_attempt, dictionary, target_language=target_language
                     )
 
                 wikitionary = WiktionaryScraper()
@@ -273,10 +325,8 @@ class Segmenter:
 
                         dictionary[single_hanzi] = ChineseDictionary(
                             english=[
-                                definition
-                                for definition in db_hanzi.values_list(
-                                    "definitions", flat=True
-                                )
+                                Segmenter.get_definitions_by_language(db_hanzi.first(), target_language)
+                                if db_hanzi.exists() else Translator.translate(single_hanzi)
                             ],
                             pinyin=[pinyin.replace("u:", "ü")],
                             zhuyin=[
@@ -288,7 +338,11 @@ class Segmenter:
                         )
 
             for entry in db_result:
-                item.definitions += [entry.definitions]
+                # Get language-specific definitions with fallback
+                entry_definitions = Segmenter.get_definitions_by_language(
+                    entry, target_language
+                )
+                item.definitions += [entry_definitions]
                 constituent_hanzi = entry.get_hanzi()
 
                 if constituent_hanzi:
@@ -298,8 +352,13 @@ class Segmenter:
                         else:
                             the_hanzi = single_hanzi.simplified
 
+                        # Get language-specific definitions
+                        hanzi_definitions = Segmenter.get_definitions_by_language(
+                            single_hanzi, target_language
+                        )
+                        
                         dictionary[the_hanzi] = ChineseDictionary(
-                            english=[single_hanzi.definitions],
+                            english=[hanzi_definitions],
                             pinyin=[single_hanzi.pronunciation.replace("u:", "ü")],
                             zhuyin=[
                                 Segmenter.pinyin_to_zhuyin(single_hanzi.pronunciation)
@@ -310,8 +369,13 @@ class Segmenter:
                         the_hanzi, db_hanzi = Segmenter.attempt_to_get_hanzi(
                             hanzi, item, index, entry
                         )
+                        # Get language-specific definitions
+                        hanzi_definitions = Segmenter.get_definitions_by_language(
+                            db_hanzi, target_language
+                        )
+                        
                         dictionary[the_hanzi] = ChineseDictionary(
-                            english=[db_hanzi.definitions],
+                            english=[hanzi_definitions],
                             pinyin=[db_hanzi.pronunciation.replace("u:", "ü")],
                             zhuyin=[Segmenter.pinyin_to_zhuyin(db_hanzi.pronunciation)],
                         )

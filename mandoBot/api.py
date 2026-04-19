@@ -53,12 +53,17 @@ emptyResponse = SegmentationResponse(
 @api.post(
     "/segment", response={200: SegmentationResponse}, throttle=[UserRateThrottle("2/s")]
 )
-def segment(request, data: str) -> APISegmentationSuccessResponse:
+def segment(request, data: str, language: str = None) -> APISegmentationSuccessResponse:
     """
     Accepts a string in Mandarin, and returns the same string but segmented into
     individual words, each of which includes pronunciation and definitions. The
     response also includes a dictionary containing every hanzi in the input sentence,
     as well as a machine translation of the entire sentence.
+    
+    Args:
+        data: Chinese text to segment
+        language: Optional target language ('en' or 'de'). If provided, overrides user preference.
+                 Useful for anonymous users to specify their language preference.
     """
     timer = Timer()
     timer.start()
@@ -74,13 +79,29 @@ def segment(request, data: str) -> APISegmentationSuccessResponse:
     else:
         text_to_segment = data[:MAX_CHARS_FREE]
 
+    # Get target language from (in priority order):
+    # 1. Query parameter (allows anonymous users to specify preference)
+    # 2. Authenticated user's stored preference
+    # 3. Default to English
+    target_language = 'en'
+    
+    if language:
+        # Query parameter provided - use it (from frontend localStorage)
+        target_language = language
+    elif request.user.is_authenticated:
+        # Authenticated user - use stored preference
+        if hasattr(request.user, 'user_language') and request.user.user_language:
+            target_language = request.user.user_language
+
     if not data:
         return 200, cast(SegmentationResponse, emptyResponse)
 
     if not hanzi.has_chinese(data):
         return 200, handle_non_chinese(data)
 
-    segmented_data = Segmenter.segment_and_translate(text_to_segment, auth)
+    segmented_data = Segmenter.segment_and_translate(
+        text_to_segment, auth, target_language=target_language
+    )
     timer.stop()
     return 200, segmented_data
 

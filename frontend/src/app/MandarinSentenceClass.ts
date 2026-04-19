@@ -69,6 +69,11 @@ export class MandarinSentenceClass {
   }
 
   private async segment() {
+    // Get user's language preference from Redux store
+    // This enables both logged-in and anonymous users to get language-specific definitions
+    const state = store.getState();
+    const userLanguage = state.settings?.user_language || 'en';
+
     if (this.batched) {
       const batches = this.mandarin.split(/(?<=[。？！.?!])/);
 
@@ -81,7 +86,7 @@ export class MandarinSentenceClass {
       };
       // Execute concurrently...
       const promises = batches.map((batch, i) =>
-        MandoBotAPI.segment(batch).then((response) => {
+        MandoBotAPI.segment(batch, userLanguage).then((response) => {
           orderedBatches[i] = response;
         }),
       );
@@ -111,7 +116,7 @@ export class MandarinSentenceClass {
         });
       });
     } else {
-      await MandoBotAPI.segment(this.mandarin).then(
+      await MandoBotAPI.segment(this.mandarin, userLanguage).then(
         (response: SegmentResponseType) => {
           this.segments = response.sentence;
           this.dictionary = response.dictionary;
