@@ -3,46 +3,46 @@ const registration_page = {
     account_created: {
       title: {
         en: 'Account created!',
-        de: '',
+        de: 'Konto erstellt!',
       },
       description: {
         en: 'Redirecting you to the user preferences page',
-        de: '',
+        de: 'Sie werden zu den Benutzereinstellungen weitergeleitet',
       },
     }
   },
   heading: {
     en: 'Register',
-    de: '',
+    de: 'Registrieren',
   },
   email: {
     en: 'E-mail',
-    de: '',
+    de: 'E-Mail',
   },
   username: {
     en: 'Username',
-    de: '',
+    de: 'Benutzername',
   },
   password: {
     en: 'Password',
-    de: '',
+    de: 'Passwort',
   },
   register: {
     en: 'Register',
-    de: '',
+    de: 'Registrieren',
   },
   user_already_exists: {
     en: 'A user with this e-mail already exists.',
-    de: '',
+    de: 'Es existiert bereits ein Nutzer mit dieser E-Mail-Adresse.',
   },
   forgot_password: {
     1: {
       en: 'If you have forgotten your password,',
-      de: '',
+      de: 'Passwort vergessen?',
     },
     link: {
       en: 'click here to reset it',
-      de: '',}
+      de: 'Hier klicken, um es zurückzusetzen',}
   }
 };
 
