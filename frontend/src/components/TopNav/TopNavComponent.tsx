@@ -23,6 +23,7 @@ import { toggleTheme } from '@/utils/store/settingsSlice';
 import { usePathname } from 'next/navigation';
 import BackToTop from './BackToTopComponent';
 import TextMenuButton from './TextMenuComponent';
+import LanguagePreferenceMenuButton from './LanguagePreferenceMenuComponent';
 
 function TopNav() {
   const pathname = usePathname();
@@ -97,6 +98,8 @@ function TopNav() {
             <ShareButton iconSize={iconSize} />
           </>
         )}
+
+        <LanguagePreferenceMenuButton iconSize={iconSize} />
 
         {pathname !== '/settings' && (
           <IconButton

@@ -32,7 +32,7 @@ export default function LanguagePreferencesComponent() {
     >
       {localization.languages.map((lang) => (
         <option key={lang.code} value={lang.code}>
-          {lang.label[user_language]}
+          {lang.label[lang.code]}
         </option>
       ))}
     </Select>
