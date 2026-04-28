@@ -1,11 +1,7 @@
 'use client';
 
 import { MandoBotAPI } from '@/utils/api';
-import {
-  togglePinyin,
-  togglePronunciation,
-  // toggleTheme,
-} from '@/utils/store/settingsSlice';
+import { togglePinyin, togglePronunciation } from '@/utils/store/settingsSlice';
 import { RootState, store } from '@/utils/store/store';
 import { Grid, Text, Switch } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
@@ -18,7 +14,6 @@ export default function PronunciationPreferencesComponent() {
     (state: RootState) => state.settings.pinyin_type,
   );
   const username = useSelector((state: RootState) => state.auth.username);
-  // const localTheme = useSelector((state: RootState) => state.settings.theme);
 
   const togglePronun = () => {
     if (username) {
