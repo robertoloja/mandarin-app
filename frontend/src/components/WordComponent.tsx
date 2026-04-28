@@ -19,11 +19,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import Pinyin from 'pinyin-tone';
 import { useEffect, useState } from 'react';
+import { UserLanguage } from '@/localization/main';
 
 function Word(props: {
   word: MandarinWordType;
   pronunciation: string[];
   definitions: string[];
+  user_language: UserLanguage;
 }) {
   const [definitionFontSize, setDefinitionFontSize] = useState<number>(() =>
     Number(localStorage.getItem('definitionFontSize')),
@@ -94,6 +96,7 @@ function Word(props: {
             isOpen={isOpen}
             onOpen={onOpen}
             onClose={onClose}
+            user_language={props.user_language}
           />
 
           <CardBody>

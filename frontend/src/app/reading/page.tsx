@@ -8,20 +8,52 @@ import { RootState } from '@/utils/store/store';
 import localization from '@/localization/main';
 
 export default function ReadingPage() {
-  const user_language = useSelector((state: RootState) => state.settings.user_language);
-  const romance_localization = localization.reading_room.romance_of_the_three_kingdoms;
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
+  const romance_localization =
+    localization.reading_room.romance_of_the_three_kingdoms;
+  const diary_localization = localization.reading_room.diary_of_a_madman;
   const chapters_1: Chapter[] = [
     {
       number: '一',
       title: romance_localization.book_1.title[user_language],
       subchapters: [
-        { name: romance_localization.book_1.chapter_1[user_language], link: 'wSE4FONhWj' },
-        { name: romance_localization.book_1.chapter_2[user_language], link: 'hErMG8iNOo' },
-        { name: romance_localization.book_1.chapter_3[user_language], link: 'RMY5TrW0T6' },
-        { name: romance_localization.book_1.chapter_4[user_language], link: 'MbGAhlo54Y' },
-        { name: romance_localization.book_1.chapter_5[user_language], link: 'Q7GnxMzcNw' },
-        { name: romance_localization.book_1.chapter_6[user_language], link: '59Yb0VElht' },
-        { name: romance_localization.book_1.chapter_7[user_language], link: 'S6c9Ie5ZkS' },
+        {
+          name: romance_localization.book_1.chapter_1[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 0,
+        },
+        {
+          name: romance_localization.book_1.chapter_2[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 1,
+        },
+        {
+          name: romance_localization.book_1.chapter_3[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 2,
+        },
+        {
+          name: romance_localization.book_1.chapter_4[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 3,
+        },
+        {
+          name: romance_localization.book_1.chapter_5[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 4,
+        },
+        {
+          name: romance_localization.book_1.chapter_6[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 5,
+        },
+        {
+          name: romance_localization.book_1.chapter_7[user_language],
+          book_slug: 'romance-of-the-three-kingdoms',
+          chapter_order: 6,
+        },
       ],
     },
     { number: '二', title: romance_localization.book_2[user_language] },
@@ -50,52 +82,110 @@ export default function ReadingPage() {
     chapters: [chapters_1, chapters_2, chapters_3],
     background: 'romance-cover.jpg',
     attribution: {
-      image: `Cover image from 三国演义, published 1957 by 上海人民美术出. Painting by 刘锡永 and 徐正平.`,
-      text: `Translation by Wikisource, presented here under the Creative Commons 
-      Attribution-ShareAlike 2.0 Generic license. 
-      https://en.wikisource.org/wiki/Translation:Romance_of_the_Three_Kingdoms`,
+      image: '',
+      text: romance_localization.popover[user_language],
     },
   };
 
   const chap1: Chapter[] = [
-    { number: '零', title: 'Two Brothers', link: 'njxoalFOGc' },
-    { number: '一', title: 'A Very Good Moon', link: 'e8PZ8KFE5Y' },
+    {
+      number: '零',
+      title: diary_localization.chapter_1[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 0,
+    },
+    {
+      number: '一',
+      title: diary_localization.chapter_2[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 1,
+    },
     {
       number: '二',
-      title: 'No Moonlight Whatsoever',
-      link: 'IlzDKJkIWL',
+      title: diary_localization.chapter_3[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 2,
     },
-    { number: '三', title: "Couldn't Fall Asleep", link: 'hOu4JeH5lZ' },
+    {
+      number: '三',
+      title: diary_localization.chapter_4[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 3,
+    },
     {
       number: '四',
-      title: 'Sat Quietly for a While',
-      link: 'xTIybS2MU9',
+      title: diary_localization.chapter_5[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 4,
     },
   ];
   const chap2: Chapter[] = [
-    { number: '五', title: 'A Step Back', link: 'YlfLF2_Whw' },
-    { number: '六', title: 'Pitch Black', link: 'NUw5_ruh3H' },
-    { number: '七', title: 'Their Methods', link: '9d2ulbbTOg' },
-    { number: '八', title: 'Somebody Came', link: 'mHOt29iUOn' },
-    { number: '九', title: 'They Want to Eat People', link: '-GdH2hZ0h_' },
+    {
+      number: '五',
+      title: diary_localization.chapter_6[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 5,
+    },
+    {
+      number: '六',
+      title: diary_localization.chapter_7[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 6,
+    },
+    {
+      number: '七',
+      title: diary_localization.chapter_8[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 7,
+    },
+    {
+      number: '八',
+      title: diary_localization.chapter_9[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 8,
+    },
+    {
+      number: '九',
+      title: diary_localization.chapter_10[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 9,
+    },
   ];
   const chap3: Chapter[] = [
-    { number: '十', title: 'Early in the Morning', link: 'YwexFVjfJ_' },
-    { number: '十一', title: 'The Sun Has Not Come Out', link: 'y1YXd7xxo2' },
-    { number: '十二', title: 'I Cannot Think About It', link: 'rPqZ4_WGFo' },
-    { number: '十三', title: 'Perhaps...', link: 'wl2tMdK8X1' },
+    {
+      number: '十',
+      title: diary_localization.chapter_11[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 10,
+    },
+    {
+      number: '十一',
+      title: diary_localization.chapter_12[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 11,
+    },
+    {
+      number: '十二',
+      title: diary_localization.chapter_13[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 12,
+    },
+    {
+      number: '十三',
+      title: diary_localization.chapter_14[user_language],
+      book_slug: 'diary-of-a-madman',
+      chapter_order: 13,
+    },
   ];
   const diary = {
     mandarinTitle: '狂人日記',
     titleLink: 'oslPMkaKBS',
-    title: 'Diary of a Madman',
+    title: diary_localization.title[user_language],
     chapters: [chap1, chap2, chap3],
     background: 'lu-xun.jpg',
     attribution: {
-      image: `Cover image is 永不休战 by 汤小铭, published in 1973.`,
-      text: `Translation by Wikisource, presented here under the Creative Commons 
-      Attribution-ShareAlike 2.0 Generic license. 
-      https://en.m.wikisource.org/wiki/Translation:Call_to_Arms_(Lu_Xun)/A_Madman%27s_Diary`,
+      image: '',
+      text: diary_localization.popover[user_language],
     },
   };
 

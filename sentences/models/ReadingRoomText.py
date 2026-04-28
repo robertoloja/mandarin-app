@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 
 class ReadingRoomText(models.Model):
     """
-    Metadata for a Reading Room text (book chapter).
-    Can have multiple translations via ReadingRoomTranslation.
+    A reading room text with language-agnostic segmentation.
+    Definitions are fetched dynamically based on user language preference.
     """
     book = models.CharField(
         max_length=100,
@@ -25,6 +25,14 @@ class ReadingRoomText(models.Model):
     title = models.CharField(
         max_length=200,
         help_text="Chapter title (in English)"
+    )
+    
+    # Original text and segmentation (language-agnostic, stored once)
+    original_text = models.TextField(
+        help_text="Raw Chinese text"
+    )
+    segmentation = models.JSONField(
+        help_text="Segmented content: [{hanzi, trad, simp, pinyin}, ...]"
     )
     
     # Metadata
@@ -50,89 +58,23 @@ class ReadingRoomText(models.Model):
     def __str__(self):
         return f"{self.book} - Chapter {self.chapter_number}: {self.title}"
 
-    def get_page_count(self, language='en'):
-        """Get the number of pages for a specific language translation."""
-        translation = self.translations.filter(language=language).first()
-        if translation:
-            return translation.page_count
-        return 0
-
-
-class ReadingRoomTranslation(models.Model):
-    """
-    Language-specific translation of a Reading Room text.
-    Stores the full segmented content that can be paginated.
-    """
-    LANGUAGE_CHOICES = [
-        ('en', 'English'),
-        ('de', 'German'),
-        ('zh', 'Simplified Chinese'),
-        ('zh-trad', 'Traditional Chinese'),
-    ]
-
-    text = models.ForeignKey(
-        ReadingRoomText,
-        on_delete=models.CASCADE,
-        related_name='translations',
-        help_text="The reading room text this translation belongs to"
-    )
-    language = models.CharField(
-        max_length=10,
-        choices=LANGUAGE_CHOICES,
-        help_text="Language of this translation"
-    )
-    json_data = models.JSONField(
-        help_text="Full segmented content (array of sentence objects)"
-    )
-    page_count = models.IntegerField(
-        default=0,
-        help_text="Cached page count (auto-calculated)"
-    )
-    
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ('text', 'language')
-        verbose_name = "Reading Room Translation"
-        verbose_name_plural = "Reading Room Translations"
-        indexes = [
-            models.Index(fields=['text', 'language']),
-        ]
-
-    def __str__(self):
-        return f"{self.text} - {self.get_language_display()}"
-
     def clean(self):
-        """Validate that json_data is valid and calculate page count."""
-        if isinstance(self.json_data, str):
+        """Validate that segmentation is valid JSON list."""
+        if isinstance(self.segmentation, str):
             try:
-                data = json.loads(self.json_data)
+                data = json.loads(self.segmentation)
             except json.JSONDecodeError:
-                raise ValidationError("Invalid JSON format in json_data")
-        elif isinstance(self.json_data, (list, dict)):
-            data = self.json_data
+                raise ValidationError("Invalid JSON format in segmentation")
+        elif isinstance(self.segmentation, (list, dict)):
+            data = self.segmentation
         else:
-            raise ValidationError("json_data must be JSON-serializable")
+            raise ValidationError("segmentation must be JSON-serializable")
         
-        # Ensure it's a list for pagination
+        # Ensure it's a list
         if not isinstance(data, list):
-            raise ValidationError("json_data must be a list of segments")
+            raise ValidationError("segmentation must be a list of word objects")
 
     def save(self, *args, **kwargs):
-        """Auto-calculate page count based on json_data."""
+        """Validate before saving."""
         self.clean()
-        
-        # Calculate page count
-        if isinstance(self.json_data, str):
-            data = json.loads(self.json_data)
-        else:
-            data = self.json_data
-        
-        if isinstance(data, list):
-            # Assume 50 segments per page by default
-            self.page_count = max(1, (len(data) + 49) // 50)
-        else:
-            self.page_count = 1
-
         super().save(*args, **kwargs)

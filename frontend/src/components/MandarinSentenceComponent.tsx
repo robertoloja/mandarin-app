@@ -29,7 +29,8 @@ function MandarinSentence(props: SegmentResponseType) {
         <Word
           word={word}
           pronunciation={pronunciation == 'pinyin' ? word.pinyin : word.zhuyin}
-          definitions={word.definitions}
+          definitions={word.definitions[props.user_language]}
+          user_language={props.user_language}
           key={index}
         />
       ))}

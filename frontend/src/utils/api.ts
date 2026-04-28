@@ -22,9 +22,7 @@ export function getCookie(name: string): string | null {
 }
 
 const API_BASE_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://127.0.0.1:8000/api'
-    : '/api';
+  process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000/api' : '/api';
 const TIMEOUT = process.env.NODE_ENV === 'development' ? 100000 : 20000;
 
 const api = axios.create({
@@ -84,15 +82,18 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 // API endpoints
 export const MandoBotAPI = {
-  segment: async function (sentence: string, language?: string): Promise<SegmentResponseType> {
+  segment: async function (
+    sentence: string,
+    language?: string,
+  ): Promise<SegmentResponseType> {
     let endpoint = `/segment?data=${encodeURIComponent(sentence)}`;
-    
+
     // Include language preference if provided
     // This allows anonymous users to get language-specific definitions
     if (language) {
       endpoint += `&language=${language}`;
     }
-    
+
     const response = await api.post(
       endpoint,
       {
@@ -112,6 +113,16 @@ export const MandoBotAPI = {
 
   shared: async function (share_id: string): Promise<SegmentResponseType> {
     const response = await api.get(`/shared?share_id=${share_id}`);
+    return response.data;
+  },
+
+  readingRoomChapter: async function (
+    book_slug: string,
+    chapter_order: number,
+  ) {
+    const response = await api.get(
+      `/reading-room/${book_slug}/${chapter_order}/`,
+    );
     return response.data;
   },
 

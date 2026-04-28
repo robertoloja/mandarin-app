@@ -1,0 +1,58 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Promote Chapter to Reading Room{% endblock %}
+
+{% block content %}
+<h1>Promote Chapter to Reading Room</h1>
+<p>
+  Select a chapter from the legacy reading room, paste in the German full-text
+  translation, and click <strong>Generate &amp; Save</strong>. The system will
+  look up German word definitions automatically and save the bilingual chapter.
+</p>
+
+{% if errors %}
+  <ul class="messagelist">
+    {% for error in errors %}
+      <li class="error">{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+
+  <fieldset class="module aligned">
+    <div class="form-row">
+      <label for="id_share_id">Chapter:</label>
+      <select id="id_share_id" name="share_id" style="min-width: 30rem;">
+        <option value="">— select a chapter —</option>
+        {% for share_id, label in registry_choices %}
+          <option value="{{ share_id }}"{% if share_id == selected_share_id %} selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="id_german_translation">German translation:</label>
+      <textarea
+        id="id_german_translation"
+        name="german_translation"
+        rows="16"
+        style="width: 100%; font-family: serif; font-size: 1rem;"
+      >{{ german_translation }}</textarea>
+      <p class="help">
+        Paste the full German translation of the chapter here — one continuous
+        text, not word-by-word.
+      </p>
+    </div>
+  </fieldset>
+
+  <div class="submit-row">
+    <input type="submit" value="Generate &amp; Save" class="default">
+    <a href=".." class="closelink">Cancel</a>
+  </div>
+</form>
+{% endblock %}

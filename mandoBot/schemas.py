@@ -79,3 +79,51 @@ class PronunciationPreferenceSchema(Schema):
 
 class LanguagePreferenceSchema(Schema):
     language: Literal["en", "de"]
+
+
+class BilingualDefinitions(Schema):
+    en: List[str]
+    de: List[str]
+
+
+class ReadingRoomWordSchema2(Schema):
+    word: str
+    pinyin: List[str]
+    zhuyin: List[str]
+    definitions: Dict
+
+
+class BilingualDictionaryEntry(Schema):
+    en: List[str]
+    de: List[str]
+    pinyin: List[str]
+    zhuyin: List[str]
+
+
+class BilingualTranslation(Schema):
+    en: str
+    de: str
+
+
+class ReadingRoomChapterSchema(Schema):
+    translation: BilingualTranslation
+    sentence: List[ReadingRoomWordSchema2]
+    dictionary: Dict[str, BilingualDictionaryEntry]
+
+
+class ReadingRoomWordSchema(Schema):
+    """A single word in the reading room with language-agnostic segmentation + definitions."""
+    hanzi: str
+    trad: str
+    simp: str
+    pinyin: str
+    definitions: str
+    # Additional fields from segmentation are preserved via **kwargs pattern in serialization
+
+
+class ReadingRoomResponseSchema(Schema):
+    """Response for a reading room text with localized definitions."""
+    id: int
+    book: str
+    title: str
+    words: List[Dict]  # List of word objects with dynamic fields

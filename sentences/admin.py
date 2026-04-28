@@ -1,218 +1,125 @@
 import json
-from django.db import models
+
 from django.contrib import admin
-from django.utils.html import format_html
-from django.forms import Textarea
-from .models import SentenceHistory, ReadingRoomText, ReadingRoomTranslation
+from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import path
+
+from sentences.bilingual_pipeline import build_chapter_data
+from sentences.chapter_registry import CHAPTER_REGISTRY
+from sentences.models import SentenceHistory
+from sentences.models.ReadingRoomChapter import ReadingRoomChapter
 
 
-class ReadingRoomTranslationInline(admin.TabularInline):
-    """
-    Inline admin for managing translations of a reading room text.
-    Allows translators to edit multiple languages from the same page.
-    """
-    model = ReadingRoomTranslation
-    extra = 1
-    fields = ('language', 'json_data_preview', 'page_count')
-    readonly_fields = ('page_count', 'json_data_preview', 'created_at', 'updated_at')
-    
-    formfield_overrides = {
-        models.JSONField: {'widget': Textarea(attrs={'rows': 10, 'cols': 80})},
-    }
+@admin.register(ReadingRoomChapter)
+class ReadingRoomChapterAdmin(admin.ModelAdmin):
+    list_display = ("book_title", "chapter_number", "title", "book_slug", "chapter_order")
+    list_filter = ("book_slug",)
+    ordering = ("book_slug", "chapter_order")
+    readonly_fields = ("book_slug", "chapter_order", "chapter_number", "title")
+    change_list_template = "admin/readingroomchapter_change_list.html"
 
-    def json_data_preview(self, obj):
-        """Show a preview of the JSON data."""
-        if obj.json_data:
-            try:
-                if isinstance(obj.json_data, str):
-                    data = json.loads(obj.json_data)
-                else:
-                    data = obj.json_data
-                
-                count = len(data) if isinstance(data, list) else 1
-                preview = json.dumps(data[:2] if isinstance(data, list) else data, 
-                                   ensure_ascii=False, indent=2)[:200] + "..."
-                return format_html(
-                    '<pre style="max-width: 500px; overflow: auto;">{}</pre>',
-                    preview
-                )
-            except:
-                return "Invalid JSON"
-        return "-"
-    
-    json_data_preview.short_description = "JSON Preview"
+    def book_title(self, obj):
+        return obj.book_slug.replace("-", " ").title()
+    book_title.short_description = "Book"
 
+    def get_urls(self):
+        urls = super().get_urls()
+        extra = [
+            path(
+                "promote/",
+                self.admin_site.admin_view(self.promote_view),
+                name="sentences_readingroomchapter_promote",
+            ),
+        ]
+        return extra + urls
 
-@admin.register(ReadingRoomText)
-class ReadingRoomTextAdmin(admin.ModelAdmin):
-    """
-    Admin interface for managing Reading Room texts (books/chapters).
-    Designed for non-technical users (translators) to add/modify content.
-    """
-    inlines = [ReadingRoomTranslationInline]
-    
-    list_display = (
-        'book',
-        'chapter_number',
-        'title',
-        'book_order',
-        'chapter_order',
-        'translation_languages',
-        'created_at',
-    )
-    
-    list_filter = (
-        'book',
-        'created_at',
-        'updated_at',
-    )
-    
-    search_fields = (
-        'book',
-        'title',
-        'chapter_number',
-    )
-    
-    fieldsets = (
-        ('Book Information', {
-            'fields': ('book', 'book_order'),
-            'description': 'Information about the book this chapter belongs to.'
-        }),
-        ('Chapter Information', {
-            'fields': ('chapter_number', 'chapter_order', 'title'),
-            'description': 'Information about this specific chapter.'
-        }),
-        ('Attribution', {
-            'fields': ('source', 'license'),
-            'classes': ('collapse',),
-            'description': 'Optional attribution and licensing information.'
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',),
-        }),
-    )
-    
-    readonly_fields = ('created_at', 'updated_at')
-    
-    ordering = ('book_order', 'chapter_order')
-
-    def translation_languages(self, obj):
-        """Display available translations for this text."""
-        languages = obj.translations.values_list('language', flat=True)
-        if not languages:
-            return format_html('<span style="color: red;">No translations</span>')
-        
-        lang_names = {lang: name for lang, name in ReadingRoomTranslation.LANGUAGE_CHOICES}
-        lang_display = ', '.join(lang_names.get(lang, lang) for lang in languages)
-        return format_html(
-            '<span style="color: green;">{}</span>',
-            lang_display
+    def promote_view(self, request: HttpRequest) -> HttpResponse:
+        """
+        Step 1 (GET):  Show a form — chapter dropdown + German translation textarea.
+        Step 2 (POST): Generate bilingual data and save ReadingRoomChapter.
+        """
+        # Build dropdown choices sorted by book then chapter_order
+        registry_choices = sorted(
+            [
+                (share_id, f"{meta['book_title']} — Ch. {meta['chapter_number']}: {meta['title']}")
+                for share_id, meta in CHAPTER_REGISTRY.items()
+            ],
+            key=lambda x: (
+                CHAPTER_REGISTRY[x[0]]["book_slug"],
+                CHAPTER_REGISTRY[x[0]]["chapter_order"],
+            ),
         )
-    
-    translation_languages.short_description = "Translations"
 
+        if request.method == "POST":
+            share_id = request.POST.get("share_id", "").strip()
+            german_translation = request.POST.get("german_translation", "").strip()
 
-@admin.register(ReadingRoomTranslation)
-class ReadingRoomTranslationAdmin(admin.ModelAdmin):
-    """
-    Admin interface for managing individual translations.
-    Allows standalone editing and bulk operations.
-    """
-    list_display = (
-        'text',
-        'language_display',
-        'page_count',
-        'segment_count',
-        'updated_at',
-    )
-    
-    list_filter = (
-        'language',
-        'text__book',
-        'created_at',
-        'updated_at',
-    )
-    
-    search_fields = (
-        'text__book',
-        'text__title',
-        'language',
-    )
-    
-    readonly_fields = (
-        'page_count',
-        'segment_count',
-        'json_preview',
-        'created_at',
-        'updated_at',
-    )
-    
-    fieldsets = (
-        ('Content', {
-            'fields': ('text', 'language', 'json_data'),
-            'description': 'The text and its language translation.'
-        }),
-        ('Content Analysis', {
-            'fields': ('segment_count', 'page_count', 'json_preview'),
-            'classes': ('collapse',),
-        }),
-        ('Metadata', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',),
-        }),
-    )
-    
-    formfield_overrides = {
-        models.JSONField: {'widget': Textarea(attrs={'rows': 15, 'cols': 120})},
-    }
-    
-    ordering = ('text', 'language')
+            errors = []
+            if not share_id:
+                errors.append("Please select a chapter.")
+            if not german_translation:
+                errors.append("Please enter the German translation.")
 
-    def language_display(self, obj):
-        """Display the language name."""
-        return obj.get_language_display()
-    
-    language_display.short_description = "Language"
+            if not errors and share_id not in CHAPTER_REGISTRY:
+                errors.append(f"Unknown share_id '{share_id}'.")
 
-    def segment_count(self, obj):
-        """Count the number of segments in the translation."""
-        if obj.json_data:
-            try:
-                if isinstance(obj.json_data, str):
-                    data = json.loads(obj.json_data)
-                else:
-                    data = obj.json_data
-                
-                if isinstance(data, list):
-                    return len(data)
-            except:
-                pass
-        return 0
-    
-    segment_count.short_description = "Segments"
+            if not errors:
+                try:
+                    history = SentenceHistory.objects.get(sentence_id=share_id)
+                except SentenceHistory.DoesNotExist:
+                    errors.append(
+                        f"No SentenceHistory found for share_id '{share_id}'. "
+                        "Has this chapter been shared at least once?"
+                    )
 
-    def json_preview(self, obj):
-        """Show a formatted preview of the first few segments."""
-        if obj.json_data:
-            try:
-                if isinstance(obj.json_data, str):
-                    data = json.loads(obj.json_data)
-                else:
-                    data = obj.json_data
-                
-                # Show first 3 segments
-                preview_data = data[:3] if isinstance(data, list) else data
-                preview_json = json.dumps(preview_data, ensure_ascii=False, indent=2)
-                return format_html(
-                    '<pre style="max-width: 100%; overflow: auto; background: #f5f5f5; padding: 10px; border-radius: 4px;">{}</pre>',
-                    preview_json
+            if not errors:
+                meta = CHAPTER_REGISTRY[share_id]
+                raw = history.json_data
+                segmentation = json.loads(raw) if isinstance(raw, str) else raw
+                english_translation = segmentation.get("translation", "")
+
+                chapter_data = build_chapter_data(
+                    segmentation=segmentation,
+                    english_translation=english_translation,
+                    german_translation=german_translation,
                 )
-            except Exception as e:
-                return format_html(
-                    '<pre style="color: red;">Error parsing JSON: {}</pre>',
-                    str(e)
+
+                chapter, created = ReadingRoomChapter.objects.update_or_create(
+                    book_slug=meta["book_slug"],
+                    chapter_order=meta["chapter_order"],
+                    defaults={
+                        "chapter_number": meta["chapter_number"],
+                        "title": meta["title"],
+                        "data": chapter_data,
+                    },
                 )
-        return "-"
-    
-    json_preview.short_description = "First 3 Segments Preview"
+
+                action = "created" if created else "updated"
+                messages.success(
+                    request,
+                    f"ReadingRoomChapter {action}: "
+                    f"{meta['book_title']} Ch. {meta['chapter_number']} — {meta['title']}",
+                )
+                return redirect("..")
+
+            context = {
+                **self.admin_site.each_context(request),
+                "title": "Promote Chapter to Reading Room",
+                "registry_choices": registry_choices,
+                "selected_share_id": share_id,
+                "german_translation": request.POST.get("german_translation", ""),
+                "errors": errors,
+            }
+            return render(request, "admin/promote_chapter.html", context)
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Promote Chapter to Reading Room",
+            "registry_choices": registry_choices,
+            "selected_share_id": "",
+            "german_translation": "",
+            "errors": [],
+        }
+        return render(request, "admin/promote_chapter.html", context)

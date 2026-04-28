@@ -20,10 +20,12 @@ export const ChapterTitle = (props: { chapter: Chapter }) => {
     <HStack
       py="0.5rem"
       textColor={
-        props.chapter.link || props.chapter.subchapters ? undefined : 'gray'
+        props.chapter.chapter_order !== undefined || props.chapter.subchapters
+          ? undefined
+          : 'gray'
       }
       cursor={
-        props.chapter.link || props.chapter.subchapters
+        props.chapter.chapter_order !== undefined || props.chapter.subchapters
           ? 'pointer'
           : 'not-allowed'
       }
@@ -43,8 +45,10 @@ export const ChapterTitle = (props: { chapter: Chapter }) => {
         _hover={{ textDecoration: 'underline' }}
         textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
       >
-        {props.chapter.link ? (
-          <Link href={`/?share_id=${props.chapter.link}`}>
+        {props.chapter.chapter_order !== undefined ? (
+          <Link
+            href={`/reading/${props.chapter.book_slug}/${props.chapter.chapter_order}`}
+          >
             {props.chapter.title}
           </Link>
         ) : (

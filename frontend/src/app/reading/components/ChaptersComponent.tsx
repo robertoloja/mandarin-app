@@ -45,7 +45,10 @@ export const Chapters = (props: {
                     <AccordionPanel mb="1rem">
                       <VStack alignItems="left" pl="3rem">
                         {chapter.subchapters.map((subchapter, i) => (
-                          <Link href={`/?share_id=${subchapter.link}`} key={i}>
+                          <Link
+                            href={`/reading/${subchapter.book_slug}/${subchapter.chapter_order}`}
+                            key={i}
+                          >
                             <Text _hover={{ textDecoration: 'underline' }}>
                               {subchapter.name}
                             </Text>

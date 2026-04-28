@@ -19,12 +19,14 @@ import Hanzi from './HanziComponent';
 import Pinyin from 'pinyin-tone';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
+import { UserLanguage } from '@/localization/main';
 
 function Definition(props: {
   word: string;
   pronunciations: string[];
   definitions: string[];
   isOpen: boolean;
+  user_language: UserLanguage;
   onOpen: () => void;
   onClose: () => void;
 }) {
@@ -92,7 +94,9 @@ function Definition(props: {
                           hanzi={hanzi}
                           pronunciation={pronunciation(hanzi)}
                         />
-                        <Text>{dictionary[hanzi].english.join(' / ')}</Text>
+                        <Text>
+                          {dictionary[hanzi][props.user_language].join(' / ')}
+                        </Text>
                       </>
                     )}
                   </HStack>

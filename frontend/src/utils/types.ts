@@ -1,7 +1,10 @@
+import { UserLanguage } from '@/localization/main';
+
 export type ChineseDictionary = Record<
   string,
   {
-    english: string[];
+    en: string[];
+    de: string[];
     pinyin: string[];
     zhuyin: string[];
   }
@@ -11,13 +14,14 @@ export type MandarinWordType = {
   word: string;
   pinyin: string[];
   zhuyin: string[];
-  definitions: string[];
+  definitions: Record<string, string[]>;
 };
 
 export type SegmentResponseType = {
   sentence: MandarinWordType[];
   dictionary: ChineseDictionary;
   translation: string;
+  user_language: UserLanguage;
 };
 
 export type MandarinSentenceType = {
