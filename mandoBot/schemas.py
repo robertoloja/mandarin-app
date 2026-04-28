@@ -109,21 +109,3 @@ class ReadingRoomChapterSchema(Schema):
     translation: BilingualTranslation
     sentence: List[ReadingRoomWordSchema2]
     dictionary: Dict[str, BilingualDictionaryEntry]
-
-
-class ReadingRoomWordSchema(Schema):
-    """A single word in the reading room with language-agnostic segmentation + definitions."""
-    hanzi: str
-    trad: str
-    simp: str
-    pinyin: str
-    definitions: str
-    # Additional fields from segmentation are preserved via **kwargs pattern in serialization
-
-
-class ReadingRoomResponseSchema(Schema):
-    """Response for a reading room text with localized definitions."""
-    id: int
-    book: str
-    title: str
-    words: List[Dict]  # List of word objects with dynamic fields
