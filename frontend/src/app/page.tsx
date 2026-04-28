@@ -22,7 +22,9 @@ export default function Home() {
   const mandarinSentence = useSelector(
     (state: RootState) => state.sentence.mandarinSentence,
   );
-  const user_language = useSelector((state: RootState) => state.settings.user_language);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   const urlShareId = useSearchParams().get('share_id') || '';
 
@@ -68,7 +70,7 @@ export default function Home() {
     <Box h="100%">
       <ProgressBar />
       <form onSubmit={handleSubmit}>
-        <TextInput inputRef={inputRef} user_language={user_language}/>
+        <TextInput inputRef={inputRef} user_language={user_language} />
         <HStack>
           <Button
             type="submit"
@@ -93,6 +95,7 @@ export default function Home() {
           sentence={mandarinSentence.segments}
           translation={mandarinSentence.translation}
           dictionary={mandarinSentence.dictionary}
+          user_language={user_language}
         />
         {mandarinSentence.segments.length !== 0 && (
           <Translation text={mandarinSentence.translation} />

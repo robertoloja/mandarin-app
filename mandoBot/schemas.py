@@ -37,7 +37,8 @@ class UserPreferencesSchema(ModelSchema):
 
 
 class ChineseDictionary(Schema):
-    english: List[str]
+    en: List[str]
+    de: List[str]
     pinyin: List[str]
     zhuyin: List[str]
 
@@ -46,7 +47,7 @@ class MandarinWordSchema(Schema):
     word: str
     pinyin: List[str]
     zhuyin: List[str]
-    definitions: List[str]
+    definitions: Dict[str, List[str]]
 
 
 class SegmentationResponse(Schema):

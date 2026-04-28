@@ -46,8 +46,8 @@ api = NinjaAPI(
 )
 api.add_router("/accounts/", accounts_router)
 
-emptyDictionary = {"word": ChineseDictionary(english=[], pinyin=[], zhuyin=[])}
-emptyWord = MandarinWordSchema(word="", pinyin=[], zhuyin=[], definitions=[])
+emptyDictionary = {"word": ChineseDictionary(en=[], de=[], pinyin=[], zhuyin=[])}
+emptyWord = MandarinWordSchema(word="", pinyin=[], zhuyin=[], definitions={})
 emptyResponse = SegmentationResponse(
     translation="", dictionary=emptyDictionary, sentence=[emptyWord]
 )
@@ -165,7 +165,17 @@ async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
             f"Database error while getting SentenceHistory.sentence_id: {share_id}"
         )
         return emptyResponse
-    return json.loads(db_entry.json_data)
+    return _migrate_shared_json(json.loads(db_entry.json_data))
+    """Migrate old single-language share JSON to the current multi-language format."""
+    for word in data.get("sentence", []):
+        if isinstance(word.get("definitions"), list):
+            word["definitions"] = {"en": word["definitions"], "de": word["definitions"]}
+    for hanzi_entry in data.get("dictionary", {}).values():
+        if "english" in hanzi_entry:
+            hanzi_entry["en"] = hanzi_entry.pop("english")
+        if "de" not in hanzi_entry:
+            hanzi_entry["de"] = hanzi_entry.get("en", [])
+    return data
 
 
 @api.post("/share", response=str)

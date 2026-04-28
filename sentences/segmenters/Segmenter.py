@@ -53,9 +53,7 @@ class Segmenter:
             segmented
         )
         segmented_sentence, dictionary = (
-            Segmenter.add_definitions_and_create_dictionary(
-                segmented_list, target_language=target_language
-            )
+            Segmenter.add_definitions_and_create_dictionary(segmented_list)
         )
         mandarin_sentence: List[MandarinWordSchema] = segmented_sentence
 
@@ -112,7 +110,7 @@ class Segmenter:
                 zhuyin = [segmented_sentence[i]]
 
             new_word = MandarinWordSchema(
-                word=segmented_sentence[i], pinyin=pinyin, zhuyin=zhuyin, definitions=[]
+                word=segmented_sentence[i], pinyin=pinyin, zhuyin=zhuyin, definitions={}
             )
             response += [new_word]
         return response
@@ -158,7 +156,7 @@ class Segmenter:
                 )
 
                 new_sentence_slice = MandarinWordSchema(
-                    word=compounded_word, pinyin=pinyin, zhuyin=zhuyin, definitions=[]
+                    word=compounded_word, pinyin=pinyin, zhuyin=zhuyin, definitions={}
                 )
 
                 new_sentence = (
@@ -170,40 +168,23 @@ class Segmenter:
         return
 
     @staticmethod
-    def get_definitions_by_language(
-        cedict_entry: CEDictionary, target_language: str = 'en'
-    ) -> str:
+    def get_all_definitions(cedict_entry: CEDictionary) -> Dict[str, List[str]]:
         """
-        Get definitions for a CEDictionary entry in the target language.
-        Falls back to English (CEDictionary.definitions) if target language unavailable.
-        
-        Args:
-            cedict_entry: The CEDictionary word entry
-            target_language: Target language code ('en', 'de', etc.)
-            
-        Returns:
-            Definition string in target language, or English as fallback
+        Return definitions for all supported languages for a CEDictionary entry.
+        German falls back to English if no CEDefinition row exists.
         """
-        # For English, use the original CEDictionary.definitions field
-        if target_language == 'en':
-            return cedict_entry.definitions
-        
-        # For other languages, try to get from CEDefinition table
+        en_def = cedict_entry.definitions
         try:
-            definition = CEDefinition.objects.get(
-                cedict=cedict_entry,
-                language=target_language
-            )
-            return definition.definitions
+            de_entry = CEDefinition.objects.get(cedict=cedict_entry, language='de')
+            de_def = de_entry.definitions
         except CEDefinition.DoesNotExist:
-            # Fallback to English (CEDictionary.definitions)
-            return cedict_entry.definitions
+            de_def = en_def
+        return {'en': [en_def], 'de': [de_def]}
 
     @staticmethod
     def add_definitions_and_create_dictionary(
         segmented_sentence: List[MandarinWordSchema],
         dictionary: Dict[str, ChineseDictionary] = {},
-        target_language: str = 'en',
     ) -> tuple[List[MandarinWordSchema], dict[str, ChineseDictionary]]:
         """
         Modifies 'segmented_sentence' and returns a tuple containing
@@ -211,14 +192,14 @@ class Segmenter:
         in the sentence.
 
         :param segmented_sentence: The list of MandarinWordSchema objects being worked on.
-        :param target_language: Language code for definitions ('en' or 'de')
         :return: A tuple containing the sentence, and the mandarin dictionary.
         """
         for index, item in enumerate(segmented_sentence):
             if is_punctuation(item.word) or not hanzi_utils.has_chinese(item.word):
+                item.definitions = {'en': [], 'de': []}
                 continue
 
-            if item.definitions != []:
+            if item.definitions != {}:
                 continue
 
             if "ü" in " ".join(item.pinyin):
@@ -236,7 +217,7 @@ class Segmenter:
                 concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
                 if concat_attempt:
                     return Segmenter.add_definitions_and_create_dictionary(
-                        concat_attempt, dictionary, target_language=target_language
+                        concat_attempt, dictionary
                     )
 
                 wikitionary = WiktionaryScraper()
@@ -304,7 +285,8 @@ class Segmenter:
                     )
                 else:
                     # TODO: Try to segment again before machine translating
-                    item.definitions = [Translator.translate(item.word)]
+                    machine_translation = Translator.translate(item.word)
+                    item.definitions = {'en': [machine_translation], 'de': [machine_translation]}
 
                     for index, single_hanzi in enumerate(item.word):
                         pinyin = item.pinyin[index]
@@ -323,11 +305,15 @@ class Segmenter:
                                 word_length=1,
                             )
 
+                        if db_hanzi.exists():
+                            all_defs = Segmenter.get_all_definitions(db_hanzi.first())
+                        else:
+                            mt = Translator.translate(single_hanzi)
+                            all_defs = {'en': [mt], 'de': [mt]}
+
                         dictionary[single_hanzi] = ChineseDictionary(
-                            english=[
-                                Segmenter.get_definitions_by_language(db_hanzi.first(), target_language)
-                                if db_hanzi.exists() else Translator.translate(single_hanzi)
-                            ],
+                            en=all_defs['en'],
+                            de=all_defs['de'],
                             pinyin=[pinyin.replace("u:", "ü")],
                             zhuyin=[
                                 Segmenter.pinyin_to_zhuyin(zhuyin)
@@ -338,11 +324,11 @@ class Segmenter:
                         )
 
             for entry in db_result:
-                # Get language-specific definitions with fallback
-                entry_definitions = Segmenter.get_definitions_by_language(
-                    entry, target_language
-                )
-                item.definitions += [entry_definitions]
+                all_defs = Segmenter.get_all_definitions(entry)
+                item.definitions = {
+                    'en': item.definitions.get('en', []) + all_defs['en'],
+                    'de': item.definitions.get('de', []) + all_defs['de'],
+                }
                 constituent_hanzi = entry.get_hanzi()
 
                 if constituent_hanzi:
@@ -352,13 +338,10 @@ class Segmenter:
                         else:
                             the_hanzi = single_hanzi.simplified
 
-                        # Get language-specific definitions
-                        hanzi_definitions = Segmenter.get_definitions_by_language(
-                            single_hanzi, target_language
-                        )
-                        
+                        hanzi_all_defs = Segmenter.get_all_definitions(single_hanzi)
                         dictionary[the_hanzi] = ChineseDictionary(
-                            english=[hanzi_definitions],
+                            en=hanzi_all_defs['en'],
+                            de=hanzi_all_defs['de'],
                             pinyin=[single_hanzi.pronunciation.replace("u:", "ü")],
                             zhuyin=[
                                 Segmenter.pinyin_to_zhuyin(single_hanzi.pronunciation)
@@ -369,13 +352,10 @@ class Segmenter:
                         the_hanzi, db_hanzi = Segmenter.attempt_to_get_hanzi(
                             hanzi, item, index, entry
                         )
-                        # Get language-specific definitions
-                        hanzi_definitions = Segmenter.get_definitions_by_language(
-                            db_hanzi, target_language
-                        )
-                        
+                        hanzi_all_defs = Segmenter.get_all_definitions(db_hanzi)
                         dictionary[the_hanzi] = ChineseDictionary(
-                            english=[hanzi_definitions],
+                            en=hanzi_all_defs['en'],
+                            de=hanzi_all_defs['de'],
                             pinyin=[db_hanzi.pronunciation.replace("u:", "ü")],
                             zhuyin=[Segmenter.pinyin_to_zhuyin(db_hanzi.pronunciation)],
                         )
