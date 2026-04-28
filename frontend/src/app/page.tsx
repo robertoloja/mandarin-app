@@ -36,12 +36,15 @@ export default function Home() {
 
       MandoBotAPI.shared(urlShareId).then((response: SegmentResponseType) => {
         store.dispatch(updateLoading({ percent: 100 }));
-        if (response.translation !== '') {
+        if (
+          response.translations &&
+          Object.keys(response.translations).length > 0
+        ) {
           const sharedSentenced = new MandarinSentenceClass(
             '',
             response.sentence,
             response.dictionary,
-            response.translation,
+            response.translations,
             urlShareId,
           );
           sharedSentenced.setActive();
@@ -84,8 +87,8 @@ export default function Home() {
           {percentLoaded < 100 && (
             <Text color="gray.600" textAlign="center" w="60%">
               {percentLoaded == 0
-                ? 'Segmentation and translation can take several seconds.'
-                : 'Your results will load one sentence at a time.'}
+                ? localization.home_page.loading_text1[user_language]
+                : localization.home_page.loading_text2[user_language]}
             </Text>
           )}
         </HStack>
@@ -93,12 +96,11 @@ export default function Home() {
       <Box h="100%">
         <MandarinSentence
           sentence={mandarinSentence.segments}
-          translation={mandarinSentence.translation}
           dictionary={mandarinSentence.dictionary}
           user_language={user_language}
         />
         {mandarinSentence.segments.length !== 0 && (
-          <Translation text={mandarinSentence.translation} />
+          <Translation translations={mandarinSentence.translations} />
         )}
       </Box>
     </Box>

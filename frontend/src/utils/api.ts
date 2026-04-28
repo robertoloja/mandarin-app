@@ -82,17 +82,8 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 
 // API endpoints
 export const MandoBotAPI = {
-  segment: async function (
-    sentence: string,
-    language?: string,
-  ): Promise<SegmentResponseType> {
-    let endpoint = `/segment?data=${encodeURIComponent(sentence)}`;
-
-    // Include language preference if provided
-    // This allows anonymous users to get language-specific definitions
-    if (language) {
-      endpoint += `&language=${language}`;
-    }
+  segment: async function (sentence: string): Promise<SegmentResponseType> {
+    const endpoint = `/segment?data=${encodeURIComponent(sentence)}`;
 
     const response = await api.post(
       endpoint,

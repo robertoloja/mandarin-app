@@ -5,7 +5,7 @@ from django.db.models import Q
 from dragonmapper import hanzi as hanzi_utils
 
 from mandoBot.schemas import ChineseDictionary, MandarinWordSchema, SegmentationResponse
-from mandoBot.languages import is_supported_language
+from mandoBot.languages import SUPPORTED_LANGUAGES
 from sentences.dictionaries import WiktionaryScraper
 from sentences.models.CEDictionary import CEDictionary
 from sentences.models.CEDefinition import CEDefinition
@@ -19,35 +19,21 @@ from ..segmenters import JiebaSegmenter
 class Segmenter:
     @staticmethod
     def segment_and_translate(
-        sentence: str, auth: bool = False, target_language: str = 'en'
+        sentence: str, auth: bool = False
     ) -> SegmentationResponse:
-        """
-        Segments and translates a Chinese sentence.
-        
-        Args:
-            sentence: The Chinese text to segment
-            auth: Whether user is authenticated (uses DeepL if True, Argos if False)
-            target_language: Language code for definitions ('en' or 'de'). Default 'en'.
-        """
         sentence = sentence.replace("\u3000", "").strip()
-        
-        # Validate target_language
-        if not is_supported_language(target_language):
-            target_language = 'en'
+
+        translator_fn = DeepLTranslate.translate if auth else Translator.translate
 
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(JiebaSegmenter.segment, sentence)
-            if auth:
-                future_translation = executor.submit(
-                    DeepLTranslate.translate, sentence, target_language
-                )
-            else:
-                future_translation = executor.submit(
-                    Translator.translate, sentence, target_language
-                )
+            future_translations = {
+                lang: executor.submit(translator_fn, sentence, lang)
+                for lang in SUPPORTED_LANGUAGES
+            }
 
             segmented = future_segmented.result()
-            translated = future_translation.result()
+            translations = {lang: fut.result() for lang, fut in future_translations.items()}
 
         segmented_list: List[MandarinWordSchema] = Segmenter.add_pronunciations(
             segmented
@@ -58,7 +44,7 @@ class Segmenter:
         mandarin_sentence: List[MandarinWordSchema] = segmented_sentence
 
         result = SegmentationResponse(
-            translation=translated, sentence=mandarin_sentence, dictionary=dictionary
+            translations=translations, sentence=mandarin_sentence, dictionary=dictionary
         )
 
         return result

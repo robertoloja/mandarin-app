@@ -21,35 +21,49 @@ simplified_mandarin_code = "zh"
 argostranslate.package.update_package_index()
 available_packages = argostranslate.package.get_available_packages()
 
-# Install packages for each supported language
+# Install zh→{lang} packages where available, and en→{lang} pivot packages
+PIVOT_LANGUAGE_PAIRS = [
+    (simplified_mandarin_code, 'en'),
+    (traditional_mandarin_code, 'en'),
+] + [
+    ('en', argos_code)
+    for lang_code, argos_code in ARGOS_LANGUAGE_MAP.items()
+    if lang_code != 'en'
+]
+
+for from_code, to_code in PIVOT_LANGUAGE_PAIRS:
+    pkg = next(
+        filter(
+            lambda x: x.from_code == from_code and x.to_code == to_code,
+            available_packages,
+        ),
+        None,
+    )
+    if pkg:
+        print(f"Installing Argos package {from_code}→{to_code}...")
+        try:
+            argostranslate.package.install_from_path(pkg.download())
+        except Exception as e:
+            print(f"Failed to install {from_code}→{to_code}: {e}")
+
+# Also try direct zh→{lang} packages (used if available)
 for language_code, argos_code in ARGOS_LANGUAGE_MAP.items():
-    try:
-        # Try to install traditional -> language package
-        traditional_pkg = next(
+    if argos_code == 'en':
+        continue
+    for zh_code in (simplified_mandarin_code, traditional_mandarin_code):
+        pkg = next(
             filter(
-                lambda x: x.from_code == traditional_mandarin_code
-                and x.to_code == argos_code,
+                lambda x: x.from_code == zh_code and x.to_code == argos_code,
                 available_packages,
             ),
-            None
+            None,
         )
-        if traditional_pkg:
-            argostranslate.package.install_from_path(traditional_pkg.download())
-        
-        # Try to install simplified -> language package
-        simplified_pkg = next(
-            filter(
-                lambda x: x.from_code == simplified_mandarin_code
-                and x.to_code == argos_code,
-                available_packages,
-            ),
-            None
-        )
-        if simplified_pkg:
-            argostranslate.package.install_from_path(simplified_pkg.download())
-    except StopIteration:
-        # Package not available, skip
-        pass
+        if pkg:
+            print(f"Installing Argos package {zh_code}→{argos_code}...")
+            try:
+                argostranslate.package.install_from_path(pkg.download())
+            except Exception as e:
+                print(f"Failed to install {zh_code}→{argos_code}: {e}")
 
 
 class ArgosTranslate:
@@ -76,15 +90,10 @@ class ArgosTranslate:
         # Get the Argos code for the target language
         to_code = ARGOS_LANGUAGE_MAP.get(target_language, ARGOS_LANGUAGE_MAP['en'])
 
+        # Argos Translate automatically builds CompositeTranslation chains at
+        # startup (e.g. zh→en→de) from installed packages, so a direct call works
+        # as long as the required packages (zh→en, en→de) are installed.
         try:
             return argostranslate.translate.translate(sentence, from_code, to_code)
-        except (AttributeError, ValueError) as e:
-            # Handle case where target language package is not available
-            # Fall back to English translation
-            if to_code != ARGOS_LANGUAGE_MAP['en']:
-                try:
-                    return argostranslate.translate.translate(sentence, from_code, ARGOS_LANGUAGE_MAP['en'])
-                except Exception:
-                    return sentence  # Return original if translation fails
-            else:
-                return sentence  # Return original if English translation fails
+        except Exception:
+            return sentence

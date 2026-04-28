@@ -15,7 +15,7 @@ export const DeleteButton = (props: {
       '',
       historyItem.segments,
       historyItem.dictionary,
-      historyItem.translation,
+      historyItem.translations,
       historyItem.shareURL,
     );
     historySentence.deleteFromHistory();

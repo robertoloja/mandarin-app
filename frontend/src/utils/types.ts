@@ -20,15 +20,14 @@ export type MandarinWordType = {
 export type SegmentResponseType = {
   sentence: MandarinWordType[];
   dictionary: ChineseDictionary;
-  translation: string;
-  user_language: UserLanguage;
+  translations: Record<string, string>;
 };
 
 export type MandarinSentenceType = {
   mandarin: string;
   segments: MandarinWordType[];
   dictionary: ChineseDictionary;
-  translation: string;
+  translations: Record<string, string>;
   shareURL: string;
 };
 
@@ -39,7 +38,7 @@ export type SentenceHistoryType = MandarinSentenceType & {
 export const emptySentence: MandarinSentenceType = {
   mandarin: '',
   segments: [],
-  translation: '',
+  translations: {},
   dictionary: {},
   shareURL: '',
 };

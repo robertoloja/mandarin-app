@@ -6,14 +6,20 @@ import { useSelector } from 'react-redux';
 import { RootState, store } from '@/utils/store/store';
 import { setTranslationPanelHeight } from '@/utils/store/mandarinSentenceSlice';
 
-function Translation(props: { text: string }) {
+function Translation(props: { translations: Record<string, string> }) {
   const { colorMode } = useColorMode();
   const lightGradientBgString =
     'linear-gradient(to bottom, rgba(255, 255, 255, 1) 10%, rgba(0, 0, 0, 0) 100%);';
   const darkGradientBgString = `linear-gradient(to bottom, rgba(40, 40, 40, 1) 10%, rgba(0, 0, 0, 0) 100%);`;
 
-  const minHeight = 20;
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
+
+  const text = props.translations[user_language] ?? '';
   const maxHeight = 300;
+
+  const minHeight = 20;
 
   const height = useSelector(
     (state: RootState) => state.sentence.translationPanelHeight,
@@ -117,7 +123,7 @@ function Translation(props: { text: string }) {
 
       <Center>
         <Text my={6} textAlign="justify" px={5}>
-          {props.text}
+          {text}
         </Text>
       </Center>
     </Box>

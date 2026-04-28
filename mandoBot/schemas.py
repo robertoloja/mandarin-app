@@ -51,7 +51,7 @@ class MandarinWordSchema(Schema):
 
 
 class SegmentationResponse(Schema):
-    translation: str
+    translations: Dict[str, str]
     sentence: List[MandarinWordSchema]
     dictionary: Dict[str, ChineseDictionary]
 

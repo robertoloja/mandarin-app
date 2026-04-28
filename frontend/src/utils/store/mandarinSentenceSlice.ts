@@ -28,21 +28,21 @@ const mandarinSentenceSlice = createSlice({
       state,
       action: PayloadAction<{
         mandarin: string;
-        translation: string;
+        translations: Record<string, string>;
         segments: MandarinWordType[];
       }>,
     ) {
-      let translation = '';
-
-      if (state.mandarinSentence.translation !== '') {
-        translation = action.payload.translation;
-      } else {
-        translation = ' ' + action.payload.translation;
-      }
+      const isFirst =
+        Object.keys(state.mandarinSentence.translations).length === 0;
 
       state.mandarinSentence.mandarin = action.payload.mandarin; // never append
 
-      state.mandarinSentence.translation += translation;
+      for (const [lang, text] of Object.entries(action.payload.translations)) {
+        const prefix = isFirst ? '' : ' ';
+        state.mandarinSentence.translations[lang] =
+          (state.mandarinSentence.translations[lang] ?? '') + prefix + text;
+      }
+
       state.mandarinSentence.segments = [
         ...state.mandarinSentence.segments,
         ...action.payload.segments,
