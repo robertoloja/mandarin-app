@@ -1,4 +1,5 @@
 import { UserLanguage } from '@/localization/main';
+export type { UserLanguage };
 
 export type ChineseDictionary = Record<
   string,
@@ -50,4 +51,5 @@ export type UserPreferences = {
   email: string;
   pronunciation_preference: PronunciationPreference;
   theme_preference: 0 | 1;
+  user_language: string;
 };

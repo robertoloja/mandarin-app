@@ -65,24 +65,23 @@ export default function LoginPage() {
     await store
       .dispatch(login({ username, password }))
       .unwrap()
-      .then((response) => {
-        if (response.error) {
-          toast({
-            title: response.error,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
-        } else {
-          setSubmitDisabled(true);
-          toast({
-            title: 'Successfully Logged in!',
-            status: 'success',
-            duration: 2000,
-            isClosable: true,
-          });
-          setTimeout(() => router.push('/settings'), 2000);
-        }
+      .then(() => {
+        setSubmitDisabled(true);
+        toast({
+          title: 'Successfully Logged in!',
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+        setTimeout(() => router.push('/settings'), 2000);
+      })
+      .catch((error: { error: string }) => {
+        toast({
+          title: error?.error ?? 'Login failed',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       });
   };
 
@@ -140,7 +139,9 @@ export default function LoginPage() {
               type="submit"
               aria-label="submit button"
             >
-              {authState.loading ? localization.login_page.logging_in[user_language] : localization.login_page.login[user_language]}
+              {authState.loading
+                ? localization.login_page.logging_in[user_language]
+                : localization.login_page.login[user_language]}
             </Button>
 
             {/* This is wrong; demand username and make API request to /api/accounts/reset_password_request */}

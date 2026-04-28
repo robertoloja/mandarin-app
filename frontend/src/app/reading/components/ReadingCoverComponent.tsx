@@ -9,7 +9,7 @@ import AttributionPopover from './AttributionPopover';
 import { ReadingProps } from '../types';
 import { NavArrows } from './NavArrowsComponent';
 import { Chapters } from './ChaptersComponent';
-import { RootState, store } from '@/utils/store/store';
+import { RootState } from '@/utils/store/store';
 import { useSelector } from 'react-redux';
 
 const cinzel = Cinzel({

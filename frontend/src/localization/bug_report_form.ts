@@ -1,5 +1,4 @@
-const about_status = {
-
+export const about_status = {
   bug_report: {
     title: {
       en: 'MandoBot Bug and Problem Report',
@@ -20,7 +19,7 @@ const about_status = {
       },
       2: {
         en: 'Sentence history page',
-        de: 'Übersetzungschronik,'
+        de: 'Übersetzungschronik,',
       },
       3: {
         en: 'Reading room page',
@@ -45,7 +44,6 @@ const about_status = {
         en: 'share button',
         de: 'Teilen-Icon',
       },
-
     },
 
     sentence_history: {
@@ -96,5 +94,4 @@ const about_status = {
       },
     },
   },
-
 };

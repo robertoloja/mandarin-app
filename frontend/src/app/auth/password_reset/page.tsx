@@ -16,6 +16,8 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import PasswordInputComponent from '../components/PasswordInputComponent';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { store } from '@/utils/store/store';
 import { login } from '@/utils/store/authSlice';
@@ -29,6 +31,9 @@ export default function PasswordResetPage() {
   const toast = useToast();
   const router = useRouter();
   const urlPasswordToken = useSearchParams().get('token') || '';
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   if (urlPasswordToken === '') {
     router.push('/');
@@ -125,6 +130,7 @@ export default function PasswordResetPage() {
             placeHolderText="Enter new password"
             handlePasswordChange={(e) => setNewPassword(e.target.value)}
             invalid={invalid}
+            user_language={user_language}
           />
 
           <GridItem colSpan={1} pt={2}>
@@ -134,6 +140,7 @@ export default function PasswordResetPage() {
             placeHolderText="Confirm new password"
             handlePasswordChange={(e) => setConfirmation(e.target.value)}
             invalid={invalid}
+            user_language={user_language}
           />
         </Grid>
 
