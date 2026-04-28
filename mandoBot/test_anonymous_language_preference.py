@@ -37,7 +37,7 @@ class AnonymousUserLanguagePreferenceTests(TestCase):
         # Should have response structure
         self.assertIn('sentence', data)
         self.assertIn('dictionary', data)
-        self.assertIn('translation', data)
+        self.assertIn('translations', data)
 
         # Segmentation should work
         self.assertTrue(len(data['sentence']) > 0)

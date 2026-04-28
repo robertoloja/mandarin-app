@@ -141,14 +141,14 @@ class SegmentationTests(TestCase):
         expected = [
             "lit. that which is long divided must unify, and that which is long unified must divide (idiom, from 三國演義|三国演义[San1 guo2 Yan3 yi4]) / fig. things are constantly changing"
         ]
-        self.assertEqual(segmented.sentence[0].definitions, expected)
+        self.assertEqual(segmented.sentence[0].definitions['en'], expected)
 
     def test_does_not_duplicate_definitions_before_chengyu(self):
         sentence = "話說天下大勢分久必合，合久必分"
         segmented = Segmenter.segment_and_translate(sentence)
 
         for word in segmented.sentence:
-            self.assertEqual(len(word.definitions), 1)
+            self.assertEqual(len(word.definitions.get('en', [])), 1)
 
         for hanzi in sentence:
             if not is_punctuation(hanzi):

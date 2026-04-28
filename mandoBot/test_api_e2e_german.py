@@ -93,7 +93,7 @@ class EndToEndGermanLocalizationTests(TestCase):
         # Check structure
         self.assertIn('sentence', data)
         self.assertIn('dictionary', data)
-        self.assertIn('translation', data)
+        self.assertIn('translations', data)
 
     @patch('sentences.translators.DeepLTranslator.DeepLTranslate.translate')
     @patch('sentences.translators.ArgosTranslator.ArgosTranslate.translate')
@@ -133,7 +133,7 @@ class EndToEndGermanLocalizationTests(TestCase):
         
         # Verify dictionary entries have required fields
         for hanzi_entry in data['dictionary'].values():
-            self.assertIn('english', hanzi_entry)
+            self.assertIn('en', hanzi_entry)
             self.assertIn('pinyin', hanzi_entry)
             self.assertIn('zhuyin', hanzi_entry)
 
@@ -150,8 +150,8 @@ class EndToEndGermanLocalizationTests(TestCase):
         data = response.json()
         
         # Translation should be present
-        self.assertIn('translation', data)
-        self.assertTrue(len(data['translation']) > 0)
+        self.assertIn('translations', data)
+        self.assertTrue(len(data['translations']) > 0)
 
     @patch('sentences.translators.DeepLTranslator.DeepLTranslate.translate')
     @patch('sentences.translators.ArgosTranslator.ArgosTranslate.translate')
@@ -169,7 +169,7 @@ class EndToEndGermanLocalizationTests(TestCase):
         # All required fields present
         self.assertIn('sentence', data)
         self.assertIn('dictionary', data)
-        self.assertIn('translation', data)
+        self.assertIn('translations', data)
 
     @patch('sentences.translators.DeepLTranslator.DeepLTranslate.translate')
     @patch('sentences.translators.ArgosTranslator.ArgosTranslate.translate')
@@ -241,16 +241,18 @@ class EndToEndGermanLocalizationTests(TestCase):
         self.assertEqual(response.status_code, 200)
         data = response.json()
         
-        # Each word in sentence should have definitions as list
+        # Each word in sentence should have definitions as dict keyed by language
         for word in data['sentence']:
-            self.assertIsInstance(word['definitions'], list)
-            for defn in word['definitions']:
-                self.assertIsInstance(defn, str)
+            self.assertIsInstance(word['definitions'], dict)
+            for lang_defs in word['definitions'].values():
+                self.assertIsInstance(lang_defs, list)
+                for defn in lang_defs:
+                    self.assertIsInstance(defn, str)
         
-        # Dictionary entries should have english as list
+        # Dictionary entries should have 'en' as list
         for hanzi_entry in data['dictionary'].values():
-            self.assertIsInstance(hanzi_entry['english'], list)
-            for defn in hanzi_entry['english']:
+            self.assertIsInstance(hanzi_entry['en'], list)
+            for defn in hanzi_entry['en']:
                 self.assertIsInstance(defn, str)
 
     @patch('sentences.translators.DeepLTranslator.DeepLTranslate.translate')
@@ -268,7 +270,7 @@ class EndToEndGermanLocalizationTests(TestCase):
         # Should have structure even if empty
         self.assertIn('sentence', data)
         self.assertIn('dictionary', data)
-        self.assertIn('translation', data)
+        self.assertIn('translations', data)
 
     @patch('sentences.translators.DeepLTranslator.DeepLTranslate.translate')
     @patch('sentences.translators.ArgosTranslator.ArgosTranslate.translate')
