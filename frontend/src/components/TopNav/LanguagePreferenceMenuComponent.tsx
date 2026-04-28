@@ -17,7 +17,11 @@ import {
 import { useSelector } from 'react-redux';
 import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
 
-export default function LanguagePreferenceMenuButton({ iconSize }: { iconSize: number }) {
+export default function LanguagePreferenceMenuButton({
+  iconSize,
+}: {
+  iconSize: number;
+}) {
   const { colorMode } = useColorMode();
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
@@ -29,7 +33,11 @@ export default function LanguagePreferenceMenuButton({ iconSize }: { iconSize: n
         <IconButton
           aria-label="language preference"
           icon={
-            <Text fontWeight="400" textTransform="uppercase" fontSize={iconSize}>
+            <Text
+              fontWeight="400"
+              textTransform="uppercase"
+              fontSize={iconSize}
+            >
               {user_language}
             </Text>
           }
@@ -40,7 +48,9 @@ export default function LanguagePreferenceMenuButton({ iconSize }: { iconSize: n
       <PopoverContent bg={colorMode === 'light' ? 'white' : 'gray.700'}>
         <PopoverArrow />
         <PopoverHeader>
-          <Center>{localization.top_nav.top_nav.language_options[user_language]}</Center>
+          <Center>
+            {localization.top_nav.language_options[user_language]}
+          </Center>
         </PopoverHeader>
         <PopoverBody>
           <LanguagePreferencesComponent />

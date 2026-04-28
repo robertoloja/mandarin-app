@@ -1,5 +1,7 @@
 'use client';
 
+import localization from '@/localization/main';
+import { RootState } from '@/utils/store/store';
 import {
   Center,
   Grid,
@@ -23,9 +25,13 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
 
 export default function TextMenuButton() {
   const { colorMode } = useColorMode();
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   return (
     <Popover>
@@ -40,7 +46,7 @@ export default function TextMenuButton() {
       <PopoverContent>
         <PopoverArrow />
         <PopoverHeader>
-          <Center>Text Options</Center>
+          <Center>{localization.top_nav.text_options[user_language]}</Center>
         </PopoverHeader>
         <PopoverBody>
           <TextPreferences />
@@ -66,6 +72,9 @@ const TextPreferences = () => {
   );
   const [showPronunciation, togglePronunciation] = useState(true);
   const [showDefinition, toggleDefinition] = useState(true);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   const setFontSize = (
     value: number,
@@ -90,14 +99,16 @@ const TextPreferences = () => {
   }, []);
 
   return (
-    <Grid templateColumns="1fr 1fr" templateRows="repeast(4, 1fr)" my={5}>
+    <Grid templateColumns="1fr 1fr" templateRows="repeat(4, 1fr)" my={5}>
       <GridItem rowSpan={2} colSpan={1} borderBottom="1px solid gray">
-        <Text textAlign="center">Pronunciation</Text>
+        <Text textAlign="center">
+          {localization.top_nav.pronunciation[user_language]}
+        </Text>
       </GridItem>
 
       <GridItem rowSpan={1} colSpan={1}>
         <HStack justify="center" mb={3}>
-          <Text>off</Text>
+          <Text>{localization.top_nav.off[user_language]}</Text>
           <Switch
             isChecked={showPronunciation}
             onChange={() => {
@@ -114,13 +125,15 @@ const TextPreferences = () => {
               }
             }}
           />
-          <Text>on</Text>
+          <Text>{localization.top_nav.on[user_language]}</Text>
         </HStack>
       </GridItem>
 
       <GridItem rowSpan={1} colSpan={1} borderBottom="1px solid gray">
         <HStack mb={5}>
-          <Text textAlign="right">size:</Text>
+          <Text textAlign="right">
+            {localization.top_nav.size[user_language]}
+          </Text>
           <NumberInput
             defaultValue={pronunciationFontSize || 15}
             min={10}
@@ -142,12 +155,14 @@ const TextPreferences = () => {
       </GridItem>
 
       <GridItem rowSpan={2} colSpan={1} mt={6}>
-        <Text textAlign="center">Definitions</Text>
+        <Text textAlign="center">
+          {localization.top_nav.definitions[user_language]}
+        </Text>
       </GridItem>
 
       <GridItem rowSpan={1} colSpan={1} mt={6}>
         <HStack justify="center" mb={3}>
-          <Text>off</Text>
+          <Text>{localization.top_nav.off[user_language]}</Text>
           <Switch
             isChecked={showDefinition}
             onChange={() => {
@@ -164,13 +179,15 @@ const TextPreferences = () => {
               }
             }}
           />
-          <Text>on</Text>
+          <Text>{localization.top_nav.on[user_language]}</Text>
         </HStack>
       </GridItem>
 
       <GridItem colSpan={1}>
         <HStack>
-          <Text textAlign="right">size:</Text>
+          <Text textAlign="right">
+            {localization.top_nav.size[user_language]}
+          </Text>
           <NumberInput
             defaultValue={definitionFontSize || 15}
             min={10}
