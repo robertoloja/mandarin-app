@@ -1,12 +1,13 @@
+import localization, { UserLanguage } from '@/localization/main';
 import { HStack, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 
-export const KoFiButton = () => {
+export const KoFiButton = ({ user_language }: { user_language: UserLanguage }) => {
   const color = '#00b4f7';
 
   return (
     <Link
-      title={'Support this project'}
+      title={localization.about_status.support_this_project.content.alt_text[user_language]}
       style={{ backgroundColor: color, borderRadius: '5px' }}
       href="https://ko-fi.com/N4N618ZZ1N"
       target="_blank"
@@ -21,7 +22,7 @@ export const KoFiButton = () => {
           color="white"
           textShadow="1px 1px 1px rgba(50, 50, 50, 0.2)"
         >
-          Support
+          {localization.about_status.support_this_project.content.button[user_language]}
         </Text>
       </HStack>
     </Link>

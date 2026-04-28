@@ -6,10 +6,12 @@ import { Text } from '@chakra-ui/react';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
+import localization from '@/localization/main';
 
 export default function SettingsButton(props: { onClose: () => void }) {
   const { colorMode } = useColorMode();
   const username = useSelector((state: RootState) => state.auth.username);
+  const user_language = useSelector((state: RootState) => state.settings.user_language);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
 
@@ -25,7 +27,7 @@ export default function SettingsButton(props: { onClose: () => void }) {
             }
             _hover={{ textDecoration: 'underline' }}
           >
-            Settings
+            {localization.nav_panel.settings[user_language]}
           </Text>
         </HStack>
       </Link>

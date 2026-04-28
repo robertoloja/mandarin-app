@@ -12,17 +12,21 @@ from dragonmapper import hanzi
 from accounts.api import router as accounts_router
 
 from sentences.segmenters import Segmenter
+from mandoBot.languages import SUPPORTED_LANGUAGES
 from sentences.segmenters.types import (
     APISegmentationSuccessResponse,
 )
 from status.models import ServerStatus
+from sentences.models import SentenceHistory
+from sentences.models.ReadingRoomChapter import ReadingRoomChapter
 from .schemas import (
     ChineseDictionary,
     MandarinWordSchema,
     SegmentationResponse,
     ServerStatusSchema,
+    ReadingRoomChapterSchema,
+    APIError,
 )
-from sentences.models import SentenceHistory
 
 logger = logging.getLogger(__name__)
 api = NinjaAPI(
@@ -43,10 +47,12 @@ api = NinjaAPI(
 )
 api.add_router("/accounts/", accounts_router)
 
-emptyDictionary = {"word": ChineseDictionary(english=[], pinyin=[], zhuyin=[])}
-emptyWord = MandarinWordSchema(word="", pinyin=[], zhuyin=[], definitions=[])
+emptyDictionary = {"word": ChineseDictionary(en=[], de=[], pinyin=[], zhuyin=[])}
+emptyWord = MandarinWordSchema(word="", pinyin=[], zhuyin=[], definitions={})
 emptyResponse = SegmentationResponse(
-    translation="", dictionary=emptyDictionary, sentence=[emptyWord]
+    translations={lang: "" for lang in SUPPORTED_LANGUAGES},
+    dictionary=emptyDictionary,
+    sentence=[emptyWord],
 )
 
 
@@ -58,7 +64,7 @@ def segment(request, data: str) -> APISegmentationSuccessResponse:
     Accepts a string in Mandarin, and returns the same string but segmented into
     individual words, each of which includes pronunciation and definitions. The
     response also includes a dictionary containing every hanzi in the input sentence,
-    as well as a machine translation of the entire sentence.
+    as well as a machine translation of the entire sentence in all supported languages.
     """
     timer = Timer()
     timer.start()
@@ -106,12 +112,12 @@ def handle_non_chinese(data: str) -> SegmentationResponse:
     When the "word" and the only item in "sentence" are equal,
     the frontend recognizes that this is punctuation.
     """
-    word = MandarinWordSchema(word=data, pinyin=[data], zhuyin=[data], definitions=[])
-    chinese_dictionary = ChineseDictionary(english=[], pinyin=[], zhuyin=[])
+    word = MandarinWordSchema(word=data, pinyin=[data], zhuyin=[data], definitions={})
+    chinese_dictionary = ChineseDictionary(en=[], de=[], pinyin=[], zhuyin=[])
     dictionary: dict[str, ChineseDictionary] = {"word": chinese_dictionary}
 
     foo = SegmentationResponse(
-        translation=data,
+        translations={lang: data for lang in SUPPORTED_LANGUAGES},
         sentence=[word],
         dictionary=dictionary,
     )
@@ -141,7 +147,17 @@ async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
             f"Database error while getting SentenceHistory.sentence_id: {share_id}"
         )
         return emptyResponse
-    return json.loads(db_entry.json_data)
+    return _migrate_shared_json(json.loads(db_entry.json_data))
+    """Migrate old single-language share JSON to the current multi-language format."""
+    for word in data.get("sentence", []):
+        if isinstance(word.get("definitions"), list):
+            word["definitions"] = {"en": word["definitions"], "de": word["definitions"]}
+    for hanzi_entry in data.get("dictionary", {}).values():
+        if "english" in hanzi_entry:
+            hanzi_entry["en"] = hanzi_entry.pop("english")
+        if "de" not in hanzi_entry:
+            hanzi_entry["de"] = hanzi_entry.get("en", [])
+    return data
 
 
 @api.post("/share", response=str)
@@ -160,3 +176,17 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
             SentenceHistory entry for {''.join([word for word in data.sentence])}"""
         )
     return db_entry.sentence_id
+
+
+@api.get(
+    "/reading-room/{book_slug}/{chapter_order}/",
+    response={200: ReadingRoomChapterSchema, 404: APIError},
+)
+def get_reading_room_chapter(request, book_slug: str, chapter_order: int):
+    try:
+        chapter = ReadingRoomChapter.objects.get(
+            book_slug=book_slug, chapter_order=chapter_order
+        )
+    except ReadingRoomChapter.DoesNotExist:
+        return 404, {"error": "Chapter not found"}
+    return 200, chapter.data

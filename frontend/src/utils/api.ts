@@ -8,9 +8,10 @@ import { store } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { logout, setUserDetails } from './store/authSlice';
 import { setPreferences } from './store/settingsSlice';
+import { UserLanguage } from '@/localization/main';
 
 export function getCookie(name: string): string | null {
-  if (typeof document !== undefined) {
+  if (typeof document !== 'undefined') {
     const cookieValue = document.cookie
       .split('; ')
       .find((row) => row.startsWith(`${name}=`))
@@ -21,9 +22,7 @@ export function getCookie(name: string): string | null {
 }
 
 const API_BASE_URL =
-  process.env.NODE_ENV === 'development'
-    ? 'https://localhost:8000/api'
-    : '/api';
+  process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000/api' : '/api';
 const TIMEOUT = process.env.NODE_ENV === 'development' ? 100000 : 20000;
 
 const api = axios.create({
@@ -84,8 +83,10 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 // API endpoints
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
+    const endpoint = `/segment?data=${encodeURIComponent(sentence)}`;
+
     const response = await api.post(
-      `/segment?data=${sentence}`,
+      endpoint,
       {
         sentence: sentence,
       },
@@ -106,6 +107,16 @@ export const MandoBotAPI = {
     return response.data;
   },
 
+  readingRoomChapter: async function (
+    book_slug: string,
+    chapter_order: number,
+  ) {
+    const response = await api.get(
+      `/reading-room/${book_slug}/${chapter_order}/`,
+    );
+    return response.data;
+  },
+
   login: async function (
     username: string,
     password: string,
@@ -121,6 +132,9 @@ export const MandoBotAPI = {
       setPreferences({
         pronunciation_preference: response.data.pronunciation_preference,
         theme_preference: response.data.theme_preference,
+        user_language:
+          (localStorage.getItem('user_language') as UserLanguage) ??
+          response.data.user_language,
       }),
     );
     return response.data;
@@ -196,6 +210,9 @@ export const MandoBotAPI = {
             setPreferences({
               pronunciation_preference: response.data.pronunciation_preference,
               theme_preference: response.data.theme_preference,
+              user_language:
+                (localStorage.getItem('user_language') as UserLanguage) ??
+                response.data.user_language,
             }),
           );
         }
@@ -226,6 +243,21 @@ export const MandoBotAPI = {
     let result = false;
     await api
       .post('/accounts/theme_preference', { preference })
+      .then(() => {
+        result = true;
+      })
+      .catch(() => {
+        result = false;
+      });
+    return result;
+  },
+
+  languagePreference: async function (
+    language: UserLanguage,
+  ): Promise<boolean> {
+    let result = false;
+    await api
+      .post('/accounts/language_preference', { language })
       .then(() => {
         result = true;
       })

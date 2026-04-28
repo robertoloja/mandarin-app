@@ -1,7 +1,8 @@
+import localization, { UserLanguage } from '@/localization/main';
 import styles from '@/themes';
 import { Text, Box, Heading, useColorMode } from '@chakra-ui/react';
 
-export const PrivacyPolicyCard = () => {
+export const PrivacyPolicyCard = ({user_language}: {user_language: UserLanguage}) => {
   const { colorMode } = useColorMode();
   return (
     <Box id="policies" mt={4}>
@@ -26,17 +27,10 @@ export const PrivacyPolicyCard = () => {
               : '1px 1px 1px #222'
           }
         >
-          Privacy Policy
+         {localization.about_status.privacy_policy.title[user_language]}
         </Heading>
         <Text mb={4}>
-          This is a privacy preserving application. We collect no personal
-          information or usage information, except for the user&apos;s provided
-          e-mail address and the mandarin sentences entered into the
-          application. User e-mail is only used to create and manage the
-          account, no unsolicited e-mails are ever sent to the user, and this
-          e-mail address is never shared with any third-party. Users may delete
-          their accounts at any time, and any sentences entered into the app can
-          be deleted at any time.
+          {localization.about_status.privacy_policy.content[user_language]}
         </Text>
         <Heading
           size="sm"
@@ -49,55 +43,34 @@ export const PrivacyPolicyCard = () => {
               : '1px 1px 1px #222'
           }
         >
-          Terms of Use
+          {localization.about_status.terms_of_use.title[user_language]}
         </Heading>
         <Text mb={2}>
-          By using this app, you agree to these Terms of Service. Please read
-          them carefully before using the service.
+          {localization.about_status.terms_of_use.content.intro[user_language]}
         </Text>
         <Text mb={2}>
-          1. Use of the Service: You may use the app only for lawful purposes
-          and in accordance with these Terms. By creating an account, you
-          confirm that: You are at least 13 years old. You will not misuse the
-          app to upload harmful, illegal, or offensive content.{' '}
+          1. {localization.about_status.terms_of_use.content[1][user_language]}
         </Text>
         <Text mb={2}>
-          2. User-Generated Content Ownership: You retain ownership of the
-          Mandarin sentences you input into the app. Deletion: You may delete
-          your content at any time via the app interface. Responsibility: You
-          are solely responsible for the content you upload and its legality.
+        2. {localization.about_status.terms_of_use.content[2][user_language]}
         </Text>
         <Text mb={2}>
-          3. Account Responsibility: You are responsible for maintaining the
-          confidentiality of your account credentials. You agree to notify us
-          immediately of any unauthorized use of your account.
+          3. {localization.about_status.terms_of_use.content[3][user_language]}
         </Text>
         <Text mb={2}>
-          4. Data Storage and Privacy: By using the app, you consent to the
-          storage of your email and user-generated content as outlined in our
-          Privacy Policy. We do not claim ownership of your data but reserve the
-          right to remove content that violates these Terms.
+          4. {localization.about_status.terms_of_use.content[4][user_language]}
         </Text>
         <Text mb={2}>
-          5. Limitation of Liability: MandoBot is provided on an
-          &quot;as-is&quot; and &quot;as-available&quot; basis. We make no
-          warranties of any kind regarding the service&apos;s reliability,
-          availability, or suitability for your purposes. To the extent
-          permitted by law, we disclaim all liability for damages resulting from
-          your use of the app.
+          5. {localization.about_status.terms_of_use.content[5][user_language]}
         </Text>
         <Text mb={2}>
-          6. Termination: We reserve the right to suspend or terminate your
-          account if you violate these Terms.
+          6. {localization.about_status.terms_of_use.content[6][user_language]}
         </Text>
         <Text mb={2}>
-          7. Changes to These: Terms We may update these Terms from time to
-          time. Significant changes will be communicated via email or through
-          the app.
+          7. {localization.about_status.terms_of_use.content[7][user_language]}
         </Text>
         <Text>
-          8. Contact: For questions or concerns about these Terms, contact us at
-          mandobotserver@gmail.com
+          8. {localization.about_status.terms_of_use.content[8][user_language]}
         </Text>
       </Box>
     </Box>

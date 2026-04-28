@@ -27,14 +27,16 @@ import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
-import SettingsButton from './SettingsButtonComponent';
 import { useRouter } from 'next/navigation';
+import SettingsButton from './SettingsButtonComponent';
+import localization from '@/localization/main';
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
   const username = useSelector((state: RootState) => state.auth.username);
+  const user_language = useSelector((state: RootState) => state.settings.user_language);
   const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
   const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
 
@@ -86,7 +88,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  Home
+                  {localization.nav_panel.home[user_language]}
                 </Text>
               </HStack>
             </Link>
@@ -108,7 +110,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  Reading Room
+                  {localization.nav_panel.reading_room[user_language]}
                 </Text>
               </HStack>
             </Link>
@@ -127,7 +129,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  Sentence History
+                  {localization.nav_panel.sentence_history[user_language]}
                 </Text>
               </HStack>
             </Link>
@@ -151,7 +153,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  Status / About
+                  {localization.nav_panel.status_about[user_language]}
                 </Text>
               </HStack>
             </Link>
@@ -170,7 +172,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  Report a Bug
+                  {localization.nav_panel.report_bug[user_language]}
                 </Text>
               </HStack>
             </Link>
@@ -193,7 +195,7 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
                     colorMode === 'light' ? lightTextShadow : darkTextShadow
                   }
                 >
-                  {username ? 'Log Out' : 'Log In'}
+                  {username ? localization.nav_panel.logout[user_language] : localization.nav_panel.login[user_language]}
                 </Text>
               </HStack>
             </Link>

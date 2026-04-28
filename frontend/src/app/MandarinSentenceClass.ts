@@ -19,7 +19,7 @@ export class MandarinSentenceClass {
   mandarin: string;
   segments: MandarinWordType[];
   dictionary: ChineseDictionary;
-  translation: string;
+  translations: Record<string, string>;
   shareURL: string;
   batched: boolean;
 
@@ -27,7 +27,7 @@ export class MandarinSentenceClass {
     userInput: string,
     segments: MandarinWordType[] = [],
     dictionary: ChineseDictionary = {},
-    translation: string = '',
+    translations: Record<string, string> = {},
     shareURL: string = '',
     batched: boolean = process.env.NODE_ENV === 'development' ? false : true,
   ) {
@@ -39,7 +39,7 @@ export class MandarinSentenceClass {
           .trim();
     this.segments = segments;
     this.dictionary = dictionary;
-    this.translation = translation;
+    this.translations = translations;
     this.shareURL = shareURL;
     this.batched = batched;
   }
@@ -56,7 +56,13 @@ export class MandarinSentenceClass {
       if (local.length !== 0 && !this.isReady()) {
         this.segments = local[0].segments;
         this.dictionary = local[0].dictionary;
-        this.translation = local[0].translation;
+        // Handle both old format (translation: string) and new format (translations: Record<string, string>)
+        const stored = local[0] as MandarinSentenceType & {
+          translation?: string;
+        };
+        this.translations =
+          stored.translations ??
+          (stored.translation ? { en: stored.translation } : {});
         this.shareURL = local[0].shareURL;
         this.finish();
         return;
@@ -73,11 +79,7 @@ export class MandarinSentenceClass {
       const batches = this.mandarin.split(/(?<=[。？！.?!])/);
 
       const orderedBatches = {} as {
-        [index: number]: {
-          sentence: MandarinWordType[];
-          dictionary: ChineseDictionary;
-          translation: string;
-        };
+        [index: number]: SegmentResponseType;
       };
       // Execute concurrently...
       const promises = batches.map((batch, i) =>
@@ -91,7 +93,13 @@ export class MandarinSentenceClass {
           await promises[i];
           this.appendToStore(orderedBatches[i]);
           this.segments = [...this.segments, ...orderedBatches[i].sentence];
-          this.translation += orderedBatches[i].translation;
+          for (const [lang, text] of Object.entries(
+            orderedBatches[i].translations,
+          )) {
+            this.translations[lang] =
+              (this.translations[lang] ? this.translations[lang] + ' ' : '') +
+              text;
+          }
           this.dictionary = {
             ...this.dictionary,
             ...orderedBatches[i].dictionary,
@@ -104,7 +112,7 @@ export class MandarinSentenceClass {
         MandoBotAPI.share({
           sentence: this.segments,
           dictionary: this.dictionary,
-          translation: this.translation,
+          translations: this.translations,
         }).then((response) => {
           this.shareURL = response;
           this.finish();
@@ -115,7 +123,7 @@ export class MandarinSentenceClass {
         (response: SegmentResponseType) => {
           this.segments = response.sentence;
           this.dictionary = response.dictionary;
-          this.translation = response.translation;
+          this.translations = response.translations;
 
           if (process.env.NODE_ENV === 'development') {
             for (const hanzi of this.mandarin) {
@@ -127,7 +135,7 @@ export class MandarinSentenceClass {
         },
       );
       await MandoBotAPI.share({
-        translation: this.translation,
+        translations: this.translations,
         sentence: this.segments,
         dictionary: this.dictionary,
       }).then((response: string) => {
@@ -163,7 +171,7 @@ export class MandarinSentenceClass {
         mandarin: this.mandarin,
         segments: this.segments,
         dictionary: this.dictionary,
-        translation: this.translation,
+        translations: this.translations,
         shareURL: this.shareURL,
         date: new Date(),
       },
@@ -193,7 +201,7 @@ export class MandarinSentenceClass {
     store.dispatch(
       appendToMandarinSentence({
         mandarin: this.mandarin,
-        translation: partiallySegmented.translation,
+        translations: partiallySegmented.translations,
         segments: partiallySegmented.sentence,
       }),
     );
@@ -208,7 +216,7 @@ export class MandarinSentenceClass {
     store.dispatch(
       appendToMandarinSentence({
         mandarin: this.mandarin,
-        translation: this.translation,
+        translations: this.translations,
         segments: this.segments,
       }),
     );
@@ -217,7 +225,7 @@ export class MandarinSentenceClass {
 
   private isReady() {
     return (
-      this.translation !== '' &&
+      Object.keys(this.translations).length > 0 &&
       this.shareURL !== '' &&
       this.segments.length !== 0 &&
       Object.keys(this.dictionary).length !== 0
@@ -237,7 +245,7 @@ export class MandarinSentenceClass {
     this.mandarin = '';
     this.segments = [];
     this.dictionary = {};
-    this.translation = '';
+    this.translations = {};
     this.shareURL = '';
     store.dispatch(clearMandarinDictionary());
     store.dispatch(clearMandarinSentence());

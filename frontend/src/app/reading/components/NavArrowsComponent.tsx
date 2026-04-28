@@ -1,12 +1,15 @@
 import { HStack, Text } from '@chakra-ui/react';
 import { Chapter } from '../types';
+import localization, { UserLanguage } from '@/localization/main';
 
 export const NavArrows = (props: {
   activePage: number;
   chapters: Chapter[][];
   setActivePage: (activePage: number) => void;
   setAccordionIndex: (num: number) => void;
+  user_language: UserLanguage;
 }) => {
+  const user_language = props.user_language;
   return (
     <HStack textColor="rgb(231, 231, 230)">
       {props.activePage > 0 && (
@@ -23,7 +26,7 @@ export const NavArrows = (props: {
             props.setAccordionIndex(-1);
           }}
         >
-          Previous 上
+          {localization.reading_room.previous[user_language]} 上
         </Text>
       )}
       {props.activePage < props.chapters.length - 1 && (
@@ -40,7 +43,7 @@ export const NavArrows = (props: {
             props.setAccordionIndex(-1);
           }}
         >
-          下 Next
+          下 {localization.reading_room.next[user_language]}
         </Text>
       )}
     </HStack>

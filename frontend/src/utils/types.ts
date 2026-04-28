@@ -1,7 +1,10 @@
+import { UserLanguage } from '@/localization/main';
+
 export type ChineseDictionary = Record<
   string,
   {
-    english: string[];
+    en: string[];
+    de: string[];
     pinyin: string[];
     zhuyin: string[];
   }
@@ -11,20 +14,20 @@ export type MandarinWordType = {
   word: string;
   pinyin: string[];
   zhuyin: string[];
-  definitions: string[];
+  definitions: Record<string, string[]>;
 };
 
 export type SegmentResponseType = {
   sentence: MandarinWordType[];
   dictionary: ChineseDictionary;
-  translation: string;
+  translations: Record<string, string>;
 };
 
 export type MandarinSentenceType = {
   mandarin: string;
   segments: MandarinWordType[];
   dictionary: ChineseDictionary;
-  translation: string;
+  translations: Record<string, string>;
   shareURL: string;
 };
 
@@ -35,7 +38,7 @@ export type SentenceHistoryType = MandarinSentenceType & {
 export const emptySentence: MandarinSentenceType = {
   mandarin: '',
   segments: [],
-  translation: '',
+  translations: {},
   dictionary: {},
   shareURL: '',
 };

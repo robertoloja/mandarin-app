@@ -32,11 +32,13 @@ class UserPreferencesSchema(ModelSchema):
             "email",
             "pronunciation_preference",
             "theme_preference",
+            "user_language",
         ]
 
 
 class ChineseDictionary(Schema):
-    english: List[str]
+    en: List[str]
+    de: List[str]
     pinyin: List[str]
     zhuyin: List[str]
 
@@ -45,11 +47,11 @@ class MandarinWordSchema(Schema):
     word: str
     pinyin: List[str]
     zhuyin: List[str]
-    definitions: List[str]
+    definitions: Dict[str, List[str]]
 
 
 class SegmentationResponse(Schema):
-    translation: str
+    translations: Dict[str, str]
     sentence: List[MandarinWordSchema]
     dictionary: Dict[str, ChineseDictionary]
 
@@ -74,3 +76,37 @@ class SuccessResponseSchema(Schema):
 
 class PronunciationPreferenceSchema(Schema):
     preference: Literal["zhuyin", "pinyin_acc", "pinyin_num"]
+
+
+class LanguagePreferenceSchema(Schema):
+    language: Literal["en", "de"]
+
+
+class BilingualDefinitions(Schema):
+    en: List[str]
+    de: List[str]
+
+
+class ReadingRoomWordSchema2(Schema):
+    word: str
+    pinyin: List[str]
+    zhuyin: List[str]
+    definitions: Dict
+
+
+class BilingualDictionaryEntry(Schema):
+    en: List[str]
+    de: List[str]
+    pinyin: List[str]
+    zhuyin: List[str]
+
+
+class BilingualTranslation(Schema):
+    en: str
+    de: str
+
+
+class ReadingRoomChapterSchema(Schema):
+    translation: BilingualTranslation
+    sentence: List[ReadingRoomWordSchema2]
+    dictionary: Dict[str, BilingualDictionaryEntry]

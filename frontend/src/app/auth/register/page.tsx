@@ -2,7 +2,7 @@
 
 import { MandoBotAPI } from '@/utils/api';
 import { login } from '@/utils/store/authSlice';
-import { store } from '@/utils/store/store';
+import { RootState, store } from '@/utils/store/store';
 import {
   Button,
   Center,
@@ -21,6 +21,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChangeEvent, useEffect, useState } from 'react';
 import PasswordInputComponent from '../components/PasswordInputComponent';
+import { useSelector } from 'react-redux';
 
 export default function RegistrationPage() {
   const router = useRouter();
@@ -31,6 +32,9 @@ export default function RegistrationPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
   const toast = useToast();
 
   const handleUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +128,10 @@ export default function RegistrationPage() {
           <Text w="7rem" textAlign="right">
             Password:
           </Text>
-          <PasswordInputComponent handlePasswordChange={handlePasswordChange} />
+          <PasswordInputComponent
+            handlePasswordChange={handlePasswordChange}
+            user_language={user_language}
+          />
         </HStack>
 
         <Center>

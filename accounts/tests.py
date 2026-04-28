@@ -35,9 +35,10 @@ class AccountAPITests(TestCase):
         self.username = "test"
         self.password = "password123"
         self.email = "test@test.com"
+        self.user_language = "en"
 
         self.test_user = User.objects.create_user(
-            self.username, self.email, self.password
+            self.username, self.email, self.password, user_language=self.user_language
         )
 
     def tearDown(self):
@@ -160,6 +161,7 @@ class AccountAPITests(TestCase):
             "username": self.username,
             "email": self.email,
             "pronunciation_preference": "pinyin_acc",
+            "user_language": self.user_language,
             "theme_preference": 0,
         }
         self.assertEqual(response.status_code, 200)
@@ -230,6 +232,7 @@ class AccountAPITests(TestCase):
             "username": self.username,
             "email": self.email,
             "pronunciation_preference": "pinyin_acc",
+            "user_language": self.user_language,
             "theme_preference": 0,
         }
         self.assertEqual(response.status_code, 200)

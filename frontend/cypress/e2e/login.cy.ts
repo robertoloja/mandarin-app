@@ -12,7 +12,10 @@ describe('login page', () => {
 
   it('should be able to login with valid credentials, then logout', () => {
     LoginPage.login('robertoloja', 'OZHk4L8G-SZJ2vHGAv-r');
-    cy.contains('Settings');
+    
+    // Add a longer wait for the login to process and redirect
+    cy.url({ timeout: 15000 }).should('include', '/settings');
+    cy.contains('Settings', { timeout: 10000 });
     LoginPage.logout();
   });
 

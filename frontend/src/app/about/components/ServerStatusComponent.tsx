@@ -27,8 +27,9 @@ import {
   IoInformationCircleOutline,
 } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
+import localization, { UserLanguage } from '@/localization/main';
 
-export default function ServerStatusComponent() {
+export default function ServerStatusComponent({ user_language }: { user_language: UserLanguage }) {
   const { colorMode } = useColorMode();
   const [localDateTime, setLastUpdate] = useState('-');
   const [translationBackend, setBackend] = useState('-');
@@ -69,9 +70,9 @@ export default function ServerStatusComponent() {
           mb={1}
           __css={styles.heading[colorMode]}
         >
-          Server Status
+          {localization.about_status.server_status.server_status[user_language]}
         </Heading>
-        <ServerStatusPopover serverStatus={serverStatus} />
+        <ServerStatusPopover serverStatus={serverStatus} user_language={user_language} />
       </HStack>
 
       <Box display="flex" justifyContent="center">
@@ -100,13 +101,13 @@ export default function ServerStatusComponent() {
                 whiteSpace="nowrap"
                 __css={styles.heading[colorMode]}
               >
-                Average First Response Time
+                {localization.about_status.server_status.response_time[user_language]}
               </Heading>
               <Text fontSize="lg">
-                {Math.trunc(responseTime * 100) / 100} seconds
+                {Math.trunc(responseTime * 100) / 100} {localization.about_status.server_status.seconds[user_language]}
               </Text>
               <Text fontSize="sm" whiteSpace="nowrap">
-                Last Update: {localDateTime}
+                {localization.about_status.server_status.last_update[user_language]} {localDateTime}
               </Text>
             </VStack>
           </Box>
@@ -119,7 +120,7 @@ export default function ServerStatusComponent() {
                   whiteSpace="nowrap"
                   __css={styles.heading[colorMode]}
                 >
-                  Current Translation Backend
+                  {localization.about_status.server_status.backend[user_language]}
                 </Heading>
                 {serverStatus && translationBackend == 'argos' && (
                   <InformationPopover />
@@ -134,10 +135,10 @@ export default function ServerStatusComponent() {
   );
 }
 
-const ServerStatusPopover = (props: { serverStatus: boolean }) => {
+const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: boolean; user_language: UserLanguage }) => {
   return (
     <>
-      {props.serverStatus ? (
+      {serverStatus ? (
         <Popover>
           <PopoverTrigger>
             <IoCheckmarkCircleOutline
@@ -149,7 +150,7 @@ const ServerStatusPopover = (props: { serverStatus: boolean }) => {
           <PopoverContent>
             <PopoverArrow />
             <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.8)">
-              <Center>Everything is working!</Center>
+              <Center>{localization.about_status.server_status.checkmark[user_language]}</Center>
             </PopoverBody>
           </PopoverContent>
         </Popover>

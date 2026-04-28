@@ -15,6 +15,8 @@ import {
   useColorMode,
   VStack,
 } from '@chakra-ui/react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 import { useRouter } from 'next/navigation';
 import { TruncatedSentence } from './TruncatedSentenceComponent';
 import { DeleteButton } from './DeleteButtonComponent';
@@ -26,11 +28,14 @@ export default function SentenceHistoryCard(props: {
 }) {
   const router = useRouter();
   const { colorMode } = useColorMode();
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   const unpackSentence = (sentenceHistory: SentenceHistoryType) => {
     return {
       sentence: sentenceHistory.segments.map((x) => x.word).join(''),
-      translation: sentenceHistory.translation,
+      translation: sentenceHistory.translations[user_language] ?? '',
       date: sentenceHistory.date,
     };
   };
@@ -40,7 +45,7 @@ export default function SentenceHistoryCard(props: {
       '',
       historyItem.segments,
       historyItem.dictionary,
-      historyItem.translation,
+      historyItem.translations,
       historyItem.shareURL,
     );
     historySentence.setActive();

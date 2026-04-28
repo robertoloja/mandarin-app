@@ -4,8 +4,12 @@ import ServerStatusComponent from '@/app/about/components/ServerStatusComponent'
 import { Box, Flex } from '@chakra-ui/react';
 import ProjectSupportCard from './components/ProjectSupportCardComponent';
 import { PrivacyPolicyCard } from './components/PrivacyPolicyCardComponent';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 
 export default function AboutPage() {
+  const user_language = useSelector((state: RootState) => state.settings.user_language) ;
+
   return (
     <Box
       display="flex"
@@ -26,9 +30,9 @@ export default function AboutPage() {
         boxSizing="border-box"
         wrap="wrap"
       >
-        <ServerStatusComponent />
-        <ProjectSupportCard />
-        <PrivacyPolicyCard />
+        <ServerStatusComponent user_language={user_language} />
+        <ProjectSupportCard user_language={user_language}/>
+        <PrivacyPolicyCard user_language={user_language}/>
       </Flex>
     </Box>
   );

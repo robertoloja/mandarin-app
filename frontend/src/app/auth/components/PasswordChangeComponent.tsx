@@ -16,8 +16,9 @@ import { MandoBotAPI } from '@/utils/api';
 import { RootState } from '@/utils/store/store';
 import { useSelector } from 'react-redux';
 import PasswordInputComponent from './PasswordInputComponent';
+import localization, { UserLanguage } from '@/localization/main';
 
-export default function PasswordResetForm(props: { changed: () => void }) {
+export default function PasswordResetForm(props: { changed: () => void, user_language: UserLanguage }) {
   const username = useSelector((state: RootState) => state.auth.username);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -100,29 +101,32 @@ export default function PasswordResetForm(props: { changed: () => void }) {
         width="100%"
       >
         <GridItem colSpan={1} pt={2}>
-          <Text>Current Password:</Text>
+          <Text>{localization.account_settings.current_password[props.user_language]}:</Text>
         </GridItem>
         <PasswordInputComponent
-          placeHolderText="Enter current password"
+          placeHolderText={localization.account_settings.current_password[props.user_language]}
           handlePasswordChange={(e) => setCurrentPassword(e.target.value)}
+          user_language={props.user_language}
         />
 
         <GridItem colSpan={1} pt={2}>
-          <Text>New Password: </Text>
+          <Text>{localization.account_settings.new_password[props.user_language]}:</Text>
         </GridItem>
         <PasswordInputComponent
-          placeHolderText="Enter new password"
+          placeHolderText={localization.account_settings.new_password[props.user_language]}
           handlePasswordChange={(e) => setNewPassword(e.target.value)}
           invalid={invalid}
+          user_language={props.user_language}
         />
 
         <GridItem colSpan={1} pt={2}>
-          <Text>Confirm New Password: </Text>
+          <Text>{localization.account_settings.confirmation[props.user_language]}:</Text>
         </GridItem>
         <PasswordInputComponent
-          placeHolderText="Confirm new password"
+          placeHolderText={localization.account_settings.confirmation[props.user_language]}
           handlePasswordChange={(e) => setConfirmation(e.target.value)}
           invalid={invalid}
+          user_language={props.user_language}
         />
       </Grid>
       <Center my={4}>
@@ -133,7 +137,7 @@ export default function PasswordResetForm(props: { changed: () => void }) {
               !currentPassword || !newPassword || !confirmation || loading
             }
           >
-            Reset Password
+            {localization.account_settings.reset_password[props.user_language]}
           </Button>
           {errors && (
             <UnorderedList>

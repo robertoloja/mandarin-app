@@ -12,6 +12,7 @@ import { RootState, store } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import TextInput from '@/components/TextInputComponent';
 import { updateLoading } from '@/utils/store/loadingSlice';
+import localization from '@/localization/main';
 
 export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -20,6 +21,9 @@ export default function Home() {
   );
   const mandarinSentence = useSelector(
     (state: RootState) => state.sentence.mandarinSentence,
+  );
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
   );
 
   const urlShareId = useSearchParams().get('share_id') || '';
@@ -32,12 +36,15 @@ export default function Home() {
 
       MandoBotAPI.shared(urlShareId).then((response: SegmentResponseType) => {
         store.dispatch(updateLoading({ percent: 100 }));
-        if (response.translation !== '') {
+        if (
+          response.translations &&
+          Object.keys(response.translations).length > 0
+        ) {
           const sharedSentenced = new MandarinSentenceClass(
             '',
             response.sentence,
             response.dictionary,
-            response.translation,
+            response.translations,
             urlShareId,
           );
           sharedSentenced.setActive();
@@ -66,7 +73,7 @@ export default function Home() {
     <Box h="100%">
       <ProgressBar />
       <form onSubmit={handleSubmit}>
-        <TextInput inputRef={inputRef} />
+        <TextInput inputRef={inputRef} user_language={user_language} />
         <HStack>
           <Button
             type="submit"
@@ -75,13 +82,13 @@ export default function Home() {
             isDisabled={percentLoaded < 100}
             aria-label="submit sentence"
           >
-            Submit
+            {localization.home_page.submit[user_language]}
           </Button>
           {percentLoaded < 100 && (
             <Text color="gray.600" textAlign="center" w="60%">
               {percentLoaded == 0
-                ? 'Segmentation and translation can take several seconds.'
-                : 'Your results will load one sentence at a time.'}
+                ? localization.home_page.loading_text1[user_language]
+                : localization.home_page.loading_text2[user_language]}
             </Text>
           )}
         </HStack>
@@ -89,11 +96,11 @@ export default function Home() {
       <Box h="100%">
         <MandarinSentence
           sentence={mandarinSentence.segments}
-          translation={mandarinSentence.translation}
           dictionary={mandarinSentence.dictionary}
+          user_language={user_language}
         />
         {mandarinSentence.segments.length !== 0 && (
-          <Translation text={mandarinSentence.translation} />
+          <Translation translations={mandarinSentence.translations} />
         )}
       </Box>
     </Box>

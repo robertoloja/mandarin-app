@@ -1,12 +1,14 @@
 import re
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 from django.db.models import Q
 from dragonmapper import hanzi as hanzi_utils
 
 from mandoBot.schemas import ChineseDictionary, MandarinWordSchema, SegmentationResponse
+from mandoBot.languages import SUPPORTED_LANGUAGES
 from sentences.dictionaries import WiktionaryScraper
 from sentences.models.CEDictionary import CEDictionary
+from sentences.models.CEDefinition import CEDefinition
 from sentences.models.ConstituentHanzi import ConstituentHanzi
 from sentences.functions import is_punctuation
 from sentences.translators import DeepLTranslate
@@ -21,15 +23,17 @@ class Segmenter:
     ) -> SegmentationResponse:
         sentence = sentence.replace("\u3000", "").strip()
 
+        translator_fn = DeepLTranslate.translate if auth else Translator.translate
+
         with ThreadPoolExecutor() as executor:
             future_segmented = executor.submit(JiebaSegmenter.segment, sentence)
-            if auth:
-                future_translation = executor.submit(DeepLTranslate.translate, sentence)
-            else:
-                future_translation = executor.submit(Translator.translate, sentence)
+            future_translations = {
+                lang: executor.submit(translator_fn, sentence, lang)
+                for lang in SUPPORTED_LANGUAGES
+            }
 
             segmented = future_segmented.result()
-            translated = future_translation.result()
+            translations = {lang: fut.result() for lang, fut in future_translations.items()}
 
         segmented_list: List[MandarinWordSchema] = Segmenter.add_pronunciations(
             segmented
@@ -40,7 +44,7 @@ class Segmenter:
         mandarin_sentence: List[MandarinWordSchema] = segmented_sentence
 
         result = SegmentationResponse(
-            translation=translated, sentence=mandarin_sentence, dictionary=dictionary
+            translations=translations, sentence=mandarin_sentence, dictionary=dictionary
         )
 
         return result
@@ -92,7 +96,7 @@ class Segmenter:
                 zhuyin = [segmented_sentence[i]]
 
             new_word = MandarinWordSchema(
-                word=segmented_sentence[i], pinyin=pinyin, zhuyin=zhuyin, definitions=[]
+                word=segmented_sentence[i], pinyin=pinyin, zhuyin=zhuyin, definitions={}
             )
             response += [new_word]
         return response
@@ -138,7 +142,7 @@ class Segmenter:
                 )
 
                 new_sentence_slice = MandarinWordSchema(
-                    word=compounded_word, pinyin=pinyin, zhuyin=zhuyin, definitions=[]
+                    word=compounded_word, pinyin=pinyin, zhuyin=zhuyin, definitions={}
                 )
 
                 new_sentence = (
@@ -148,6 +152,20 @@ class Segmenter:
                 )
                 return new_sentence
         return
+
+    @staticmethod
+    def get_all_definitions(cedict_entry: CEDictionary) -> Dict[str, List[str]]:
+        """
+        Return definitions for all supported languages for a CEDictionary entry.
+        German falls back to English if no CEDefinition row exists.
+        """
+        en_def = cedict_entry.definitions
+        try:
+            de_entry = CEDefinition.objects.get(cedict=cedict_entry, language='de')
+            de_def = de_entry.definitions
+        except CEDefinition.DoesNotExist:
+            de_def = en_def
+        return {'en': [en_def], 'de': [de_def]}
 
     @staticmethod
     def add_definitions_and_create_dictionary(
@@ -164,9 +182,10 @@ class Segmenter:
         """
         for index, item in enumerate(segmented_sentence):
             if is_punctuation(item.word) or not hanzi_utils.has_chinese(item.word):
+                item.definitions = {'en': [], 'de': []}
                 continue
 
-            if item.definitions != []:
+            if item.definitions != {}:
                 continue
 
             if "ü" in " ".join(item.pinyin):
@@ -252,7 +271,8 @@ class Segmenter:
                     )
                 else:
                     # TODO: Try to segment again before machine translating
-                    item.definitions = [Translator.translate(item.word)]
+                    machine_translation = Translator.translate(item.word)
+                    item.definitions = {'en': [machine_translation], 'de': [machine_translation]}
 
                     for index, single_hanzi in enumerate(item.word):
                         pinyin = item.pinyin[index]
@@ -271,13 +291,15 @@ class Segmenter:
                                 word_length=1,
                             )
 
+                        if db_hanzi.exists():
+                            all_defs = Segmenter.get_all_definitions(db_hanzi.first())
+                        else:
+                            mt = Translator.translate(single_hanzi)
+                            all_defs = {'en': [mt], 'de': [mt]}
+
                         dictionary[single_hanzi] = ChineseDictionary(
-                            english=[
-                                definition
-                                for definition in db_hanzi.values_list(
-                                    "definitions", flat=True
-                                )
-                            ],
+                            en=all_defs['en'],
+                            de=all_defs['de'],
                             pinyin=[pinyin.replace("u:", "ü")],
                             zhuyin=[
                                 Segmenter.pinyin_to_zhuyin(zhuyin)
@@ -288,7 +310,11 @@ class Segmenter:
                         )
 
             for entry in db_result:
-                item.definitions += [entry.definitions]
+                all_defs = Segmenter.get_all_definitions(entry)
+                item.definitions = {
+                    'en': item.definitions.get('en', []) + all_defs['en'],
+                    'de': item.definitions.get('de', []) + all_defs['de'],
+                }
                 constituent_hanzi = entry.get_hanzi()
 
                 if constituent_hanzi:
@@ -298,8 +324,10 @@ class Segmenter:
                         else:
                             the_hanzi = single_hanzi.simplified
 
+                        hanzi_all_defs = Segmenter.get_all_definitions(single_hanzi)
                         dictionary[the_hanzi] = ChineseDictionary(
-                            english=[single_hanzi.definitions],
+                            en=hanzi_all_defs['en'],
+                            de=hanzi_all_defs['de'],
                             pinyin=[single_hanzi.pronunciation.replace("u:", "ü")],
                             zhuyin=[
                                 Segmenter.pinyin_to_zhuyin(single_hanzi.pronunciation)
@@ -310,8 +338,10 @@ class Segmenter:
                         the_hanzi, db_hanzi = Segmenter.attempt_to_get_hanzi(
                             hanzi, item, index, entry
                         )
+                        hanzi_all_defs = Segmenter.get_all_definitions(db_hanzi)
                         dictionary[the_hanzi] = ChineseDictionary(
-                            english=[db_hanzi.definitions],
+                            en=hanzi_all_defs['en'],
+                            de=hanzi_all_defs['de'],
                             pinyin=[db_hanzi.pronunciation.replace("u:", "ü")],
                             zhuyin=[Segmenter.pinyin_to_zhuyin(db_hanzi.pronunciation)],
                         )

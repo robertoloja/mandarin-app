@@ -1,72 +1,40 @@
 'use client';
 
 import { MandoBotAPI } from '@/utils/api';
-import {
-  togglePinyin,
-  togglePronunciation,
-  // toggleTheme,
-} from '@/utils/store/settingsSlice';
+import { setUserLanguage } from '@/utils/store/settingsSlice';
 import { RootState, store } from '@/utils/store/store';
-import { Grid, Text, Switch } from '@chakra-ui/react';
+import { Select } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
+import localization, { UserLanguage } from '@/localization/main';
 
 export default function LanguagePreferencesComponent() {
-  const localPronunciation = useSelector(
-    (state: RootState) => state.settings.pronunciation,
-  );
-  const localPinyinType = useSelector(
-    (state: RootState) => state.settings.pinyin_type,
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
   );
   const username = useSelector((state: RootState) => state.auth.username);
-  // const localTheme = useSelector((state: RootState) => state.settings.theme);
 
-  const togglePronun = () => {
+  const handleLanguageChange = (newLanguage: UserLanguage) => {
+    localStorage.setItem('user_language', newLanguage);
     if (username) {
-      MandoBotAPI.pronunciationPreference(
-        localPronunciation === 'zhuyin' ? localPinyinType : 'zhuyin',
-      ).then(() => {
-        store.dispatch(togglePronunciation());
+      MandoBotAPI.languagePreference(newLanguage).then(() => {
+        store.dispatch(setUserLanguage(newLanguage));
       });
     } else {
-      store.dispatch(togglePronunciation());
-    }
-  };
-
-  const togglePin = () => {
-    if (username) {
-      MandoBotAPI.pronunciationPreference(
-        localPinyinType === 'pinyin_acc' ? 'pinyin_num' : 'pinyin_acc',
-      ).then(() => {
-        store.dispatch(togglePinyin());
-      });
-    } else {
-      store.dispatch(togglePinyin());
+      store.dispatch(setUserLanguage(newLanguage));
     }
   };
 
   return (
-    <Grid templateColumns="1fr auto 1fr" gap={2} alignItems="center">
-      <Text align="right">
-        {localPinyinType === 'pinyin_acc' ? 'pīnyīn' : 'pin1yin1'}
-      </Text>
-      <Switch
-        aria-label="toggle pinyin and bopomofo"
-        onChange={togglePronun}
-        isChecked={localPronunciation === 'zhuyin'}
-      />
-      <Text>ㄅㄆㄇㄈ</Text>
-
-      {localPronunciation == 'pinyin' && (
-        <>
-          <Text align="right">pīnyīn</Text>
-          <Switch
-            aria-label="toggle accented to numbered pinyin"
-            onChange={togglePin}
-            isChecked={localPinyinType === 'pinyin_num'}
-          />
-          <Text>pin1yin1</Text>
-        </>
-      )}
-    </Grid>
+    <Select
+      value={user_language}
+      onChange={(e) => handleLanguageChange(e.target.value as UserLanguage)}
+      aria-label="select language preference"
+    >
+      {localization.languages.map((lang) => (
+        <option key={lang.code} value={lang.code}>
+          {lang.label[lang.code]}
+        </option>
+      ))}
+    </Select>
   );
 }

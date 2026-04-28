@@ -9,6 +9,8 @@ import AttributionPopover from './AttributionPopover';
 import { ReadingProps } from '../types';
 import { NavArrows } from './NavArrowsComponent';
 import { Chapters } from './ChaptersComponent';
+import { RootState, store } from '@/utils/store/store';
+import { useSelector } from 'react-redux';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -25,13 +27,17 @@ const yujiMai = Yuji_Mai({
 export default function ReadingCoverComponent({
   mandarinTitle,
   titleLink,
-  englishTitle,
+  title: englishTitle,
   chapters,
   background,
   attribution,
-}: ReadingProps) {
+  currentChapterOrder,
+}: ReadingProps & { currentChapterOrder?: number }) {
   const [activePage, setActivePage] = useState(0);
   const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
   const heightModifier = () => {
     if (
       accordionIndex !== -1 &&
@@ -125,6 +131,7 @@ export default function ReadingCoverComponent({
             chapters={chapters}
             setAccordionIndex={setAccordionIndex}
             activePage={activePage}
+            currentChapterOrder={currentChapterOrder}
           />
         </Box>
       </Box>
@@ -133,6 +140,7 @@ export default function ReadingCoverComponent({
         chapters={chapters}
         setActivePage={setActivePage}
         setAccordionIndex={setAccordionIndex}
+        user_language={user_language}
       />
     </Box>
   );

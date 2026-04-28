@@ -10,9 +10,9 @@ class SegmentationAPITest(TestCase):
         api.urls_namespace = api.urls_namespace + "1"  # new namespace for each test
         self.client: TestClient = TestClient(api)
         self.emptyResponse = {
-            "translation": "",
-            "dictionary": {"word": {"english": [], "pinyin": [], "zhuyin": []}},
-            "sentence": [{"word": "", "pinyin": [], "zhuyin": [], "definitions": []}],
+            "translations": {"en": "", "de": ""},
+            "dictionary": {"word": {"en": [], "de": [], "pinyin": [], "zhuyin": []}},
+            "sentence": [{"word": "", "pinyin": [], "zhuyin": [], "definitions": {}}],
         }
 
     def tearDown(self):
@@ -28,7 +28,7 @@ class SegmentationAPITest(TestCase):
         response = self.client.post(f"/segment?data={request_data}")
 
         english_only_response = self.emptyResponse
-        english_only_response["translation"] = request_data
+        english_only_response["translations"] = {"en": request_data, "de": request_data}
         english_only_response["sentence"][0] = {
             "word": request_data,
             "pinyin": [request_data],

@@ -19,6 +19,7 @@ export const Chapters = (props: {
   activePage: number;
   setAccordionIndex: Dispatch<SetStateAction<number | number[]>>;
   accordionIndex: number | number[];
+  currentChapterOrder?: number;
 }) => {
   return (
     <OrderedList styleType="none" mt={3} aria-label="chapters container">
@@ -45,8 +46,19 @@ export const Chapters = (props: {
                     <AccordionPanel mb="1rem">
                       <VStack alignItems="left" pl="3rem">
                         {chapter.subchapters.map((subchapter, i) => (
-                          <Link href={`/?share_id=${subchapter.link}`} key={i}>
-                            <Text _hover={{ textDecoration: 'underline' }}>
+                          <Link
+                            href={`/reading/${subchapter.book_slug}/${subchapter.chapter_order}`}
+                            key={i}
+                          >
+                            <Text
+                              _hover={{ textDecoration: 'underline' }}
+                              color={
+                                subchapter.chapter_order ===
+                                props.currentChapterOrder
+                                  ? 'gray'
+                                  : undefined
+                              }
+                            >
                               {subchapter.name}
                             </Text>
                           </Link>
@@ -55,7 +67,12 @@ export const Chapters = (props: {
                     </AccordionPanel>
                   </AccordionItem>
                 ) : (
-                  <ChapterTitle chapter={chapter} />
+                  <ChapterTitle
+                    chapter={chapter}
+                    isCurrentChapter={
+                      chapter.chapter_order === props.currentChapterOrder
+                    }
+                  />
                 )}
               </HStack>
             </ListItem>

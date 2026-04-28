@@ -13,11 +13,17 @@ import {
 } from '@chakra-ui/react';
 import { IoLanguageOutline } from 'react-icons/io5';
 
-import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
+import PronunciationPreferencesComponent from '../PronunciationPreferencesComponent';
+import localization from '@/localization/main';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 
 export default function LanguageMenu(props: { iconSize: number }) {
   const { colorMode } = useColorMode();
 
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
   return (
     <Popover>
       <PopoverTrigger>
@@ -31,10 +37,12 @@ export default function LanguageMenu(props: { iconSize: number }) {
       <PopoverContent width="13rem" boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
         <PopoverArrow />
         <PopoverHeader>
-          <Center>Language Options</Center>
+          <Center>
+            {localization.top_nav.language_options[user_language]}
+          </Center>
         </PopoverHeader>
         <PopoverBody>
-          <LanguagePreferencesComponent />
+          <PronunciationPreferencesComponent />
         </PopoverBody>
       </PopoverContent>
     </Popover>
