@@ -47,7 +47,10 @@ export default function TableOfContentsButton({
         p={0}
       >
         <PopoverBody p={0}>
-          <ReadingCoverComponent {...readingProps} currentChapterOrder={currentChapterOrder} />
+          <ReadingCoverComponent
+            {...readingProps}
+            currentChapterOrder={currentChapterOrder}
+          />
         </PopoverBody>
       </PopoverContent>
     </Popover>

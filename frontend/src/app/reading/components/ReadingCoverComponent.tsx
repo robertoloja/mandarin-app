@@ -35,7 +35,9 @@ export default function ReadingCoverComponent({
 }: ReadingProps & { currentChapterOrder?: number }) {
   const [activePage, setActivePage] = useState(0);
   const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
-  const user_language = useSelector((state: RootState) => state.settings.user_language);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
   const heightModifier = () => {
     if (
       accordionIndex !== -1 &&

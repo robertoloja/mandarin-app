@@ -15,16 +15,20 @@ const yujiMai = Yuji_Mai({
   display: 'swap',
 });
 
-export const ChapterTitle = (props: { chapter: Chapter; isCurrentChapter?: boolean }) => {
+export const ChapterTitle = (props: {
+  chapter: Chapter;
+  isCurrentChapter?: boolean;
+}) => {
   return (
     <HStack
       py="0.5rem"
       textColor={
         props.isCurrentChapter
           ? 'gray'
-          : props.chapter.chapter_order !== undefined || props.chapter.subchapters
-          ? undefined
-          : 'gray'
+          : props.chapter.chapter_order !== undefined ||
+              props.chapter.subchapters
+            ? undefined
+            : 'gray'
       }
       cursor={
         props.chapter.chapter_order !== undefined || props.chapter.subchapters

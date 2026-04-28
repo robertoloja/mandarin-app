@@ -52,7 +52,12 @@ export const Chapters = (props: {
                           >
                             <Text
                               _hover={{ textDecoration: 'underline' }}
-                              color={subchapter.chapter_order === props.currentChapterOrder ? 'gray' : undefined}
+                              color={
+                                subchapter.chapter_order ===
+                                props.currentChapterOrder
+                                  ? 'gray'
+                                  : undefined
+                              }
                             >
                               {subchapter.name}
                             </Text>
@@ -62,7 +67,12 @@ export const Chapters = (props: {
                     </AccordionPanel>
                   </AccordionItem>
                 ) : (
-                  <ChapterTitle chapter={chapter} isCurrentChapter={chapter.chapter_order === props.currentChapterOrder} />
+                  <ChapterTitle
+                    chapter={chapter}
+                    isCurrentChapter={
+                      chapter.chapter_order === props.currentChapterOrder
+                    }
+                  />
                 )}
               </HStack>
             </ListItem>
