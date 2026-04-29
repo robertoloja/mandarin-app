@@ -38,7 +38,7 @@ export default function ChapterPageClient() {
             sentence={chapterData.sentence}
             dictionary={chapterData.dictionary}
           />
-          <Translation translations={chapterData.translations ?? {}} />
+          <Translation translations={chapterData.translation ?? {}} />
         </>
       )}
     </Flex>
