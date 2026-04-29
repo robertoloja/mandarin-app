@@ -189,4 +189,8 @@ def get_reading_room_chapter(request, book_slug: str, chapter_order: int):
         )
     except ReadingRoomChapter.DoesNotExist:
         return 404, {"error": "Chapter not found"}
-    return 200, chapter.data
+    try:
+        return 200, ReadingRoomChapterSchema(**chapter.data)
+    except Exception as e:
+        logger.error("ReadingRoom schema validation error: %s", e, exc_info=True)
+        raise

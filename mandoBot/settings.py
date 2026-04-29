@@ -35,6 +35,10 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
+    "root": {
+        "handlers": ["console"],
+        "level": "ERROR",
+    },
 }
 
 ALLOWED_HOSTS = [
