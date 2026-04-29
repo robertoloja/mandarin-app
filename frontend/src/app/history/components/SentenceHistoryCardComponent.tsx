@@ -32,10 +32,19 @@ export default function SentenceHistoryCard(props: {
     (state: RootState) => state.settings.user_language,
   );
 
+  const getTranslations = (
+    historyItem: SentenceHistoryType,
+  ): Record<string, string> => {
+    const item = historyItem as SentenceHistoryType & { translation?: string };
+    return (
+      item.translations ?? (item.translation ? { en: item.translation } : {})
+    );
+  };
+
   const unpackSentence = (sentenceHistory: SentenceHistoryType) => {
     return {
       sentence: sentenceHistory.segments.map((x) => x.word).join(''),
-      translation: sentenceHistory.translations[user_language] ?? '',
+      translation: getTranslations(sentenceHistory)[user_language] ?? '',
       date: sentenceHistory.date,
     };
   };
@@ -45,7 +54,7 @@ export default function SentenceHistoryCard(props: {
       '',
       historyItem.segments,
       historyItem.dictionary,
-      historyItem.translations,
+      getTranslations(historyItem),
       historyItem.shareURL,
     );
     historySentence.setActive();

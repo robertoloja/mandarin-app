@@ -4,9 +4,15 @@ import { useEffect, useState } from 'react';
 
 import { SentenceHistoryType } from '@/utils/types';
 import SentenceHistoryCard from './components/SentenceHistoryCardComponent';
+import localization from '@/localization/main';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 
 export default function HistoryPage() {
   const [fullHistory, setSentences] = useState<SentenceHistoryType[]>([]);
+  const user_language = useSelector(
+    (state: RootState) => state.settings.user_language,
+  );
 
   useEffect(() => {
     resetHistory();
@@ -45,7 +51,9 @@ export default function HistoryPage() {
             ))
         ) : (
           <Center>
-            <Text>No history found</Text>
+            <Text>
+              {localization.sentence_history.no_history_found[user_language]}
+            </Text>
           </Center>
         )}
       </Flex>
