@@ -29,12 +29,17 @@ import {
 import { useSelector } from 'react-redux';
 import localization, { UserLanguage } from '@/localization/main';
 
-export default function ServerStatusComponent({ user_language }: { user_language: UserLanguage }) {
+export default function ServerStatusComponent({
+  user_language,
+}: {
+  user_language: UserLanguage;
+}) {
   const { colorMode } = useColorMode();
   const [localDateTime, setLastUpdate] = useState('-');
   const [translationBackend, setBackend] = useState('-');
   const [responseTime, setResponseTime] = useState(-1);
   const [serverStatus, setServerStatus] = useState(false);
+  const status_localization = localization.about_status.server_status;
 
   useEffect(() => {
     MandoBotAPI.status()
@@ -56,7 +61,7 @@ export default function ServerStatusComponent({ user_language }: { user_language
       .catch(() => {
         setServerStatus(false);
         store.dispatch(
-          setError('Server currently unreachable. Please try again soon.'),
+          setError(status_localization.server_unreachable_error[user_language]),
         );
       });
   }, []);
@@ -70,9 +75,12 @@ export default function ServerStatusComponent({ user_language }: { user_language
           mb={1}
           __css={styles.heading[colorMode]}
         >
-          {localization.about_status.server_status.server_status[user_language]}
+          {status_localization.server_status[user_language]}
         </Heading>
-        <ServerStatusPopover serverStatus={serverStatus} user_language={user_language} />
+        <ServerStatusPopover
+          serverStatus={serverStatus}
+          user_language={user_language}
+        />
       </HStack>
 
       <Box display="flex" justifyContent="center">
@@ -101,13 +109,14 @@ export default function ServerStatusComponent({ user_language }: { user_language
                 whiteSpace="nowrap"
                 __css={styles.heading[colorMode]}
               >
-                {localization.about_status.server_status.response_time[user_language]}
+                {status_localization.response_time[user_language]}
               </Heading>
               <Text fontSize="lg">
-                {Math.trunc(responseTime * 100) / 100} {localization.about_status.server_status.seconds[user_language]}
+                {Math.trunc(responseTime * 100) / 100}{' '}
+                {status_localization.seconds[user_language]}
               </Text>
               <Text fontSize="sm" whiteSpace="nowrap">
-                {localization.about_status.server_status.last_update[user_language]} {localDateTime}
+                {status_localization.last_update[user_language]} {localDateTime}
               </Text>
             </VStack>
           </Box>
@@ -120,10 +129,10 @@ export default function ServerStatusComponent({ user_language }: { user_language
                   whiteSpace="nowrap"
                   __css={styles.heading[colorMode]}
                 >
-                  {localization.about_status.server_status.backend[user_language]}
+                  {status_localization.backend[user_language]}
                 </Heading>
                 {serverStatus && translationBackend == 'argos' && (
-                  <InformationPopover />
+                  <InformationPopover user_language={user_language} />
                 )}
               </HStack>
               {serverStatus ? <TranslationBackendComponent /> : <Text>-</Text>}
@@ -135,7 +144,14 @@ export default function ServerStatusComponent({ user_language }: { user_language
   );
 }
 
-const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: boolean; user_language: UserLanguage }) => {
+const ServerStatusPopover = ({
+  serverStatus,
+  user_language,
+}: {
+  serverStatus: boolean;
+  user_language: UserLanguage;
+}) => {
+  const status_localization = localization.about_status.server_status;
   return (
     <>
       {serverStatus ? (
@@ -150,7 +166,13 @@ const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: bo
           <PopoverContent>
             <PopoverArrow />
             <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.8)">
-              <Center>{localization.about_status.server_status.checkmark[user_language]}</Center>
+              <Center>
+                {
+                  localization.about_status.server_status.checkmark[
+                    user_language
+                  ]
+                }
+              </Center>
             </PopoverBody>
           </PopoverContent>
         </Popover>
@@ -163,8 +185,7 @@ const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: bo
             <PopoverArrow />
             <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.8)">
               <Center>
-                The segmentation server is currently unreachable. Please check
-                your internet connection, and try again soon.{' '}
+                {status_localization.popover_server_error[user_language]}
               </Center>
             </PopoverBody>
           </PopoverContent>
@@ -174,7 +195,12 @@ const ServerStatusPopover = ({ serverStatus, user_language }: { serverStatus: bo
   );
 };
 
-const InformationPopover = () => {
+const InformationPopover = ({
+  user_language,
+}: {
+  user_language: UserLanguage;
+}) => {
+  const localized_text = localization.about_status.server_status;
   return (
     <Popover>
       <PopoverTrigger>
@@ -183,17 +209,13 @@ const InformationPopover = () => {
       <PopoverContent>
         <PopoverArrow />
         <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
-          <Text mb={3}>
-            While Argos Translate is a very good open-source project, it can
-            sometimes make egregious mistakes when translating Mandarin (such as
-            rendering &quot;京&quot; as &quot;Kyoto&quot;).
-          </Text>
+          <Text mb={3}>{localized_text.popup[1][user_language]}</Text>
           <Text>
-            Users at the Project Backer level always have access to{' '}
+            {localized_text.popup[2][user_language]}
             <Link href="https://www.deepl.com">
-              <u>DeepL</u>
+              <u>{localized_text.popup.link[user_language]}</u>
             </Link>
-            , the best publicly available translation engine.
+            {localized_text.popup[3][user_language]}
           </Text>
         </PopoverBody>
       </PopoverContent>
