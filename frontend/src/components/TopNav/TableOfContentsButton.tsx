@@ -6,8 +6,8 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
-  useColorMode,
   PopoverArrow,
+  useColorMode,
 } from '@chakra-ui/react';
 import { IoListOutline } from 'react-icons/io5';
 import { usePathname } from 'next/navigation';
@@ -41,14 +41,20 @@ export default function TableOfContentsButton({
         />
       </PopoverTrigger>
       <PopoverContent
-        w="fit-content"
+        width={['100vw', 'fit-content']}
         border="none"
         bg="transparent"
         boxShadow="none"
         p={0}
+        pointerEvents="none"
       >
         <PopoverArrow />
-        <PopoverBody p={0}>
+        <PopoverBody
+          p={0}
+          display={['flex', 'block']}
+          justifyContent="center"
+          pointerEvents="auto"
+        >
           <ReadingCoverComponent
             {...readingProps}
             currentChapterOrder={currentChapterOrder}
