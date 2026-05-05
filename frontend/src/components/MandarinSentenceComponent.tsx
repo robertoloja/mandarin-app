@@ -38,6 +38,7 @@ function MandarinSentence(props: MandarinSentenceProps) {
           pronunciation={pronunciation == 'pinyin' ? word.pinyin : word.zhuyin}
           definitions={word.definitions[props.user_language]}
           user_language={props.user_language}
+          dictionary={props.dictionary}
           key={index}
         />
       ))}

@@ -2,7 +2,7 @@
 
 import Hanzi from './HanziComponent';
 import Definition from './DefinitionComponent';
-import { MandarinWordType } from '../utils/types';
+import { MandarinWordType, ChineseDictionary } from '../utils/types';
 import {
   Flex,
   Text,
@@ -18,7 +18,6 @@ import styles from '@/themes';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import Pinyin from 'pinyin-tone';
-import { useEffect, useState } from 'react';
 import { UserLanguage } from '@/localization/main';
 
 function Word(props: {
@@ -26,30 +25,14 @@ function Word(props: {
   pronunciation: string[];
   definitions: string[];
   user_language: UserLanguage;
+  dictionary?: ChineseDictionary;
 }) {
-  const [definitionFontSize, setDefinitionFontSize] = useState<number>(() =>
-    Number(localStorage.getItem('definitionFontSize')),
+  const definitionFontSize = useSelector(
+    (state: RootState) => state.settings.definitionFontSize,
   );
-  const [pronunciationFontSize, setPronunciationFontSize] = useState<number>(
-    () => Number(localStorage.getItem('pronunciationFontSize')),
+  const pronunciationFontSize = useSelector(
+    (state: RootState) => state.settings.pronunciationFontSize,
   );
-
-  const handleStorageChange = (event: StorageEvent) => {
-    if (event.key === 'definitionFontSize') {
-      setDefinitionFontSize(Number(event.newValue));
-    }
-    if (event.key === 'pronunciationFontSize') {
-      setPronunciationFontSize(Number(event.newValue));
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
 
   // TODO: Account for compound words (e.g. 軍事將領, and 成語)
   const punctuation =
@@ -62,10 +45,12 @@ function Word(props: {
   const pinyinSetting = useSelector(
     (state: RootState) => state.settings.pinyin_type,
   );
-  const dictionary = useSelector(
+  const reduxDictionary = useSelector(
     (state: RootState) => state.sentence.mandarinDictionary,
   );
+  const dictionary = props.dictionary ?? reduxDictionary;
   const pronunciation = (hanzi: string): string => {
+    if (!dictionary[hanzi]) return '';
     if (pronunciationSetting === 'pinyin') {
       if (pinyinSetting === 'pinyin_acc') {
         return Pinyin(dictionary[hanzi].pinyin[0].toLowerCase());
@@ -97,6 +82,7 @@ function Word(props: {
             onOpen={onOpen}
             onClose={onClose}
             user_language={props.user_language}
+            dictionary={props.dictionary}
           />
 
           <CardBody>

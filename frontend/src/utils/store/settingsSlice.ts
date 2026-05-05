@@ -7,6 +7,8 @@ interface SettingsState {
   pronunciation: 'pinyin' | 'zhuyin';
   pinyin_type: 'pinyin_acc' | 'pinyin_num';
   user_language: UserLanguage;
+  definitionFontSize: number;
+  pronunciationFontSize: number;
 }
 
 const getInitialUserLanguage = (): UserLanguage => {
@@ -17,11 +19,21 @@ const getInitialUserLanguage = (): UserLanguage => {
   return 'en';
 };
 
+const getLocalNumber = (key: string, fallback: number): number => {
+  if (typeof window !== 'undefined') {
+    const val = localStorage.getItem(key);
+    if (val !== null) return Number(val);
+  }
+  return fallback;
+};
+
 const initialState: SettingsState = {
   theme: 'dark',
   pronunciation: 'pinyin',
   pinyin_type: 'pinyin_acc',
   user_language: getInitialUserLanguage(),
+  definitionFontSize: getLocalNumber('definitionFontSize', 15),
+  pronunciationFontSize: getLocalNumber('pronunciationFontSize', 15),
 };
 
 const settingsSlice = createSlice({
@@ -41,6 +53,18 @@ const settingsSlice = createSlice({
     },
     setUserLanguage(state, action: PayloadAction<UserLanguage>) {
       state.user_language = action.payload;
+    },
+    setDefinitionFontSize(state, action: PayloadAction<number>) {
+      state.definitionFontSize = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('definitionFontSize', String(action.payload));
+      }
+    },
+    setPronunciationFontSize(state, action: PayloadAction<number>) {
+      state.pronunciationFontSize = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('pronunciationFontSize', String(action.payload));
+      }
     },
     setPreferences(
       state,
@@ -75,5 +99,7 @@ export const {
   togglePinyin,
   setUserLanguage,
   setPreferences,
+  setDefinitionFontSize,
+  setPronunciationFontSize,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

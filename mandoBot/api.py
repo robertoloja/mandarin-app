@@ -178,6 +178,16 @@ async def create_share_link(request, data: SegmentationResponse) -> str:
     return db_entry.sentence_id
 
 
+@api.get("/reading-room/{book_slug}/chapters/", response=list[int])
+def get_book_chapters(request, book_slug: str):
+    chapters = (
+        ReadingRoomChapter.objects.filter(book_slug=book_slug)
+        .order_by("chapter_order")
+        .values_list("chapter_order", flat=True)
+    )
+    return list(chapters)
+
+
 @api.get(
     "/reading-room/{book_slug}/{chapter_order}/",
     response={200: ReadingRoomChapterSchema, 404: APIError},

@@ -19,6 +19,7 @@ import Pinyin from 'pinyin-tone';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { UserLanguage } from '@/localization/main';
+import { ChineseDictionary } from '@/utils/types';
 
 function Definition(props: {
   word: string;
@@ -28,6 +29,7 @@ function Definition(props: {
   user_language: UserLanguage;
   onOpen: () => void;
   onClose: () => void;
+  dictionary?: ChineseDictionary;
 }) {
   const pronunciationSetting = useSelector(
     (state: RootState) => state.settings.pronunciation,
@@ -35,11 +37,13 @@ function Definition(props: {
   const pinyinSetting = useSelector(
     (state: RootState) => state.settings.pinyin_type,
   );
-  const dictionary = useSelector(
+  const reduxDictionary = useSelector(
     (state: RootState) => state.sentence.mandarinDictionary,
   );
+  const dictionary = props.dictionary ?? reduxDictionary;
 
   const pronunciation = (hanzi: string): string => {
+    if (!dictionary[hanzi]) return '';
     if (pronunciationSetting === 'pinyin') {
       if (pinyinSetting === 'pinyin_acc') {
         return Pinyin(dictionary[hanzi].pinyin[0].toLowerCase());
