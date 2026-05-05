@@ -23,10 +23,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <title>mandoBot</title>
-      </head>
-      <Provider store={store}>
+<Provider store={store}>
         <body>
           <ChakraProvider resetCSS theme={theme}>
             <UpdateUserSettings />
