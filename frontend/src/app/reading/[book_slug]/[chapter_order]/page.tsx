@@ -24,7 +24,9 @@ export async function generateMetadata({
 const API_BASE =
   process.env.NODE_ENV === 'development'
     ? 'http://127.0.0.1:8000/api'
-    : `${process.env.URL}/api`;
+    : process.env.URL
+      ? `${process.env.URL}/api`
+      : null;
 
 export function generateStaticParams() {
   const diary = Array.from({ length: 14 }, (_, i) => ({
@@ -46,10 +48,17 @@ export default async function Page({
   const { book_slug, chapter_order } = await params;
   const book = BOOK_META[book_slug];
   const chapterNum = Number(chapter_order) + 1;
-  const res = await fetch(
-    `${API_BASE}/reading-room/${book_slug}/${chapter_order}/`,
-  );
-  const chapterData = res.ok ? await res.json() : null;
+  let chapterData = null;
+  if (API_BASE) {
+    try {
+      const res = await fetch(
+        `${API_BASE}/reading-room/${book_slug}/${chapter_order}/`,
+      );
+      chapterData = res.ok ? await res.json() : null;
+    } catch {
+      chapterData = null;
+    }
+  }
 
   const jsonLd = book
     ? {

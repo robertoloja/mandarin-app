@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Edit Translations — {{ chapter }}{% endblock %}
+
+{% block content %}
+<h1>Edit Translations</h1>
+<p>
+  <strong>{{ chapter.book_slug|title }}</strong> &mdash;
+  Chapter {{ chapter.chapter_number }}: {{ chapter.title }}
+</p>
+<p>
+  Edit the full-text translations below. Word-level definitions are not affected.
+</p>
+
+{% if errors %}
+  <ul class="messagelist">
+    {% for error in errors %}
+      <li class="error">{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+
+  <fieldset class="module aligned">
+    <h2>English</h2>
+    <div class="form-row">
+      <textarea
+        id="id_translation_en"
+        name="translation_en"
+        rows="20"
+        style="width: 100%; font-family: serif; font-size: 1rem; line-height: 1.6;"
+      >{{ translation_en }}</textarea>
+    </div>
+
+    <h2>German</h2>
+    <div class="form-row">
+      <textarea
+        id="id_translation_de"
+        name="translation_de"
+        rows="20"
+        style="width: 100%; font-family: serif; font-size: 1rem; line-height: 1.6;"
+      >{{ translation_de }}</textarea>
+    </div>
+  </fieldset>
+
+  <div class="submit-row">
+    <input type="submit" value="Save Translations" class="default">
+    <a href="../../" class="closelink">Cancel</a>
+  </div>
+</form>
+{% endblock %}
