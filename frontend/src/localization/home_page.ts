@@ -1,11 +1,11 @@
 const home_page = {
   heading: {
     en: 'Word-by-word pronunciation, translation, and definitions for Mandarin Chinese learners',
-    de: '',
+    de: 'Wort-für-Wort-Aussprache, Übersetzungen und Definitionen für alle, die Mandarin-Chinesisch lernen',
   },
   welcome_new: {
     en: 'By breaking down Chinese sentences into constituent words, mandoBot helps beginners better understand structure, vocabulary, and meaning. \n\n**Enter a Mandarin sentence into the textbox above, press _Submit_, and the sentence will be broken down into constituent words!** \n\nWe also offer a curated [reading room](/reading) featuring pre-translated and segmented classical texts, making complex material more accessible to anyone with an interest in Mandarin.',
-    de: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    de: 'Indem mandoBot chinesische Sätze in ihre einzelnen Wörter zerlegt, hilft die App besonders Anfängern, Struktur, Wortschatz und Bedeutung besser zu verstehen. \n\n**Geben Sie einen Satz in Mandarin in das Textfeld oben ein, klicken sie auf _Absenden_, und der Satz wird in seine einzelnen Wörter zerlegt!** \n\nAußerdem bieten wir einen kuratierten [Lesesaal](/reading) mit bereits übersetzen und segmentierten klassischen Texten an, wodurch komplexes Material für alle, die sich für Mandarin interessieren, leichter zugänglich gemacht wird.',
   },
   welcome_returning: {
     en: 'Lorem ipsum dolor sit amet. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
