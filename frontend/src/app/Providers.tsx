@@ -1,12 +1,15 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import TopNav from '@/components/TopNav/TopNavComponent';
-import { MandoBotAPI } from '@/utils/api';
+import { MandoBotAPI, injectStore } from '@/utils/api';
+import { logout, setUserDetails } from '@/utils/store/authSlice';
 import { accordionTheme } from './reading/components/Accordion';
+
+injectStore(store.dispatch, logout, setUserDetails);
 
 const theme = extendTheme({
   components: { Accordion: accordionTheme },
@@ -17,9 +20,11 @@ const theme = extendTheme({
 });
 
 const UpdateUserSettings = () => {
-  MandoBotAPI.updateCSRF().then(() => {
-    MandoBotAPI.getUserSettings();
-  });
+  useEffect(() => {
+    MandoBotAPI.updateCSRF().then(() => {
+      MandoBotAPI.getUserSettings();
+    });
+  }, []);
   return null;
 };
 

@@ -1,13 +1,7 @@
-import { Cinzel, Yuji_Mai, Goudy_Bookletter_1911 } from 'next/font/google';
+import { Yuji_Mai, Goudy_Bookletter_1911 } from 'next/font/google';
 import { Chapter } from '../types';
 import { HStack, Text } from '@chakra-ui/react';
 import Link from 'next/link';
-
-const cinzel = Cinzel({
-  subsets: ['latin'],
-  weight: ['400'],
-  display: 'swap',
-});
 
 const goudy = Goudy_Bookletter_1911({
   subsets: ['latin'],
