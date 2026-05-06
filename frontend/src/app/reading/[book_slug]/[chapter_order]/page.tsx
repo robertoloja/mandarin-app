@@ -19,9 +19,23 @@ export async function generateMetadata({
   const chapterLabel = isDiary && order === 0
     ? 'Preface'
     : `Chapter ${isDiary ? order : order + 1}`;
+  const description = `Read the ${chapterLabel.toLowerCase()} of ${bookTitle} in the original Chinese with word-by-word segmentation and translation.`;
   return {
     title: `${bookTitle}, ${chapterLabel}`,
-    description: `Read the ${chapterLabel.toLowerCase()} of ${bookTitle} in the original Chinese with word-by-word segmentation and English translation.`,
+    description,
+    openGraph: {
+      title: `${bookTitle}, ${chapterLabel} — mandoBot`,
+      description,
+      url: `https://www.mandobot.com/reading/${book_slug}/${chapter_order}/`,
+      type: 'article',
+      images: [{ url: '/OG-image.png', width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${bookTitle}, ${chapterLabel} — mandoBot`,
+      description,
+      images: ['/OG-image.png'],
+    },
   };
 }
 
