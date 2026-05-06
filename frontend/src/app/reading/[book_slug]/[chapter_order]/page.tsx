@@ -24,8 +24,8 @@ export async function generateMetadata({
 const API_BASE =
   process.env.NODE_ENV === 'development'
     ? 'http://127.0.0.1:8000/api'
-    : process.env.URL
-      ? `${process.env.URL}/api`
+    : process.env.BACKEND_URL
+      ? `${process.env.BACKEND_URL}/api`
       : null;
 
 export function generateStaticParams() {
