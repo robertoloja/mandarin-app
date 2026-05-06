@@ -1,10 +1,12 @@
+import copy
 import json
 
 from django.contrib import admin
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import path
+from django.utils.html import format_html
 
 from sentences.bilingual_pipeline import build_chapter_data
 from sentences.chapter_registry import CHAPTER_REGISTRY
@@ -14,7 +16,7 @@ from sentences.models.ReadingRoomChapter import ReadingRoomChapter
 
 @admin.register(ReadingRoomChapter)
 class ReadingRoomChapterAdmin(admin.ModelAdmin):
-    list_display = ("book_title", "chapter_number", "title", "book_slug", "chapter_order")
+    list_display = ("book_title", "chapter_number", "title", "book_slug", "chapter_order", "edit_translations_link")
     list_filter = ("book_slug",)
     ordering = ("book_slug", "chapter_order")
     readonly_fields = ("book_slug", "chapter_order", "chapter_number", "title")
@@ -24,6 +26,13 @@ class ReadingRoomChapterAdmin(admin.ModelAdmin):
         return obj.book_slug.replace("-", " ").title()
     book_title.short_description = "Book"
 
+    def edit_translations_link(self, obj):
+        return format_html(
+            '<a href="{}/edit-translations/" class="button">Edit Translations</a>',
+            obj.pk,
+        )
+    edit_translations_link.short_description = "Translations"
+
     def get_urls(self):
         urls = super().get_urls()
         extra = [
@@ -32,8 +41,56 @@ class ReadingRoomChapterAdmin(admin.ModelAdmin):
                 self.admin_site.admin_view(self.promote_view),
                 name="sentences_readingroomchapter_promote",
             ),
+            path(
+                "<int:pk>/edit-translations/",
+                self.admin_site.admin_view(self.edit_translations_view),
+                name="sentences_readingroomchapter_edit_translations",
+            ),
         ]
         return extra + urls
+
+    def edit_translations_view(self, request: HttpRequest, pk: int) -> HttpResponse:
+        chapter = get_object_or_404(ReadingRoomChapter, pk=pk)
+        translation = chapter.data.get("translation", {})
+
+        if request.method == "POST":
+            en = request.POST.get("translation_en", "").strip()
+            de = request.POST.get("translation_de", "").strip()
+
+            errors = []
+            if not en:
+                errors.append("English translation cannot be empty.")
+            if not de:
+                errors.append("German translation cannot be empty.")
+
+            if not errors:
+                updated_data = copy.deepcopy(chapter.data)
+                updated_data["translation"]["en"] = en
+                updated_data["translation"]["de"] = de
+                chapter.data = updated_data
+                chapter.save()
+                messages.success(request, f"Translations updated for: {chapter}")
+                return redirect("../../")
+
+            context = {
+                **self.admin_site.each_context(request),
+                "title": f"Edit Translations — {chapter}",
+                "chapter": chapter,
+                "translation_en": en,
+                "translation_de": de,
+                "errors": errors,
+            }
+            return render(request, "admin/edit_chapter_translations.html", context)
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": f"Edit Translations — {chapter}",
+            "chapter": chapter,
+            "translation_en": translation.get("en", ""),
+            "translation_de": translation.get("de", ""),
+            "errors": [],
+        }
+        return render(request, "admin/edit_chapter_translations.html", context)
 
     def promote_view(self, request: HttpRequest) -> HttpResponse:
         """

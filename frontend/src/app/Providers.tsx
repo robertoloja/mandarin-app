@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
@@ -17,9 +17,11 @@ const theme = extendTheme({
 });
 
 const UpdateUserSettings = () => {
-  MandoBotAPI.updateCSRF().then(() => {
-    MandoBotAPI.getUserSettings();
-  });
+  useEffect(() => {
+    MandoBotAPI.updateCSRF().then(() => {
+      MandoBotAPI.getUserSettings();
+    });
+  }, []);
   return null;
 };
 
