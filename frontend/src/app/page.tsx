@@ -19,7 +19,7 @@ const jsonLd = {
   '@type': 'WebApplication',
   name: 'mandoBot',
   description:
-    'Word-by-word pinyin, translation, and definitions for Mandarin Chinese learners',
+    'Word-by-word pronunciation, translation, and definitions for Mandarin Chinese learners',
   applicationCategory: 'EducationApplication',
   operatingSystem: 'Web',
   url: 'https://www.mandobot.com',
