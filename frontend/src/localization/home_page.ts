@@ -18,7 +18,7 @@ const home_page = {
         en: 'German Translations',
         de: 'Deutsche Übersetzungen',
       },
-      date: 'May 6th, 2026',
+      date: { en: 'May 6th, 2026', de: '' },
       body: {
         en: "We're extremely happy to announce that mandoBot has been _fully_ localized into German, thanks to the amazing efforts of our newest team member [Svenja M.](mailto:svenja@mandobot.com), who has worked hard over the past _year_ to make this happen! This includes all the [Reading Room](/reading) texts, as well as the full segmentation/translation functions. \n\n On any page, you may switch the application's language from English to German by clicking on the button on the top-right (next to the color mode button), and selecting your prefered language. \n\n Welcome to any and all German-speaking users, and feel free to [let us know](mailto:mistakes@mandobot.com) if we've made any translation mistakes.",
         de: 'Wir freuen uns sehr, euch mitteilen zu können, dass mandoBot dank des großartigen Einsatzes unseres neuesten Teammitglieds [Svenja M.](mailto:svenja@mandobot.com) nun _vollständig_ ins Deutsche lokalisiert wurde! Dies umfasst alle Texte im [Lesesaal](/reading), sowie die gesamten Segmentierungs- und Übersetzungsoptionen. \n\n Auf jeder Seite kann die Sprache der Anwendung von Englisch auf Deutsch umgestellt werden, indem man auf die Schaltfläche oben rechts (neben der Schaltfläche für den Farbmodus) klickt und seine bevorzugte Sprache auswählt. \n\n Herzlich willkommen an alle deutschsprachigen Nutzer! Bitte [lasst uns wissen](mailto:mistakes@mandobot.com), falls uns Übersetzungsfehler unterlaufen sind.',
@@ -30,7 +30,7 @@ const home_page = {
         en: 'New Domain Name',
         de: 'Neuer Domainname',
       },
-      date: 'May 3rd, 2026',
+      date: { en: 'May 3rd, 2026', de: '' },
       body: {
         en: 'MandoBot finally has a permanent home on the web, at [www.mandobot.com](/). All previous links should still work with the old URL. Finally, members of the mandoBot team now have @mandobot.com email addresses.',
         de: 'MandoBot hat endlich eine feste Adresse im Internet: [www.mandobot.com](/). Alle bisherigen Links sollten weiterhin über die alte URL funktionieren. Außerdem verfügen die Mitglieder des mandoBot Teams nun über E-Mail Adressen mit der Endung @mandobot.com.',
@@ -42,7 +42,7 @@ const home_page = {
         en: "...and we're back!",
         de: '...und wir sind wieder da!',
       },
-      date: 'May 1st, 2026',
+      date: { en: 'May 1st, 2026', de: '' },
       body: {
         en: 'After a period of inactivity, mandoBot is now actively being improved again. In the following months, you can expect new languages, new reading room texts, and new features to speed up all of our Mandarin learning journeys. As always, the core features of mandoBot will remain free for all users, while paying users will have access to better translations (DeepL instead of Argos), more reading room texts, and more personalized features. \n\n Watch this space for upcoming announcements!',
         de: 'Nach einer Phase der Inaktivität wird mandoBot nun wieder aktiv weiterentwickelt. In den kommenden Monaten könnt ihr euch auf neue Sprachen, neue Texte im Lesesaal und neue Funktionen freuen, die unsere Mandarin-Lernprozesse beschleunigen werden. Wie immer bleiben die Kernfunktionen von mandoBot für alle Nutzer kostenlos, während zahlende Nutzer Zugang zu besseren Übersetzungen (DeepL statt Argos), mehr Texten im Lesesaal und personalisierten Funktionen erhalten. \n\n Behaltet diese Seite für künftige Ankündigungen im Auge!',
