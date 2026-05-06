@@ -7,7 +7,7 @@ const home_page = {
     en: 'By breaking down Chinese sentences into constituent words, mandoBot helps beginners better understand structure, vocabulary, and meaning. \n\n**Enter a Mandarin sentence into the textbox above, press _Submit_, and the sentence will be broken down into constituent words!** \n\nWe also offer a curated [reading room](/reading) featuring pre-translated and segmented classical texts, making complex material more accessible to anyone with an interest in Mandarin.',
     de: 'Indem mandoBot chinesische Sätze in ihre einzelnen Wörter zerlegt, hilft die App besonders Anfängern, Struktur, Wortschatz und Bedeutung besser zu verstehen. \n\n**Geben Sie einen Satz in Mandarin in das Textfeld oben ein, klicken sie auf _Absenden_, und der Satz wird in seine einzelnen Wörter zerlegt!** \n\nAußerdem bieten wir einen kuratierten [Lesesaal](/reading) mit bereits übersetzen und segmentierten klassischen Texten an, wodurch komplexes Material für alle, die sich für Mandarin interessieren, leichter zugänglich gemacht wird.',
   },
- 
+
   news_heading: {
     en: 'Development News',
     de: 'Aktuelles',
@@ -20,7 +20,7 @@ const home_page = {
       },
       date: 'May 6th, 2026',
       body: {
-        en: "We're extremely happy to announce that mandoBot has been _fully_ localized into German, thanks to the amazing efforts of our newest team member [Svenja M.](mailto:svenja@mandobot.com)! This includes all the [Reading Room](/reading) texts, as well as the full segmentation/translation functions. \n\n On any page, you may switch the application's language from English to German by clicking on the button on the top-right (next to the color mode button), and selecting your prefered language. \n\n Welcome to any and all German-speaking users, and feel free to [let us know](mailto:mistakes@mandobot.com) if we've made any translation mistakes.",
+        en: "We're extremely happy to announce that mandoBot has been _fully_ localized into German, thanks to the amazing efforts of our newest team member [Svenja M.](mailto:svenja@mandobot.com), who has worked hard over the past _year_ to make this happen! This includes all the [Reading Room](/reading) texts, as well as the full segmentation/translation functions. \n\n On any page, you may switch the application's language from English to German by clicking on the button on the top-right (next to the color mode button), and selecting your prefered language. \n\n Welcome to any and all German-speaking users, and feel free to [let us know](mailto:mistakes@mandobot.com) if we've made any translation mistakes.",
         de: 'Wir freuen uns sehr, euch mitteilen zu können, dass mandoBot dank des großartigen Einsatzes unseres neuesten Teammitglieds [Svenja M.](mailto:svenja@mandobot.com) nun _vollständig_ ins Deutsche lokalisiert wurde! Dies umfasst alle Texte im [Lesesaal](/reading), sowie die gesamten Segmentierungs- und Übersetzungsoptionen. \n\n Auf jeder Seite kann die Sprache der Anwendung von Englisch auf Deutsch umgestellt werden, indem man auf die Schaltfläche oben rechts (neben der Schaltfläche für den Farbmodus) klickt und seine bevorzugte Sprache auswählt. \n\n Herzlich willkommen an alle deutschsprachigen Nutzer! Bitte [lasst uns wissen](mailto:mistakes@mandobot.com), falls uns Übersetzungsfehler unterlaufen sind.',
       },
       author: 'mandoBot team',
