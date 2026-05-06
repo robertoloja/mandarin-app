@@ -8,9 +8,11 @@ import {
   PopoverBody,
   PopoverArrow,
   useColorMode,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { IoListOutline } from 'react-icons/io5';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 import { useReadingBooks } from '@/app/reading/hooks/useReadingBooks';
 import ReadingCoverComponent from '@/app/reading/components/ReadingCoverComponent';
 
@@ -21,7 +23,12 @@ export default function TableOfContentsButton({
 }) {
   const pathname = usePathname();
   const { colorMode } = useColorMode();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const books = useReadingBooks();
+
+  useEffect(() => {
+    onClose();
+  }, [pathname]);
 
   const parts = pathname.split('/');
   // pathname: /reading/[book_slug]/[chapter_order] → parts = ['', 'reading', slug, order]
@@ -32,7 +39,7 @@ export default function TableOfContentsButton({
   if (!readingProps) return null;
 
   return (
-    <Popover placement="bottom-end" offset={[0, 4]}>
+    <Popover isOpen={isOpen} onOpen={onOpen} onClose={onClose} placement="bottom-end" offset={[0, 4]}>
       <PopoverTrigger>
         <IconButton
           aria-label="table of contents"

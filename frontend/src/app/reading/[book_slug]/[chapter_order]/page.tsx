@@ -14,10 +14,14 @@ export async function generateMetadata({
   const { book_slug, chapter_order } = await params;
   const book = BOOK_META[book_slug];
   const bookTitle = book?.title ?? book_slug;
-  const chapterNum = Number(chapter_order) + 1;
+  const order = Number(chapter_order);
+  const isDiary = book_slug === 'diary-of-a-madman';
+  const chapterLabel = isDiary && order === 0
+    ? 'Preface'
+    : `Chapter ${isDiary ? order : order + 1}`;
   return {
-    title: `${bookTitle}, Chapter ${chapterNum}`,
-    description: `Read Chapter ${chapterNum} of ${bookTitle} in the original Chinese with word-by-word segmentation and English translation.`,
+    title: `${bookTitle}, ${chapterLabel}`,
+    description: `Read the ${chapterLabel.toLowerCase()} of ${bookTitle} in the original Chinese with word-by-word segmentation and English translation.`,
   };
 }
 
@@ -47,7 +51,11 @@ export default async function Page({
 }) {
   const { book_slug, chapter_order } = await params;
   const book = BOOK_META[book_slug];
-  const chapterNum = Number(chapter_order) + 1;
+  const order = Number(chapter_order);
+  const isDiary = book_slug === 'diary-of-a-madman';
+  const chapterLabel = isDiary && order === 0
+    ? 'Preface'
+    : `Chapter ${isDiary ? order : order + 1}`;
   let chapterData = null;
   if (API_BASE) {
     try {
@@ -64,7 +72,7 @@ export default async function Page({
     ? {
         '@context': 'https://schema.org',
         '@type': 'Chapter',
-        name: `${book.title}, Chapter ${chapterNum}`,
+        name: `${book.title}, ${chapterLabel}`,
         isPartOf: {
           '@type': 'Book',
           name: book.title,
