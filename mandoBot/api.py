@@ -131,6 +131,19 @@ def server_status(request):
     return status
 
 
+def _migrate_shared_json(data: dict) -> dict:
+    """Migrate old single-language share JSON to the current multi-language format."""
+    for word in data.get("sentence", []):
+        if isinstance(word.get("definitions"), list):
+            word["definitions"] = {"en": word["definitions"], "de": word["definitions"]}
+    for hanzi_entry in data.get("dictionary", {}).values():
+        if "english" in hanzi_entry:
+            hanzi_entry["en"] = hanzi_entry.pop("english")
+        if "de" not in hanzi_entry:
+            hanzi_entry["de"] = hanzi_entry.get("en", [])
+    return data
+
+
 @api.get("/shared", response=SegmentationResponse)
 async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
     """
@@ -148,16 +161,6 @@ async def retrieve_shared(request, share_id: str) -> SegmentationResponse:
         )
         return emptyResponse
     return _migrate_shared_json(json.loads(db_entry.json_data))
-    """Migrate old single-language share JSON to the current multi-language format."""
-    for word in data.get("sentence", []):
-        if isinstance(word.get("definitions"), list):
-            word["definitions"] = {"en": word["definitions"], "de": word["definitions"]}
-    for hanzi_entry in data.get("dictionary", {}).values():
-        if "english" in hanzi_entry:
-            hanzi_entry["en"] = hanzi_entry.pop("english")
-        if "de" not in hanzi_entry:
-            hanzi_entry["de"] = hanzi_entry.get("en", [])
-    return data
 
 
 @api.post("/share", response=str)
