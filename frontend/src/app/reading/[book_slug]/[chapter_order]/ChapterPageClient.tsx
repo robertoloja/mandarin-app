@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Spinner } from '@chakra-ui/react';
 import MandarinSentence from '@/components/MandarinSentenceComponent';
 import Translation from '@/components/TranslationComponent';
 import { RootState } from '@/utils/store/store';
@@ -15,6 +15,7 @@ export default function ChapterPageClient({ initialData }: { initialData: any })
     (state: RootState) => state.settings.user_language,
   );
   const [data, setData] = useState(initialData);
+  const [loading, setLoading] = useState(!initialData);
 
   useEffect(() => {
     if (!data && params.book_slug && params.chapter_order) {
@@ -23,13 +24,18 @@ export default function ChapterPageClient({ initialData }: { initialData: any })
         Number(params.chapter_order),
       )
         .then(setData)
-        .catch(() => {});
+        .catch(() => {})
+        .finally(() => setLoading(false));
     }
   }, []);
 
   return (
     <Flex direction="column" w="100%" h="100%" p={4}>
-      {data && (
+      {loading ? (
+        <Flex justify="center" align="center" h="100%">
+          <Spinner size="xl" />
+        </Flex>
+      ) : data && (
         <>
           <MandarinSentence
             user_language={user_language}
