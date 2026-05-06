@@ -16,7 +16,7 @@ import localization from '@/localization/main';
 import WelcomeCard from '@/components/WelcomeCardComponent';
 
 export default function HomeClient() {
-  const [isReturningUser, setIsReturningUser] = useState(false);
+  const [isReturningUser, setIsReturningUser] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const percentLoaded = useSelector(
     (state: RootState) => state.loading.percentLoaded,
@@ -100,8 +100,13 @@ export default function HomeClient() {
         </HStack>
       </form>
       <Box h="100%">
-        {mandarinSentence.segments.length === 0 ? (
-          <WelcomeCard isReturningUser={isReturningUser} user_language={user_language} />
+        {mandarinSentence.segments.length === 0 && urlShareId === '' ? (
+          isReturningUser !== null && (
+            <WelcomeCard
+              isReturningUser={isReturningUser}
+              user_language={user_language}
+            />
+          )
         ) : (
           <>
             <MandarinSentence
