@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /auth/
+Disallow: /settings/
+Disallow: /history/
+Allow: /
+
+Sitemap: https://www.mandobot.com/sitemap.xml

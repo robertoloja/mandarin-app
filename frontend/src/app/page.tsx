@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import HomeClient from './HomeClient';
 
 export const metadata: Metadata = {
-  title: 'mandoBot',
+  title: { absolute: 'mandoBot' },
   description:
     'Paste any Mandarin text to get instant word-by-word segmentation, pinyin pronunciation, and English translations.',
   openGraph: {
@@ -10,9 +10,29 @@ export const metadata: Metadata = {
     description:
       'Paste any Mandarin text to get instant word-by-word segmentation, pinyin pronunciation, and English translations.',
     type: 'website',
+    images: [{ url: '/OG-image.png', width: 1200, height: 630 }],
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'mandoBot',
+  description: 'Word-by-word pinyin, translation, and definitions for Mandarin Chinese learners',
+  applicationCategory: 'EducationApplication',
+  operatingSystem: 'Web',
+  url: 'https://www.mandobot.com',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+};
+
 export default function Home() {
-  return <HomeClient />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <HomeClient />
+    </>
+  );
 }

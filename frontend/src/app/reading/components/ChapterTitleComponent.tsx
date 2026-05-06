@@ -1,9 +1,15 @@
-import { Cinzel, Yuji_Mai } from 'next/font/google';
+import { Cinzel, Yuji_Mai, Goudy_Bookletter_1911 } from 'next/font/google';
 import { Chapter } from '../types';
 import { HStack, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 
 const cinzel = Cinzel({
+  subsets: ['latin'],
+  weight: ['400'],
+  display: 'swap',
+});
+
+const goudy = Goudy_Bookletter_1911({
   subsets: ['latin'],
   weight: ['400'],
   display: 'swap',
@@ -46,8 +52,8 @@ export const ChapterTitle = (props: {
       </Text>
       {/* English Chapter Title */}
       <Text
-        fontSize="1rem"
-        className={cinzel.className}
+        fontSize="1.2rem"
+        className={goudy.className}
         _hover={{ textDecoration: 'underline' }}
         textShadow={['1px 1px 1px rgba(20, 20, 20, 0.5)']}
       >

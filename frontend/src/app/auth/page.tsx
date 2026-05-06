@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { login } from '@/utils/store/authSlice';
 import { useSelector } from 'react-redux';
 import {
@@ -32,6 +32,10 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState(false);
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const toast = useToast();
+
+  useEffect(() => {
+    document.title = 'mandoBot - Login';
+  }, []);
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();

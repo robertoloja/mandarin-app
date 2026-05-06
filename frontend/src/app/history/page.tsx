@@ -15,6 +15,7 @@ export default function HistoryPage() {
   );
 
   useEffect(() => {
+    document.title = 'mandoBot - History';
     resetHistory();
   }, []);
 
