@@ -5,10 +5,11 @@
 All Priority 1 and 2 items have been implemented. The site is in good SEO shape.
 
 - Home page has `metadata` export (title, description, OpenGraph + OG image)
-- H1 on home page: "Word-by-word pinyin, translation, and definitions for Mandarin Chinese learners" (`WelcomeCardComponent.tsx`)
+- H1 on home page: "Word-by-word pronunciation, translation, and definitions for Mandarin Chinese learners" (`WelcomeCardComponent.tsx`) — fully localised in EN and DE
 - `public/robots.txt` blocks `/auth/`, `/settings/`, `/history/`; references sitemap
 - `public/sitemap.xml` covers all 24 public URLs (home, reading, about, 21 chapters)
 - Chapter pages export `generateMetadata` with per-chapter titles and descriptions
+- Diary of a Madman chapter labels are correct: chapter 0 is "Preface", subsequent chapters are numbered from 1
 - JSON-LD structured data on home page (`WebApplication`) and chapter pages (`Chapter` + `Book`)
 - OG image: `public/OG-image.png` (1200×630, 解 logo + "mandoBot" wordmark on blurred app screenshot)
 - Favicon, web manifest, and PWA icons configured
@@ -20,11 +21,8 @@ All Priority 1 and 2 items have been implemented. The site is in good SEO shape.
 ### Open Graph image on chapter pages
 Chapter pages currently have no OG image set in `generateMetadata`. A generic fallback (e.g. the same `OG-image.png`) or per-book cover images would improve social sharing appearance for reading room links.
 
-### Welcome card copy
-The welcome card on the home page still contains lorem ipsum placeholder text. This is visible to users and affects first impressions — not a crawler signal, but worth replacing before launch.
-
-### German H1 localisation
-`home_page.heading.de` in `localization/home_page.ts` is an empty string. Will render blank for German-language users.
+### Returning-user welcome card copy
+`home_page.welcome_returning` in `localization/home_page.ts` still contains lorem ipsum in both EN and DE. This text is shown to logged-in users on the home page — not a crawler signal, but visible to users and should be replaced before launch.
 
 ## What will not move the needle
 

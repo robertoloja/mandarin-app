@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Providers from './Providers';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://www.mandobot.com'),
   title: {
     default: 'mandoBot',
     template: 'mandoBot - %s',
