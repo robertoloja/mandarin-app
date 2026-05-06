@@ -4,10 +4,25 @@ import {
   SegmentResponseType,
   UserPreferences,
 } from './types';
-import { store } from './store/store';
+import type { AppDispatch } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
-import { logout, setUserDetails } from './store/authSlice';
 import { setPreferences } from './store/settingsSlice';
+
+type AnyAction = { type: string; payload?: any };
+
+let _dispatch: AppDispatch | undefined;
+let _logout: (() => AnyAction) | undefined;
+let _setUserDetails: ((data: { username: string; email: string }) => AnyAction) | undefined;
+
+export function injectStore(
+  dispatch: AppDispatch,
+  logout: () => AnyAction,
+  setUserDetails: (data: { username: string; email: string }) => AnyAction,
+) {
+  _dispatch = dispatch;
+  _logout = logout;
+  _setUserDetails = setUserDetails;
+}
 import { UserLanguage } from '@/localization/main';
 
 export function getCookie(name: string): string | null {
@@ -45,13 +60,11 @@ const errorHandler = (error: {
   }
 
   if (statusCode && statusCode === 403) {
-    store.dispatch(
-      setError('Authentication error: CSRF token validation failed.'),
-    );
+    _dispatch?.(setError('Authentication error: CSRF token validation failed.'));
   }
 
   if (statusCode && ![401, 404, 409, 400].includes(statusCode)) {
-    store.dispatch(
+    _dispatch?.(
       setError(
         'There has been an error connecting to the server. Please try again soon',
       ),
@@ -63,7 +76,7 @@ const errorHandler = (error: {
 // Response Interceptor: Handle errors
 api.interceptors.response.use(
   (response) => {
-    store.dispatch(clearError());
+    _dispatch?.(clearError());
     return response;
   },
   (error) => {
@@ -128,7 +141,7 @@ export const MandoBotAPI = {
         withCredentials: true,
       },
     );
-    store.dispatch(
+    _dispatch?.(
       setPreferences({
         pronunciation_preference: response.data.pronunciation_preference,
         theme_preference: response.data.theme_preference,
@@ -146,7 +159,7 @@ export const MandoBotAPI = {
       {},
       { withCredentials: true },
     );
-    store.dispatch(logout());
+    if (_logout) _dispatch?.(_logout());
     return response.data;
   },
 
@@ -200,13 +213,15 @@ export const MandoBotAPI = {
       })
       .then((response) => {
         if (response.data.username) {
-          store.dispatch(
-            setUserDetails({
-              username: response.data.username,
-              email: response.data.email,
-            }),
-          );
-          store.dispatch(
+          if (_setUserDetails) {
+            _dispatch?.(
+              _setUserDetails({
+                username: response.data.username,
+                email: response.data.email,
+              }),
+            );
+          }
+          _dispatch?.(
             setPreferences({
               pronunciation_preference: response.data.pronunciation_preference,
               theme_preference: response.data.theme_preference,
