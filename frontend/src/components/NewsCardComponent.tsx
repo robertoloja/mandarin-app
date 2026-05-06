@@ -46,7 +46,7 @@ function NewsCard({ user_language }: { user_language: UserLanguage }) {
                 {item.heading[user_language]}
               </Heading>
               <Text fontSize="xs" color="gray.500">
-                {item.date}
+                {item.date[user_language]}
               </Text>
               <Text as="div">
                 <ReactMarkdown
