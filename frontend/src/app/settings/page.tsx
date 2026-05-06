@@ -34,7 +34,7 @@ export default function Settings() {
   const { isOpen, onToggle } = useDisclosure();
 
   useEffect(() => {
-    // TODO: This is triggering when the user is logged in
+    document.title = 'mandoBot - Settings';
     if (!username) {
       router.push('/');
     }
@@ -73,7 +73,7 @@ export default function Settings() {
         </Box>
 
         <Spacer m={5} />
-        
+
         <Text>{localization.account_settings.user_language[user_language]}</Text>
         <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
           <LanguagePreferencesComponent />

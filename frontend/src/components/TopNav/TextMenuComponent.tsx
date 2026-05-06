@@ -23,9 +23,11 @@ import {
   Text,
   useColorMode,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
+import { setDefinitionFontSize, setPronunciationFontSize } from '@/utils/store/settingsSlice';
+import { store } from '@/utils/store/store';
 
 export default function TextMenuButton() {
   const { colorMode } = useColorMode();
@@ -57,46 +59,17 @@ export default function TextMenuButton() {
 }
 
 const TextPreferences = () => {
-  const [definitionFontSize, setDefinitionFontSize] = useState<number>(() => {
-    if (typeof window !== 'undefined' && localStorage) {
-      return Number(localStorage.getItem('definitionFontSize'));
-    }
-    return 15;
-  });
-  const [pronunciationFontSize, setPronunciationFontSize] = useState<number>(
-    () => {
-      if (typeof window !== 'undefined' && localStorage)
-        return Number(localStorage.getItem('pronunciationFontSize'));
-      return 15;
-    },
+  const definitionFontSize = useSelector(
+    (state: RootState) => state.settings.definitionFontSize,
   );
-  const [showPronunciation, togglePronunciation] = useState(true);
-  const [showDefinition, toggleDefinition] = useState(true);
+  const pronunciationFontSize = useSelector(
+    (state: RootState) => state.settings.pronunciationFontSize,
+  );
+  const [showPronunciation, togglePronunciation] = useState(pronunciationFontSize !== 0);
+  const [showDefinition, toggleDefinition] = useState(definitionFontSize !== 0);
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
-
-  const setFontSize = (
-    value: number,
-    storageKey: string,
-    setter: (val: number) => void,
-  ) => {
-    if (value !== 0) setter(value);
-    if (typeof window !== 'undefined' && localStorage) {
-      localStorage.setItem(`${storageKey}FontSize`, `${value}`);
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: `${storageKey}FontSize`,
-          newValue: String(value),
-        }),
-      );
-    }
-  };
-
-  useEffect(() => {
-    toggleDefinition(definitionFontSize !== 0);
-    togglePronunciation(pronunciationFontSize !== 0);
-  }, []);
 
   return (
     <Grid templateColumns="1fr 1fr" templateRows="repeat(4, 1fr)" my={5}>
@@ -112,16 +85,12 @@ const TextPreferences = () => {
           <Switch
             isChecked={showPronunciation}
             onChange={() => {
-              if (showPronunciation && pronunciationFontSize !== 0) {
+              if (showPronunciation) {
                 togglePronunciation(false);
-                setFontSize(0, 'pronunciation', setPronunciationFontSize);
+                store.dispatch(setPronunciationFontSize(0));
               } else {
                 togglePronunciation(true);
-                setFontSize(
-                  pronunciationFontSize || 15,
-                  'pronunciation',
-                  setPronunciationFontSize,
-                );
+                store.dispatch(setPronunciationFontSize(pronunciationFontSize || 15));
               }
             }}
           />
@@ -141,7 +110,7 @@ const TextPreferences = () => {
             size={['lg', 'sm']}
             w="5rem"
             onChange={(e) => {
-              setFontSize(Number(e), 'pronunciation', setPronunciationFontSize);
+              store.dispatch(setPronunciationFontSize(Number(e)));
               togglePronunciation(true);
             }}
           >
@@ -166,16 +135,12 @@ const TextPreferences = () => {
           <Switch
             isChecked={showDefinition}
             onChange={() => {
-              if (showDefinition && definitionFontSize !== 0) {
+              if (showDefinition) {
                 toggleDefinition(false);
-                setFontSize(0, 'definition', setDefinitionFontSize);
+                store.dispatch(setDefinitionFontSize(0));
               } else {
                 toggleDefinition(true);
-                setFontSize(
-                  definitionFontSize || 15,
-                  'definition',
-                  setDefinitionFontSize,
-                );
+                store.dispatch(setDefinitionFontSize(definitionFontSize || 15));
               }
             }}
           />
@@ -195,7 +160,7 @@ const TextPreferences = () => {
             size={['lg', 'sm']}
             w="5rem"
             onChange={(e) => {
-              setFontSize(Number(e), 'definition', setDefinitionFontSize);
+              store.dispatch(setDefinitionFontSize(Number(e)));
               toggleDefinition(true);
             }}
           >

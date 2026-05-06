@@ -1,25 +1,11 @@
-'use client';
+import { Metadata } from 'next';
+import ReadingClient from './ReadingClient';
 
-import { Flex } from '@chakra-ui/react';
-import ReadingCoverComponent from './components/ReadingCoverComponent';
-import { useReadingBooks } from './hooks/useReadingBooks';
+export const metadata: Metadata = {
+  title: 'Reading Room',
+  description: 'Read classic Chinese literature with word-by-word segmentation, pinyin pronunciation, and English translations.',
+};
 
 export default function ReadingPage() {
-  const books = useReadingBooks();
-
-  return (
-    <Flex
-      align="stretch"
-      w="100%"
-      h="100%"
-      px={['0', '5%']}
-      flexWrap="wrap"
-      overflow="hidden"
-      justifyContent="center"
-      aria-label="text container"
-    >
-      <ReadingCoverComponent {...books['diary-of-a-madman']} />
-      <ReadingCoverComponent {...books['romance-of-the-three-kingdoms']} />
-    </Flex>
-  );
+  return <ReadingClient />;
 }

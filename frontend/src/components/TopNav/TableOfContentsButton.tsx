@@ -6,6 +6,7 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverBody,
+  PopoverArrow,
   useColorMode,
 } from '@chakra-ui/react';
 import { IoListOutline } from 'react-icons/io5';
@@ -31,7 +32,7 @@ export default function TableOfContentsButton({
   if (!readingProps) return null;
 
   return (
-    <Popover placement="bottom-start">
+    <Popover placement="bottom-end" offset={[0, 4]}>
       <PopoverTrigger>
         <IconButton
           aria-label="table of contents"
@@ -40,16 +41,24 @@ export default function TableOfContentsButton({
         />
       </PopoverTrigger>
       <PopoverContent
-        width="fit-content"
+        width={['100vw', 'fit-content']}
         border="none"
         bg="transparent"
         boxShadow="none"
         p={0}
+        pointerEvents="none"
       >
-        <PopoverBody p={0}>
+        <PopoverArrow />
+        <PopoverBody
+          p={0}
+          display={['flex', 'block']}
+          justifyContent="center"
+          pointerEvents="auto"
+        >
           <ReadingCoverComponent
             {...readingProps}
             currentChapterOrder={currentChapterOrder}
+            noMargin
           />
         </PopoverBody>
       </PopoverContent>

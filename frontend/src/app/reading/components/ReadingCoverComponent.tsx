@@ -32,7 +32,8 @@ export default function ReadingCoverComponent({
   background,
   attribution,
   currentChapterOrder,
-}: ReadingProps & { currentChapterOrder?: number }) {
+  noMargin,
+}: ReadingProps & { currentChapterOrder?: number; noMargin?: boolean }) {
   const [activePage, setActivePage] = useState(0);
   const [accordionIndex, setAccordionIndex] = useState<number | number[]>(-1);
   const user_language = useSelector(
@@ -51,7 +52,7 @@ export default function ReadingCoverComponent({
   return (
     <Box
       position="relative"
-      width={['98%', '96%', '40rem']}
+      width={noMargin ? ['95vw', '95vw', '40rem'] : ['98%', '96%', '40rem']}
       height={
         accordionIndex !== -1
           ? [`${heightModifier() + 35}rem`, `${heightModifier() + 25}rem`]
@@ -59,11 +60,11 @@ export default function ReadingCoverComponent({
       }
       borderRadius={8}
       overflow="hidden"
-      backgroundImage={background}
+      backgroundImage={`url('/${background}')`}
       backgroundSize={['contain', 'cover']}
       backgroundPosition={['top', 'left']}
-      m={[1, 4]}
-      mt="4"
+      m={noMargin ? 0 : [1, 4]}
+      mt={noMargin ? 0 : '4'}
       transition="height 0.2s ease"
       __css={styles.darkBox.dark}
     >
