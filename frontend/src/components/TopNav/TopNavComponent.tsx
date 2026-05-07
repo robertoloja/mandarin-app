@@ -14,7 +14,6 @@ import { IoMoon, IoSunny, IoMenuOutline, IoHomeOutline } from 'react-icons/io5';
 
 import NavPanel from '../NavPanelComponent';
 import ShareButton from '../ShareButtonComponent';
-import LanguageMenu from './LanguageMenuComponent';
 import ErrorButton from './ErrorButtonComponent';
 import Link from 'next/link';
 import { RootState, store } from '@/utils/store/store';
@@ -95,7 +94,6 @@ function TopNav() {
           <>
             <BackToTop iconSize={iconSize} />
             <TextMenuButton />
-            <LanguageMenu iconSize={iconSize} />
             <ShareButton iconSize={iconSize} />
           </>
         )}
@@ -105,7 +103,6 @@ function TopNav() {
             <BackToTop iconSize={iconSize} />
             <TableOfContentsButton iconSize={iconSize} />
             <TextMenuButton />
-            <LanguageMenu iconSize={iconSize} />
           </>
         )}
 
