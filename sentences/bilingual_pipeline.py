@@ -152,77 +152,115 @@ def lookup_german(hanzi: str, pinyin_list: list) -> list | None:
     return None
 
 
-# ── Main pipeline ─────────────────────────────────────────────────────────────
+# ── Pre-segmented ingest pipeline ─────────────────────────────────────────────
 
-def build_chapter_data(
-    segmentation: dict,
+def _parse_segmented_input(text: str) -> list[str]:
+    """
+    Parse a textarea of space-separated Chinese tokens into a flat token list.
+
+    Blank lines become paragraph-break sentinels (empty string '').
+    Single newlines and spaces are treated as token separators within a paragraph.
+    """
+    import re
+    text = re.sub(r'\r\n|\r', '\n', text)
+    paragraphs = re.split(r'\n[ \t]*\n', text.strip())
+    result: list[str] = []
+    for i, paragraph in enumerate(paragraphs):
+        result.extend(paragraph.split())
+        if i < len(paragraphs) - 1:
+            result.append('')
+    return result
+
+
+def build_chapter_data_from_tokens(
+    tokens: list[str],
     english_translation: str,
     german_translation: str,
 ) -> dict:
     """
-    Convert a legacy SegmentationResponse dict (from SentenceHistory.json_data)
-    into a ReadingRoomChapter data dict.
+    Build ReadingRoomChapter data from a pre-tokenized list of Chinese words.
 
-    Args:
-        segmentation:          Parsed json_data from SentenceHistory — must have
-                               'sentence' (list) and 'dictionary' (dict) keys.
-        english_translation:   The English full-text translation (stored in
-                               segmentation['translation']).
-        german_translation:    The German full-text translation supplied by the
-                               translator.
-
-    Returns:
-        A dict matching the ReadingRoomChapter.data shape.
+    Tokens are plain strings (words or punctuation). An empty string becomes
+    a paragraph-break sentinel. Pronunciations are derived via dragonmapper;
+    English and German definitions are looked up from the database.
     """
+    import re
+    from dragonmapper import hanzi as hanzi_utils
+    from sentences.functions import is_punctuation
+
+    def _pinyin_to_zhuyin(pinyin: str) -> str:
+        if ':' not in pinyin:
+            return hanzi_utils.pinyin_to_zhuyin(pinyin)
+        number = pinyin[-1]
+        return hanzi_utils.pinyin_to_zhuyin(pinyin[:-3] + 'ü' + number)
+
     sentence_out = []
-    for word in segmentation.get('sentence', []):
-        raw_defs = word.get('definitions', [])
+    dictionary_out = {}
 
-        # Legacy shape: definitions is a flat list of English strings
-        if isinstance(raw_defs, list):
-            en_defs = raw_defs
-        elif isinstance(raw_defs, dict):
-            en_defs = raw_defs.get('en', [])
+    for token in tokens:
+        if token == '':
+            sentence_out.append({'word': '\n', 'pinyin': [], 'zhuyin': [], 'definitions': {}})
+            continue
+
+        if not hanzi_utils.has_chinese(token) or is_punctuation(token):
+            sentence_out.append({
+                'word': token,
+                'pinyin': [token],
+                'zhuyin': [token],
+                'definitions': {},
+            })
+            continue
+
+        raw_pinyin = hanzi_utils.to_pinyin(token, accented=False)
+        pinyin = re.findall(r'[a-zA-Zü]+(?:\d+)?', raw_pinyin)
+        zhuyin = [_pinyin_to_zhuyin(p) for p in pinyin]
+
+        cedict = find_cedict(token, pinyin)
+        if cedict:
+            en_defs = [d.strip() for d in cedict.definitions.split('/') if d.strip()]
+            de_defs = lookup_german(token, pinyin) or ['MISSING FROM HANDEDICT']
         else:
-            en_defs = []
-
-        pinyin = word.get('pinyin', [])
-
-        if en_defs:
-            de_defs = lookup_german(word.get('word', ''), pinyin) or ['MISSING FROM HANDEDICT']
-        else:
-            de_defs = []
+            from sentences.models import CustomDefinition
+            custom, created = CustomDefinition.objects.get_or_create(
+                word=token,
+                defaults={'pinyin': pinyin},
+            )
+            en_defs = custom.definitions_en
+            de_defs = custom.definitions_de
 
         sentence_out.append({
-            'word': word.get('word', ''),
+            'word': token,
             'pinyin': pinyin,
-            'zhuyin': word.get('zhuyin', []),
-            'definitions': {'en': en_defs, 'de': de_defs} if en_defs else {},
+            'zhuyin': zhuyin,
+            'definitions': {'en': en_defs, 'de': de_defs},
         })
 
-    dictionary_out = {}
-    for hanzi, entry in segmentation.get('dictionary', {}).items():
-        # Legacy shape: entry has 'english' key (not 'en')
-        if isinstance(entry, dict):
-            en_defs = entry.get('en') or entry.get('english') or []
-        else:
-            en_defs = []
-
-        pinyin = entry.get('pinyin', []) if isinstance(entry, dict) else []
-        de_defs = lookup_german(hanzi, pinyin) or ['MISSING FROM HANDEDICT']
-
-        dictionary_out[hanzi] = {
-            'en': en_defs,
-            'de': de_defs,
-            'pinyin': pinyin,
-            'zhuyin': entry.get('zhuyin', []) if isinstance(entry, dict) else [],
-        }
+        if cedict:
+            constituents = cedict.get_hanzi()
+            if constituents:
+                for ch in constituents:
+                    char = ch.traditional if token == cedict.traditional else ch.simplified
+                    dictionary_out[char] = {
+                        'en': [ch.definitions],
+                        'de': de_from_cedict(ch) or [ch.definitions],
+                        'pinyin': [ch.pronunciation.replace('u:', 'ü')],
+                        'zhuyin': [_pinyin_to_zhuyin(ch.pronunciation)],
+                    }
+            else:
+                for i, char in enumerate(token):
+                    char_pinyin = [pinyin[i]] if i < len(pinyin) else []
+                    char_cedict = find_cedict(char, char_pinyin)
+                    if char_cedict:
+                        dictionary_out[char] = {
+                            'en': [char_cedict.definitions],
+                            'de': de_from_cedict(char_cedict) or [char_cedict.definitions],
+                            'pinyin': [char_cedict.pronunciation.replace('u:', 'ü')],
+                            'zhuyin': [_pinyin_to_zhuyin(char_cedict.pronunciation)],
+                        }
 
     return {
-        'translation': {
-            'en': english_translation,
-            'de': german_translation,
-        },
+        'translation': {'en': english_translation, 'de': german_translation},
         'sentence': sentence_out,
         'dictionary': dictionary_out,
     }
+

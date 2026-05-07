@@ -10,7 +10,9 @@
   Chapter {{ chapter.chapter_number }}: {{ chapter.title }}
 </p>
 <p>
-  Edit the full-text translations below. Word-level definitions are not affected.
+  Editing the mandarin text or translations will re-digest the chapter.
+  Word-level definitions are re-looked-up from the dictionary on save.
+  Paragraph breaks are blank lines in the mandarin textarea.
 </p>
 
 {% if errors %}
@@ -25,7 +27,33 @@
   {% csrf_token %}
 
   <fieldset class="module aligned">
-    <h2>English</h2>
+    <h2>German chapter title</h2>
+    <div class="form-row">
+      <input
+        id="id_title_de"
+        name="title_de"
+        type="text"
+        value="{{ title_de }}"
+        style="width: 30rem; font-size: 1rem;"
+        placeholder="German title for the chapter listing"
+      >
+    </div>
+  </fieldset>
+
+  <fieldset class="module aligned">
+    <h2>Mandarin text</h2>
+    <div class="form-row">
+      <textarea
+        id="id_segmented_text"
+        name="segmented_text"
+        rows="20"
+        style="width: 100%; font-family: serif; font-size: 1rem; line-height: 1.6;"
+      >{{ segmented_text }}</textarea>
+    </div>
+  </fieldset>
+
+  <fieldset class="module aligned">
+    <h2>English translation</h2>
     <div class="form-row">
       <textarea
         id="id_translation_en"
@@ -35,7 +63,7 @@
       >{{ translation_en }}</textarea>
     </div>
 
-    <h2>German</h2>
+    <h2>German translation</h2>
     <div class="form-row">
       <textarea
         id="id_translation_de"
@@ -46,29 +74,8 @@
     </div>
   </fieldset>
 
-  <fieldset class="module aligned">
-    <h2>Paragraph Breaks</h2>
-    <p>Check the box before each sentence that should begin a new paragraph.</p>
-    {% for chunk in chunks %}
-      <div class="form-row" style="display: flex; align-items: baseline; gap: 0.75rem; padding: 0.25rem 0;">
-        {% if forloop.first %}
-          <span style="display: inline-block; width: 1.25rem;"></span>
-        {% else %}
-          <input
-            type="checkbox"
-            name="paragraph_breaks"
-            value="{{ chunk.start }}"
-            {% if chunk.start in existing_breaks %}checked{% endif %}
-            style="margin-top: 0.15rem; flex-shrink: 0;"
-          >
-        {% endif %}
-        <span style="font-family: serif; font-size: 1rem; line-height: 1.6;">{{ chunk.text }}</span>
-      </div>
-    {% endfor %}
-  </fieldset>
-
   <div class="submit-row">
-    <input type="submit" value="Save Translations" class="default">
+    <input type="submit" value="Save" class="default">
     <a href="../../" class="closelink">Cancel</a>
   </div>
 </form>
