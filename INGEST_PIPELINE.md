@@ -42,19 +42,16 @@ After ingest, some words will be in `CustomDefinition` with empty definitions. T
 # Export words still missing definitions to a text file
 python manage.py export_custom_definitions --missing-only
 
-# Edit custom_definitions.txt — add | English definition | German definition after each word:
+# MANUAL STEP: Edit custom_definitions.txt — add | English definition | German definition after each word:
 #   玄德 | Xuande (style name of Liu Bei) | Xuande (Hofname von Liu Bei)
 
-# Import the filled-in definitions back into CustomDefinition
-python manage.py import_custom_definitions
-
-# Promote CustomDefinition entries into CEDictionary + ConstituentHanzi,
-# then re-bake ReadingRoomChapter data so definitions, zhuyin, and
+# Import the filled-in definitions, promote them into CEDictionary + ConstituentHanzi,
+# and re-bake ReadingRoomChapter data so definitions, zhuyin, and
 # constituent character entries are all correct in the frontend
-python manage.py promote_custom_definitions
+python manage.py update_custom_definitions
 ```
 
-`promote_custom_definitions` must be re-run each time new definitions are added. It is idempotent — already-promoted words are skipped on CEDictionary creation, and chapter data is always re-baked from the current CEDictionary state.
+`update_custom_definitions` is idempotent — already-promoted words are skipped on CEDictionary creation, and chapter data is always re-baked from the current CEDictionary state. Use `--promote-only` to skip the file import step (e.g. after adding definitions directly in the admin).
 
 ### 3. Wire up the frontend
 Three files need updating for the chapter to appear in the reading room navigation:
@@ -70,8 +67,7 @@ Three files need updating for the chapter to appear in the reading room navigati
 | Command | Purpose |
 |---|---|
 | `export_custom_definitions [--missing-only]` | Export CustomDefinition words to `custom_definitions.txt`. `--missing-only` limits output to words with empty definitions. |
-| `import_custom_definitions [--input FILE]` | Import pipe-delimited `word \| en \| de` definitions into CustomDefinition. Skips words that already have definitions. |
-| `promote_custom_definitions` | Create CEDictionary + ConstituentHanzi entries from CustomDefinition, then re-bake all ReadingRoomChapter data. Run after every import. |
+| `update_custom_definitions [--input FILE] [--promote-only]` | Import pipe-delimited `word \| en \| de` definitions into CustomDefinition, then promote to CEDictionary + ConstituentHanzi and re-bake all ReadingRoomChapter data. `--promote-only` skips the file import step. |
 | `scan_missing_definitions [--dry-run]` | Diagnostic: scans all chapter data for `{}` definition entries, logs them to CustomDefinition, and patches them to `{'en': [], 'de': []}` to prevent frontend crashes. Normally not needed — the ingest pipeline handles this automatically. |
 
 ---

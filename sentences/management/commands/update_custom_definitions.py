@@ -1,17 +1,16 @@
 """
-Promote CustomDefinition entries into the main CEDictionary + ConstituentHanzi
-tables, then re-bake ReadingRoomChapter data so every word has correct
-pronunciations, definitions, and character-level dictionary entries.
+Import definitions from a pipe-delimited text file into CustomDefinition, then
+promote them into CEDictionary and re-bake ReadingRoomChapter data.
 
-Only processes CustomDefinition records that have non-empty definitions.
-Skips words already present in CEDictionary.
+Expected file format (one word per line):
+    word | English definition | German definition
 
 Usage:
-    python manage.py promote_custom_definitions
-    python manage.py promote_custom_definitions --dry-run
+    python manage.py update_custom_definitions
+    python manage.py update_custom_definitions --input path/to/file.txt
+    python manage.py update_custom_definitions --promote-only
+    python manage.py update_custom_definitions --dry-run
 """
-
-import re
 
 from django.core.management.base import BaseCommand
 from dragonmapper import hanzi as hanzi_utils
@@ -36,9 +35,20 @@ def _pinyin_to_zhuyin(pinyin: str) -> str:
 
 
 class Command(BaseCommand):
-    help = 'Promote CustomDefinition entries to CEDictionary and re-bake chapter data'
+    help = 'Import definitions from a file into CustomDefinition, then promote to CEDictionary'
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            '--input',
+            type=str,
+            default='custom_definitions.txt',
+            help='Input file path (default: custom_definitions.txt)',
+        )
+        parser.add_argument(
+            '--promote-only',
+            action='store_true',
+            help='Skip the file import step; only promote and re-bake',
+        )
         parser.add_argument(
             '--dry-run',
             action='store_true',
@@ -47,17 +57,62 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         dry_run = options['dry_run']
+
+        if not options['promote_only']:
+            self._import(options['input'], dry_run)
+
+        self._promote(dry_run)
+
+    def _import(self, input_path, dry_run):
+        updated = 0
+        skipped = 0
+        not_found = 0
+
+        with open(input_path, encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                parts = [p.strip() for p in line.split('|')]
+                if len(parts) < 3:
+                    continue
+
+                word, en_def, de_def = parts[0], parts[1], parts[2]
+                if not word or not en_def or not de_def:
+                    continue
+
+                try:
+                    custom = CustomDefinition.objects.get(word=word)
+                except CustomDefinition.DoesNotExist:
+                    self.stdout.write(self.style.WARNING(f'Not in table: {word}'))
+                    not_found += 1
+                    continue
+
+                if custom.definitions_en and custom.definitions_de:
+                    skipped += 1
+                    continue
+
+                if dry_run:
+                    self.stdout.write(f'  would update {word}: en={en_def!r}, de={de_def!r}')
+                else:
+                    custom.definitions_en = [en_def]
+                    custom.definitions_de = [de_def]
+                    custom.save(update_fields=['definitions_en', 'definitions_de'])
+                updated += 1
+
+        label = 'Would update' if dry_run else 'Updated'
+        self.stdout.write(self.style.SUCCESS(
+            f'{label} {updated} records ({skipped} already had definitions, {not_found} not found in table)'
+        ))
+
+    def _promote(self, dry_run):
         created_count = 0
         skipped_count = 0
-        no_defs_count = 0
 
         customs = CustomDefinition.objects.exclude(definitions_en=[])
 
         for custom in customs:
             word = custom.word
-            pinyin = custom.pinyin  # list of pinyin syllables (with ü)
+            pinyin = custom.pinyin
 
-            # Already in CEDictionary?
             if CEDictionary.objects.filter(traditional=word).exists() or \
                CEDictionary.objects.filter(simplified=word).exists():
                 skipped_count += 1
@@ -91,7 +146,6 @@ class Command(BaseCommand):
                 definitions=definitions_str,
             )
 
-            # Link constituent characters
             for i, char in enumerate(word):
                 char_pinyin = [pinyin[i]] if i < len(pinyin) else []
                 char_cedict = find_cedict(char, char_pinyin)
@@ -111,17 +165,10 @@ class Command(BaseCommand):
         label = 'Would create' if dry_run else 'Created'
         self.stdout.write(self.style.SUCCESS(
             f'{label} {created_count} CEDictionary entries '
-            f'({skipped_count} already existed, {no_defs_count} skipped — no definitions)'
+            f'({skipped_count} already existed)'
         ))
 
     def _rebake_chapters(self):
-        """
-        Re-apply word entries in ReadingRoomChapter.data using the now-populated
-        CEDictionary, adding correct definitions, pronunciations, and dictionary
-        entries for words that previously fell back to CustomDefinition.
-        """
-        from sentences.models import CustomDefinition
-
         custom_words = set(
             CustomDefinition.objects.exclude(definitions_en=[]).values_list('word', flat=True)
         )
@@ -150,11 +197,10 @@ class Command(BaseCommand):
                 dirty = True
                 patched_words += 1
 
-                # Add constituent characters to the dictionary section
                 constituents = cedict.get_hanzi()
                 if constituents:
-                    for ch in constituents:
-                        char = ch.traditional if word == cedict.traditional else ch.simplified
+                    for i, ch in enumerate(constituents):
+                        char = word[i] if i < len(word) else (ch.traditional if word == cedict.traditional else ch.simplified)
                         dictionary[char] = {
                             'en': [ch.definitions],
                             'de': de_from_cedict(ch) or [ch.definitions],

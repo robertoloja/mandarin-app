@@ -238,8 +238,8 @@ def build_chapter_data_from_tokens(
         if cedict:
             constituents = cedict.get_hanzi()
             if constituents:
-                for ch in constituents:
-                    char = ch.traditional if token == cedict.traditional else ch.simplified
+                for i, ch in enumerate(constituents):
+                    char = token[i] if i < len(token) else (ch.traditional if token == cedict.traditional else ch.simplified)
                     dictionary_out[char] = {
                         'en': [ch.definitions],
                         'de': de_from_cedict(ch) or [ch.definitions],
