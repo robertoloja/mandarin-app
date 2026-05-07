@@ -13,6 +13,38 @@ from sentences.chapter_registry import CHAPTER_REGISTRY
 from sentences.models import SentenceHistory
 from sentences.models.ReadingRoomChapter import ReadingRoomChapter
 
+_SENTENCE_ENDINGS = frozenset('。！？.?!')
+_PARAGRAPH_SENTINEL = {'word': '\n', 'pinyin': [], 'zhuyin': [], 'definitions': {}}
+
+
+def _strip_sentinels(sentence: list) -> list:
+    return [w for w in sentence if w.get('word') != '\n']
+
+
+def _existing_break_indices(sentence: list) -> set:
+    """Return the clean-array indices at which a sentinel currently sits."""
+    breaks, clean_idx = set(), 0
+    for word in sentence:
+        if word.get('word') == '\n':
+            breaks.add(clean_idx)
+        else:
+            clean_idx += 1
+    return breaks
+
+
+def _sentence_chunks(clean_words: list) -> list:
+    """Split a sentinel-free word list into chunks at sentence-ending punctuation."""
+    chunks, current, start = [], [], 0
+    for i, word in enumerate(clean_words):
+        current.append(word)
+        if any(c in word.get('word', '') for c in _SENTENCE_ENDINGS):
+            chunks.append({'start': start, 'text': ''.join(w['word'] for w in current)})
+            start = i + 1
+            current = []
+    if current:
+        chunks.append({'start': start, 'text': ''.join(w['word'] for w in current)})
+    return chunks
+
 
 @admin.register(ReadingRoomChapter)
 class ReadingRoomChapterAdmin(admin.ModelAdmin):
@@ -52,6 +84,9 @@ class ReadingRoomChapterAdmin(admin.ModelAdmin):
     def edit_translations_view(self, request: HttpRequest, pk: int) -> HttpResponse:
         chapter = get_object_or_404(ReadingRoomChapter, pk=pk)
         translation = chapter.data.get("translation", {})
+        sentence = chapter.data.get("sentence", [])
+        clean = _strip_sentinels(sentence)
+        chunks = _sentence_chunks(clean)
 
         if request.method == "POST":
             en = request.POST.get("translation_en", "").strip()
@@ -67,17 +102,31 @@ class ReadingRoomChapterAdmin(admin.ModelAdmin):
                 updated_data = copy.deepcopy(chapter.data)
                 updated_data["translation"]["en"] = en
                 updated_data["translation"]["de"] = de
+
+                break_indices = sorted(
+                    (int(v) for v in request.POST.getlist('paragraph_breaks')),
+                    reverse=True,
+                )
+                new_sentence = _strip_sentinels(updated_data['sentence'])
+                for idx in break_indices:
+                    if 0 < idx <= len(new_sentence):
+                        new_sentence.insert(idx, _PARAGRAPH_SENTINEL)
+                updated_data['sentence'] = new_sentence
+
                 chapter.data = updated_data
                 chapter.save()
                 messages.success(request, f"Translations updated for: {chapter}")
                 return redirect("../../")
 
+            existing_breaks = {int(v) for v in request.POST.getlist('paragraph_breaks')}
             context = {
                 **self.admin_site.each_context(request),
                 "title": f"Edit Translations — {chapter}",
                 "chapter": chapter,
                 "translation_en": en,
                 "translation_de": de,
+                "chunks": chunks,
+                "existing_breaks": existing_breaks,
                 "errors": errors,
             }
             return render(request, "admin/edit_chapter_translations.html", context)
@@ -88,6 +137,8 @@ class ReadingRoomChapterAdmin(admin.ModelAdmin):
             "chapter": chapter,
             "translation_en": translation.get("en", ""),
             "translation_de": translation.get("de", ""),
+            "chunks": chunks,
+            "existing_breaks": _existing_break_indices(sentence),
             "errors": [],
         }
         return render(request, "admin/edit_chapter_translations.html", context)

@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex } from '@chakra-ui/react';
+import { Flex, Box } from '@chakra-ui/react';
 import Word from './WordComponent';
 import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
@@ -32,16 +32,20 @@ function MandarinSentence(props: MandarinSentenceProps) {
       overflow="hidden"
       aria-label="mandarin sentence"
     >
-      {props.sentence.map((word, index) => (
-        <Word
-          word={word}
-          pronunciation={pronunciation == 'pinyin' ? word.pinyin : word.zhuyin}
-          definitions={word.definitions[props.user_language]}
-          user_language={props.user_language}
-          dictionary={props.dictionary}
-          key={index}
-        />
-      ))}
+      {props.sentence.map((word, index) =>
+        word.word === '\n' ? (
+          <Box key={index} w="100%" h={4} />
+        ) : (
+          <Word
+            word={word}
+            pronunciation={pronunciation == 'pinyin' ? word.pinyin : word.zhuyin}
+            definitions={word.definitions[props.user_language]}
+            user_language={props.user_language}
+            dictionary={props.dictionary}
+            key={index}
+          />
+        )
+      )}
     </Flex>
   );
 }
