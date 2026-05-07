@@ -13,7 +13,7 @@ from sentences.chapter_registry import CHAPTER_REGISTRY
 from sentences.models import SentenceHistory
 from sentences.models.ReadingRoomChapter import ReadingRoomChapter
 
-_SENTENCE_ENDINGS = frozenset('。！？.?!')
+_SENTENCE_ENDINGS = frozenset('。！？.?!…」：')
 _PARAGRAPH_SENTINEL = {'word': '\n', 'pinyin': [], 'zhuyin': [], 'definitions': {}}
 
 
@@ -33,11 +33,38 @@ def _existing_break_indices(sentence: list) -> set:
 
 
 def _sentence_chunks(clean_words: list) -> list:
-    """Split a sentinel-free word list into chunks at sentence-ending punctuation."""
+    """Split a sentinel-free word list into chunks at sentence-ending punctuation.
+
+    When a single token contains 」 immediately followed by 「, the token is
+    split for display purposes and the chunk start is encoded as 'orig_idx:char_pos'
+    so the save logic knows to split the token in the database.
+    """
     chunks, current, start = [], [], 0
     for i, word in enumerate(clean_words):
+        word_text = word.get('word', '')
+
+        # Find the first 「 that has a sentence-ending character before it in
+        # the same token (covers 。「, 」「, ！「, etc.).
+        k_pos = -1
+        search_from = 0
+        while True:
+            found = word_text.find('「', search_from)
+            if found == -1:
+                break
+            if found > 0 and any(c in word_text[:found] for c in _SENTENCE_ENDINGS):
+                k_pos = found
+                break
+            search_from = found + 1
+
+        if k_pos > 0:
+            current.append({**word, 'word': word_text[:k_pos]})
+            chunks.append({'start': start, 'text': ''.join(w['word'] for w in current)})
+            start = f'{i}:{k_pos}'
+            current = [{**word, 'word': word_text[k_pos:]}]
+            continue
+
         current.append(word)
-        if any(c in word.get('word', '') for c in _SENTENCE_ENDINGS):
+        if any(c in word_text for c in _SENTENCE_ENDINGS):
             chunks.append({'start': start, 'text': ''.join(w['word'] for w in current)})
             start = i + 1
             current = []
@@ -103,14 +130,26 @@ class ReadingRoomChapterAdmin(admin.ModelAdmin):
                 updated_data["translation"]["en"] = en
                 updated_data["translation"]["de"] = de
 
-                break_indices = sorted(
-                    (int(v) for v in request.POST.getlist('paragraph_breaks')),
+                break_values = sorted(
+                    request.POST.getlist('paragraph_breaks'),
+                    key=lambda v: int(v.split(':')[0]) if ':' in v else int(v),
                     reverse=True,
                 )
                 new_sentence = _strip_sentinels(updated_data['sentence'])
-                for idx in break_indices:
-                    if 0 < idx <= len(new_sentence):
-                        new_sentence.insert(idx, _PARAGRAPH_SENTINEL)
+                for v in break_values:
+                    if ':' in v:
+                        orig_idx, char_pos = int(v.split(':')[0]), int(v.split(':')[1])
+                        if 0 <= orig_idx < len(new_sentence):
+                            token = new_sentence[orig_idx]
+                            pre_word = token['word'][:char_pos]
+                            post_word = token['word'][char_pos:]
+                            pre = {**token, 'word': pre_word, 'pinyin': [pre_word], 'zhuyin': [pre_word]}
+                            post = {**token, 'word': post_word, 'pinyin': [post_word], 'zhuyin': [post_word]}
+                            new_sentence[orig_idx:orig_idx + 1] = [pre, _PARAGRAPH_SENTINEL, post]
+                    else:
+                        idx = int(v)
+                        if 0 < idx <= len(new_sentence):
+                            new_sentence.insert(idx, _PARAGRAPH_SENTINEL)
                 updated_data['sentence'] = new_sentence
 
                 chapter.data = updated_data
