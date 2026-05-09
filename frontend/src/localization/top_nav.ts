@@ -29,35 +29,35 @@ const top_nav = {
   },
   script: {
     en: 'Script',
-    de: '',
+    de: 'Umschrift',
   },
   format: {
     en: 'Format',
-    de: '',
+    de: 'Format',
   },
   reading: {
     en: 'Reading',
-    de: '',
+    de: 'Sie lesen',
   },
   chapters: {
     en: 'Chapters',
-    de: '',
+    de: 'Kapitel',
   },
   not_yet_available: {
     en: 'Not yet available',
-    de: '',
+    de: 'Noch nicht verfügbar',
   },
   flow: {
     en: 'Flow',
-    de: '',
+    de: 'Flow',
   },
   vocab_grid: {
     en: 'Vocab grid',
-    de: '',
+    de: 'Vokabelraster',
   },
   interface_language: {
-    en: 'Interface language',
-    de: '',
+    en: 'Language',
+    de: 'Sprache',
   },
   characters: {
     en: 'Characters',
