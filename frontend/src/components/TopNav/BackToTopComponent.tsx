@@ -26,17 +26,22 @@ export default function BackToTop(props: { iconSize: number }) {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
+  const isDark = colorMode === 'dark';
   return (
     <>
       {isVisible && (
         <IconButton
           aria-label="Back to top"
-          mr={1}
           icon={<IoArrowUpOutline size={props.iconSize + 5} />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg="transparent"
+          border="1px solid"
+          borderColor={isDark ? 'gray.700' : 'gray.200'}
+          h="30px"
+          minW="30px"
+          _hover={{ borderColor: isDark ? 'gray.600' : 'gray.300' }}
           onClick={scrollToTop}
         />
-      )}{' '}
+      )}
     </>
   );
 }

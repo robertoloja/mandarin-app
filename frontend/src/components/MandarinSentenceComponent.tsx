@@ -17,9 +17,15 @@ function MandarinSentence(props: MandarinSentenceProps) {
   const pronunciation = useSelector(
     (state: RootState) => state.settings.pronunciation,
   );
+  const pronunciationFontSize = useSelector(
+    (state: RootState) => state.settings.pronunciationFontSize,
+  );
   const height = useSelector(
     (state: RootState) => state.sentence.translationPanelHeight,
   );
+
+  const showRuby = pronunciationFontSize !== 0;
+  const lineHeight = showRuby ? (pronunciation === 'zhuyin' ? 4.5 : 4) : 3;
 
   return (
     <div
@@ -33,7 +39,7 @@ function MandarinSentence(props: MandarinSentenceProps) {
         style={{
           margin: 0,
           textAlign: 'justify',
-          lineHeight: 3,
+          lineHeight,
           fontFamily: '"Noto Serif SC", serif',
         }}
       >

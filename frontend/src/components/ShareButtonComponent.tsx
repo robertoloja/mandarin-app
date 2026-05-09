@@ -58,13 +58,11 @@ export default function ShareButton(props: {
           isDisabled={props.shareLink ? false : shareLink == ''}
           isLoading={percentLoaded < 100}
           icon={<IoShareSocialOutline size={props.iconSize + 2} />}
-          bg={
-            props.defaultStyles
-              ? undefined
-              : colorMode === 'light'
-                ? 'white'
-                : 'gray.800'
-          }
+          bg={props.defaultStyles ? undefined : 'transparent'}
+          border={props.defaultStyles ? undefined : '1px solid'}
+          borderColor={props.defaultStyles ? undefined : colorMode === 'light' ? 'gray.200' : 'gray.700'}
+          h={props.defaultStyles ? undefined : '30px'}
+          minW={props.defaultStyles ? undefined : '30px'}
         />
       </PopoverTrigger>
       <PopoverContent boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">

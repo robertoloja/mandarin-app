@@ -249,8 +249,13 @@ export default function TextMenuButton() {
       <PopoverTrigger>
         <IconButton
           aria-label="Text settings"
-          icon={<IoTextOutline size={22} />}
-          bg={isDark ? 'gray.800' : 'white'}
+          icon={<IoTextOutline size={16} />}
+          bg="transparent"
+          border="1px solid"
+          borderColor={isDark ? 'gray.700' : 'gray.200'}
+          h="30px"
+          minW="30px"
+          _hover={{ borderColor: isDark ? 'gray.600' : 'gray.300' }}
         />
       </PopoverTrigger>
       <PopoverContent

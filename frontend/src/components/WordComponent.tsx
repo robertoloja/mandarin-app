@@ -13,32 +13,8 @@ import { MandarinWordType, ChineseDictionary } from '../utils/types';
 import { UserLanguage } from '@/localization/main';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
-import Pinyin from 'pinyin-tone';
 import DefinitionContent from './DefinitionComponent';
-
-const TONE_DARK: Record<number, string> = {
-  1: 'oklch(0.78 0.13 25)',
-  2: 'oklch(0.82 0.12 75)',
-  3: 'oklch(0.80 0.13 145)',
-  4: 'oklch(0.78 0.11 250)',
-  0: 'oklch(0.65 0.005 60)',
-};
-
-const TONE_LIGHT: Record<number, string> = {
-  1: 'oklch(0.50 0.16 25)',
-  2: 'oklch(0.55 0.14 75)',
-  3: 'oklch(0.48 0.14 145)',
-  4: 'oklch(0.48 0.13 250)',
-  0: 'oklch(0.42 0.005 60)',
-};
-
-function getTone(char: string, dict: ChineseDictionary): number {
-  const py = dict[char]?.pinyin?.[0] ?? '';
-  const m = py.match(/(\d)$/);
-  if (!m) return 0;
-  const t = parseInt(m[1]);
-  return t === 5 ? 0 : t;
-}
+import { TONE_DARK, TONE_LIGHT, RUBY_COLOR_DARK, RUBY_COLOR_LIGHT, getTone, getCharPron } from '@/utils/mandarin';
 
 function Word(props: {
   word: MandarinWordType;
@@ -73,7 +49,10 @@ function Word(props: {
         style={{
           fontFamily: '"Noto Serif SC", serif',
           fontSize: '1.5rem',
+          lineHeight: 1.4,
           color: 'inherit',
+          display: 'inline-block',
+          verticalAlign: 'bottom',
         }}
       >
         {props.word.word}
@@ -86,33 +65,17 @@ function Word(props: {
   const showRuby = pronunciationFontSize !== 0;
   const isZhuyin = pronunciationSetting === 'zhuyin';
 
-  const getCharPron = (c: string): string => {
-    if (!dictionary[c]) return '';
-    if (pronunciationSetting === 'pinyin') {
-      if (pinyinSetting === 'pinyin_acc') {
-        return Pinyin(dictionary[c].pinyin[0]?.toLowerCase() ?? '');
-      }
-      return dictionary[c].pinyin[0] ?? '';
-    }
-    return dictionary[c].zhuyin[0] ?? '';
-  };
-
-  const rubyText = chars.map((c) => getCharPron(c)).join(isZhuyin ? ' ' : '');
-  const rubyColor =
-    colorMode === 'dark' ? 'oklch(0.68 0.008 70)' : 'oklch(0.48 0.008 60)';
+  const rubyColor = colorMode === 'dark' ? RUBY_COLOR_DARK : RUBY_COLOR_LIGHT;
 
   return (
     <Popover placement="bottom" isLazy lazyBehavior="unmount">
       <PopoverTrigger>
         <Box
           as="span"
-          position="relative"
-          display="inline-block"
+          display="inline-flex"
+          verticalAlign="bottom"
+          gap="1px"
           cursor="pointer"
-          fontFamily='"Noto Serif SC", serif'
-          fontSize="1.5rem"
-          lineHeight={showRuby ? (isZhuyin ? '2.6' : '2.4') : '1.8'}
-          pt={showRuby ? (isZhuyin ? '1.7em' : '1.4em') : '2px'}
           pb="4px"
           px="2px"
           mx="1px"
@@ -122,31 +85,42 @@ function Word(props: {
           tabIndex={0}
           aria-label={`word: ${props.word.word}`}
         >
-          {showRuby && (
-            <Box
-              as="span"
-              position="absolute"
-              top={isZhuyin ? '0.2em' : '0.28em'}
-              left={0}
-              right={0}
-              textAlign="center"
-              fontFamily={
-                isZhuyin
-                  ? '"Noto Sans TC", "Noto Serif SC", system-ui'
-                  : '"IBM Plex Sans", system-ui, sans-serif'
-              }
-              fontSize={`${isZhuyin ? 0.72 : 0.65}rem`}
-              color={rubyColor}
-              whiteSpace="nowrap"
-              pointerEvents="none"
-              aria-hidden
-            >
-              {rubyText}
-            </Box>
-          )}
           {chars.map((c, i) => (
-            <Box as="span" key={i} color={palette[getTone(c, dictionary)]}>
-              {c}
+            <Box
+              key={i}
+              as="span"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+            >
+              {showRuby && (
+                <Box
+                  as="span"
+                  fontFamily={
+                    isZhuyin
+                      ? '"Noto Sans TC", "Noto Serif SC", system-ui'
+                      : '"IBM Plex Sans", system-ui, sans-serif'
+                  }
+                  fontSize={`${isZhuyin ? 0.72 : 0.65}rem`}
+                  lineHeight={1}
+                  mb="2px"
+                  color={rubyColor}
+                  whiteSpace="nowrap"
+                  pointerEvents="none"
+                  aria-hidden
+                >
+                  {getCharPron(c, dictionary, pronunciationSetting, pinyinSetting)}
+                </Box>
+              )}
+              <Box
+                as="span"
+                fontFamily='"Noto Serif SC", serif'
+                fontSize="1.5rem"
+                lineHeight={1.1}
+                color={palette[getTone(c, dictionary)]}
+              >
+                {c}
+              </Box>
             </Box>
           ))}
         </Box>

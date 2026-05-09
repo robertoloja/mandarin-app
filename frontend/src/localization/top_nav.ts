@@ -59,6 +59,10 @@ const top_nav = {
     en: 'Interface language',
     de: '',
   },
+  characters: {
+    en: 'Characters',
+    de: 'Zeichen',
+  },
 };
 
 export default top_nav;

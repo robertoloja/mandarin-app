@@ -30,8 +30,11 @@ export default function ErrorButton(props: { iconSize: number }) {
                   size={props.iconSize + 5}
                 />
               }
-              bg={colorMode === 'light' ? 'white' : 'gray.800'}
-              mr={2}
+              bg="transparent"
+              border="1px solid"
+              borderColor={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+              h="30px"
+              minW="30px"
             />
           </PopoverTrigger>
           <PopoverArrow />

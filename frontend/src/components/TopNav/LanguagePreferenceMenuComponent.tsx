@@ -43,7 +43,12 @@ export default function LanguagePreferenceMenuButton({
               {user_language}
             </Text>
           }
-          bg={isDark ? 'gray.800' : 'white'}
+          bg="transparent"
+          border="1px solid"
+          borderColor={isDark ? 'gray.700' : 'gray.200'}
+          h="30px"
+          minW="30px"
+          _hover={{ borderColor: isDark ? 'gray.600' : 'gray.300' }}
         />
       </PopoverTrigger>
 

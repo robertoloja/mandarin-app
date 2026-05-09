@@ -279,9 +279,13 @@ export default function TableOfContentsButton({
       <IconButton
         aria-label="Table of contents"
         icon={<IoListOutline size={iconSize + 3} />}
-        bg={isDark ? 'gray.800' : 'white'}
+        bg="transparent"
+        border="1px solid"
+        borderColor={isDark ? 'gray.700' : 'gray.200'}
+        h="30px"
+        minW="30px"
+        _hover={{ borderColor: isDark ? 'gray.600' : 'gray.300' }}
         onClick={onOpen}
-        mr="0.5rem"
       />
 
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="xs">

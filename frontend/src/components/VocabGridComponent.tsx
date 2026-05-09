@@ -16,31 +16,7 @@ import { RootState } from '@/utils/store/store';
 import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
 import DefinitionContent from './DefinitionComponent';
-import Pinyin from 'pinyin-tone';
-
-const TONE_DARK: Record<number, string> = {
-  1: 'oklch(0.78 0.13 25)',
-  2: 'oklch(0.82 0.12 75)',
-  3: 'oklch(0.80 0.13 145)',
-  4: 'oklch(0.78 0.11 250)',
-  0: 'oklch(0.65 0.005 60)',
-};
-
-const TONE_LIGHT: Record<number, string> = {
-  1: 'oklch(0.50 0.16 25)',
-  2: 'oklch(0.55 0.14 75)',
-  3: 'oklch(0.48 0.14 145)',
-  4: 'oklch(0.48 0.13 250)',
-  0: 'oklch(0.42 0.005 60)',
-};
-
-function getTone(char: string, dict: ChineseDictionary): number {
-  const py = dict[char]?.pinyin?.[0] ?? '';
-  const m = py.match(/(\d)$/);
-  if (!m) return 0;
-  const t = parseInt(m[1]);
-  return t === 5 ? 0 : t;
-}
+import { TONE_DARK, TONE_LIGHT, getTone, getCharPron } from '@/utils/mandarin';
 
 function isPunct(word: MandarinWordType): boolean {
   return (
@@ -73,16 +49,7 @@ function VocabCard({
   const definitions = word.definitions[user_language] ?? [];
   const firstDef = (definitions[0] ?? '').split('(')[0].trim();
 
-  const getCharPron = (c: string): string => {
-    if (!dictionary[c]) return '';
-    if (pronunciationSetting === 'pinyin') {
-      if (pinyinSetting === 'pinyin_acc') {
-        return Pinyin(dictionary[c].pinyin[0]?.toLowerCase() ?? '');
-      }
-      return dictionary[c].pinyin[0] ?? '';
-    }
-    return dictionary[c].zhuyin[0] ?? '';
-  };
+  const pron = (c: string) => getCharPron(c, dictionary, pronunciationSetting, pinyinSetting);
 
   return (
     <Popover placement="bottom" isLazy lazyBehavior="unmount">
@@ -131,7 +98,7 @@ function VocabCard({
                   color={isDark ? 'gray.500' : 'gray.400'}
                   mt="1px"
                 >
-                  {getCharPron(c)}
+                  {pron(c)}
                 </Text>
               </Box>
             ))}

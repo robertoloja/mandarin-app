@@ -209,19 +209,19 @@ const reading_room = {
 
   vocab_grid_description: {
     en: 'Vocab grid · every word as a study card. Best for vocabulary review, not flowing reading.',
-    de: '',
+    de: 'Vokabeln · Jedes Wort als Lernkarte. Am besten zur Vokabelarbeit, nicht zum fließenden Lesen.',
   },
   chapter_not_found: {
     en: 'Chapter not found.',
-    de: '',
+    de: 'Kapitel nicht gefunden.',
   },
   preface: {
     en: 'Preface',
-    de: '',
+    de: 'Vorwort',
   },
   chapter: {
     en: 'Chapter',
-    de: '',
+    de: 'Kapitel',
   },
 };
 
