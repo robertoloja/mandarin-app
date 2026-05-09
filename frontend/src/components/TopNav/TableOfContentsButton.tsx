@@ -25,9 +25,7 @@ import { Chapter } from '@/app/reading/types';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import localization from '@/localization/main';
-
-const ACCENT_DARK = 'oklch(0.82 0.13 70)';
-const ACCENT_LIGHT = 'oklch(0.55 0.15 60)';
+import { ACCENT_DARK, ACCENT_LIGHT, FONT_SANS, FONT_SERIF, FONT_CHINESE } from '@/theme';
 
 function ChapterRow({
   chapter,
@@ -67,28 +65,20 @@ function ChapterRow({
     >
       <Box display="flex" alignItems="baseline" gap={2}>
         <Text
-          fontFamily='"IBM Plex Sans", sans-serif'
+          fontFamily={FONT_SANS}
           fontSize="12px"
-          color={
-            !isAvailable
-              ? isDark ? 'gray.600' : 'gray.300'
-              : isDark ? 'gray.500' : 'gray.400'
-          }
+          color={!isAvailable ? 'borderEmphasis' : 'fgSubtle'}
           minW="22px"
           sx={{ fontVariantNumeric: 'tabular-nums' }}
         >
           {chapter.number}
         </Text>
         <Text
-          fontFamily='"IBM Plex Sans", sans-serif'
+          fontFamily={FONT_SANS}
           fontSize="13px"
           fontWeight={isCurrent ? 600 : 400}
           color={
-            !isAvailable
-              ? isDark ? 'gray.600' : 'gray.300'
-              : isCurrent
-                ? isDark ? 'gray.100' : 'gray.800'
-                : isDark ? 'gray.300' : 'gray.600'
+            !isAvailable ? 'borderEmphasis' : isCurrent ? 'fgPrimary' : 'fgBody'
           }
           lineHeight={1.35}
         >
@@ -139,22 +129,14 @@ function SubchapterRow({
         pr={4}
         py="7px"
         borderLeft={`2px solid ${isCurrent ? accent : 'transparent'}`}
-        bg={
-          isCurrent
-            ? isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'
-            : 'transparent'
-        }
+        bg={isCurrent ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') : 'transparent'}
         _hover={{ bg: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}
       >
         <Text
-          fontFamily='"IBM Plex Sans", sans-serif'
+          fontFamily={FONT_SANS}
           fontSize="13px"
           fontWeight={isCurrent ? 600 : 400}
-          color={
-            isCurrent
-              ? isDark ? 'gray.100' : 'gray.800'
-              : isDark ? 'gray.400' : 'gray.500'
-          }
+          color={isCurrent ? 'fgPrimary' : 'fgMuted'}
           lineHeight={1.35}
           noOfLines={1}
         >
@@ -192,25 +174,25 @@ function GroupHeader({
       _hover={{ bg: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}
     >
       <Text
-        fontFamily='"IBM Plex Sans", sans-serif'
+        fontFamily={FONT_SANS}
         fontSize="12px"
-        color={isDark ? 'gray.500' : 'gray.400'}
+        color="fgSubtle"
         minW="22px"
         sx={{ fontVariantNumeric: 'tabular-nums' }}
       >
         {chapter.number}
       </Text>
       <Text
-        fontFamily='"IBM Plex Sans", sans-serif'
+        fontFamily={FONT_SANS}
         fontSize="13px"
-        color={isDark ? 'gray.300' : 'gray.600'}
+        color="fgBody"
         lineHeight={1.35}
         flex={1}
         textAlign="left"
       >
         {chapter.title}
       </Text>
-      <Box color={isDark ? 'gray.500' : 'gray.400'} flexShrink={0}>
+      <Box color="fgSubtle" flexShrink={0}>
         {isExpanded ? (
           <IoChevronDownOutline size={13} />
         ) : (
@@ -281,19 +263,19 @@ export default function TableOfContentsButton({
         icon={<IoListOutline size={iconSize + 3} />}
         bg="transparent"
         border="1px solid"
-        borderColor={isDark ? 'gray.700' : 'gray.200'}
+        borderColor="borderDefault"
         h="30px"
         minW="30px"
-        _hover={{ borderColor: isDark ? 'gray.600' : 'gray.300' }}
+        _hover={{ borderColor: 'borderEmphasis' }}
         onClick={onOpen}
       />
 
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="xs">
         <DrawerOverlay bg="blackAlpha.300" />
         <DrawerContent
-          bg={isDark ? 'gray.900' : 'white'}
+          bg="bgCanvas"
           borderLeft="1px solid"
-          borderColor={isDark ? 'gray.700' : 'gray.200'}
+          borderColor="borderDefault"
           maxW="280px"
         >
           <DrawerBody p={0} display="flex" flexDirection="column">
@@ -303,7 +285,7 @@ export default function TableOfContentsButton({
               pt={5}
               pb={4}
               borderBottom="1px solid"
-              borderColor={isDark ? 'gray.700' : 'gray.100'}
+              borderColor="borderSubtle"
               flexShrink={0}
             >
               <Box
@@ -313,39 +295,39 @@ export default function TableOfContentsButton({
                 mb={3}
               >
                 <Text
-                  fontFamily='"IBM Plex Sans", sans-serif'
+                  fontFamily={FONT_SANS}
                   fontSize="10px"
                   textTransform="uppercase"
                   letterSpacing="0.14em"
-                  color={isDark ? 'gray.500' : 'gray.400'}
+                  color="fgSubtle"
                 >
                   {loc.reading[user_language]}
                 </Text>
                 <Box
                   as="button"
                   onClick={onClose}
-                  color={isDark ? 'gray.500' : 'gray.400'}
-                  _hover={{ color: isDark ? 'gray.200' : 'gray.700' }}
+                  color="fgSubtle"
+                  _hover={{ color: 'fgPrimary' }}
                   mt="-2px"
                 >
                   <IoCloseOutline size={18} />
                 </Box>
               </Box>
               <Text
-                fontFamily='"Spectral", Georgia, serif'
+                fontFamily={FONT_SERIF}
                 fontStyle="italic"
                 fontSize="17px"
                 fontWeight={500}
-                color={isDark ? 'gray.100' : 'gray.800'}
+                color="fgPrimary"
                 lineHeight={1.25}
                 mb={1}
               >
                 {readingProps.title}
               </Text>
               <Text
-                fontFamily='"Noto Serif SC", serif'
+                fontFamily={FONT_CHINESE}
                 fontSize="14px"
-                color={isDark ? 'gray.400' : 'gray.500'}
+                color="fgMuted"
                 mb={2}
               >
                 {readingProps.mandarinTitle}
@@ -356,7 +338,7 @@ export default function TableOfContentsButton({
                   <Box
                     flex={1}
                     h="3px"
-                    bg={isDark ? 'gray.700' : 'gray.200'}
+                    bg="borderDefault"
                     borderRadius="full"
                     overflow="hidden"
                   >
@@ -368,9 +350,9 @@ export default function TableOfContentsButton({
                     />
                   </Box>
                   <Text
-                    fontFamily='"IBM Plex Sans", sans-serif'
+                    fontFamily={FONT_SANS}
                     fontSize="11px"
-                    color={isDark ? 'gray.500' : 'gray.400'}
+                    color="fgSubtle"
                     whiteSpace="nowrap"
                   >
                     {currentIdx} / {totalDirect}
@@ -382,11 +364,11 @@ export default function TableOfContentsButton({
             {/* Chapter list */}
             <Box flex={1} overflowY="auto" py={2}>
               <Text
-                fontFamily='"IBM Plex Sans", sans-serif'
+                fontFamily={FONT_SANS}
                 fontSize="10px"
                 textTransform="uppercase"
                 letterSpacing="0.14em"
-                color={isDark ? 'gray.500' : 'gray.400'}
+                color="fgSubtle"
                 px={5}
                 pt={2}
                 pb={1.5}
@@ -402,9 +384,7 @@ export default function TableOfContentsButton({
                       <GroupHeader
                         chapter={chapter}
                         isExpanded={isExpanded}
-                        onToggle={() =>
-                          setExpandedIdx(isExpanded ? -1 : i)
-                        }
+                        onToggle={() => setExpandedIdx(isExpanded ? -1 : i)}
                         isDark={isDark}
                       />
                       {isExpanded &&

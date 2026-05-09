@@ -17,6 +17,7 @@ import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
 import DefinitionContent from './DefinitionComponent';
 import { TONE_DARK, TONE_LIGHT, getTone, getCharPron } from '@/utils/mandarin';
+import { FONT_SANS, FONT_CHINESE } from '@/theme';
 
 function isPunct(word: MandarinWordType): boolean {
   return (
@@ -62,15 +63,15 @@ function VocabCard({
           gap="2px"
           borderRadius="6px"
           border="1px solid"
-          borderColor={isDark ? 'gray.700' : 'gray.200'}
-          bg={isDark ? 'gray.800' : 'white'}
+          borderColor="borderDefault"
+          bg="bgSubtle"
           px="10px"
           py="8px"
           minW={`${chars.length * 36 + 12}px`}
           cursor="pointer"
           transition="all 0.14s"
           _hover={{
-            borderColor: isDark ? 'gray.500' : 'gray.400',
+            borderColor: 'fgMuted',
           }}
           className="reading-token"
           aria-label={`word: ${word.word}`}
@@ -85,7 +86,7 @@ function VocabCard({
                 minW="28px"
               >
                 <Text
-                  fontFamily='"Noto Serif SC", serif'
+                  fontFamily={FONT_CHINESE}
                   fontSize="26px"
                   lineHeight={1.1}
                   color={palette[getTone(c, dictionary)]}
@@ -93,9 +94,9 @@ function VocabCard({
                   {c}
                 </Text>
                 <Text
-                  fontFamily='"IBM Plex Sans", sans-serif'
+                  fontFamily={FONT_SANS}
                   fontSize="10px"
-                  color={isDark ? 'gray.500' : 'gray.400'}
+                  color="fgMuted"
                   mt="1px"
                 >
                   {pron(c)}
@@ -105,9 +106,9 @@ function VocabCard({
           </Flex>
           {firstDef && (
             <Text
-              fontFamily='"IBM Plex Sans", sans-serif'
+              fontFamily={FONT_SANS}
               fontSize="11px"
-              color={isDark ? 'gray.400' : 'gray.500'}
+              color="fgMuted"
               mt="4px"
               maxW="140px"
               textAlign="center"
@@ -149,9 +150,6 @@ interface VocabGridProps {
 }
 
 function VocabGrid({ sentence, dictionary, user_language }: VocabGridProps) {
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
-
   return (
     <Box>
       <Flex flexWrap="wrap" gap={2} alignItems="flex-start">
@@ -164,9 +162,9 @@ function VocabGrid({ sentence, dictionary, user_language }: VocabGridProps) {
               <Text
                 key={i}
                 as="span"
-                fontFamily='"Noto Serif SC", serif'
+                fontFamily={FONT_CHINESE}
                 fontSize="20px"
-                color={isDark ? 'gray.500' : 'gray.400'}
+                color="fgMuted"
                 alignSelf="center"
                 px="2px"
               >

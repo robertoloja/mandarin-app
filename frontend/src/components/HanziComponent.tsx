@@ -1,31 +1,28 @@
 'use client';
 
-import styles from '@/themes';
-import { VStack, Text, useColorMode } from '@chakra-ui/react';
+import { VStack, Text } from '@chakra-ui/react';
+
+const PUNCT = ',，。！？：；、“”‘’（）《》【】〔〕…—～·　';
 
 function Hanzi(props: { hanzi: string; pronunciation: string }) {
-  const { colorMode } = useColorMode();
-  const isPunctuation = (hanzi: string) =>
-    ',，。！？：；、“”‘’（）《》【】〔〕……—～·\u3000'.includes(hanzi);
+  if (PUNCT.includes(props.hanzi)) return null;
 
   return (
-    <>
-      {!isPunctuation(props.hanzi) && (
-        <VStack
-          padding="0.5rem"
-          paddingTop="0"
-          __css={styles.lightBox[colorMode]}
-        >
-          <Text fontSize="3xl" fontWeight="bold">
-            {props.hanzi}
-          </Text>
-
-          {props.pronunciation ? (
-            <Text>{props.pronunciation.toLowerCase()}</Text>
-          ) : null}
-        </VStack>
+    <VStack
+      padding="0.5rem"
+      paddingTop="0"
+      border="1px solid"
+      borderColor="borderDefault"
+      borderRadius="8px"
+      bg="bgSubtle"
+    >
+      <Text fontSize="3xl" fontWeight="bold">
+        {props.hanzi}
+      </Text>
+      {props.pronunciation && (
+        <Text>{props.pronunciation.toLowerCase()}</Text>
       )}
-    </>
+    </VStack>
   );
 }
 

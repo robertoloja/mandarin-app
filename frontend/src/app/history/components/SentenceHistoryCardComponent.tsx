@@ -1,6 +1,5 @@
 import { MandarinSentenceClass } from '@/app/MandarinSentenceClass';
 import ShareButton from '@/components/ShareButtonComponent';
-import styles from '@/themes';
 import { SentenceHistoryType } from '@/utils/types';
 import {
   Text,
@@ -12,7 +11,6 @@ import {
   Heading,
   Spacer,
   StackDivider,
-  useColorMode,
   VStack,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
@@ -27,7 +25,6 @@ export default function SentenceHistoryCard(props: {
   resetHistory: () => void;
 }) {
   const router = useRouter();
-  const { colorMode } = useColorMode();
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
@@ -78,7 +75,7 @@ export default function SentenceHistoryCard(props: {
       margin="0.1rem"
       marginBottom="0.5rem"
       padding="0.6rem"
-      __css={styles.darkBox[colorMode]}
+      border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas"
       key={props.index}
       w="20rem"
     >
@@ -104,7 +101,7 @@ export default function SentenceHistoryCard(props: {
           p="0.5rem"
           mb="0.5rem"
           cursor="pointer"
-          __css={styles.lightBox[colorMode]}
+          border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle"
         >
           <VStack divider={<StackDivider />}>
             <TruncatedSentence>

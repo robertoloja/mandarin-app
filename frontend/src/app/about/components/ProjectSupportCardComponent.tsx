@@ -1,4 +1,3 @@
-import styles from '@/themes';
 import {
   Text,
   Box,
@@ -8,7 +7,6 @@ import {
   ListItem,
   OrderedList,
   UnorderedList,
-  useColorMode,
   VStack,
 } from '@chakra-ui/react';
 import { KoFiButton } from './KoFiButtonComponent';
@@ -16,7 +14,6 @@ import Link from 'next/link';
 import localization, { UserLanguage } from '@/localization/main';
 
 export default function ProjectSupportCard({ user_language }: { user_language: UserLanguage }) {
-  const { colorMode } = useColorMode();
   return (
     <Box id="support" maxW="40rem">
       <Heading
@@ -24,13 +21,12 @@ export default function ProjectSupportCard({ user_language }: { user_language: U
         textAlign="center"
         mb={4}
         whiteSpace="nowrap"
-        __css={styles.heading[colorMode]}
       >
         {localization.about_status.support_this_project.title[user_language]}
       </Heading>
 
       <Box
-        __css={styles.darkBox[colorMode]}
+        border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas"
         justifyContent="center"
         w="fit-content"
         m={2}
@@ -44,14 +40,14 @@ export default function ProjectSupportCard({ user_language }: { user_language: U
         <Center>
           <VStack>
             <HStack>
-              <Heading __css={styles.heading[colorMode]} size="sm">
+              <Heading size="sm">
                 {localization.about_status.support_this_project.content.amount[user_language]}
               </Heading>
               <KoFiButton user_language={user_language} />
             </HStack>
-            <Box p={3} mb={5} __css={styles.lightBox[colorMode]}>
+            <Box p={3} mb={5} border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle">
               <OrderedList p={4}>
-                <ListItem __css={styles.heading[colorMode]}>
+                <ListItem>
                   <b>{localization.about_status.support_this_project.content[1].title[user_language]}</b>
                 </ListItem>
                 <UnorderedList mb={3}>
@@ -61,7 +57,7 @@ export default function ProjectSupportCard({ user_language }: { user_language: U
                   <ListItem>{localization.about_status.support_this_project.content[1].bullet_point2[user_language]}</ListItem>
                 </UnorderedList>
 
-                <ListItem __css={styles.heading[colorMode]}>
+                <ListItem>
                   <b>{localization.about_status.support_this_project.content[2].title[user_language]}</b>
                 </ListItem>
                 <UnorderedList mb={3}>
@@ -73,7 +69,7 @@ export default function ProjectSupportCard({ user_language }: { user_language: U
                   </ListItem>
                 </UnorderedList>
 
-                <ListItem __css={styles.heading[colorMode]}>
+                <ListItem>
                   <b>
                     {localization.about_status.support_this_project.content[3].title[user_language]}
                   </b>

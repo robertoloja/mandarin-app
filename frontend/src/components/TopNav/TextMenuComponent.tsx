@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
-  useColorMode,
 } from '@chakra-ui/react';
 import { IoTextOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
@@ -21,39 +20,30 @@ import {
 } from '@/utils/store/settingsSlice';
 import { MandoBotAPI } from '@/utils/api';
 import localization from '@/localization/main';
+import { FONT_SANS } from '@/theme';
 
 function SegBtn({
   active,
   onClick,
   children,
-  isDark,
 }: {
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
-  isDark: boolean;
 }) {
   return (
     <Box
       as="button"
       onClick={onClick}
-      fontFamily='"IBM Plex Sans", sans-serif'
+      fontFamily={FONT_SANS}
       fontSize="12px"
       fontWeight={active ? 600 : 400}
       px={3}
       py="4px"
       border="none"
       borderRadius="5px"
-      bg={active ? (isDark ? 'gray.700' : 'white') : 'transparent'}
-      color={
-        active
-          ? isDark
-            ? 'white'
-            : 'gray.800'
-          : isDark
-            ? 'gray.400'
-            : 'gray.500'
-      }
+      bg={active ? 'bgActive' : 'transparent'}
+      color={active ? 'fgPrimary' : 'fgMuted'}
       cursor="pointer"
       transition="all 0.14s"
       boxShadow={active ? 'sm' : 'none'}
@@ -64,10 +54,8 @@ function SegBtn({
 }
 
 function SegControl({
-  isDark,
   children,
 }: {
-  isDark: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -75,8 +63,8 @@ function SegControl({
       display="inline-flex"
       borderRadius="7px"
       border="1px solid"
-      borderColor={isDark ? 'gray.700' : 'gray.200'}
-      bg={isDark ? 'gray.800' : 'gray.100'}
+      borderColor="borderDefault"
+      bg="bgSubtle"
       p="2px"
       gap="1px"
     >
@@ -87,11 +75,9 @@ function SegControl({
 
 function Row({
   label,
-  isDark,
   children,
 }: {
   label: string;
-  isDark: boolean;
   children: React.ReactNode;
 }) {
   return (
@@ -103,9 +89,9 @@ function Row({
       py="10px"
     >
       <Text
-        fontFamily='"IBM Plex Sans", sans-serif'
+        fontFamily={FONT_SANS}
         fontSize="13px"
-        color={isDark ? 'gray.300' : 'gray.600'}
+        color="fgBody"
         whiteSpace="nowrap"
       >
         {label}
@@ -116,9 +102,6 @@ function Row({
 }
 
 function TextPreferences() {
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
-
   const pronunciation = useSelector(
     (state: RootState) => state.settings.pronunciation,
   );
@@ -159,18 +142,17 @@ function TextPreferences() {
   const divider = (
     <Box
       borderBottom="1px solid"
-      borderColor={isDark ? 'gray.700' : 'gray.100'}
+      borderColor="borderSubtle"
     />
   );
 
   return (
-    <Box fontFamily='"IBM Plex Sans", sans-serif'>
-      <Row label={loc.pronunciation[user_language]} isDark={isDark}>
-        <SegControl isDark={isDark}>
+    <Box fontFamily={FONT_SANS}>
+      <Row label={loc.pronunciation[user_language]}>
+        <SegControl>
           <SegBtn
             active={!rubyOn}
             onClick={() => store.dispatch(setPronunciationFontSize(0))}
-            isDark={isDark}
           >
             {loc.off[user_language]}
           </SegBtn>
@@ -181,7 +163,6 @@ function TextPreferences() {
                 setPronunciationFontSize(pronunciationFontSize || 15),
               )
             }
-            isDark={isDark}
           >
             {loc.on[user_language]}
           </SegBtn>
@@ -190,19 +171,17 @@ function TextPreferences() {
 
       {divider}
 
-      <Row label={loc.script[user_language]} isDark={isDark}>
-        <SegControl isDark={isDark}>
+      <Row label={loc.script[user_language]}>
+        <SegControl>
           <SegBtn
             active={pronunciation === 'pinyin'}
             onClick={pronunciation === 'zhuyin' ? handleTogglePronun : () => {}}
-            isDark={isDark}
           >
             pīnyīn
           </SegBtn>
           <SegBtn
             active={pronunciation === 'zhuyin'}
             onClick={pronunciation === 'pinyin' ? handleTogglePronun : () => {}}
-            isDark={isDark}
           >
             ㄅㄆㄇ
           </SegBtn>
@@ -212,14 +191,13 @@ function TextPreferences() {
       {pronunciation === 'pinyin' && (
         <>
           {divider}
-          <Row label={loc.format[user_language]} isDark={isDark}>
-            <SegControl isDark={isDark}>
+          <Row label={loc.format[user_language]}>
+            <SegControl>
               <SegBtn
                 active={pinyinType === 'pinyin_acc'}
                 onClick={
                   pinyinType !== 'pinyin_acc' ? handleTogglePinyin : () => {}
                 }
-                isDark={isDark}
               >
                 pīnyīn
               </SegBtn>
@@ -228,7 +206,6 @@ function TextPreferences() {
                 onClick={
                   pinyinType !== 'pinyin_num' ? handleTogglePinyin : () => {}
                 }
-                isDark={isDark}
               >
                 pin1yin1
               </SegBtn>
@@ -241,9 +218,6 @@ function TextPreferences() {
 }
 
 export default function TextMenuButton() {
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
-
   return (
     <Popover placement="bottom-end" offset={[0, 4]}>
       <PopoverTrigger>
@@ -252,24 +226,24 @@ export default function TextMenuButton() {
           icon={<IoTextOutline size={16} />}
           bg="transparent"
           border="1px solid"
-          borderColor={isDark ? 'gray.700' : 'gray.200'}
+          borderColor="borderDefault"
           h="30px"
           minW="30px"
-          _hover={{ borderColor: isDark ? 'gray.600' : 'gray.300' }}
+          _hover={{ borderColor: 'borderEmphasis' }}
         />
       </PopoverTrigger>
       <PopoverContent
         width="220px"
         borderRadius="10px"
         border="1px solid"
-        borderColor={isDark ? 'gray.700' : 'gray.200'}
-        bg={isDark ? 'gray.900' : 'white'}
+        borderColor="borderDefault"
+        bg="bgCanvas"
         boxShadow="lg"
         _focus={{ outline: 'none' }}
         px={4}
         py={2}
       >
-        <PopoverArrow bg={isDark ? 'gray.900' : 'white'} />
+        <PopoverArrow bg="bgCanvas" />
         <PopoverBody p={0}>
           <TextPreferences />
         </PopoverBody>

@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -14,15 +14,13 @@ import TextInput from '@/components/TextInputComponent';
 import { updateLoading } from '@/utils/store/loadingSlice';
 import localization from '@/localization/main';
 import WelcomeCard from '@/components/WelcomeCardComponent';
+import { FONT_SANS, FONT_SERIF } from '@/theme';
 
 const SENTENCE_ENDINGS = new Set(['。', '！', '？', '…', '!', '?']);
 
 export default function HomeClient() {
   const [isReturningUser, setIsReturningUser] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
-
   const percentLoaded = useSelector(
     (state: RootState) => state.loading.percentLoaded,
   );
@@ -109,21 +107,21 @@ export default function HomeClient() {
               as="button"
               type="submit"
               disabled={isLoading}
-              fontFamily='"IBM Plex Sans", sans-serif'
+              fontFamily={FONT_SANS}
               fontSize="13px"
               fontWeight={500}
               px={4}
               py="6px"
               borderRadius="6px"
               border="1px solid"
-              borderColor={isDark ? 'gray.600' : 'gray.300'}
+              borderColor="borderEmphasis"
               bg="transparent"
-              color={isLoading ? (isDark ? 'gray.600' : 'gray.300') : (isDark ? 'gray.200' : 'gray.700')}
+              color={isLoading ? 'fgSubtle' : 'fgBody'}
               cursor={isLoading ? 'not-allowed' : 'pointer'}
               transition="all 0.14s"
               _hover={
                 !isLoading
-                  ? { borderColor: isDark ? 'gray.400' : 'gray.500', color: isDark ? 'white' : 'gray.900' }
+                  ? { borderColor: 'fgMuted', color: 'fgPrimary' }
                   : undefined
               }
             >
@@ -132,10 +130,10 @@ export default function HomeClient() {
 
             {isLoading && (
               <Text
-                fontFamily='"IBM Plex Sans", sans-serif'
+                fontFamily={FONT_SANS}
                 fontSize="13px"
                 fontStyle="italic"
-                color={isDark ? 'gray.500' : 'gray.400'}
+                color="fgSubtle"
               >
                 {percentLoaded === 0
                   ? localization.home_page.loading_text1[user_language]
@@ -170,14 +168,14 @@ export default function HomeClient() {
                   mb={6}
                   pl={4}
                   borderLeftWidth={2}
-                  borderLeftColor={isDark ? 'gray.600' : 'gray.300'}
+                  borderLeftColor="borderEmphasis"
                 >
                   <Text
-                    fontFamily='"Spectral", Georgia, serif'
+                    fontFamily={FONT_SERIF}
                     fontStyle="italic"
                     fontSize="16px"
                     lineHeight={1.65}
-                    color={isDark ? 'gray.400' : 'gray.600'}
+                    color="fgMuted"
                   >
                     {translation}
                   </Text>

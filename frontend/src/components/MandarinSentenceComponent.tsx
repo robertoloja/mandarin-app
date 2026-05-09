@@ -5,6 +5,7 @@ import { RootState } from '@/utils/store/store';
 import Word from './WordComponent';
 import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
+import { FONT_CHINESE } from '@/theme';
 
 interface MandarinSentenceProps {
   sentence: MandarinWordType[];
@@ -40,7 +41,7 @@ function MandarinSentence(props: MandarinSentenceProps) {
           margin: 0,
           textAlign: 'justify',
           lineHeight,
-          fontFamily: '"Noto Serif SC", serif',
+          fontFamily: FONT_CHINESE,
         }}
       >
         {props.sentence.map((word, index) => (

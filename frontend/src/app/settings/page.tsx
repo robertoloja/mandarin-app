@@ -18,7 +18,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import styles from '../../themes';
 import PronunciationPreferencesComponent from '@/components/PronunciationPreferencesComponent';
 import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 import { useEffect } from 'react';
@@ -46,12 +45,12 @@ export default function Settings() {
       <Heading p={5}>{localization.account_settings.settings[user_language]}</Heading>
 
       <Box
-        __css={styles.darkBox[colorMode]}
+        border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas"
         p={5}
         m={2}
         minW={['91vw', '30rem']}
       >
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
           <Text aria-label="username display">{localization.account_settings.username[user_language]}: {username}</Text>
           <Text aria-label="email display">{localization.account_settings.email[user_language]}: {email}</Text>
 
@@ -68,21 +67,21 @@ export default function Settings() {
 
         <Text>{localization.account_settings.pronunciation_preferences[user_language]}</Text>
 
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
           <PronunciationPreferencesComponent />
         </Box>
 
         <Spacer m={5} />
 
         <Text>{localization.account_settings.user_language[user_language]}</Text>
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
           <LanguagePreferencesComponent />
         </Box>
 
         <Spacer m={5} />
 
         <Text>{localization.account_settings.color_theme[user_language]}</Text>
-        <Box __css={styles.lightBox[colorMode]} p={3} m={2}>
+        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
           <Center>
             <HStack>
               <Text>{localization.account_settings.light[user_language]}</Text>
@@ -100,7 +99,7 @@ export default function Settings() {
         <Text>{localization.account_settings.account[user_language]}</Text>
 
         <Spacer m={5} />
-        <Box __css={styles.lightBox[colorMode]} p={5} m={2}>
+        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={5} m={2}>
           <Center>
             <Button color="red" disabled>
               {localization.account_settings.delete_account[user_language]}

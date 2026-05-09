@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Text, VStack, HStack, useColorMode } from '@chakra-ui/react';
+import { FONT_SANS, FONT_SERIF, FONT_CHINESE } from '@/theme';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { UserLanguage } from '@/localization/main';
@@ -22,8 +23,8 @@ function DefinitionContent(props: {
     (state: RootState) => state.settings.pinyin_type,
   );
   const palette = colorMode === 'dark' ? TONE_DARK : TONE_LIGHT;
-  const borderColor = colorMode === 'dark' ? 'gray.700' : 'gray.200';
-  const subColor = colorMode === 'dark' ? 'gray.500' : 'gray.400';
+  const borderColor = 'borderDefault';
+  const subColor = 'fgMuted';
 
   const pron = (c: string) => getCharPron(c, props.dictionary, pronunciationSetting, pinyinSetting);
 
@@ -40,7 +41,7 @@ function DefinitionContent(props: {
           {chars.map((c, i) => (
             <Box key={i} display="flex" flexDirection="column" alignItems="center">
               <Text
-                fontFamily='"IBM Plex Sans", system-ui, sans-serif'
+                fontFamily={FONT_SANS}
                 fontSize={pronFontSize}
                 lineHeight={1}
                 mb="3px"
@@ -50,7 +51,7 @@ function DefinitionContent(props: {
                 {pron(c)}
               </Text>
               <Text
-                fontFamily='"Noto Serif SC", serif'
+                fontFamily={FONT_CHINESE}
                 fontSize={charFontSize}
                 lineHeight={1}
                 color={palette[getTone(c, props.dictionary)]}
@@ -61,7 +62,7 @@ function DefinitionContent(props: {
           ))}
         </Box>
         <Text
-          fontFamily='"Spectral", Georgia, serif'
+          fontFamily={FONT_SERIF}
           fontSize="16px"
           lineHeight={1.45}
           fontStyle="italic"
@@ -91,7 +92,7 @@ function DefinitionContent(props: {
                 )}
                 <HStack spacing={3} align="flex-start" px="14px" py="8px">
                   <Text
-                    fontFamily='"Noto Serif SC", serif'
+                    fontFamily={FONT_CHINESE}
                     fontSize="22px"
                     lineHeight={1}
                     color={palette[getTone(c, props.dictionary)]}
@@ -101,7 +102,7 @@ function DefinitionContent(props: {
                     {c}
                   </Text>
                   <Text
-                    fontFamily='"IBM Plex Sans", system-ui, sans-serif'
+                    fontFamily={FONT_SANS}
                     fontSize="13px"
                     lineHeight={1}
                     color={subColor}
@@ -111,7 +112,7 @@ function DefinitionContent(props: {
                     {pron(c)}
                   </Text>
                   <Text
-                    fontFamily='"Spectral", Georgia, serif'
+                    fontFamily={FONT_SERIF}
                     fontSize="14px"
                     lineHeight={1.4}
                     fontStyle="italic"

@@ -3,14 +3,12 @@
 import { MandoBotAPI } from '@/utils/api';
 import { setUserLanguage } from '@/utils/store/settingsSlice';
 import { RootState, store } from '@/utils/store/store';
-import { Box, useColorMode } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import localization, { UserLanguage } from '@/localization/main';
+import { FONT_SANS } from '@/theme';
 
 export default function LanguagePreferencesComponent() {
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
-
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
@@ -32,8 +30,8 @@ export default function LanguagePreferencesComponent() {
       display="inline-flex"
       borderRadius="7px"
       border="1px solid"
-      borderColor={isDark ? 'gray.700' : 'gray.200'}
-      bg={isDark ? 'gray.800' : 'gray.100'}
+      borderColor="borderDefault"
+      bg="bgSubtle"
       p="2px"
       gap="1px"
       aria-label="select language preference"
@@ -45,23 +43,15 @@ export default function LanguagePreferencesComponent() {
             key={lang.code}
             as="button"
             onClick={() => handleLanguageChange(lang.code as UserLanguage)}
-            fontFamily='"IBM Plex Sans", sans-serif'
+            fontFamily={FONT_SANS}
             fontSize="12px"
             fontWeight={isActive ? 600 : 400}
             px={3}
             py="4px"
             border="none"
             borderRadius="5px"
-            bg={isActive ? (isDark ? 'gray.700' : 'white') : 'transparent'}
-            color={
-              isActive
-                ? isDark
-                  ? 'white'
-                  : 'gray.800'
-                : isDark
-                  ? 'gray.400'
-                  : 'gray.500'
-            }
+            bg={isActive ? 'bgActive' : 'transparent'}
+            color={isActive ? 'fgPrimary' : 'fgMuted'}
             cursor="pointer"
             transition="all 0.14s"
             boxShadow={isActive ? 'sm' : 'none'}

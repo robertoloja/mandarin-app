@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import DefinitionContent from './DefinitionComponent';
 import { TONE_DARK, TONE_LIGHT, RUBY_COLOR_DARK, RUBY_COLOR_LIGHT, getTone, getCharPron } from '@/utils/mandarin';
+import { FONT_SANS, FONT_CHINESE } from '@/theme';
 
 function Word(props: {
   word: MandarinWordType;
@@ -47,7 +48,7 @@ function Word(props: {
     return (
       <span
         style={{
-          fontFamily: '"Noto Serif SC", serif',
+          fontFamily: FONT_CHINESE,
           fontSize: '1.5rem',
           lineHeight: 1.4,
           color: 'inherit',
@@ -99,7 +100,7 @@ function Word(props: {
                   fontFamily={
                     isZhuyin
                       ? '"Noto Sans TC", "Noto Serif SC", system-ui'
-                      : '"IBM Plex Sans", system-ui, sans-serif'
+                      : FONT_SANS
                   }
                   fontSize={`${isZhuyin ? 0.72 : 0.65}rem`}
                   lineHeight={1}
@@ -114,7 +115,7 @@ function Word(props: {
               )}
               <Box
                 as="span"
-                fontFamily='"Noto Serif SC", serif'
+                fontFamily={FONT_CHINESE}
                 fontSize="1.5rem"
                 lineHeight={1.1}
                 color={palette[getTone(c, dictionary)]}

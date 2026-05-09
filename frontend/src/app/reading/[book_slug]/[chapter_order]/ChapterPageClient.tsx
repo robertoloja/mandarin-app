@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { Box, Flex, Spinner, Text, useColorMode } from '@chakra-ui/react';
+import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5';
 import Link from 'next/link';
 import MandarinSentence from '@/components/MandarinSentenceComponent';
@@ -13,17 +13,16 @@ import { MandoBotAPI } from '@/utils/api';
 import { MandarinWordType } from '@/utils/types';
 import localization from '@/localization/main';
 import { useReadingBooks } from '@/app/reading/hooks/useReadingBooks';
+import { FONT_SANS, FONT_SERIF } from '@/theme';
 
 function ChapterNavLink({
   nav,
   label,
   direction,
-  isDark,
 }: {
   nav: { book_slug: string; chapter_order: number } | null;
   label: string;
   direction: 'prev' | 'next';
-  isDark: boolean;
 }) {
   if (!nav) return <Box />;
   return (
@@ -32,12 +31,12 @@ function ChapterNavLink({
         display="flex"
         alignItems="center"
         gap={2}
-        color={isDark ? 'gray.400' : 'gray.500'}
-        _hover={{ color: isDark ? 'gray.100' : 'gray.800' }}
+        color="fgMuted"
+        _hover={{ color: 'fgPrimary' }}
         transition="color 0.14s"
       >
         {direction === 'prev' && <IoChevronBackOutline size={18} />}
-        <Text fontFamily='"IBM Plex Sans", sans-serif' fontSize="14px">
+        <Text fontFamily={FONT_SANS} fontSize="14px">
           {label}
         </Text>
         {direction === 'next' && <IoChevronForwardOutline size={18} />}
@@ -52,7 +51,6 @@ export default function ChapterPageClient({
   initialData: any;
 }) {
   const params = useParams();
-  const { colorMode } = useColorMode();
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
@@ -86,7 +84,6 @@ export default function ChapterPageClient({
       : `${loc.chapter[user_language]} ${isDiary ? chapterOrder : chapterOrder + 1}`;
 
   const translation = data?.translation?.[user_language] ?? '';
-  const isDark = colorMode === 'dark';
 
   const paragraphs = useMemo<MandarinWordType[][]>(() => {
     if (!data?.sentence) return [];
@@ -160,8 +157,8 @@ export default function ChapterPageClient({
               fontSize="11px"
               textTransform="uppercase"
               letterSpacing="0.18em"
-              color={isDark ? 'gray.500' : 'gray.400'}
-              fontFamily='"IBM Plex Sans", system-ui, sans-serif'
+              color="fgSubtle"
+              fontFamily={FONT_SANS}
               mb={3}
             >
               {chapterLabel}
@@ -171,7 +168,7 @@ export default function ChapterPageClient({
               <>
                 <Text
                   as="h1"
-                  fontFamily='"Spectral", Georgia, serif'
+                  fontFamily={FONT_SERIF}
                   fontSize={['22px', '30px']}
                   fontWeight={500}
                   fontStyle="italic"
@@ -183,8 +180,8 @@ export default function ChapterPageClient({
                 </Text>
                 <Text
                   fontSize="13px"
-                  color={isDark ? 'gray.500' : 'gray.400'}
-                  fontFamily='"IBM Plex Sans", system-ui, sans-serif'
+                  color="fgSubtle"
+                  fontFamily={FONT_SANS}
                 >
                   {book.author}
                 </Text>
@@ -209,14 +206,14 @@ export default function ChapterPageClient({
                       mb={6}
                       pl={4}
                       borderLeftWidth={2}
-                      borderLeftColor={isDark ? 'gray.600' : 'gray.300'}
+                      borderLeftColor="borderEmphasis"
                     >
                       <Text
-                        fontFamily='"Spectral", Georgia, serif'
+                        fontFamily={FONT_SERIF}
                         fontStyle="italic"
                         fontSize="16px"
                         lineHeight={1.65}
-                        color={isDark ? 'gray.400' : 'gray.600'}
+                        color="fgMuted"
                       >
                         {translationParagraphs[i]}
                       </Text>
@@ -229,9 +226,9 @@ export default function ChapterPageClient({
             <Box>
               <Text
                 fontSize="12px"
-                color={isDark ? 'gray.500' : 'gray.400'}
+                color="fgSubtle"
                 mb={4}
-                fontFamily='"IBM Plex Sans", sans-serif'
+                fontFamily={FONT_SANS}
                 fontStyle="italic"
               >
                 {loc.vocab_grid_description[user_language]}
@@ -242,7 +239,7 @@ export default function ChapterPageClient({
                   mb={6}
                   pb={5}
                   borderBottomWidth={i < paragraphs.length - 1 ? 1 : 0}
-                  borderBottomColor={isDark ? 'gray.700' : 'gray.200'}
+                  borderBottomColor="borderDefault"
                 >
                   <VocabGrid
                     sentence={para}
@@ -252,11 +249,11 @@ export default function ChapterPageClient({
                   {translationParagraphs[i] && (
                     <Text
                       mt={3}
-                      fontFamily='"Spectral", Georgia, serif'
+                      fontFamily={FONT_SERIF}
                       fontStyle="italic"
                       fontSize="15px"
                       lineHeight={1.55}
-                      color={isDark ? 'gray.400' : 'gray.600'}
+                      color="fgMuted"
                     >
                       {translationParagraphs[i]}
                     </Text>
@@ -273,10 +270,10 @@ export default function ChapterPageClient({
             mt={10}
             pt={8}
             borderTopWidth={1}
-            borderColor={isDark ? 'gray.700' : 'gray.200'}
+            borderColor="borderDefault"
           >
-            <ChapterNavLink nav={prevNav} label={loc.previous[user_language]} direction="prev" isDark={isDark} />
-            <ChapterNavLink nav={nextNav} label={loc.next[user_language]} direction="next" isDark={isDark} />
+            <ChapterNavLink nav={prevNav} label={loc.previous[user_language]} direction="prev" />
+            <ChapterNavLink nav={nextNav} label={loc.next[user_language]} direction="next" />
           </Box>
         </Box>
       ) : (

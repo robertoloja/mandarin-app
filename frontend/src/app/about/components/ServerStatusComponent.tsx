@@ -1,5 +1,4 @@
 'use client';
-import styles from '@/themes';
 import { MandoBotAPI } from '@/utils/api';
 import { clearError, setError } from '@/utils/store/errorSlice';
 import { RootState, store } from '@/utils/store/store';
@@ -11,7 +10,6 @@ import {
   VStack,
   Flex,
   Box,
-  useColorMode,
   HStack,
   Popover,
   PopoverTrigger,
@@ -34,7 +32,6 @@ export default function ServerStatusComponent({
 }: {
   user_language: UserLanguage;
 }) {
-  const { colorMode } = useColorMode();
   const [localDateTime, setLastUpdate] = useState('-');
   const [translationBackend, setBackend] = useState('-');
   const [responseTime, setResponseTime] = useState(-1);
@@ -73,7 +70,6 @@ export default function ServerStatusComponent({
           size="md"
           textAlign="center"
           mb={1}
-          __css={styles.heading[colorMode]}
         >
           {status_localization.server_status[user_language]}
         </Heading>
@@ -94,20 +90,17 @@ export default function ServerStatusComponent({
           gap={4}
           mt={3}
           width="fit-content"
-          border={
-            colorMode === 'light' ? '1px solid #468DA4' : '1px solid #1e282c'
-          }
+          border="1px solid" borderColor="borderDefault"
           borderRadius={8}
           boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-          backgroundColor={colorMode === 'light' ? '#B8EEFF' : '#333c40'}
+          bg="bgCanvas"
           boxSizing="border-box"
         >
-          <Box m={2} p={5} __css={styles.lightBox[colorMode]}>
+          <Box m={2} p={5} border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle">
             <VStack>
               <Heading
                 size="sm"
                 whiteSpace="nowrap"
-                __css={styles.heading[colorMode]}
               >
                 {status_localization.response_time[user_language]}
               </Heading>
@@ -121,13 +114,12 @@ export default function ServerStatusComponent({
             </VStack>
           </Box>
 
-          <Box m={2} p={5} __css={styles.lightBox[colorMode]}>
+          <Box m={2} p={5} border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle">
             <VStack mb={3} mx={2}>
               <HStack>
                 <Heading
                   size="sm"
                   whiteSpace="nowrap"
-                  __css={styles.heading[colorMode]}
                 >
                   {status_localization.backend[user_language]}
                 </Heading>

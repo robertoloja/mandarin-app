@@ -25,12 +25,11 @@ import LanguagePreferenceMenuButton from './LanguagePreferenceMenuComponent';
 import TableOfContentsButton from './TableOfContentsButton';
 import ReadingModeToggle from './ReadingModeToggle';
 
-function NavDivider({ isDark }: { isDark: boolean }) {
-  return <Box w="1px" h="22px" bg={isDark ? 'gray.700' : 'gray.200'} flexShrink={0} />;
+function NavDivider() {
+  return <Box w="1px" h="22px" bg="borderDefault" flexShrink={0} />;
 }
 
 function ThemeControl({ theme, onToggle }: { theme: string; onToggle: () => void }) {
-  const isDark = theme === 'dark';
   const items = [
     { v: 'light', filled: <IoSunny size={13} />, outline: <IoSunnyOutline size={13} /> },
     { v: 'dark', filled: <IoMoon size={13} />, outline: <IoMoonOutline size={13} /> },
@@ -38,9 +37,9 @@ function ThemeControl({ theme, onToggle }: { theme: string; onToggle: () => void
   return (
     <Box
       display="inline-flex"
-      bg={isDark ? 'gray.800' : 'gray.100'}
+      bg="bgSubtle"
       border="1px solid"
-      borderColor={isDark ? 'gray.700' : 'gray.200'}
+      borderColor="borderDefault"
       borderRadius="7px"
       p="2px"
       gap="1px"
@@ -58,8 +57,8 @@ function ThemeControl({ theme, onToggle }: { theme: string; onToggle: () => void
             display="flex"
             alignItems="center"
             justifyContent="center"
-            bg={isActive ? (isDark ? 'gray.700' : 'white') : 'transparent'}
-            color={isActive ? (isDark ? 'white' : 'gray.800') : (isDark ? 'gray.500' : 'gray.400')}
+            bg={isActive ? 'bgActive' : 'transparent'}
+            color={isActive ? 'fgPrimary' : 'fgSubtle'}
             cursor="pointer"
             onClick={() => { if (!isActive) onToggle(); }}
           >
@@ -76,7 +75,6 @@ function TopNav() {
   const pathname = usePathname();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
 
   const toggleThemeSetting = () => {
     store.dispatch(toggleTheme());
@@ -92,17 +90,17 @@ function TopNav() {
   const iconBtnProps = {
     bg: 'transparent' as const,
     border: '1px solid',
-    borderColor: isDark ? 'gray.700' : 'gray.200',
+    borderColor: 'borderDefault',
     h: '30px',
     minW: '30px',
-    _hover: { borderColor: isDark ? 'gray.600' : 'gray.300' },
+    _hover: { borderColor: 'borderEmphasis' },
   };
 
   return (
     <HStack
       justifyContent="space-between"
       borderBottom="1px solid"
-      borderColor={isDark ? 'gray.700' : 'gray.200'}
+      borderColor="borderDefault"
       position="sticky"
       top="0"
       zIndex="100"
@@ -110,7 +108,7 @@ function TopNav() {
       h="52px"
       px={4}
       gap={2}
-      backgroundColor={isDark ? 'gray.900' : 'white'}
+      backgroundColor="bgCanvas"
     >
       <HStack gap={2} flexShrink={0}>
         <NavPanel isOpen={isOpen} onClose={onClose} />
@@ -145,15 +143,15 @@ function TopNav() {
         {pathname.includes('/reading/') && (
           <>
             <ReadingModeToggle />
-            <NavDivider isDark={isDark} />
+            <NavDivider />
             <BackToTop iconSize={iconSize} />
             <TextMenuButton />
           </>
         )}
 
-        <NavDivider isDark={isDark} />
+        <NavDivider />
         <LanguagePreferenceMenuButton iconSize={iconSize} />
-        <NavDivider isDark={isDark} />
+        <NavDivider />
         <ThemeControl theme={theme} onToggle={toggleThemeSetting} />
 
         {pathname.includes('/reading/') && (

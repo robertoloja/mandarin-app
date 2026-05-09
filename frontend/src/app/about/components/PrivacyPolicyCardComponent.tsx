@@ -1,13 +1,11 @@
 import localization, { UserLanguage } from '@/localization/main';
-import styles from '@/themes';
-import { Text, Box, Heading, useColorMode } from '@chakra-ui/react';
+import { Text, Box, Heading } from '@chakra-ui/react';
 
 export const PrivacyPolicyCard = ({user_language}: {user_language: UserLanguage}) => {
-  const { colorMode } = useColorMode();
   return (
     <Box id="policies" mt={4}>
       <Box
-        __css={styles.darkBox[colorMode]}
+        border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas"
         justifyContent="center"
         w="fit-content"
         m={2}
@@ -21,11 +19,6 @@ export const PrivacyPolicyCard = ({user_language}: {user_language: UserLanguage}
           textAlign="center"
           mb={4}
           whiteSpace="nowrap"
-          textShadow={
-            colorMode === 'light'
-              ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-              : '1px 1px 1px #222'
-          }
         >
          {localization.about_status.privacy_policy.title[user_language]}
         </Heading>
@@ -37,11 +30,6 @@ export const PrivacyPolicyCard = ({user_language}: {user_language: UserLanguage}
           textAlign="center"
           mb={4}
           whiteSpace="nowrap"
-          textShadow={
-            colorMode === 'light'
-              ? '1px 1px 1px rgba(0, 0, 0, 0.2)'
-              : '1px 1px 1px #222'
-          }
         >
           {localization.about_status.terms_of_use.title[user_language]}
         </Heading>

@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { MAX_LENGTH, MAX_LENGTH_FREE } from 'constant_variables';
 import Link from 'next/link';
 import localization, { UserLanguage } from '@/localization/main';
+import { FONT_CHINESE, FONT_SANS } from '@/theme';
 
 export default function TextInput(props: {
   inputRef: RefObject<HTMLTextAreaElement | null>;
@@ -60,23 +61,23 @@ export default function TextInput(props: {
         onChange={handleTextChange}
         rows={3}
         resize="vertical"
-        fontFamily='"Noto Serif SC", serif'
+        fontFamily={FONT_CHINESE}
         fontSize="1.4rem"
         lineHeight={1.9}
         py={4}
         px={5}
         borderRadius="10px"
         border="1px solid"
-        borderColor={isDark ? 'gray.700' : 'gray.200'}
-        bg={isDark ? 'gray.900' : 'white'}
-        color={isDark ? 'gray.100' : 'gray.800'}
+        borderColor="borderDefault"
+        bg="bgCanvas"
+        color="fgPrimary"
         _placeholder={{
-          color: isDark ? 'gray.600' : 'gray.300',
-          fontFamily: '"IBM Plex Sans", sans-serif',
+          color: "fgMuted",
+          fontFamily: FONT_SANS,
           fontSize: '15px',
         }}
         _focus={{
-          borderColor: isDark ? 'gray.500' : 'gray.400',
+          borderColor: "fgSubtle",
           boxShadow: 'none',
           outline: 'none',
         }}
@@ -94,10 +95,10 @@ export default function TextInput(props: {
         >
           <PopoverTrigger>
             <Text
-              fontFamily='"IBM Plex Sans", sans-serif'
+              fontFamily={FONT_SANS}
               fontSize="11px"
               color={
-                atLimit ? 'red.400' : nearLimit ? 'orange.400' : isDark ? 'gray.600' : 'gray.400'
+                atLimit ? 'red.400' : nearLimit ? 'orange.400' : 'fgSubtle'
               }
               cursor={atLimit ? 'help' : 'default'}
               userSelect="none"
@@ -110,16 +111,16 @@ export default function TextInput(props: {
             maxW="280px"
             borderRadius="8px"
             border="1px solid"
-            borderColor={isDark ? 'gray.700' : 'gray.200'}
-            bg={isDark ? 'gray.900' : 'white'}
+            borderColor="borderDefault"
+            bg="bgCanvas"
             boxShadow="md"
             _focus={{ outline: 'none' }}
             px={4}
             py={3}
           >
-            <PopoverArrow bg={isDark ? 'gray.900' : 'white'} />
+            <PopoverArrow bg="bgCanvas" />
             <PopoverBody p={0}>
-              <Text fontFamily='"IBM Plex Sans", sans-serif' fontSize="13px" color={isDark ? 'gray.300' : 'gray.600'}>
+              <Text fontFamily={FONT_SANS} fontSize="13px" color="fgBody">
                 {localization.home_page.info[1][props.user_language]}{' '}
                 {MAX_LENGTH_FREE}{' '}
                 {localization.home_page.info[2][props.user_language]}{' '}
