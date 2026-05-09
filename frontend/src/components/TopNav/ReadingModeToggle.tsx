@@ -4,11 +4,14 @@ import { Box, useColorMode } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { RootState, store } from '@/utils/store/store';
 import { setReadingMode } from '@/utils/store/settingsSlice';
+import localization from '@/localization/main';
 
 export default function ReadingModeToggle() {
   const { colorMode } = useColorMode();
   const readingMode = useSelector((state: RootState) => state.settings.readingMode);
+  const user_language = useSelector((state: RootState) => state.settings.user_language);
   const isDark = colorMode === 'dark';
+  const loc = localization.top_nav;
 
   return (
     <Box
@@ -40,7 +43,7 @@ export default function ReadingModeToggle() {
             transition="all 0.14s"
             boxShadow={isActive ? 'sm' : 'none'}
           >
-            {mode === 'flow' ? 'Flow' : 'Vocab grid'}
+            {mode === 'flow' ? loc.flow[user_language] : loc.vocab_grid[user_language]}
           </Box>
         );
       })}

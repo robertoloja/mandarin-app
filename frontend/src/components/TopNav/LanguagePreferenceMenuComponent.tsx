@@ -1,58 +1,75 @@
 'use client';
 
-import localization from '@/localization/main';
 import { RootState } from '@/utils/store/store';
 import {
-  Center,
+  Box,
   IconButton,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
-  PopoverHeader,
   PopoverTrigger,
   Text,
   useColorMode,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
+import localization from '@/localization/main';
 
 export default function LanguagePreferenceMenuButton({
-  iconSize,
+  iconSize: _iconSize,
 }: {
   iconSize: number;
 }) {
   const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
 
   return (
-    <Popover>
+    <Popover placement="bottom-end" offset={[0, 4]}>
       <PopoverTrigger>
         <IconButton
-          aria-label="language preference"
+          aria-label="Language preference"
           icon={
             <Text
-              fontWeight="400"
+              fontFamily='"IBM Plex Sans", sans-serif'
+              fontWeight={500}
               textTransform="uppercase"
-              fontSize={iconSize}
+              fontSize="13px"
+              letterSpacing="0.04em"
             >
               {user_language}
             </Text>
           }
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg={isDark ? 'gray.800' : 'white'}
         />
       </PopoverTrigger>
 
-      <PopoverContent bg={colorMode === 'light' ? 'white' : 'gray.700'}>
-        <PopoverArrow />
-        <PopoverHeader>
-          <Center>
-            {localization.top_nav.language_options[user_language]}
-          </Center>
-        </PopoverHeader>
-        <PopoverBody>
+      <PopoverContent
+        width="fit-content"
+        borderRadius="10px"
+        border="1px solid"
+        borderColor={isDark ? 'gray.700' : 'gray.200'}
+        bg={isDark ? 'gray.900' : 'white'}
+        boxShadow="lg"
+        _focus={{ outline: 'none' }}
+        px={4}
+        py={3}
+      >
+        <PopoverArrow bg={isDark ? 'gray.900' : 'white'} />
+        <PopoverBody p={0}>
+          <Box
+            fontFamily='"IBM Plex Sans", sans-serif'
+            fontSize="10px"
+            textTransform="uppercase"
+            letterSpacing="0.14em"
+            color={isDark ? 'gray.500' : 'gray.400'}
+            mb={2}
+          >
+            {localization.top_nav.interface_language[user_language]}
+          </Box>
           <LanguagePreferencesComponent />
         </PopoverBody>
       </PopoverContent>

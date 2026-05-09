@@ -1,13 +1,13 @@
 'use client';
-import { Box, Button, Text, HStack } from '@chakra-ui/react';
+
+import { Box, Text, useColorMode } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MandarinSentenceClass } from './MandarinSentenceClass';
 import MandarinSentence from '@/components/MandarinSentenceComponent';
-import Translation from '@/components/TranslationComponent';
 import ProgressBar from '@/components/ProgressBarComponent';
-import { SegmentResponseType } from '@/utils/types';
+import { SegmentResponseType, MandarinWordType } from '@/utils/types';
 import { RootState, store } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import TextInput from '@/components/TextInputComponent';
@@ -15,9 +15,14 @@ import { updateLoading } from '@/utils/store/loadingSlice';
 import localization from '@/localization/main';
 import WelcomeCard from '@/components/WelcomeCardComponent';
 
+const SENTENCE_ENDINGS = new Set(['。', '！', '？', '…', '!', '?']);
+
 export default function HomeClient() {
   const [isReturningUser, setIsReturningUser] = useState<boolean | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+
   const percentLoaded = useSelector(
     (state: RootState) => state.loading.percentLoaded,
   );
@@ -67,7 +72,6 @@ export default function HomeClient() {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     let inputValue = '';
-
     if (inputRef.current && inputRef.current.value !== '') {
       inputValue = inputRef.current.value;
     }
@@ -75,48 +79,113 @@ export default function HomeClient() {
     mandarinClassInstance.populate();
   };
 
+  const sentences = useMemo<MandarinWordType[][]>(() => {
+    if (!mandarinSentence.segments.length) return [];
+    const result: MandarinWordType[][] = [];
+    let current: MandarinWordType[] = [];
+    for (const word of mandarinSentence.segments as MandarinWordType[]) {
+      current.push(word);
+      if (SENTENCE_ENDINGS.has(word.word) && current.length > 0) {
+        result.push(current);
+        current = [];
+      }
+    }
+    if (current.length > 0) result.push(current);
+    return result;
+  }, [mandarinSentence.segments]);
+
+  const translation = mandarinSentence.translations[user_language] ?? '';
+  const isLoading = percentLoaded < 100;
+
   return (
-    <Box h="100%">
+    <Box w="100%" minH="100vh">
       <ProgressBar />
-      <form onSubmit={handleSubmit}>
-        <TextInput inputRef={inputRef} user_language={user_language} />
-        <HStack>
-          <Button
-            type="submit"
-            colorScheme="teal"
-            m={2}
-            isDisabled={percentLoaded < 100}
-            aria-label="submit sentence"
-          >
-            {localization.home_page.submit[user_language]}
-          </Button>
-          {percentLoaded < 100 && (
-            <Text color="gray.600" textAlign="center" w="60%">
-              {percentLoaded == 0
-                ? localization.home_page.loading_text1[user_language]
-                : localization.home_page.loading_text2[user_language]}
-            </Text>
+      <Box maxW="760px" mx="auto" px={[4, 8]} pt={8} pb={20}>
+        <form onSubmit={handleSubmit}>
+          <TextInput inputRef={inputRef} user_language={user_language} />
+
+          <Box display="flex" alignItems="center" gap={3} mt={3}>
+            <Box
+              as="button"
+              type="submit"
+              disabled={isLoading}
+              fontFamily='"IBM Plex Sans", sans-serif'
+              fontSize="13px"
+              fontWeight={500}
+              px={4}
+              py="6px"
+              borderRadius="6px"
+              border="1px solid"
+              borderColor={isDark ? 'gray.600' : 'gray.300'}
+              bg="transparent"
+              color={isLoading ? (isDark ? 'gray.600' : 'gray.300') : (isDark ? 'gray.200' : 'gray.700')}
+              cursor={isLoading ? 'not-allowed' : 'pointer'}
+              transition="all 0.14s"
+              _hover={
+                !isLoading
+                  ? { borderColor: isDark ? 'gray.400' : 'gray.500', color: isDark ? 'white' : 'gray.900' }
+                  : undefined
+              }
+            >
+              {localization.home_page.submit[user_language]} ↵
+            </Box>
+
+            {isLoading && (
+              <Text
+                fontFamily='"IBM Plex Sans", sans-serif'
+                fontSize="13px"
+                fontStyle="italic"
+                color={isDark ? 'gray.500' : 'gray.400'}
+              >
+                {percentLoaded === 0
+                  ? localization.home_page.loading_text1[user_language]
+                  : localization.home_page.loading_text2[user_language]}
+              </Text>
+            )}
+          </Box>
+        </form>
+
+        <Box mt={8}>
+          {sentences.length === 0 && urlShareId === '' ? (
+            isReturningUser !== null && (
+              <WelcomeCard
+                isReturningUser={isReturningUser}
+                user_language={user_language}
+              />
+            )
+          ) : (
+            <>
+              {sentences.map((sentence, i) => (
+                <Box key={i} mb={6}>
+                  <MandarinSentence
+                    sentence={sentence}
+                    user_language={user_language}
+                    noBottomMargin
+                  />
+                </Box>
+              ))}
+              {translation && (
+                <Box
+                  mt={2}
+                  mb={6}
+                  pl={4}
+                  borderLeftWidth={2}
+                  borderLeftColor={isDark ? 'gray.600' : 'gray.300'}
+                >
+                  <Text
+                    fontFamily='"Spectral", Georgia, serif'
+                    fontStyle="italic"
+                    fontSize="16px"
+                    lineHeight={1.65}
+                    color={isDark ? 'gray.400' : 'gray.600'}
+                  >
+                    {translation}
+                  </Text>
+                </Box>
+              )}
+            </>
           )}
-        </HStack>
-      </form>
-      <Box h="100%">
-        {mandarinSentence.segments.length === 0 && urlShareId === '' ? (
-          isReturningUser !== null && (
-            <WelcomeCard
-              isReturningUser={isReturningUser}
-              user_language={user_language}
-            />
-          )
-        ) : (
-          <>
-            <MandarinSentence
-              sentence={mandarinSentence.segments}
-              dictionary={mandarinSentence.dictionary}
-              user_language={user_language}
-            />
-            <Translation translations={mandarinSentence.translations} />
-          </>
-        )}
+        </Box>
       </Box>
     </Box>
   );

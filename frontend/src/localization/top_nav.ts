@@ -8,12 +8,12 @@ const top_nav = {
     de: 'Aussprache',
   },
   off: {
-    en: 'off',
-    de: 'aus',
+    en: 'Off',
+    de: 'Aus',
   },
   on: {
-    en: 'on',
-    de: 'an',
+    en: 'On',
+    de: 'An',
   },
   size: {
     en: 'size',
@@ -26,6 +26,38 @@ const top_nav = {
   language_options: {
     en: 'Language Options',
     de: 'Spracheinstellungen',
+  },
+  script: {
+    en: 'Script',
+    de: '',
+  },
+  format: {
+    en: 'Format',
+    de: '',
+  },
+  reading: {
+    en: 'Reading',
+    de: '',
+  },
+  chapters: {
+    en: 'Chapters',
+    de: '',
+  },
+  not_yet_available: {
+    en: 'Not yet available',
+    de: '',
+  },
+  flow: {
+    en: 'Flow',
+    de: '',
+  },
+  vocab_grid: {
+    en: 'Vocab grid',
+    de: '',
+  },
+  interface_language: {
+    en: 'Interface language',
+    de: '',
   },
 };
 

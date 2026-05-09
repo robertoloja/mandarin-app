@@ -1,189 +1,274 @@
 'use client';
 
-import localization from '@/localization/main';
-import { RootState } from '@/utils/store/store';
+import { RootState, store } from '@/utils/store/store';
 import {
-  Center,
-  Grid,
-  GridItem,
-  HStack,
+  Box,
   IconButton,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
-  PopoverHeader,
   PopoverTrigger,
-  Switch,
   Text,
   useColorMode,
 } from '@chakra-ui/react';
-import { useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import {
-  setDefinitionFontSize,
   setPronunciationFontSize,
+  togglePronunciation,
+  togglePinyin,
 } from '@/utils/store/settingsSlice';
-import { store } from '@/utils/store/store';
-import PronunciationPreferencesComponent from '../PronunciationPreferencesComponent';
+import { MandoBotAPI } from '@/utils/api';
+import localization from '@/localization/main';
 
-export default function TextMenuButton() {
+function SegBtn({
+  active,
+  onClick,
+  children,
+  isDark,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  isDark: boolean;
+}) {
+  return (
+    <Box
+      as="button"
+      onClick={onClick}
+      fontFamily='"IBM Plex Sans", sans-serif'
+      fontSize="12px"
+      fontWeight={active ? 600 : 400}
+      px={3}
+      py="4px"
+      border="none"
+      borderRadius="5px"
+      bg={active ? (isDark ? 'gray.700' : 'white') : 'transparent'}
+      color={
+        active
+          ? isDark
+            ? 'white'
+            : 'gray.800'
+          : isDark
+            ? 'gray.400'
+            : 'gray.500'
+      }
+      cursor="pointer"
+      transition="all 0.14s"
+      boxShadow={active ? 'sm' : 'none'}
+    >
+      {children}
+    </Box>
+  );
+}
+
+function SegControl({
+  isDark,
+  children,
+}: {
+  isDark: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Box
+      display="inline-flex"
+      borderRadius="7px"
+      border="1px solid"
+      borderColor={isDark ? 'gray.700' : 'gray.200'}
+      bg={isDark ? 'gray.800' : 'gray.100'}
+      p="2px"
+      gap="1px"
+    >
+      {children}
+    </Box>
+  );
+}
+
+function Row({
+  label,
+  isDark,
+  children,
+}: {
+  label: string;
+  isDark: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      gap={4}
+      py="10px"
+    >
+      <Text
+        fontFamily='"IBM Plex Sans", sans-serif'
+        fontSize="13px"
+        color={isDark ? 'gray.300' : 'gray.600'}
+        whiteSpace="nowrap"
+      >
+        {label}
+      </Text>
+      {children}
+    </Box>
+  );
+}
+
+function TextPreferences() {
   const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+
+  const pronunciation = useSelector(
+    (state: RootState) => state.settings.pronunciation,
+  );
+  const pinyinType = useSelector(
+    (state: RootState) => state.settings.pinyin_type,
+  );
+  const pronunciationFontSize = useSelector(
+    (state: RootState) => state.settings.pronunciationFontSize,
+  );
+  const username = useSelector((state: RootState) => state.auth.username);
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
+  const loc = localization.top_nav;
+
+  const rubyOn = pronunciationFontSize !== 0;
+
+  const handleTogglePronun = () => {
+    if (username) {
+      MandoBotAPI.pronunciationPreference(
+        pronunciation === 'zhuyin' ? pinyinType : 'zhuyin',
+      ).then(() => store.dispatch(togglePronunciation()));
+    } else {
+      store.dispatch(togglePronunciation());
+    }
+  };
+
+  const handleTogglePinyin = () => {
+    if (username) {
+      MandoBotAPI.pronunciationPreference(
+        pinyinType === 'pinyin_acc' ? 'pinyin_num' : 'pinyin_acc',
+      ).then(() => store.dispatch(togglePinyin()));
+    } else {
+      store.dispatch(togglePinyin());
+    }
+  };
+
+  const divider = (
+    <Box
+      borderBottom="1px solid"
+      borderColor={isDark ? 'gray.700' : 'gray.100'}
+    />
+  );
 
   return (
-    <Popover>
+    <Box fontFamily='"IBM Plex Sans", sans-serif'>
+      <Row label={loc.pronunciation[user_language]} isDark={isDark}>
+        <SegControl isDark={isDark}>
+          <SegBtn
+            active={!rubyOn}
+            onClick={() => store.dispatch(setPronunciationFontSize(0))}
+            isDark={isDark}
+          >
+            {loc.off[user_language]}
+          </SegBtn>
+          <SegBtn
+            active={rubyOn}
+            onClick={() =>
+              store.dispatch(
+                setPronunciationFontSize(pronunciationFontSize || 15),
+              )
+            }
+            isDark={isDark}
+          >
+            {loc.on[user_language]}
+          </SegBtn>
+        </SegControl>
+      </Row>
+
+      {divider}
+
+      <Row label={loc.script[user_language]} isDark={isDark}>
+        <SegControl isDark={isDark}>
+          <SegBtn
+            active={pronunciation === 'pinyin'}
+            onClick={pronunciation === 'zhuyin' ? handleTogglePronun : () => {}}
+            isDark={isDark}
+          >
+            pīnyīn
+          </SegBtn>
+          <SegBtn
+            active={pronunciation === 'zhuyin'}
+            onClick={pronunciation === 'pinyin' ? handleTogglePronun : () => {}}
+            isDark={isDark}
+          >
+            ㄅㄆㄇ
+          </SegBtn>
+        </SegControl>
+      </Row>
+
+      {pronunciation === 'pinyin' && (
+        <>
+          {divider}
+          <Row label={loc.format[user_language]} isDark={isDark}>
+            <SegControl isDark={isDark}>
+              <SegBtn
+                active={pinyinType === 'pinyin_acc'}
+                onClick={
+                  pinyinType !== 'pinyin_acc' ? handleTogglePinyin : () => {}
+                }
+                isDark={isDark}
+              >
+                pīnyīn
+              </SegBtn>
+              <SegBtn
+                active={pinyinType === 'pinyin_num'}
+                onClick={
+                  pinyinType !== 'pinyin_num' ? handleTogglePinyin : () => {}
+                }
+                isDark={isDark}
+              >
+                pin1yin1
+              </SegBtn>
+            </SegControl>
+          </Row>
+        </>
+      )}
+    </Box>
+  );
+}
+
+export default function TextMenuButton() {
+  const { colorMode } = useColorMode();
+  const isDark = colorMode === 'dark';
+
+  return (
+    <Popover placement="bottom-end" offset={[0, 4]}>
       <PopoverTrigger>
         <IconButton
-          aria-label="text settings"
+          aria-label="Text settings"
           icon={<IoTextOutline size={22} />}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg={isDark ? 'gray.800' : 'white'}
         />
       </PopoverTrigger>
-
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverHeader>
-          <Center>{localization.top_nav.text_options[user_language]}</Center>
-        </PopoverHeader>
-        <PopoverBody>
+      <PopoverContent
+        width="220px"
+        borderRadius="10px"
+        border="1px solid"
+        borderColor={isDark ? 'gray.700' : 'gray.200'}
+        bg={isDark ? 'gray.900' : 'white'}
+        boxShadow="lg"
+        _focus={{ outline: 'none' }}
+        px={4}
+        py={2}
+      >
+        <PopoverArrow bg={isDark ? 'gray.900' : 'white'} />
+        <PopoverBody p={0}>
           <TextPreferences />
         </PopoverBody>
       </PopoverContent>
     </Popover>
   );
 }
-
-const TextPreferences = () => {
-  const definitionFontSize = useSelector(
-    (state: RootState) => state.settings.definitionFontSize,
-  );
-  const pronunciationFontSize = useSelector(
-    (state: RootState) => state.settings.pronunciationFontSize,
-  );
-  const [showPronunciation, togglePronunciation] = useState(
-    pronunciationFontSize !== 0,
-  );
-  const [showDefinition, toggleDefinition] = useState(definitionFontSize !== 0);
-  const user_language = useSelector(
-    (state: RootState) => state.settings.user_language,
-  );
-
-  return (
-    <Grid templateColumns="1fr 1fr" my={5}>
-      <GridItem rowSpan={2} colSpan={1}>
-        <Text textAlign="center">
-          {localization.top_nav.pronunciation[user_language]}
-        </Text>
-      </GridItem>
-
-      <GridItem colSpan={1}>
-        <HStack justify="center" mb={3}>
-          <Text>{localization.top_nav.off[user_language]}</Text>
-          <Switch
-            isChecked={showPronunciation}
-            onChange={() => {
-              if (showPronunciation) {
-                togglePronunciation(false);
-                store.dispatch(setPronunciationFontSize(0));
-              } else {
-                togglePronunciation(true);
-                store.dispatch(
-                  setPronunciationFontSize(pronunciationFontSize || 15),
-                );
-              }
-            }}
-          />
-          <Text>{localization.top_nav.on[user_language]}</Text>
-        </HStack>
-      </GridItem>
-
-      <GridItem colSpan={1}>
-        <HStack mb={5}>
-          <Text textAlign="right">
-            {localization.top_nav.size[user_language]}
-          </Text>
-          <NumberInput
-            defaultValue={pronunciationFontSize || 15}
-            min={10}
-            max={20}
-            size={['lg', 'sm']}
-            w="5rem"
-            onChange={(e) => {
-              store.dispatch(setPronunciationFontSize(Number(e)));
-              togglePronunciation(true);
-            }}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </HStack>
-      </GridItem>
-
-      <GridItem colSpan={2} borderBottom="1px solid gray" pb={3} mb={2}>
-        <PronunciationPreferencesComponent />
-      </GridItem>
-
-      <GridItem rowSpan={2} colSpan={1}>
-        <Text textAlign="center">
-          {localization.top_nav.definitions[user_language]}
-        </Text>
-      </GridItem>
-
-      <GridItem colSpan={1} mt={2}>
-        <HStack justify="center" mb={3}>
-          <Text>{localization.top_nav.off[user_language]}</Text>
-          <Switch
-            isChecked={showDefinition}
-            onChange={() => {
-              if (showDefinition) {
-                toggleDefinition(false);
-                store.dispatch(setDefinitionFontSize(0));
-              } else {
-                toggleDefinition(true);
-                store.dispatch(setDefinitionFontSize(definitionFontSize || 15));
-              }
-            }}
-          />
-          <Text>{localization.top_nav.on[user_language]}</Text>
-        </HStack>
-      </GridItem>
-
-      <GridItem colSpan={1}>
-        <HStack>
-          <Text textAlign="right">
-            {localization.top_nav.size[user_language]}
-          </Text>
-          <NumberInput
-            defaultValue={definitionFontSize || 15}
-            min={10}
-            max={20}
-            size={['lg', 'sm']}
-            w="5rem"
-            onChange={(e) => {
-              store.dispatch(setDefinitionFontSize(Number(e)));
-              toggleDefinition(true);
-            }}
-          >
-            <NumberInputField />
-            <NumberInputStepper>
-              <NumberIncrementStepper />
-              <NumberDecrementStepper />
-            </NumberInputStepper>
-          </NumberInput>
-        </HStack>
-      </GridItem>
-    </Grid>
-  );
-};

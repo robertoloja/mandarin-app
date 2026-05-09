@@ -9,6 +9,7 @@ import VocabGrid from '@/components/VocabGridComponent';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { MandarinWordType } from '@/utils/types';
+import localization from '@/localization/main';
 
 const BOOK_INFO: Record<
   string,
@@ -52,14 +53,15 @@ export default function ChapterPageClient({
     }
   }, []);
 
+  const loc = localization.reading_room;
   const bookSlug = params.book_slug as string;
   const chapterOrder = Number(params.chapter_order);
   const book = BOOK_INFO[bookSlug];
   const isDiary = bookSlug === 'diary-of-a-madman';
   const chapterLabel =
     isDiary && chapterOrder === 0
-      ? 'Preface'
-      : `Chapter ${isDiary ? chapterOrder : chapterOrder + 1}`;
+      ? loc.preface[user_language]
+      : `${loc.chapter[user_language]} ${isDiary ? chapterOrder : chapterOrder + 1}`;
 
   const translation = data?.translation?.[user_language] ?? '';
   const isDark = colorMode === 'dark';
@@ -179,8 +181,7 @@ export default function ChapterPageClient({
                 fontFamily='"IBM Plex Sans", sans-serif'
                 fontStyle="italic"
               >
-                Vocab grid · every word as a study card. Best for vocabulary
-                review, not flowing reading.
+                {loc.vocab_grid_description[user_language]}
               </Text>
               {paragraphs.map((para, i) => (
                 <Box
@@ -226,7 +227,7 @@ export default function ChapterPageClient({
         </Box>
       ) : (
         <Flex justify="center" align="center" h="100vh">
-          <Text color="gray.500">Chapter not found.</Text>
+          <Text color="gray.500">{loc.chapter_not_found[user_language]}</Text>
         </Flex>
       )}
     </Box>

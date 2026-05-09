@@ -8,7 +8,7 @@ import { UserLanguage } from '@/localization/main';
 
 interface MandarinSentenceProps {
   sentence: MandarinWordType[];
-  dictionary: ChineseDictionary;
+  dictionary?: ChineseDictionary;
   user_language: UserLanguage;
   noBottomMargin?: boolean;
 }
