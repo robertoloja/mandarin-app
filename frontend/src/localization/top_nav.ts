@@ -60,8 +60,8 @@ const top_nav = {
     de: 'Sprache',
   },
   characters: {
-    en: 'Characters',
-    de: 'Zeichen',
+    en: 'Hanzi',
+    de: 'Hanzi',
   },
 };
 
