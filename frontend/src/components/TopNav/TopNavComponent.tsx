@@ -25,6 +25,7 @@ import BackToTop from './BackToTopComponent';
 import TextMenuButton from './TextMenuComponent';
 import LanguagePreferenceMenuButton from './LanguagePreferenceMenuComponent';
 import TableOfContentsButton from './TableOfContentsButton';
+import ReadingModeToggle from './ReadingModeToggle';
 
 function TopNav() {
   const pathname = usePathname();
@@ -102,8 +103,8 @@ function TopNav() {
 
         {pathname.includes('/reading/') && (
           <>
+            <ReadingModeToggle />
             <BackToTop iconSize={iconSize} />
-            <TableOfContentsButton iconSize={iconSize} />
             <TextMenuButton />
             <LanguageMenu iconSize={iconSize} />
           </>
@@ -123,8 +124,11 @@ function TopNav() {
             }
             onClick={toggleThemeSetting}
             bg={colorMode === 'light' ? 'white' : 'gray.800'}
-            mr="2rem"
           />
+        )}
+
+        {pathname.includes('/reading/') && (
+          <TableOfContentsButton iconSize={iconSize} />
         )}
       </HStack>
     </HStack>

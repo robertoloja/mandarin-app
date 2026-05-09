@@ -13,3 +13,4 @@ localhost-cert.pem
 localhost-key.pem
 snoop.log
 output.txt
+design_extracted/*.*
