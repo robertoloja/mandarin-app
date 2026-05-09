@@ -3,6 +3,7 @@
 import React, { useRef } from 'react';
 import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
+import ReactMarkdown from 'react-markdown';
 import { RootState, store } from '@/utils/store/store';
 import { setTranslationPanelHeight } from '@/utils/store/mandarinSentenceSlice';
 
@@ -122,9 +123,17 @@ function Translation(props: { translations: Record<string, string> }) {
       </Box>
 
       <Center>
-        <Text my={6} textAlign="justify" px={5}>
-          {text}
-        </Text>
+        <Box my={6} textAlign="justify" px={5}>
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => <Text mb={2}>{children}</Text>,
+              strong: ({ children }) => <Text as="strong" fontWeight="bold">{children}</Text>,
+              em: ({ children }) => <Text as="em" fontStyle="italic">{children}</Text>,
+            }}
+          >
+            {text}
+          </ReactMarkdown>
+        </Box>
       </Center>
     </Box>
   );

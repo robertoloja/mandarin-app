@@ -115,8 +115,38 @@ const reading_room = {
       },
 
       book_2: {
-        en: "Zhang Fei's Anger",
-        de: 'Zhang Feis Wut',
+        title: {
+          en: "Zhang Fei's Anger",
+          de: 'Zhang Feis Wut',
+        },
+        chapter_1: {
+          en: 'Brothers in Arms',
+          de: 'Waffenbrüder',
+        },
+        chapter_2: {
+          en: 'The Messenger',
+          de: 'Der Bote',
+        },
+        chapter_3: {
+          en: 'New Allies',
+          de: 'Neue Verbündete',
+        },
+        chapter_4: {
+          en: 'Zhang Fei Strikes',
+          de: 'Zhang Fei Schlägt Zu',
+        },
+        chapter_5: {
+          en: 'Corruption Deepens',
+          de: 'Korruption Eskaliert',
+        },
+        chapter_6: {
+          en: "He Jin's Gambit",
+          de: 'He Jins Schachzug',
+        },
+        chapter_7: {
+          en: "He Jin's Decision",
+          de: 'He Jins Entscheidung',
+        },
       },
       book_3: {
         en: 'Dong Zhuo',

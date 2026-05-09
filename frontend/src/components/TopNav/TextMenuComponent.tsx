@@ -26,8 +26,12 @@ import {
 import { useState } from 'react';
 import { IoTextOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
-import { setDefinitionFontSize, setPronunciationFontSize } from '@/utils/store/settingsSlice';
+import {
+  setDefinitionFontSize,
+  setPronunciationFontSize,
+} from '@/utils/store/settingsSlice';
 import { store } from '@/utils/store/store';
+import PronunciationPreferencesComponent from '../PronunciationPreferencesComponent';
 
 export default function TextMenuButton() {
   const { colorMode } = useColorMode();
@@ -65,21 +69,23 @@ const TextPreferences = () => {
   const pronunciationFontSize = useSelector(
     (state: RootState) => state.settings.pronunciationFontSize,
   );
-  const [showPronunciation, togglePronunciation] = useState(pronunciationFontSize !== 0);
+  const [showPronunciation, togglePronunciation] = useState(
+    pronunciationFontSize !== 0,
+  );
   const [showDefinition, toggleDefinition] = useState(definitionFontSize !== 0);
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
 
   return (
-    <Grid templateColumns="1fr 1fr" templateRows="repeat(4, 1fr)" my={5}>
-      <GridItem rowSpan={2} colSpan={1} borderBottom="1px solid gray">
+    <Grid templateColumns="1fr 1fr" my={5}>
+      <GridItem rowSpan={2} colSpan={1}>
         <Text textAlign="center">
           {localization.top_nav.pronunciation[user_language]}
         </Text>
       </GridItem>
 
-      <GridItem rowSpan={1} colSpan={1}>
+      <GridItem colSpan={1}>
         <HStack justify="center" mb={3}>
           <Text>{localization.top_nav.off[user_language]}</Text>
           <Switch
@@ -90,7 +96,9 @@ const TextPreferences = () => {
                 store.dispatch(setPronunciationFontSize(0));
               } else {
                 togglePronunciation(true);
-                store.dispatch(setPronunciationFontSize(pronunciationFontSize || 15));
+                store.dispatch(
+                  setPronunciationFontSize(pronunciationFontSize || 15),
+                );
               }
             }}
           />
@@ -98,7 +106,7 @@ const TextPreferences = () => {
         </HStack>
       </GridItem>
 
-      <GridItem rowSpan={1} colSpan={1} borderBottom="1px solid gray">
+      <GridItem colSpan={1}>
         <HStack mb={5}>
           <Text textAlign="right">
             {localization.top_nav.size[user_language]}
@@ -123,13 +131,17 @@ const TextPreferences = () => {
         </HStack>
       </GridItem>
 
-      <GridItem rowSpan={2} colSpan={1} mt={6}>
+      <GridItem colSpan={2} borderBottom="1px solid gray" pb={3} mb={2}>
+        <PronunciationPreferencesComponent />
+      </GridItem>
+
+      <GridItem rowSpan={2} colSpan={1}>
         <Text textAlign="center">
           {localization.top_nav.definitions[user_language]}
         </Text>
       </GridItem>
 
-      <GridItem rowSpan={1} colSpan={1} mt={6}>
+      <GridItem colSpan={1} mt={2}>
         <HStack justify="center" mb={3}>
           <Text>{localization.top_nav.off[user_language]}</Text>
           <Switch
