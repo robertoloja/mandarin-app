@@ -16,16 +16,8 @@ import { RootState } from '@/utils/store/store';
 import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
 import DefinitionContent from './DefinitionComponent';
-import { TONE_DARK, TONE_LIGHT, getTone, getCharPron } from '@/utils/mandarin';
+import { TONE_DARK, TONE_LIGHT, getTone, getCharPron, isPunct as isPunctChar } from '@/utils/mandarin';
 import { FONT_SANS, FONT_CHINESE } from '@/theme';
-
-function isPunct(word: MandarinWordType): boolean {
-  return (
-    word.word === '' ||
-    word.word === '\n' ||
-    (word.pinyin.length > 0 && word.word === word.pinyin[0])
-  );
-}
 
 function VocabCard({
   word,
@@ -157,7 +149,7 @@ function VocabGrid({ sentence, dictionary, user_language }: VocabGridProps) {
           if (word.word === '\n') {
             return <Box key={i} w="100%" mb={2} />;
           }
-          if (isPunct(word)) {
+          if (isPunctChar(word.word, word.pinyin)) {
             return (
               <Text
                 key={i}

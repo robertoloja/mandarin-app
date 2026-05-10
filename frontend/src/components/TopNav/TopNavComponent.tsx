@@ -81,6 +81,10 @@ function TopNav() {
     toggleColorMode();
   };
   const theme = useSelector((state: RootState) => state.settings.theme);
+  const shareLink = useSelector((state: RootState) => state.sentence.shareLink);
+  const hasSegments = useSelector(
+    (state: RootState) => state.sentence.mandarinSentence.segments.length > 0,
+  );
   useEffect(() => {
     if (theme === 'light' && colorMode === 'dark') toggleColorMode();
     if (theme === 'dark' && colorMode === 'light') toggleColorMode();
@@ -88,7 +92,7 @@ function TopNav() {
 
   const iconSize = 20;
   const iconBtnProps = {
-    bg: 'transparent' as const,
+    bg: 'bgSubtle' as const,
     border: '1px solid',
     borderColor: 'borderDefault',
     h: '30px',
@@ -132,11 +136,11 @@ function TopNav() {
       <HStack gap={2} flexShrink={0} ml="auto">
         <ErrorButton iconSize={iconSize} />
 
-        {pathname === '/' && (
+        {pathname === '/' && hasSegments && (
           <>
             <BackToTop iconSize={iconSize} />
             <TextMenuButton />
-            <ShareButton iconSize={iconSize} />
+            {shareLink !== '' && <ShareButton iconSize={iconSize} />}
           </>
         )}
 

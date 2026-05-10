@@ -1,7 +1,7 @@
 'use client';
-import { Box, Link, Text, VStack } from '@chakra-ui/react';
-import ReactMarkdown from 'react-markdown';
+import { Box, Text, VStack } from '@chakra-ui/react';
 import localization, { UserLanguage } from '@/localization/main';
+import AppMarkdown from '@/components/AppMarkdown';
 import { FONT_SANS, FONT_SERIF } from '@/theme';
 
 function NewsItem({
@@ -47,24 +47,7 @@ function NewsItem({
         color="fgBody"
         mb={3}
       >
-        <ReactMarkdown
-          components={{
-            p: ({ children }) => <Text mb="1em">{children}</Text>,
-            strong: ({ children }) => (
-              <Text as="strong" fontWeight={600} color="fgPrimary">
-                {children}
-              </Text>
-            ),
-            em: ({ children }) => <Text as="em" fontStyle="italic">{children}</Text>,
-            a: ({ href, children }) => (
-              <Link href={href} color="fgLink" textDecoration="underline">
-                {children}
-              </Link>
-            ),
-          }}
-        >
-          {item.body[user_language]}
-        </ReactMarkdown>
+        <AppMarkdown>{item.body[user_language]}</AppMarkdown>
       </Text>
       <Text
         fontFamily={FONT_SANS}
@@ -84,7 +67,6 @@ function NewsCard({ user_language }: { user_language: UserLanguage }) {
 
   return (
     <Box
-      mx={[2, 4, 16]}
       maxW="2xl"
       w="100%"
       border="1px solid"

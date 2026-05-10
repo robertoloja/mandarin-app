@@ -224,7 +224,7 @@ export default function TextMenuButton() {
         <IconButton
           aria-label="Text settings"
           icon={<IoTextOutline size={16} />}
-          bg="transparent"
+          bg="bgSubtle"
           border="1px solid"
           borderColor="borderDefault"
           h="30px"

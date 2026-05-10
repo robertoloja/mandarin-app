@@ -20,8 +20,11 @@ const theme = extendTheme({
   },
   styles: {
     global: {
+      'html, body': {
+        overflowX: 'hidden',
+      },
       body: {
-        bg: 'bgCanvas',
+        bg: 'bgPage',
         color: 'fgBody',
       },
     },
@@ -29,6 +32,7 @@ const theme = extendTheme({
   semanticTokens: {
     colors: {
       // Surfaces
+      bgPage:    { default: 'gray.50',   _dark: '#0D1117' },
       bgCanvas:  { default: 'white',     _dark: 'gray.900' },
       bgSubtle:  { default: 'gray.100',  _dark: 'gray.800' },
       bgActive:  { default: 'white',     _dark: 'gray.700' },

@@ -24,7 +24,7 @@ export default function BackToTop(props: { iconSize: number }) {
         <IconButton
           aria-label="Back to top"
           icon={<IoArrowUpOutline size={props.iconSize + 5} />}
-          bg="transparent"
+          bg="bgSubtle"
           border="1px solid"
           borderColor="borderDefault"
           h="30px"

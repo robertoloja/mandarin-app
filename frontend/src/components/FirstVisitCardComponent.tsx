@@ -1,16 +1,32 @@
 'use client';
-import { Box, HStack, Image, Link, Text, useColorMode } from '@chakra-ui/react';
-import ReactMarkdown from 'react-markdown';
+import { Box, HStack, Image, Text, useColorMode } from '@chakra-ui/react';
+import { IoCloseOutline } from 'react-icons/io5';
+import { useState, useEffect } from 'react';
 import localization, { UserLanguage } from '@/localization/main';
 import { FONT_SANS, FONT_SERIF } from '@/theme';
+import AppMarkdown from '@/components/AppMarkdown';
+
+const STORAGE_KEY = 'welcomeCardDismissed';
 
 function FirstVisitCard({ user_language }: { user_language: UserLanguage }) {
   const { colorMode } = useColorMode();
   const isDark = colorMode === 'dark';
+  const [dismissed, setDismissed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    setDismissed(localStorage.getItem(STORAGE_KEY) === 'true');
+  }, []);
+
+  const dismiss = () => {
+    localStorage.setItem(STORAGE_KEY, 'true');
+    setDismissed(true);
+  };
+
+  if (dismissed === null || dismissed) return null;
 
   return (
     <Box
-      mx={[2, 4, 16]}
+      position="relative"
       maxW="2xl"
       w="100%"
       border="1px solid"
@@ -20,6 +36,18 @@ function FirstVisitCard({ user_language }: { user_language: UserLanguage }) {
       px={[6, 8]}
       py={6}
     >
+      <Box
+        as="button"
+        position="absolute"
+        top={3}
+        right={3}
+        onClick={dismiss}
+        color="fgSubtle"
+        _hover={{ color: 'fgMuted' }}
+        lineHeight={0}
+      >
+        <IoCloseOutline size={18} />
+      </Box>
       <HStack spacing={3} align="center" mb={5}>
         <Image
           src="/jie.svg"
@@ -46,24 +74,7 @@ function FirstVisitCard({ user_language }: { user_language: UserLanguage }) {
         lineHeight={1.7}
         color="fgBody"
       >
-        <ReactMarkdown
-          components={{
-            p: ({ children }) => <Text mb="1em">{children}</Text>,
-            strong: ({ children }) => (
-              <Text as="strong" fontWeight={600} color="fgPrimary">
-                {children}
-              </Text>
-            ),
-            em: ({ children }) => <Text as="em" fontStyle="italic">{children}</Text>,
-            a: ({ href, children }) => (
-              <Link href={href} color="fgLink" textDecoration="underline">
-                {children}
-              </Link>
-            ),
-          }}
-        >
-          {localization.home_page.welcome_new[user_language]}
-        </ReactMarkdown>
+        <AppMarkdown>{localization.home_page.welcome_new[user_language]}</AppMarkdown>
       </Text>
     </Box>
   );

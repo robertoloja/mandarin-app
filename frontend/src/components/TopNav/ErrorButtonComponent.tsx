@@ -7,14 +7,12 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverTrigger,
-  useColorMode,
 } from '@chakra-ui/react';
 import { RootState } from '@/utils/store/store';
 import { IoWarningOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 
 export default function ErrorButton(props: { iconSize: number }) {
-  const { colorMode } = useColorMode();
   const errorMessage = useSelector((state: RootState) => state.errors.error);
 
   return (
@@ -30,9 +28,9 @@ export default function ErrorButton(props: { iconSize: number }) {
                   size={props.iconSize + 5}
                 />
               }
-              bg="transparent"
+              bg="bgSubtle"
               border="1px solid"
-              borderColor={colorMode === 'light' ? 'gray.200' : 'gray.700'}
+              borderColor="borderDefault"
               h="30px"
               minW="30px"
             />

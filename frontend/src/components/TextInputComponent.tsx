@@ -10,7 +10,6 @@ import {
   PopoverTrigger,
   Text,
   Textarea,
-  useColorMode,
 } from '@chakra-ui/react';
 import { RefObject, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -26,8 +25,6 @@ export default function TextInput(props: {
   const [charCount, setCharCount] = useState(0);
   const [popoverIsOpen, setPopoverIsOpen] = useState(false);
   const [previousText, setPreviousText] = useState('');
-  const { colorMode } = useColorMode();
-  const isDark = colorMode === 'dark';
   const user = useSelector((state: RootState) => state.auth.username);
   const percentLoaded = useSelector(
     (state: RootState) => state.loading.percentLoaded,

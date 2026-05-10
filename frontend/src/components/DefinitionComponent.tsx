@@ -23,8 +23,6 @@ function DefinitionContent(props: {
     (state: RootState) => state.settings.pinyin_type,
   );
   const palette = colorMode === 'dark' ? TONE_DARK : TONE_LIGHT;
-  const borderColor = 'borderDefault';
-  const subColor = 'fgMuted';
 
   const pron = (c: string) => getCharPron(c, props.dictionary, pronunciationSetting, pinyinSetting);
 
@@ -35,8 +33,7 @@ function DefinitionContent(props: {
 
   return (
     <VStack align="stretch" spacing={0}>
-      {/* Header: per-character columns (pinyin above, hanzi below) + definition */}
-      <Box p="18px 18px 14px" borderBottomWidth={1} borderColor={borderColor}>
+      <Box p="18px 18px 14px" borderBottomWidth={1} borderColor="borderDefault">
         <Box display="flex" flexWrap="wrap" gap="6px" alignItems="flex-end" mb={3}>
           {chars.map((c, i) => (
             <Box key={i} display="flex" flexDirection="column" alignItems="center">
@@ -45,7 +42,7 @@ function DefinitionContent(props: {
                 fontSize={pronFontSize}
                 lineHeight={1}
                 mb="3px"
-                color={subColor}
+                color="fgMuted"
                 letterSpacing="0.01em"
               >
                 {pron(c)}
@@ -71,14 +68,13 @@ function DefinitionContent(props: {
         </Text>
       </Box>
 
-      {/* Per-hanzi breakdown for multi-char words */}
       {isMulti && (
         <Box pt="10px" pb="4px">
           <Text
             fontSize="10px"
             textTransform="uppercase"
             letterSpacing="0.14em"
-            color={subColor}
+            color="fgMuted"
             mb={1}
             px="14px"
           >
@@ -88,7 +84,7 @@ function DefinitionContent(props: {
             props.dictionary[c] ? (
               <Box key={i}>
                 {i > 0 && (
-                  <Box borderTopWidth={1} borderColor={borderColor} mx="14px" />
+                  <Box borderTopWidth={1} borderColor="borderDefault" mx="14px" />
                 )}
                 <HStack spacing={3} align="flex-start" px="14px" py="8px">
                   <Text
@@ -105,7 +101,7 @@ function DefinitionContent(props: {
                     fontFamily={FONT_SANS}
                     fontSize="13px"
                     lineHeight={1}
-                    color={subColor}
+                    color="fgMuted"
                     minW="48px"
                     pt="3px"
                   >

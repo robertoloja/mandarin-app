@@ -4,6 +4,7 @@ import {
   SegmentResponseType,
   UserPreferences,
 } from './types';
+import { UserLanguage } from '@/localization/main';
 import type { AppDispatch } from './store/store';
 import { setError, clearError } from '@/utils/store/errorSlice';
 import { setPreferences } from './store/settingsSlice';
@@ -23,7 +24,6 @@ export function injectStore(
   _logout = logout;
   _setUserDetails = setUserDetails;
 }
-import { UserLanguage } from '@/localization/main';
 
 export function getCookie(name: string): string | null {
   if (typeof document !== 'undefined') {
@@ -46,7 +46,6 @@ const api = axios.create({
   timeout: TIMEOUT,
 });
 
-// The response interceptor uses these error handlers.
 const errorHandler = (error: {
   message: string;
   response: { status: any };
@@ -54,37 +53,27 @@ const errorHandler = (error: {
 }) => {
   const statusCode = error.response?.status;
   if (error.code === 'ECONNABORTED') {
-    setError(
+    _dispatch?.(setError(
       'Connection timeout. The server might be under heavy load. Please try again soon.',
-    );
+    ));
   }
-
-  if (statusCode && statusCode === 403) {
+  if (statusCode === 403) {
     _dispatch?.(setError('Authentication error: CSRF token validation failed.'));
   }
-
-  if (statusCode && ![401, 404, 409, 400].includes(statusCode)) {
-    _dispatch?.(
-      setError(
-        'There has been an error connecting to the server. Please try again soon',
-      ),
-    );
+  if (statusCode && ![401, 403, 404, 409, 400].includes(statusCode)) {
+    _dispatch?.(setError(
+      'There has been an error connecting to the server. Please try again soon',
+    ));
   }
   return Promise.reject(error);
 };
 
-// Response Interceptor: Handle errors
 api.interceptors.response.use(
-  (response) => {
-    _dispatch?.(clearError());
-    return response;
-  },
-  (error) => {
-    return errorHandler(error);
-  },
+  (response) => { _dispatch?.(clearError()); return response; },
+  (error) => errorHandler(error),
 );
 
-// Request Interceptor: Sets or gets CSRF token
+// Sets CSRF token header from cookie on every request
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const csrfToken = getCookie('csrftoken');
   if (csrfToken) {
@@ -93,16 +82,11 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// API endpoints
 export const MandoBotAPI = {
   segment: async function (sentence: string): Promise<SegmentResponseType> {
-    const endpoint = `/segment?data=${encodeURIComponent(sentence)}`;
-
     const response = await api.post(
-      endpoint,
-      {
-        sentence: sentence,
-      },
+      `/segment?data=${encodeURIComponent(sentence)}`,
+      { sentence },
       { withCredentials: true },
     );
     return response.data;
@@ -137,19 +121,15 @@ export const MandoBotAPI = {
     const response = await api.post(
       '/accounts/login',
       new URLSearchParams({ username, password }),
-      {
-        withCredentials: true,
-      },
+      { withCredentials: true },
     );
-    _dispatch?.(
-      setPreferences({
-        pronunciation_preference: response.data.pronunciation_preference,
-        theme_preference: response.data.theme_preference,
-        user_language:
-          (localStorage.getItem('user_language') as UserLanguage) ??
-          response.data.user_language,
-      }),
-    );
+    _dispatch?.(setPreferences({
+      pronunciation_preference: response.data.pronunciation_preference,
+      theme_preference: response.data.theme_preference,
+      user_language:
+        (localStorage.getItem('user_language') as UserLanguage) ??
+        response.data.user_language,
+    }));
     return response.data;
   },
 
@@ -193,93 +173,65 @@ export const MandoBotAPI = {
   },
 
   updateCSRF: async function () {
-    await api
-      .get('/accounts/csrf', { withCredentials: true })
-      .then((response) => {
-        document.cookie = `csrfToken=${response.data}; path=/`;
-      });
+    const response = await api.get('/accounts/csrf', { withCredentials: true });
+    document.cookie = `csrfToken=${response.data}; path=/`;
   },
 
-  /**
-   * Gets user preferences and sets user info and preferences
-   * in the redux store, if user is logged in.
-   * @returns Promise<boolean>
-   */
   getUserSettings: async function (): Promise<boolean> {
-    let result = false;
-    await api
-      .get('/accounts/user_settings', {
+    try {
+      const response = await api.get('/accounts/user_settings', {
         withCredentials: true,
-      })
-      .then((response) => {
-        if (response.data.username) {
-          if (_setUserDetails) {
-            _dispatch?.(
-              _setUserDetails({
-                username: response.data.username,
-                email: response.data.email,
-              }),
-            );
-          }
-          _dispatch?.(
-            setPreferences({
-              pronunciation_preference: response.data.pronunciation_preference,
-              theme_preference: response.data.theme_preference,
-              user_language:
-                (localStorage.getItem('user_language') as UserLanguage) ??
-                response.data.user_language,
-            }),
-          );
-        }
-        result = true;
-      })
-      .catch(() => {
-        result = false;
       });
-    return result;
+      if (response.data.username) {
+        if (_setUserDetails) {
+          _dispatch?.(_setUserDetails({
+            username: response.data.username,
+            email: response.data.email,
+          }));
+        }
+        _dispatch?.(setPreferences({
+          pronunciation_preference: response.data.pronunciation_preference,
+          theme_preference: response.data.theme_preference,
+          user_language:
+            (localStorage.getItem('user_language') as UserLanguage) ??
+            response.data.user_language,
+        }));
+      }
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   pronunciationPreference: async function (
     preference: PronunciationPreference,
   ): Promise<boolean> {
-    let result = false;
-    await api
-      .post('/accounts/pronunciation_preference', { preference })
-      .then(() => {
-        result = true;
-      })
-      .catch(() => {
-        result = false;
-      });
-    return result;
+    try {
+      await api.post('/accounts/pronunciation_preference', { preference });
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   themePreference: async function (preference: 0 | 1): Promise<boolean> {
-    let result = false;
-    await api
-      .post('/accounts/theme_preference', { preference })
-      .then(() => {
-        result = true;
-      })
-      .catch(() => {
-        result = false;
-      });
-    return result;
+    try {
+      await api.post('/accounts/theme_preference', { preference });
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   languagePreference: async function (
     language: UserLanguage,
   ): Promise<boolean> {
-    let result = false;
-    await api
-      .post('/accounts/language_preference', { language })
-      .then(() => {
-        result = true;
-      })
-      .catch(() => {
-        result = false;
-      });
-    return result;
+    try {
+      await api.post('/accounts/language_preference', { language });
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   changePassword: async function (
@@ -288,9 +240,8 @@ export const MandoBotAPI = {
     new_password: string,
     password_confirmation: string,
   ): Promise<boolean> {
-    let result = false;
-    await api
-      .post(
+    try {
+      await api.post(
         '/accounts/change_password',
         new URLSearchParams({
           username,
@@ -298,14 +249,12 @@ export const MandoBotAPI = {
           new_password,
           password_confirmation,
         }),
-        {
-          withCredentials: true,
-        },
-      )
-      .then(() => {
-        result = true;
-      });
-    return result;
+        { withCredentials: true },
+      );
+      return true;
+    } catch {
+      return false;
+    }
   },
 
   resetPasswordRequest: async function (
@@ -313,9 +262,7 @@ export const MandoBotAPI = {
   ): Promise<{ message: string }> {
     const response = await api.post(
       '/accounts/reset_password_request',
-      new URLSearchParams({
-        username,
-      }),
+      new URLSearchParams({ username }),
       { withCredentials: true },
     );
     return response.data;

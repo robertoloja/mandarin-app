@@ -2,7 +2,7 @@
 
 import { Box, Text } from '@chakra-ui/react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { MandarinSentenceClass } from './MandarinSentenceClass';
 import MandarinSentence from '@/components/MandarinSentenceComponent';
@@ -19,7 +19,6 @@ import { FONT_SANS, FONT_SERIF } from '@/theme';
 const SENTENCE_ENDINGS = new Set(['。', '！', '？', '…', '!', '?']);
 
 export default function HomeClient() {
-  const [isReturningUser, setIsReturningUser] = useState<boolean | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const percentLoaded = useSelector(
     (state: RootState) => state.loading.percentLoaded,
@@ -32,10 +31,6 @@ export default function HomeClient() {
   );
   const urlShareId = useSearchParams().get('share_id') || '';
 
-  useEffect(() => {
-    setIsReturningUser(!!localStorage.getItem('hasVisited'));
-    localStorage.setItem('hasVisited', '1');
-  }, []);
 
   useEffect(() => {
     if (urlShareId !== '') {
@@ -145,12 +140,7 @@ export default function HomeClient() {
 
         <Box mt={8}>
           {sentences.length === 0 && urlShareId === '' ? (
-            isReturningUser !== null && (
-              <WelcomeCard
-                isReturningUser={isReturningUser}
-                user_language={user_language}
-              />
-            )
+            <WelcomeCard user_language={user_language} />
           ) : (
             <>
               {sentences.map((sentence, i) => (

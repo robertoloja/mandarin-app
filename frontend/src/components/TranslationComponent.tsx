@@ -1,17 +1,15 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { Center, Box, Text, useColorMode } from '@chakra-ui/react';
+import { Center, Box, Text } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
 import { RootState, store } from '@/utils/store/store';
 import { setTranslationPanelHeight } from '@/utils/store/mandarinSentenceSlice';
 
 function Translation(props: { translations: Record<string, string> }) {
-  const { colorMode } = useColorMode();
-  const lightGradientBgString =
-    'linear-gradient(to bottom, rgba(255, 255, 255, 1) 10%, rgba(0, 0, 0, 0) 100%);';
-  const darkGradientBgString = `linear-gradient(to bottom, rgba(40, 40, 40, 1) 10%, rgba(0, 0, 0, 0) 100%);`;
+  // CSS var resolves to the current bgCanvas value in both light and dark mode
+  const gradientBg = 'linear-gradient(to bottom, var(--chakra-colors-bgCanvas) 10%, transparent 100%)';
 
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
@@ -19,7 +17,6 @@ function Translation(props: { translations: Record<string, string> }) {
 
   const text = props.translations[user_language] ?? '';
   const maxHeight = 300;
-
   const minHeight = 20;
 
   const height = useSelector(
@@ -91,7 +88,7 @@ function Translation(props: { translations: Record<string, string> }) {
       height={`${height}px`}
       maxHeight="50%"
       shadow="md"
-      bg={colorMode === 'light' ? 'white' : '#282828'}
+      bg="bgCanvas"
       zIndex={1}
     >
       <Box
@@ -101,9 +98,7 @@ function Translation(props: { translations: Record<string, string> }) {
         position="fixed"
         borderTopRadius="lg"
         mx="10%"
-        bg={
-          colorMode === 'light' ? lightGradientBgString : darkGradientBgString
-        }
+        bg={gradientBg}
         left="40%"
         transform="translatex(-50%)"
         onMouseDown={handleStartResize}
@@ -114,7 +109,7 @@ function Translation(props: { translations: Record<string, string> }) {
           cursor="ns-resize"
           mx="30%"
           borderRadius="lg"
-          bg="darkgrey"
+          bg="fgSubtle"
           minW="10rem"
           height="0.3rem"
           onMouseDown={handleStartResize}

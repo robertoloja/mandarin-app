@@ -261,7 +261,7 @@ export default function TableOfContentsButton({
       <IconButton
         aria-label="Table of contents"
         icon={<IoListOutline size={iconSize + 3} />}
-        bg="transparent"
+        bg="bgSubtle"
         border="1px solid"
         borderColor="borderDefault"
         h="30px"

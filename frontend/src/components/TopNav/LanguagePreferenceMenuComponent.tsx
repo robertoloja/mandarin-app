@@ -41,7 +41,7 @@ export default function LanguagePreferenceMenuButton({
               {user_language}
             </Text>
           }
-          bg="transparent"
+          bg="bgSubtle"
           border="1px solid"
           borderColor="borderDefault"
           h="30px"

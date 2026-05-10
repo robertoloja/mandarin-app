@@ -14,7 +14,15 @@ import { UserLanguage } from '@/localization/main';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import DefinitionContent from './DefinitionComponent';
-import { TONE_DARK, TONE_LIGHT, RUBY_COLOR_DARK, RUBY_COLOR_LIGHT, getTone, getCharPron } from '@/utils/mandarin';
+import {
+  TONE_DARK,
+  TONE_LIGHT,
+  RUBY_COLOR_DARK,
+  RUBY_COLOR_LIGHT,
+  getTone,
+  getCharPron,
+  isPunct,
+} from '@/utils/mandarin';
 import { FONT_SANS, FONT_CHINESE } from '@/theme';
 
 function Word(props: {
@@ -39,12 +47,7 @@ function Word(props: {
   );
   const dictionary = props.dictionary ?? reduxDictionary;
 
-  const isPunct =
-    props.word.word === '' ||
-    (props.pronunciation.length > 0 &&
-      props.word.word === props.pronunciation[0]);
-
-  if (isPunct) {
+  if (isPunct(props.word.word, props.word.pinyin)) {
     return (
       <span
         style={{
@@ -81,10 +84,15 @@ function Word(props: {
           px="2px"
           mx="1px"
           borderRadius={4}
+          borderBottomWidth="1px"
+          borderBottomColor="rgba(0,0,0,0)"
           className="reading-token"
           userSelect="none"
           tabIndex={0}
           aria-label={`word: ${props.word.word}`}
+          _hover={{
+            borderBottomColor: 'fgSubtle',
+          }}
         >
           {chars.map((c, i) => (
             <Box
@@ -110,7 +118,12 @@ function Word(props: {
                   pointerEvents="none"
                   aria-hidden
                 >
-                  {getCharPron(c, dictionary, pronunciationSetting, pinyinSetting)}
+                  {getCharPron(
+                    c,
+                    dictionary,
+                    pronunciationSetting,
+                    pinyinSetting,
+                  )}
                 </Box>
               )}
               <Box
@@ -129,12 +142,11 @@ function Word(props: {
       <PopoverContent
         width="360px"
         borderRadius="10px"
-        overflow="hidden"
         zIndex={200}
         _focus={{ outline: 'none' }}
       >
         <PopoverArrow />
-        <PopoverBody p={0}>
+        <PopoverBody p={0} overflow="hidden" borderRadius="10px">
           <DefinitionContent
             word={props.word.word}
             definitions={props.definitions}
