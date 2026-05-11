@@ -65,7 +65,7 @@ const top_nav = {
   },
   tone_colors: {
     en: 'Tone Colors',
-    de: '',
+    de: 'Farbtöne',
   },
 };
 

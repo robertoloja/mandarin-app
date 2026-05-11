@@ -16,12 +16,12 @@ const home_page = {
     {
       heading: {
         en: 'New Site Design',
-        de: '',
+        de: 'Neues Website-Design',
       },
       date: { en: 'May 11th, 2026', de: '11. Mai 2026' },
       body: {
         en: "MandoBot has a totally new design! Using more consistent colors and fonts throughout, we've also drastically changed the [Reading Room](/reading) to improve reading flow. Checkout the 'flow' view as well as the 'vocab card' view. \n We've also added tone colors (which you can turn off, in case you want to practice reading without them).",
-        de: '',
+        de: "MandoBot hat ein komplett neues Design! Wir haben eine einheitlichere Farbgebung und Schriftart verwendet und zudem den [Lesesaal](/reading) grundlegend überarbeitet, um den Lesefluss zu verbessern. Schau dir sowohl die 'Flow'-Ansicht als auch die 'Vokabelraster'-Ansicht an. \n Außerdem haben wir Farbtöne hinzugefügt (die deaktiviert werden können, falls du ohne sie lesen üben möchtest).",
       },
       author: 'mandoBot team',
     },
