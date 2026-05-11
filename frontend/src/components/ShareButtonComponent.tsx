@@ -14,7 +14,7 @@ import { IoClipboardOutline, IoShareSocialOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '@/utils/store/store';
-import { FONT_SANS } from '@/theme';
+import { FONT_SANS, FONT_SIZE_MICRO, FONT_SIZE_SMALL } from '@/theme';
 
 export default function ShareButton(props: {
   iconSize: number;
@@ -73,7 +73,7 @@ export default function ShareButton(props: {
         <PopoverBody p={0}>
           <Box
             fontFamily={FONT_SANS}
-            fontSize="10px"
+            fontSize={FONT_SIZE_MICRO}
             textTransform="uppercase"
             letterSpacing="0.14em"
             color="fgSubtle"
@@ -88,7 +88,7 @@ export default function ShareButton(props: {
           >
             <Text
               fontFamily={FONT_SANS}
-              fontSize="12px"
+              fontSize={FONT_SIZE_SMALL}
               color="fgMuted"
               flex={1}
               overflow="hidden"

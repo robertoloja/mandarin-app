@@ -20,7 +20,7 @@ import {
 } from '@/utils/store/settingsSlice';
 import { MandoBotAPI } from '@/utils/api';
 import localization from '@/localization/main';
-import { FONT_SANS } from '@/theme';
+import { FONT_SANS, FONT_SIZE_SMALL, FONT_SIZE_UI } from '@/theme';
 
 function SegBtn({
   active,
@@ -36,7 +36,7 @@ function SegBtn({
       as="button"
       onClick={onClick}
       fontFamily={FONT_SANS}
-      fontSize="12px"
+      fontSize={FONT_SIZE_SMALL}
       fontWeight={active ? 600 : 400}
       px={3}
       py="4px"
@@ -90,7 +90,7 @@ function Row({
     >
       <Text
         fontFamily={FONT_SANS}
-        fontSize="13px"
+        fontSize={FONT_SIZE_UI}
         color="fgBody"
         whiteSpace="nowrap"
       >

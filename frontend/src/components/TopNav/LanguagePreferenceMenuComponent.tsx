@@ -14,7 +14,7 @@ import {
 import { useSelector } from 'react-redux';
 import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
 import localization from '@/localization/main';
-import { FONT_SANS } from '@/theme';
+import { FONT_SANS, FONT_SIZE_MICRO, FONT_SIZE_UI } from '@/theme';
 
 export default function LanguagePreferenceMenuButton({
   iconSize: _iconSize,
@@ -35,7 +35,7 @@ export default function LanguagePreferenceMenuButton({
               fontFamily={FONT_SANS}
               fontWeight={500}
               textTransform="uppercase"
-              fontSize="13px"
+              fontSize={FONT_SIZE_UI}
               letterSpacing="0.04em"
             >
               {user_language}
@@ -65,7 +65,7 @@ export default function LanguagePreferenceMenuButton({
         <PopoverBody p={0}>
           <Box
             fontFamily={FONT_SANS}
-            fontSize="10px"
+            fontSize={FONT_SIZE_MICRO}
             textTransform="uppercase"
             letterSpacing="0.14em"
             color="fgSubtle"

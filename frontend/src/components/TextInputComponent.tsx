@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { MAX_LENGTH, MAX_LENGTH_FREE } from 'constant_variables';
 import Link from 'next/link';
 import localization, { UserLanguage } from '@/localization/main';
-import { FONT_CHINESE, FONT_SANS } from '@/theme';
+import { FONT_CHINESE, FONT_SANS, FONT_SIZE_LABEL, FONT_SIZE_UI, FONT_SIZE_PROSE } from '@/theme';
 
 export default function TextInput(props: {
   inputRef: RefObject<HTMLTextAreaElement | null>;
@@ -71,7 +71,7 @@ export default function TextInput(props: {
         _placeholder={{
           color: "fgMuted",
           fontFamily: FONT_SANS,
-          fontSize: '15px',
+          fontSize: FONT_SIZE_PROSE,
         }}
         _focus={{
           borderColor: "fgSubtle",
@@ -93,7 +93,7 @@ export default function TextInput(props: {
           <PopoverTrigger>
             <Text
               fontFamily={FONT_SANS}
-              fontSize="11px"
+              fontSize={FONT_SIZE_LABEL}
               color={
                 atLimit ? 'red.400' : nearLimit ? 'orange.400' : 'fgSubtle'
               }
@@ -117,7 +117,7 @@ export default function TextInput(props: {
           >
             <PopoverArrow bg="bgCanvas" />
             <PopoverBody p={0}>
-              <Text fontFamily={FONT_SANS} fontSize="13px" color="fgBody">
+              <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody">
                 {localization.home_page.info[1][props.user_language]}{' '}
                 {MAX_LENGTH_FREE}{' '}
                 {localization.home_page.info[2][props.user_language]}{' '}

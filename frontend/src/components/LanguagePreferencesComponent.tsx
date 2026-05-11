@@ -6,7 +6,7 @@ import { RootState, store } from '@/utils/store/store';
 import { Box } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import localization, { UserLanguage } from '@/localization/main';
-import { FONT_SANS } from '@/theme';
+import { FONT_SANS, FONT_SIZE_SMALL } from '@/theme';
 
 export default function LanguagePreferencesComponent() {
   const user_language = useSelector(
@@ -44,7 +44,7 @@ export default function LanguagePreferencesComponent() {
             as="button"
             onClick={() => handleLanguageChange(lang.code as UserLanguage)}
             fontFamily={FONT_SANS}
-            fontSize="12px"
+            fontSize={FONT_SIZE_SMALL}
             fontWeight={isActive ? 600 : 400}
             px={3}
             py="4px"

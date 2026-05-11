@@ -1,39 +1,20 @@
 'use client';
 
-import ServerStatusComponent from '@/app/about/components/ServerStatusComponent';
-import { Box, Flex } from '@chakra-ui/react';
-import ProjectSupportCard from './components/ProjectSupportCardComponent';
-import { PrivacyPolicyCard } from './components/PrivacyPolicyCardComponent';
+import { Box } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
+import ServerStatusComponent from './components/ServerStatusComponent';
+import ProjectSupportCard from './components/ProjectSupportCardComponent';
+import { PrivacyPolicyCard } from './components/PrivacyPolicyCardComponent';
 
 export default function AboutClient() {
   const user_language = useSelector((state: RootState) => state.settings.user_language);
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      width="100vw"
-      overflowX="hidden"
-    >
-      <Flex
-        justifyContent="center"
-        direction={{ base: 'column', lg: 'row' }}
-        align="center"
-        alignItems={{ base: 'center', lg: 'flex-start' }}
-        justify="center"
-        p={4}
-        m={[2, 10]}
-        gap={4}
-        maxWidth="100vw"
-        boxSizing="border-box"
-        wrap="wrap"
-      >
-        <ServerStatusComponent user_language={user_language} />
-        <ProjectSupportCard user_language={user_language}/>
-        <PrivacyPolicyCard user_language={user_language}/>
-      </Flex>
+    <Box display="flex" flexDirection="column" alignItems="center" px={[4, 8]} pt={10} pb={20}>
+      <ServerStatusComponent user_language={user_language} />
+      <ProjectSupportCard user_language={user_language} />
+      <PrivacyPolicyCard user_language={user_language} />
     </Box>
   );
 }

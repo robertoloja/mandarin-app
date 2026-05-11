@@ -23,7 +23,7 @@ import {
   getCharPron,
   isPunct,
 } from '@/utils/mandarin';
-import { FONT_SANS, FONT_CHINESE } from '@/theme';
+import { FONT_SANS, FONT_CHINESE, FONT_SIZE_READING } from '@/theme';
 
 function Word(props: {
   word: MandarinWordType;
@@ -52,7 +52,7 @@ function Word(props: {
       <span
         style={{
           fontFamily: FONT_CHINESE,
-          fontSize: '1.5rem',
+          fontSize: FONT_SIZE_READING,
           lineHeight: 1.4,
           color: 'inherit',
           display: 'inline-block',
@@ -129,7 +129,7 @@ function Word(props: {
               <Box
                 as="span"
                 fontFamily={FONT_CHINESE}
-                fontSize="1.5rem"
+                fontSize={FONT_SIZE_READING}
                 lineHeight={1.1}
                 color={palette[getTone(c, dictionary)]}
               >

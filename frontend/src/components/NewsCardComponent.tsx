@@ -2,7 +2,7 @@
 import { Box, Text, VStack } from '@chakra-ui/react';
 import localization, { UserLanguage } from '@/localization/main';
 import AppMarkdown from '@/components/AppMarkdown';
-import { FONT_SANS, FONT_SERIF } from '@/theme';
+import { FONT_SANS, FONT_SERIF, FONT_SIZE_LABEL, FONT_SIZE_UI, FONT_SIZE_BODY, FONT_SIZE_SUBHEAD } from '@/theme';
 
 function NewsItem({
   item,
@@ -20,7 +20,7 @@ function NewsItem({
       )}
       <Text
         fontFamily={FONT_SERIF}
-        fontSize="16px"
+        fontSize={FONT_SIZE_SUBHEAD}
         fontWeight={500}
         fontStyle="italic"
         lineHeight={1.3}
@@ -31,7 +31,7 @@ function NewsItem({
       </Text>
       <Text
         fontFamily={FONT_SANS}
-        fontSize="11px"
+        fontSize={FONT_SIZE_LABEL}
         textTransform="uppercase"
         letterSpacing="0.10em"
         color="fgMuted"
@@ -42,7 +42,7 @@ function NewsItem({
       <Text
         as="div"
         fontFamily={FONT_SANS}
-        fontSize="14px"
+        fontSize={FONT_SIZE_BODY}
         lineHeight={1.7}
         color="fgBody"
         mb={3}
@@ -51,7 +51,7 @@ function NewsItem({
       </Text>
       <Text
         fontFamily={FONT_SANS}
-        fontSize="13px"
+        fontSize={FONT_SIZE_UI}
         fontStyle="italic"
         color="fgMuted"
         textAlign="right"
@@ -78,7 +78,7 @@ function NewsCard({ user_language }: { user_language: UserLanguage }) {
     >
       <Text
         fontFamily={FONT_SANS}
-        fontSize="11px"
+        fontSize={FONT_SIZE_LABEL}
         textTransform="uppercase"
         letterSpacing="0.18em"
         color="fgMuted"

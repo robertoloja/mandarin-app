@@ -1,112 +1,326 @@
 'use client';
 
-import { RootState } from '@/utils/store/store';
+import { RootState, store } from '@/utils/store/store';
 import { useSelector } from 'react-redux';
-import {
-  Box,
-  Text,
-  Button,
-  Center,
-  Heading,
-  VStack,
-  HStack,
-  Switch,
-  Spacer,
-  useColorMode,
-  useDisclosure,
-  Collapse,
-} from '@chakra-ui/react';
+import { Box, Collapse, Text, useColorMode, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import PronunciationPreferencesComponent from '@/components/PronunciationPreferencesComponent';
-import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 import { useEffect } from 'react';
+import {
+  setPronunciationFontSize,
+  togglePinyin,
+  togglePronunciation,
+} from '@/utils/store/settingsSlice';
+import { MandoBotAPI } from '@/utils/api';
 import PasswordChangeComponent from '../auth/components/PasswordChangeComponent';
+import LanguagePreferencesComponent from '@/components/LanguagePreferencesComponent';
 import localization from '@/localization/main';
+import {
+  FONT_SANS,
+  FONT_SERIF,
+  FONT_SIZE_LABEL,
+  FONT_SIZE_SMALL,
+  FONT_SIZE_UI,
+  FONT_SIZE_SUBHEAD,
+} from '@/theme';
+
+function SegBtn({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Box
+      as="button"
+      onClick={onClick}
+      fontFamily={FONT_SANS}
+      fontSize={FONT_SIZE_SMALL}
+      fontWeight={active ? 600 : 400}
+      px={3}
+      py="4px"
+      border="none"
+      borderRadius="5px"
+      bg={active ? 'bgActive' : 'transparent'}
+      color={active ? 'fgPrimary' : 'fgMuted'}
+      cursor="pointer"
+      transition="all 0.14s"
+      boxShadow={active ? 'sm' : 'none'}
+    >
+      {children}
+    </Box>
+  );
+}
+
+function SegControl({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      display="inline-flex"
+      borderRadius="7px"
+      border="1px solid"
+      borderColor="borderDefault"
+      bg="bgSubtle"
+      p="2px"
+      gap="1px"
+    >
+      {children}
+    </Box>
+  );
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <Box display="flex" alignItems="center" justifyContent="space-between" gap={4} py="10px">
+      <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody" whiteSpace="nowrap">
+        {label}
+      </Text>
+      {children}
+    </Box>
+  );
+}
+
+function Divider() {
+  return <Box borderBottom="1px solid" borderColor="borderSubtle" />;
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <Box
+      maxW="2xl"
+      w="100%"
+      border="1px solid"
+      borderColor="borderDefault"
+      borderRadius="12px"
+      bg="bgCanvas"
+      px={[6, 8]}
+      py={6}
+      mb={4}
+    >
+      {children}
+    </Box>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <Text
+      fontFamily={FONT_SANS}
+      fontSize={FONT_SIZE_LABEL}
+      textTransform="uppercase"
+      letterSpacing="0.14em"
+      color="fgMuted"
+      mb={4}
+    >
+      {children}
+    </Text>
+  );
+}
 
 export default function Settings() {
   const router = useRouter();
   const email = useSelector((state: RootState) => state.auth.email);
   const username = useSelector((state: RootState) => state.auth.username);
   const user_language = useSelector((state: RootState) => state.settings.user_language);
+  const pronunciation = useSelector((state: RootState) => state.settings.pronunciation);
+  const pinyinType = useSelector((state: RootState) => state.settings.pinyin_type);
+  const pronunciationFontSize = useSelector((state: RootState) => state.settings.pronunciationFontSize);
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onToggle } = useDisclosure();
 
+  const loc = localization.account_settings;
+  const navLoc = localization.top_nav;
+  const rubyOn = pronunciationFontSize !== 0;
+
   useEffect(() => {
     document.title = 'mandoBot - Settings';
-    if (!username) {
-      router.push('/');
-    }
+    if (!username) router.push('/');
   }, []);
-  if (!username) return <></>;
+
+  if (!username) return null;
+
+  const handleTogglePronun = () => {
+    if (username) {
+      MandoBotAPI.pronunciationPreference(
+        pronunciation === 'zhuyin' ? pinyinType : 'zhuyin',
+      ).then(() => store.dispatch(togglePronunciation()));
+    } else {
+      store.dispatch(togglePronunciation());
+    }
+  };
+
+  const handleTogglePinyin = () => {
+    if (username) {
+      MandoBotAPI.pronunciationPreference(
+        pinyinType === 'pinyin_acc' ? 'pinyin_num' : 'pinyin_acc',
+      ).then(() => store.dispatch(togglePinyin()));
+    } else {
+      store.dispatch(togglePinyin());
+    }
+  };
 
   return (
-    <VStack>
-      <Heading p={5}>{localization.account_settings.settings[user_language]}</Heading>
-
-      <Box
-        border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas"
-        p={5}
-        m={2}
-        minW={['91vw', '30rem']}
-      >
-        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
-          <Text aria-label="username display">{localization.account_settings.username[user_language]}: {username}</Text>
-          <Text aria-label="email display">{localization.account_settings.email[user_language]}: {email}</Text>
-
-          <Text as="u">
-            <Link href="" onClick={onToggle} aria-label="change password link">
-              {localization.account_settings.change_password[user_language]}
-            </Link>
-          </Text>
-
-          <Collapse in={isOpen}>
-            <PasswordChangeComponent changed={onToggle} user_language={user_language} />
-          </Collapse>
-        </Box>
-
-        <Text>{localization.account_settings.pronunciation_preferences[user_language]}</Text>
-
-        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
-          <PronunciationPreferencesComponent />
-        </Box>
-
-        <Spacer m={5} />
-
-        <Text>{localization.account_settings.user_language[user_language]}</Text>
-        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
-          <LanguagePreferencesComponent />
-        </Box>
-
-        <Spacer m={5} />
-
-        <Text>{localization.account_settings.color_theme[user_language]}</Text>
-        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={3} m={2}>
-          <Center>
-            <HStack>
-              <Text>{localization.account_settings.light[user_language]}</Text>
-              <Switch
-                isChecked={colorMode === 'dark'}
-                onChange={toggleColorMode}
-              />
-              <Text>{localization.account_settings.dark[user_language]}</Text>
-            </HStack>
-          </Center>
-        </Box>
-
-        <Spacer m={5} />
-
-        <Text>{localization.account_settings.account[user_language]}</Text>
-
-        <Spacer m={5} />
-        <Box border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle" p={5} m={2}>
-          <Center>
-            <Button color="red" disabled>
-              {localization.account_settings.delete_account[user_language]}
-            </Button>
-          </Center>
-        </Box>
+    <Box display="flex" flexDirection="column" alignItems="center" px={[4, 8]} pt={10} pb={20}>
+      <Box maxW="2xl" w="100%" mb={6}>
+        <Text
+          fontFamily={FONT_SERIF}
+          fontSize={FONT_SIZE_SUBHEAD}
+          fontWeight={500}
+          fontStyle="italic"
+          color="fgPrimary"
+        >
+          {loc.settings[user_language]}
+        </Text>
       </Box>
-    </VStack>
+
+      <Card>
+        <SectionLabel>{loc.account[user_language]}</SectionLabel>
+        <Row label={loc.username[user_language]}>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgMuted">
+            {username}
+          </Text>
+        </Row>
+        <Divider />
+        <Row label={loc.email[user_language]}>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgMuted">
+            {email}
+          </Text>
+        </Row>
+        <Divider />
+        <Row label={loc.change_password[user_language]}>
+          <Box
+            as="button"
+            onClick={onToggle}
+            fontFamily={FONT_SANS}
+            fontSize={FONT_SIZE_SMALL}
+            fontWeight={500}
+            px={3}
+            py="4px"
+            border="1px solid"
+            borderColor="borderEmphasis"
+            borderRadius="6px"
+            bg="transparent"
+            color="fgBody"
+            cursor="pointer"
+            transition="all 0.14s"
+            _hover={{ borderColor: 'fgMuted', color: 'fgPrimary' }}
+          >
+            {isOpen ? loc.hide[user_language] : loc.show[user_language]}
+          </Box>
+        </Row>
+        <Collapse in={isOpen}>
+          <Box pt={2} pb={1}>
+            <PasswordChangeComponent changed={onToggle} user_language={user_language} />
+          </Box>
+        </Collapse>
+      </Card>
+
+      <Card>
+        <SectionLabel>{loc.pronunciation_preferences[user_language]}</SectionLabel>
+        <Row label={navLoc.pronunciation[user_language]}>
+          <SegControl>
+            <SegBtn
+              active={!rubyOn}
+              onClick={() => store.dispatch(setPronunciationFontSize(0))}
+            >
+              {navLoc.off[user_language]}
+            </SegBtn>
+            <SegBtn
+              active={rubyOn}
+              onClick={() => store.dispatch(setPronunciationFontSize(pronunciationFontSize || 15))}
+            >
+              {navLoc.on[user_language]}
+            </SegBtn>
+          </SegControl>
+        </Row>
+        <Divider />
+        <Row label={navLoc.script[user_language]}>
+          <SegControl>
+            <SegBtn
+              active={pronunciation === 'pinyin'}
+              onClick={pronunciation === 'zhuyin' ? handleTogglePronun : () => {}}
+            >
+              pīnyīn
+            </SegBtn>
+            <SegBtn
+              active={pronunciation === 'zhuyin'}
+              onClick={pronunciation === 'pinyin' ? handleTogglePronun : () => {}}
+            >
+              ㄅㄆㄇ
+            </SegBtn>
+          </SegControl>
+        </Row>
+        {pronunciation === 'pinyin' && (
+          <>
+            <Divider />
+            <Row label={navLoc.format[user_language]}>
+              <SegControl>
+                <SegBtn
+                  active={pinyinType === 'pinyin_acc'}
+                  onClick={pinyinType !== 'pinyin_acc' ? handleTogglePinyin : () => {}}
+                >
+                  pīnyīn
+                </SegBtn>
+                <SegBtn
+                  active={pinyinType === 'pinyin_num'}
+                  onClick={pinyinType !== 'pinyin_num' ? handleTogglePinyin : () => {}}
+                >
+                  pin1yin1
+                </SegBtn>
+              </SegControl>
+            </Row>
+          </>
+        )}
+      </Card>
+
+      <Card>
+        <SectionLabel>{loc.interface[user_language]}</SectionLabel>
+        <Row label={loc.user_language[user_language]}>
+          <LanguagePreferencesComponent />
+        </Row>
+        <Divider />
+        <Row label={loc.color_theme[user_language]}>
+          <SegControl>
+            <SegBtn
+              active={colorMode === 'light'}
+              onClick={colorMode !== 'light' ? toggleColorMode : () => {}}
+            >
+              {loc.light[user_language]}
+            </SegBtn>
+            <SegBtn
+              active={colorMode === 'dark'}
+              onClick={colorMode !== 'dark' ? toggleColorMode : () => {}}
+            >
+              {loc.dark[user_language]}
+            </SegBtn>
+          </SegControl>
+        </Row>
+      </Card>
+
+      <Card>
+        <SectionLabel>{loc.danger_zone[user_language]}</SectionLabel>
+        <Row label={loc.delete_account[user_language]}>
+          <Box
+            as="button"
+            disabled
+            fontFamily={FONT_SANS}
+            fontSize={FONT_SIZE_SMALL}
+            fontWeight={500}
+            px={3}
+            py="4px"
+            border="1px solid"
+            borderColor="red.300"
+            borderRadius="6px"
+            bg="transparent"
+            color="red.300"
+            cursor="not-allowed"
+            opacity={0.5}
+          >
+            {loc.delete_account[user_language]}
+          </Box>
+        </Row>
+      </Card>
+    </Box>
   );
 }

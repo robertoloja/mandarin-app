@@ -17,7 +17,7 @@ import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
 import DefinitionContent from './DefinitionComponent';
 import { TONE_DARK, TONE_LIGHT, getTone, getCharPron, isPunct as isPunctChar } from '@/utils/mandarin';
-import { FONT_SANS, FONT_CHINESE } from '@/theme';
+import { FONT_SANS, FONT_CHINESE, FONT_SIZE_MICRO, FONT_SIZE_LABEL, FONT_SIZE_HANZI_MD } from '@/theme';
 
 function VocabCard({
   word,
@@ -79,7 +79,7 @@ function VocabCard({
               >
                 <Text
                   fontFamily={FONT_CHINESE}
-                  fontSize="26px"
+                  fontSize={FONT_SIZE_HANZI_MD}
                   lineHeight={1.1}
                   color={palette[getTone(c, dictionary)]}
                 >
@@ -87,7 +87,7 @@ function VocabCard({
                 </Text>
                 <Text
                   fontFamily={FONT_SANS}
-                  fontSize="10px"
+                  fontSize={FONT_SIZE_MICRO}
                   color="fgMuted"
                   mt="1px"
                 >
@@ -99,7 +99,7 @@ function VocabCard({
           {firstDef && (
             <Text
               fontFamily={FONT_SANS}
-              fontSize="11px"
+              fontSize={FONT_SIZE_LABEL}
               color="fgMuted"
               mt="4px"
               maxW="140px"
@@ -155,7 +155,7 @@ function VocabGrid({ sentence, dictionary, user_language }: VocabGridProps) {
                 key={i}
                 as="span"
                 fontFamily={FONT_CHINESE}
-                fontSize="20px"
+                fontSize="1.25rem"
                 color="fgMuted"
                 alignSelf="center"
                 px="2px"

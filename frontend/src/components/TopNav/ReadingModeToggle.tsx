@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState, store } from '@/utils/store/store';
 import { setReadingMode } from '@/utils/store/settingsSlice';
 import localization from '@/localization/main';
-import { FONT_SANS } from '@/theme';
+import { FONT_SANS, FONT_SIZE_SMALL } from '@/theme';
 
 export default function ReadingModeToggle() {
   const readingMode = useSelector((state: RootState) => state.settings.readingMode);
@@ -30,7 +30,7 @@ export default function ReadingModeToggle() {
             as="button"
             onClick={() => store.dispatch(setReadingMode(mode))}
             fontFamily={FONT_SANS}
-            fontSize="12px"
+            fontSize={FONT_SIZE_SMALL}
             fontWeight={isActive ? 600 : 400}
             px={3}
             py="3px"

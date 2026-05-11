@@ -14,7 +14,7 @@ import TextInput from '@/components/TextInputComponent';
 import { updateLoading } from '@/utils/store/loadingSlice';
 import localization from '@/localization/main';
 import WelcomeCard from '@/components/WelcomeCardComponent';
-import { FONT_SANS, FONT_SERIF } from '@/theme';
+import { FONT_SANS, FONT_SERIF, FONT_SIZE_UI, FONT_SIZE_SUBHEAD } from '@/theme';
 
 const SENTENCE_ENDINGS = new Set(['。', '！', '？', '…', '!', '?']);
 
@@ -103,7 +103,7 @@ export default function HomeClient() {
               type="submit"
               disabled={isLoading}
               fontFamily={FONT_SANS}
-              fontSize="13px"
+              fontSize={FONT_SIZE_UI}
               fontWeight={500}
               px={4}
               py="6px"
@@ -126,7 +126,7 @@ export default function HomeClient() {
             {isLoading && (
               <Text
                 fontFamily={FONT_SANS}
-                fontSize="13px"
+                fontSize={FONT_SIZE_UI}
                 fontStyle="italic"
                 color="fgSubtle"
               >
@@ -163,7 +163,7 @@ export default function HomeClient() {
                   <Text
                     fontFamily={FONT_SERIF}
                     fontStyle="italic"
-                    fontSize="16px"
+                    fontSize={FONT_SIZE_SUBHEAD}
                     lineHeight={1.65}
                     color="fgMuted"
                   >

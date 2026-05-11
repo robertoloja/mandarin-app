@@ -25,7 +25,7 @@ import { Chapter } from '@/app/reading/types';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import localization from '@/localization/main';
-import { ACCENT_DARK, ACCENT_LIGHT, FONT_SANS, FONT_SERIF, FONT_CHINESE } from '@/theme';
+import { ACCENT_DARK, ACCENT_LIGHT, FONT_SANS, FONT_SERIF, FONT_CHINESE, FONT_SIZE_MICRO, FONT_SIZE_LABEL, FONT_SIZE_SMALL, FONT_SIZE_UI, FONT_SIZE_BODY } from '@/theme';
 
 function ChapterRow({
   chapter,
@@ -66,7 +66,7 @@ function ChapterRow({
       <Box display="flex" alignItems="baseline" gap={2}>
         <Text
           fontFamily={FONT_SANS}
-          fontSize="12px"
+          fontSize={FONT_SIZE_SMALL}
           color={!isAvailable ? 'borderEmphasis' : 'fgSubtle'}
           minW="22px"
           sx={{ fontVariantNumeric: 'tabular-nums' }}
@@ -75,7 +75,7 @@ function ChapterRow({
         </Text>
         <Text
           fontFamily={FONT_SANS}
-          fontSize="13px"
+          fontSize={FONT_SIZE_UI}
           fontWeight={isCurrent ? 600 : 400}
           color={
             !isAvailable ? 'borderEmphasis' : isCurrent ? 'fgPrimary' : 'fgBody'
@@ -134,7 +134,7 @@ function SubchapterRow({
       >
         <Text
           fontFamily={FONT_SANS}
-          fontSize="13px"
+          fontSize={FONT_SIZE_UI}
           fontWeight={isCurrent ? 600 : 400}
           color={isCurrent ? 'fgPrimary' : 'fgMuted'}
           lineHeight={1.35}
@@ -175,7 +175,7 @@ function GroupHeader({
     >
       <Text
         fontFamily={FONT_SANS}
-        fontSize="12px"
+        fontSize={FONT_SIZE_SMALL}
         color="fgSubtle"
         minW="22px"
         sx={{ fontVariantNumeric: 'tabular-nums' }}
@@ -184,7 +184,7 @@ function GroupHeader({
       </Text>
       <Text
         fontFamily={FONT_SANS}
-        fontSize="13px"
+        fontSize={FONT_SIZE_UI}
         color="fgBody"
         lineHeight={1.35}
         flex={1}
@@ -296,7 +296,7 @@ export default function TableOfContentsButton({
               >
                 <Text
                   fontFamily={FONT_SANS}
-                  fontSize="10px"
+                  fontSize={FONT_SIZE_MICRO}
                   textTransform="uppercase"
                   letterSpacing="0.14em"
                   color="fgSubtle"
@@ -316,7 +316,7 @@ export default function TableOfContentsButton({
               <Text
                 fontFamily={FONT_SERIF}
                 fontStyle="italic"
-                fontSize="17px"
+                fontSize="1.0625rem"
                 fontWeight={500}
                 color="fgPrimary"
                 lineHeight={1.25}
@@ -326,7 +326,7 @@ export default function TableOfContentsButton({
               </Text>
               <Text
                 fontFamily={FONT_CHINESE}
-                fontSize="14px"
+                fontSize={FONT_SIZE_BODY}
                 color="fgMuted"
                 mb={2}
               >
@@ -351,7 +351,7 @@ export default function TableOfContentsButton({
                   </Box>
                   <Text
                     fontFamily={FONT_SANS}
-                    fontSize="11px"
+                    fontSize={FONT_SIZE_LABEL}
                     color="fgSubtle"
                     whiteSpace="nowrap"
                   >
@@ -365,7 +365,7 @@ export default function TableOfContentsButton({
             <Box flex={1} overflowY="auto" py={2}>
               <Text
                 fontFamily={FONT_SANS}
-                fontSize="10px"
+                fontSize={FONT_SIZE_MICRO}
                 textTransform="uppercase"
                 letterSpacing="0.14em"
                 color="fgSubtle"

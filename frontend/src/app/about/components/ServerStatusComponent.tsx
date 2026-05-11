@@ -1,16 +1,12 @@
 'use client';
+
 import { MandoBotAPI } from '@/utils/api';
 import { clearError, setError } from '@/utils/store/errorSlice';
 import { RootState, store } from '@/utils/store/store';
 import {
-  Center,
-  Heading,
+  Box,
   Image,
   Text,
-  VStack,
-  Flex,
-  Box,
-  HStack,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -26,6 +22,128 @@ import {
 } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import localization, { UserLanguage } from '@/localization/main';
+import {
+  FONT_SANS,
+  FONT_SERIF,
+  FONT_SIZE_LABEL,
+  FONT_SIZE_UI,
+  FONT_SIZE_BODY,
+  FONT_SIZE_SUBHEAD,
+} from '@/theme';
+
+function Divider() {
+  return <Box borderBottom="1px solid" borderColor="borderSubtle" />;
+}
+
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <Box display="flex" alignItems="center" justifyContent="space-between" gap={4} py="10px">
+      <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody" whiteSpace="nowrap">
+        {label}
+      </Text>
+      {children}
+    </Box>
+  );
+}
+
+const ServerStatusIcon = ({
+  serverStatus,
+  user_language,
+}: {
+  serverStatus: boolean;
+  user_language: UserLanguage;
+}) => {
+  const loc = localization.about_status.server_status;
+  return (
+    <Popover placement="top">
+      <PopoverTrigger>
+        <Box as="span" cursor="pointer" lineHeight={0}>
+          {serverStatus ? (
+            <IoCheckmarkCircleOutline color="#45bb78" size={18} />
+          ) : (
+            <IoAlertCircleOutline color="#f07070" size={18} />
+          )}
+        </Box>
+      </PopoverTrigger>
+      <PopoverContent
+        w="fit-content"
+        maxW="220px"
+        borderRadius="10px"
+        border="1px solid"
+        borderColor="borderDefault"
+        bg="bgCanvas"
+        _focus={{ outline: 'none' }}
+        px={3}
+        py={2}
+      >
+        <PopoverArrow bg="bgCanvas" />
+        <PopoverBody p={0}>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody">
+            {serverStatus
+              ? loc.checkmark[user_language]
+              : loc.popover_server_error[user_language]}
+          </Text>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+const ArgosInfoPopover = ({ user_language }: { user_language: UserLanguage }) => {
+  const loc = localization.about_status.server_status;
+  return (
+    <Popover placement="top">
+      <PopoverTrigger>
+        <Box as="span" cursor="pointer" lineHeight={0}>
+          <IoInformationCircleOutline size={16} color="currentColor" />
+        </Box>
+      </PopoverTrigger>
+      <PopoverContent
+        w="fit-content"
+        maxW="260px"
+        borderRadius="10px"
+        border="1px solid"
+        borderColor="borderDefault"
+        bg="bgCanvas"
+        _focus={{ outline: 'none' }}
+        px={3}
+        py={2}
+      >
+        <PopoverArrow bg="bgCanvas" />
+        <PopoverBody p={0}>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody" mb={2}>
+            {loc.popup[1][user_language]}
+          </Text>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody">
+            {loc.popup[2][user_language]}
+            <Link href="https://www.deepl.com">
+              <Text as="span" textDecoration="underline">{loc.popup.link[user_language]}</Text>
+            </Link>
+            {loc.popup[3][user_language]}
+          </Text>
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
+const TranslationBackendDisplay = ({ backend }: { backend: string }) => {
+  const username = useSelector((state: RootState) => state.auth.username);
+  const href = username ? 'https://www.deepl.com' : 'https://www.argosopentech.com/';
+  const src = username ? '/deepl_logo.svg' : 'argos_translate_logo.png';
+  const label = username ? 'DeepL' : 'Argos Translate';
+
+  return (
+    <Link href={href} target="_blank" rel="noopener noreferrer">
+      <Box display="flex" alignItems="center" gap={2} _hover={{ opacity: 0.8 }}>
+        <Image alt="Translator logo" src={src} boxSize="20px" />
+        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody">
+          {label}
+        </Text>
+      </Box>
+    </Link>
+  );
+};
 
 export default function ServerStatusComponent({
   user_language,
@@ -36,7 +154,7 @@ export default function ServerStatusComponent({
   const [translationBackend, setBackend] = useState('-');
   const [responseTime, setResponseTime] = useState(-1);
   const [serverStatus, setServerStatus] = useState(false);
-  const status_localization = localization.about_status.server_status;
+  const loc = localization.about_status.server_status;
 
   useEffect(() => {
     MandoBotAPI.status()
@@ -50,189 +168,54 @@ export default function ServerStatusComponent({
           hour: 'numeric',
           minute: 'numeric',
         });
-        setLastUpdate(`${localTime}`);
+        setLastUpdate(localTime);
         setResponseTime(response.mandobot_response_time);
         setBackend(response.translation_backend);
         setServerStatus(true);
       })
       .catch(() => {
         setServerStatus(false);
-        store.dispatch(
-          setError(status_localization.server_unreachable_error[user_language]),
-        );
+        store.dispatch(setError(loc.server_unreachable_error[user_language]));
       });
   }, []);
 
   return (
-    <Box justifyContent="center">
-      <HStack justifyContent="center">
-        <Heading
-          size="md"
-          textAlign="center"
-          mb={1}
-        >
-          {status_localization.server_status[user_language]}
-        </Heading>
-        <ServerStatusPopover
-          serverStatus={serverStatus}
-          user_language={user_language}
-        />
-      </HStack>
+    <Box maxW="2xl" w="100%" border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas" px={[6, 8]} py={6} mb={4}>
+      <Box display="flex" alignItems="center" gap={2} mb={4}>
+        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_LABEL} textTransform="uppercase" letterSpacing="0.14em" color="fgMuted">
+          {loc.server_status[user_language]}
+        </Text>
+        <ServerStatusIcon serverStatus={serverStatus} user_language={user_language} />
+      </Box>
 
-      <Box display="flex" justifyContent="center">
-        <Flex
-          direction={{ base: 'column', lg: 'row' }}
-          align="center"
-          justify="center"
-          justifyContent="center"
-          alignItems="center"
-          p={4}
-          gap={4}
-          mt={3}
-          width="fit-content"
-          border="1px solid" borderColor="borderDefault"
-          borderRadius={8}
-          boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)"
-          bg="bgCanvas"
-          boxSizing="border-box"
-        >
-          <Box m={2} p={5} border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle">
-            <VStack>
-              <Heading
-                size="sm"
-                whiteSpace="nowrap"
-              >
-                {status_localization.response_time[user_language]}
-              </Heading>
-              <Text fontSize="lg">
-                {Math.trunc(responseTime * 100) / 100}{' '}
-                {status_localization.seconds[user_language]}
-              </Text>
-              <Text fontSize="sm" whiteSpace="nowrap">
-                {status_localization.last_update[user_language]} {localDateTime}
-              </Text>
-            </VStack>
-          </Box>
-
-          <Box m={2} p={5} border="1px solid" borderColor="borderDefault" borderRadius="8px" bg="bgSubtle">
-            <VStack mb={3} mx={2}>
-              <HStack>
-                <Heading
-                  size="sm"
-                  whiteSpace="nowrap"
-                >
-                  {status_localization.backend[user_language]}
-                </Heading>
-                {serverStatus && translationBackend == 'argos' && (
-                  <InformationPopover user_language={user_language} />
-                )}
-              </HStack>
-              {serverStatus ? <TranslationBackendComponent /> : <Text>-</Text>}
-            </VStack>
-          </Box>
-        </Flex>
+      <Row label={loc.response_time[user_language]}>
+        <Box display="flex" alignItems="baseline" gap={1}>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_SUBHEAD} color="fgPrimary">
+            {responseTime >= 0 ? Math.trunc(responseTime * 100) / 100 : '—'}
+          </Text>
+          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgMuted">
+            {loc.seconds[user_language]}
+          </Text>
+        </Box>
+      </Row>
+      <Divider />
+      <Row label={loc.backend[user_language]}>
+        <Box display="flex" alignItems="center" gap={2}>
+          {serverStatus ? (
+            <TranslationBackendDisplay backend={translationBackend} />
+          ) : (
+            <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgMuted">—</Text>
+          )}
+          {serverStatus && translationBackend === 'argos' && (
+            <ArgosInfoPopover user_language={user_language} />
+          )}
+        </Box>
+      </Row>
+      <Box mt={3}>
+        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_BODY} color="fgSubtle">
+          {loc.last_update[user_language]} {localDateTime}
+        </Text>
       </Box>
     </Box>
   );
 }
-
-const ServerStatusPopover = ({
-  serverStatus,
-  user_language,
-}: {
-  serverStatus: boolean;
-  user_language: UserLanguage;
-}) => {
-  const status_localization = localization.about_status.server_status;
-  return (
-    <>
-      {serverStatus ? (
-        <Popover>
-          <PopoverTrigger>
-            <IoCheckmarkCircleOutline
-              color="green"
-              size={22}
-              cursor="pointer"
-            />
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.8)">
-              <Center>
-                {
-                  localization.about_status.server_status.checkmark[
-                    user_language
-                  ]
-                }
-              </Center>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-      ) : (
-        <Popover>
-          <PopoverTrigger>
-            <IoAlertCircleOutline color="red" size={22} cursor="pointer" />
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.8)">
-              <Center>
-                {status_localization.popover_server_error[user_language]}
-              </Center>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-      )}
-    </>
-  );
-};
-
-const InformationPopover = ({
-  user_language,
-}: {
-  user_language: UserLanguage;
-}) => {
-  const localized_text = localization.about_status.server_status;
-  return (
-    <Popover>
-      <PopoverTrigger>
-        <IoInformationCircleOutline size={22} cursor="pointer" />
-      </PopoverTrigger>
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverBody boxShadow="1px 1px 2px rgba(0, 0, 0, 0.5)">
-          <Text mb={3}>{localized_text.popup[1][user_language]}</Text>
-          <Text>
-            {localized_text.popup[2][user_language]}
-            <Link href="https://www.deepl.com">
-              <u>{localized_text.popup.link[user_language]}</u>
-            </Link>
-            {localized_text.popup[3][user_language]}
-          </Text>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-const TranslationBackendComponent = () => {
-  const username = useSelector((state: RootState) => state.auth.username);
-  return (
-    <Link
-      href={
-        username ? 'https://www.deepl.com' : 'https://www.argosopentech.com/'
-      }
-    >
-      <Center>
-        <Image
-          alt="Translator logo"
-          src={username ? '/deepl_logo.svg' : 'argos_translate_logo.png'}
-          boxSize={10}
-        />
-        <Text ml={2} _hover={{ textDecoration: 'underline' }}>
-          {username ? 'DeepL' : 'Argos Translate'}
-        </Text>
-      </Center>
-    </Link>
-  );
-};

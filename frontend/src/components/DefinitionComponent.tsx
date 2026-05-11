@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Text, VStack, HStack, useColorMode } from '@chakra-ui/react';
-import { FONT_SANS, FONT_SERIF, FONT_CHINESE } from '@/theme';
+import { FONT_SANS, FONT_SERIF, FONT_CHINESE, FONT_SIZE_MICRO, FONT_SIZE_SMALL, FONT_SIZE_UI, FONT_SIZE_BODY, FONT_SIZE_SUBHEAD, FONT_SIZE_HANZI_SM } from '@/theme';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { UserLanguage } from '@/localization/main';
@@ -28,8 +28,8 @@ function DefinitionContent(props: {
 
   const chars = props.word.split('');
   const isMulti = chars.length > 1;
-  const charFontSize = chars.length <= 2 ? '44px' : chars.length <= 4 ? '36px' : chars.length <= 6 ? '28px' : '22px';
-  const pronFontSize = chars.length <= 2 ? '16px' : chars.length <= 4 ? '14px' : '12px';
+  const charFontSize = chars.length <= 2 ? '2.75rem' : chars.length <= 4 ? '2.25rem' : chars.length <= 6 ? '1.75rem' : FONT_SIZE_HANZI_SM;
+  const pronFontSize = chars.length <= 2 ? FONT_SIZE_SUBHEAD : chars.length <= 4 ? FONT_SIZE_BODY : FONT_SIZE_SMALL;
 
   return (
     <VStack align="stretch" spacing={0}>
@@ -60,7 +60,7 @@ function DefinitionContent(props: {
         </Box>
         <Text
           fontFamily={FONT_SERIF}
-          fontSize="16px"
+          fontSize={FONT_SIZE_SUBHEAD}
           lineHeight={1.45}
           fontStyle="italic"
         >
@@ -71,7 +71,7 @@ function DefinitionContent(props: {
       {isMulti && (
         <Box pt="10px" pb="4px">
           <Text
-            fontSize="10px"
+            fontSize={FONT_SIZE_MICRO}
             textTransform="uppercase"
             letterSpacing="0.14em"
             color="fgMuted"
@@ -89,7 +89,7 @@ function DefinitionContent(props: {
                 <HStack spacing={3} align="flex-start" px="14px" py="8px">
                   <Text
                     fontFamily={FONT_CHINESE}
-                    fontSize="22px"
+                    fontSize={FONT_SIZE_HANZI_SM}
                     lineHeight={1}
                     color={palette[getTone(c, props.dictionary)]}
                     minW="30px"
@@ -99,7 +99,7 @@ function DefinitionContent(props: {
                   </Text>
                   <Text
                     fontFamily={FONT_SANS}
-                    fontSize="13px"
+                    fontSize={FONT_SIZE_UI}
                     lineHeight={1}
                     color="fgMuted"
                     minW="48px"
@@ -109,7 +109,7 @@ function DefinitionContent(props: {
                   </Text>
                   <Text
                     fontFamily={FONT_SERIF}
-                    fontSize="14px"
+                    fontSize={FONT_SIZE_BODY}
                     lineHeight={1.4}
                     fontStyle="italic"
                   >

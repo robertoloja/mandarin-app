@@ -29,7 +29,7 @@ import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { useRouter } from 'next/navigation';
 import localization from '@/localization/main';
-import { FONT_SANS } from '@/theme';
+import { FONT_SANS, FONT_SIZE_UI } from '@/theme';
 
 function NavItem({
   href,
@@ -61,7 +61,7 @@ function NavItem({
         transition="all 0.14s"
       >
         {icon}
-        <Text fontFamily={FONT_SANS} fontSize="13px">
+        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI}>
           {label}
         </Text>
       </HStack>

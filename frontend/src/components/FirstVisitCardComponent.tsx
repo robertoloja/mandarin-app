@@ -3,7 +3,7 @@ import { Box, HStack, Image, Text, useColorMode } from '@chakra-ui/react';
 import { IoCloseOutline } from 'react-icons/io5';
 import { useState, useEffect } from 'react';
 import localization, { UserLanguage } from '@/localization/main';
-import { FONT_SANS, FONT_SERIF } from '@/theme';
+import { FONT_SANS, FONT_SERIF, FONT_SIZE_BODY, FONT_SIZE_SUBHEAD } from '@/theme';
 import AppMarkdown from '@/components/AppMarkdown';
 
 const STORAGE_KEY = 'welcomeCardDismissed';
@@ -58,7 +58,7 @@ function FirstVisitCard({ user_language }: { user_language: UserLanguage }) {
         />
         <Text
           fontFamily={FONT_SERIF}
-          fontSize={['16px', '18px']}
+          fontSize={[FONT_SIZE_SUBHEAD, '1.125rem']}
           fontWeight={500}
           fontStyle="italic"
           lineHeight={1.3}
@@ -70,7 +70,7 @@ function FirstVisitCard({ user_language }: { user_language: UserLanguage }) {
       <Text
         as="div"
         fontFamily={FONT_SANS}
-        fontSize="14px"
+        fontSize={FONT_SIZE_BODY}
         lineHeight={1.7}
         color="fgBody"
       >

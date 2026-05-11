@@ -13,7 +13,7 @@ import { MandoBotAPI } from '@/utils/api';
 import { MandarinWordType } from '@/utils/types';
 import localization from '@/localization/main';
 import { useReadingBooks } from '@/app/reading/hooks/useReadingBooks';
-import { FONT_SANS, FONT_SERIF } from '@/theme';
+import { FONT_SANS, FONT_SERIF, FONT_SIZE_LABEL, FONT_SIZE_SMALL, FONT_SIZE_UI, FONT_SIZE_BODY, FONT_SIZE_PROSE, FONT_SIZE_SUBHEAD, FONT_SIZE_HANZI_SM } from '@/theme';
 
 function ChapterNavLink({
   nav,
@@ -36,7 +36,7 @@ function ChapterNavLink({
         transition="color 0.14s"
       >
         {direction === 'prev' && <IoChevronBackOutline size={18} />}
-        <Text fontFamily={FONT_SANS} fontSize="14px">
+        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_BODY}>
           {label}
         </Text>
         {direction === 'next' && <IoChevronForwardOutline size={18} />}
@@ -154,7 +154,7 @@ export default function ChapterPageClient({
           {/* Title block */}
           <Box as="header" mb={8}>
             <Text
-              fontSize="11px"
+              fontSize={FONT_SIZE_LABEL}
               textTransform="uppercase"
               letterSpacing="0.18em"
               color="fgSubtle"
@@ -169,7 +169,7 @@ export default function ChapterPageClient({
                 <Text
                   as="h1"
                   fontFamily={FONT_SERIF}
-                  fontSize={['22px', '30px']}
+                  fontSize={[FONT_SIZE_HANZI_SM, '1.875rem']}
                   fontWeight={500}
                   fontStyle="italic"
                   lineHeight={1.2}
@@ -179,7 +179,7 @@ export default function ChapterPageClient({
                   {book.title}
                 </Text>
                 <Text
-                  fontSize="13px"
+                  fontSize={FONT_SIZE_UI}
                   color="fgSubtle"
                   fontFamily={FONT_SANS}
                 >
@@ -211,7 +211,7 @@ export default function ChapterPageClient({
                       <Text
                         fontFamily={FONT_SERIF}
                         fontStyle="italic"
-                        fontSize="16px"
+                        fontSize={FONT_SIZE_SUBHEAD}
                         lineHeight={1.65}
                         color="fgMuted"
                       >
@@ -225,7 +225,7 @@ export default function ChapterPageClient({
           ) : (
             <Box>
               <Text
-                fontSize="12px"
+                fontSize={FONT_SIZE_SMALL}
                 color="fgSubtle"
                 mb={4}
                 fontFamily={FONT_SANS}
@@ -251,7 +251,7 @@ export default function ChapterPageClient({
                       mt={3}
                       fontFamily={FONT_SERIF}
                       fontStyle="italic"
-                      fontSize="15px"
+                      fontSize={FONT_SIZE_PROSE}
                       lineHeight={1.55}
                       color="fgMuted"
                     >
