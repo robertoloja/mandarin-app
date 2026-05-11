@@ -1,5 +1,28 @@
 import { Metadata } from 'next';
+import { IBM_Plex_Sans, Spectral, Noto_Serif_SC } from 'next/font/google';
 import Providers from './Providers';
+
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-sans',
+  display: 'swap',
+});
+
+const spectral = Spectral({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
+  display: 'swap',
+});
+
+const notoSerifSC = Noto_Serif_SC({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-chinese',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.mandobot.com'),
@@ -16,15 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" suppressHydrationWarning className={`${ibmPlexSans.variable} ${spectral.variable} ${notoSerifSC.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

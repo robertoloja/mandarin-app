@@ -27,6 +27,10 @@ const account_settings = {
     en: 'Pronunciation Preferences',
     de: 'Aussprache-Einstellungen',
   },
+  tone_colors: {
+    en: 'Tone Colors',
+    de: '',
+  },
   color_theme: {
     en: 'Color Theme',
     de: 'Farbschema-Einstellung',

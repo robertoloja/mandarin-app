@@ -15,12 +15,17 @@ import { IoTextOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import {
   setPronunciationFontSize,
+  setRubySize,
   togglePronunciation,
   togglePinyin,
+  setToneColors,
 } from '@/utils/store/settingsSlice';
 import { MandoBotAPI } from '@/utils/api';
 import localization from '@/localization/main';
 import { FONT_SANS, FONT_SIZE_SMALL, FONT_SIZE_UI } from '@/theme';
+
+const SIZES = [10, 13, 16] as const;
+const SIZE_LABELS = ['S', 'M', 'L'] as const;
 
 function SegBtn({
   active,
@@ -115,6 +120,8 @@ function TextPreferences() {
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
+  const toneColors = useSelector((state: RootState) => state.settings.toneColors);
+  const rubySizePx = useSelector((state: RootState) => state.settings.rubySizePx);
   const loc = localization.top_nav;
 
   const rubyOn = pronunciationFontSize !== 0;
@@ -158,16 +165,28 @@ function TextPreferences() {
           </SegBtn>
           <SegBtn
             active={rubyOn}
-            onClick={() =>
-              store.dispatch(
-                setPronunciationFontSize(pronunciationFontSize || 15),
-              )
-            }
+            onClick={() => store.dispatch(setPronunciationFontSize(rubySizePx))}
           >
             {loc.on[user_language]}
           </SegBtn>
         </SegControl>
       </Row>
+
+      {rubyOn && (
+        <Box display="flex" justifyContent="flex-end" pb="10px">
+          <SegControl>
+            {SIZES.map((s, i) => (
+              <SegBtn
+                key={s}
+                active={rubySizePx === s}
+                onClick={() => store.dispatch(setRubySize(s))}
+              >
+                {SIZE_LABELS[i]}
+              </SegBtn>
+            ))}
+          </SegControl>
+        </Box>
+      )}
 
       {divider}
 
@@ -213,6 +232,25 @@ function TextPreferences() {
           </Row>
         </>
       )}
+
+      {divider}
+
+      <Row label={loc.tone_colors[user_language]}>
+        <SegControl>
+          <SegBtn
+            active={!toneColors}
+            onClick={() => store.dispatch(setToneColors(false))}
+          >
+            {loc.off[user_language]}
+          </SegBtn>
+          <SegBtn
+            active={toneColors}
+            onClick={() => store.dispatch(setToneColors(true))}
+          >
+            {loc.on[user_language]}
+          </SegBtn>
+        </SegControl>
+      </Row>
     </Box>
   );
 }

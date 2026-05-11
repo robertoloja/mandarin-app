@@ -16,11 +16,7 @@ import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
 import localization from '@/localization/main';
 import { FONT_SANS, FONT_SIZE_MICRO, FONT_SIZE_UI } from '@/theme';
 
-export default function LanguagePreferenceMenuButton({
-  iconSize: _iconSize,
-}: {
-  iconSize: number;
-}) {
+export default function LanguagePreferenceMenuButton() {
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );

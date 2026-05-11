@@ -9,6 +9,7 @@ import {
   setPronunciationFontSize,
   togglePinyin,
   togglePronunciation,
+  setToneColors,
 } from '@/utils/store/settingsSlice';
 import { MandoBotAPI } from '@/utils/api';
 import PasswordChangeComponent from '../auth/components/PasswordChangeComponent';
@@ -126,6 +127,7 @@ export default function Settings() {
   const pronunciation = useSelector((state: RootState) => state.settings.pronunciation);
   const pinyinType = useSelector((state: RootState) => state.settings.pinyin_type);
   const pronunciationFontSize = useSelector((state: RootState) => state.settings.pronunciationFontSize);
+  const toneColors = useSelector((state: RootState) => state.settings.toneColors);
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onToggle } = useDisclosure();
 
@@ -272,6 +274,17 @@ export default function Settings() {
             </Row>
           </>
         )}
+        <Divider />
+        <Row label={loc.tone_colors[user_language]}>
+          <SegControl>
+            <SegBtn active={!toneColors} onClick={() => store.dispatch(setToneColors(false))}>
+              {navLoc.off[user_language]}
+            </SegBtn>
+            <SegBtn active={toneColors} onClick={() => store.dispatch(setToneColors(true))}>
+              {navLoc.on[user_language]}
+            </SegBtn>
+          </SegControl>
+        </Row>
       </Card>
 
       <Card>

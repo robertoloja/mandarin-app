@@ -1,9 +1,9 @@
 import { extendTheme } from '@chakra-ui/react';
 import { accordionTheme } from './app/reading/components/Accordion';
 
-export const FONT_SANS = '"IBM Plex Sans", system-ui, sans-serif';
-export const FONT_SERIF = '"Spectral", Georgia, serif';
-export const FONT_CHINESE = '"Noto Serif SC", serif';
+export const FONT_SANS = 'var(--font-sans), system-ui, sans-serif';
+export const FONT_SERIF = 'var(--font-serif), Georgia, serif';
+export const FONT_CHINESE = 'var(--font-chinese), serif';
 
 // Font sizes (rem, 16px root)
 export const FONT_SIZE_MICRO    = '0.625rem';   // 10px — eyebrow / badge labels

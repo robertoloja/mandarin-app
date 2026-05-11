@@ -37,7 +37,8 @@ function VocabCard({
   );
 
   const isDark = colorMode === 'dark';
-  const palette = isDark ? TONE_DARK : TONE_LIGHT;
+  const toneColors = useSelector((state: RootState) => state.settings.toneColors);
+  const palette = toneColors ? (isDark ? TONE_DARK : TONE_LIGHT) : {};
   const chars = word.word.split('');
   const definitions = word.definitions[user_language] ?? [];
   const firstDef = (definitions[0] ?? '').split('(')[0].trim();

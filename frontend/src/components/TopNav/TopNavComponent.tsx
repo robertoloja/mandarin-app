@@ -154,7 +154,7 @@ function TopNav() {
         )}
 
         <NavDivider />
-        <LanguagePreferenceMenuButton iconSize={iconSize} />
+        <LanguagePreferenceMenuButton />
         <NavDivider />
         <ThemeControl theme={theme} onToggle={toggleThemeSetting} />
 

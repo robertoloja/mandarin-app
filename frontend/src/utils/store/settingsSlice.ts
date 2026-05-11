@@ -10,6 +10,8 @@ interface SettingsState {
   definitionFontSize: number;
   pronunciationFontSize: number;
   readingMode: 'flow' | 'grid';
+  toneColors: boolean;
+  rubySizePx: number;
 }
 
 const getInitialUserLanguage = (): UserLanguage => {
@@ -34,8 +36,10 @@ const initialState: SettingsState = {
   pinyin_type: 'pinyin_acc',
   user_language: getInitialUserLanguage(),
   definitionFontSize: getLocalNumber('definitionFontSize', 15),
-  pronunciationFontSize: getLocalNumber('pronunciationFontSize', 15),
+  pronunciationFontSize: getLocalNumber('pronunciationFontSize', 10),
   readingMode: 'flow',
+  toneColors: getLocalNumber('toneColors', 1) !== 0,
+  rubySizePx: getLocalNumber('rubySizePx', 10),
 };
 
 const settingsSlice = createSlice({
@@ -70,6 +74,21 @@ const settingsSlice = createSlice({
     },
     setReadingMode(state, action: PayloadAction<'flow' | 'grid'>) {
       state.readingMode = action.payload;
+    },
+    setToneColors(state, action: PayloadAction<boolean>) {
+      state.toneColors = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('toneColors', action.payload ? '1' : '0');
+      }
+    },
+    setRubySize(state, action: PayloadAction<number>) {
+      state.rubySizePx = action.payload;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rubySizePx', String(action.payload));
+      }
+      if (state.pronunciationFontSize !== 0) {
+        state.pronunciationFontSize = action.payload;
+      }
     },
     setPreferences(
       state,
@@ -107,5 +126,7 @@ export const {
   setDefinitionFontSize,
   setPronunciationFontSize,
   setReadingMode,
+  setToneColors,
+  setRubySize,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

@@ -45,6 +45,7 @@ function Word(props: {
   const reduxDictionary = useSelector(
     (state: RootState) => state.sentence.mandarinDictionary,
   );
+  const toneColors = useSelector((state: RootState) => state.settings.toneColors);
   const dictionary = props.dictionary ?? reduxDictionary;
 
   if (isPunct(props.word.word, props.word.pinyin)) {
@@ -65,7 +66,7 @@ function Word(props: {
   }
 
   const chars = props.word.word.split('');
-  const palette = colorMode === 'dark' ? TONE_DARK : TONE_LIGHT;
+  const palette = toneColors ? (colorMode === 'dark' ? TONE_DARK : TONE_LIGHT) : {};
   const showRuby = pronunciationFontSize !== 0;
   const isZhuyin = pronunciationSetting === 'zhuyin';
 
@@ -110,7 +111,7 @@ function Word(props: {
                       ? '"Noto Sans TC", "Noto Serif SC", system-ui'
                       : FONT_SANS
                   }
-                  fontSize={`${isZhuyin ? 0.72 : 0.65}rem`}
+                  fontSize={`${pronunciationFontSize}px`}
                   lineHeight={1}
                   mb="2px"
                   color={rubyColor}

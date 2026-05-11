@@ -24,7 +24,6 @@ import { useSelector } from 'react-redux';
 import localization, { UserLanguage } from '@/localization/main';
 import {
   FONT_SANS,
-  FONT_SERIF,
   FONT_SIZE_LABEL,
   FONT_SIZE_UI,
   FONT_SIZE_BODY,
@@ -35,10 +34,27 @@ function Divider() {
   return <Box borderBottom="1px solid" borderColor="borderSubtle" />;
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
-    <Box display="flex" alignItems="center" justifyContent="space-between" gap={4} py="10px">
-      <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody" whiteSpace="nowrap">
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      gap={4}
+      py="10px"
+    >
+      <Text
+        fontFamily={FONT_SANS}
+        fontSize={FONT_SIZE_UI}
+        color="fgBody"
+        whiteSpace="nowrap"
+      >
         {label}
       </Text>
       {children}
@@ -89,7 +105,11 @@ const ServerStatusIcon = ({
   );
 };
 
-const ArgosInfoPopover = ({ user_language }: { user_language: UserLanguage }) => {
+const ArgosInfoPopover = ({
+  user_language,
+}: {
+  user_language: UserLanguage;
+}) => {
   const loc = localization.about_status.server_status;
   return (
     <Popover placement="top">
@@ -111,13 +131,20 @@ const ArgosInfoPopover = ({ user_language }: { user_language: UserLanguage }) =>
       >
         <PopoverArrow bg="bgCanvas" />
         <PopoverBody p={0}>
-          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody" mb={2}>
+          <Text
+            fontFamily={FONT_SANS}
+            fontSize={FONT_SIZE_UI}
+            color="fgBody"
+            mb={2}
+          >
             {loc.popup[1][user_language]}
           </Text>
           <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgBody">
             {loc.popup[2][user_language]}
             <Link href="https://www.deepl.com">
-              <Text as="span" textDecoration="underline">{loc.popup.link[user_language]}</Text>
+              <Text as="span" textDecoration="underline">
+                {loc.popup.link[user_language]}
+              </Text>
             </Link>
             {loc.popup[3][user_language]}
           </Text>
@@ -127,9 +154,11 @@ const ArgosInfoPopover = ({ user_language }: { user_language: UserLanguage }) =>
   );
 };
 
-const TranslationBackendDisplay = ({ backend }: { backend: string }) => {
+const TranslationBackendDisplay = () => {
   const username = useSelector((state: RootState) => state.auth.username);
-  const href = username ? 'https://www.deepl.com' : 'https://www.argosopentech.com/';
+  const href = username
+    ? 'https://www.deepl.com'
+    : 'https://www.argosopentech.com/';
   const src = username ? '/deepl_logo.svg' : 'argos_translate_logo.png';
   const label = username ? 'DeepL' : 'Argos Translate';
 
@@ -180,17 +209,40 @@ export default function ServerStatusComponent({
   }, []);
 
   return (
-    <Box maxW="2xl" w="100%" border="1px solid" borderColor="borderDefault" borderRadius="12px" bg="bgCanvas" px={[6, 8]} py={6} mb={4}>
+    <Box
+      maxW="2xl"
+      w="100%"
+      border="1px solid"
+      borderColor="borderDefault"
+      borderRadius="12px"
+      bg="bgCanvas"
+      px={[6, 8]}
+      py={6}
+      mb={4}
+    >
       <Box display="flex" alignItems="center" gap={2} mb={4}>
-        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_LABEL} textTransform="uppercase" letterSpacing="0.14em" color="fgMuted">
+        <Text
+          fontFamily={FONT_SANS}
+          fontSize={FONT_SIZE_LABEL}
+          textTransform="uppercase"
+          letterSpacing="0.14em"
+          color="fgMuted"
+        >
           {loc.server_status[user_language]}
         </Text>
-        <ServerStatusIcon serverStatus={serverStatus} user_language={user_language} />
+        <ServerStatusIcon
+          serverStatus={serverStatus}
+          user_language={user_language}
+        />
       </Box>
 
       <Row label={loc.response_time[user_language]}>
         <Box display="flex" alignItems="baseline" gap={1}>
-          <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_SUBHEAD} color="fgPrimary">
+          <Text
+            fontFamily={FONT_SANS}
+            fontSize={FONT_SIZE_SUBHEAD}
+            color="fgPrimary"
+          >
             {responseTime >= 0 ? Math.trunc(responseTime * 100) / 100 : '—'}
           </Text>
           <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgMuted">
@@ -202,9 +254,15 @@ export default function ServerStatusComponent({
       <Row label={loc.backend[user_language]}>
         <Box display="flex" alignItems="center" gap={2}>
           {serverStatus ? (
-            <TranslationBackendDisplay backend={translationBackend} />
+            <TranslationBackendDisplay />
           ) : (
-            <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI} color="fgMuted">—</Text>
+            <Text
+              fontFamily={FONT_SANS}
+              fontSize={FONT_SIZE_UI}
+              color="fgMuted"
+            >
+              —
+            </Text>
           )}
           {serverStatus && translationBackend === 'argos' && (
             <ArgosInfoPopover user_language={user_language} />

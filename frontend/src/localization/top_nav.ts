@@ -63,6 +63,10 @@ const top_nav = {
     en: 'Hanzi',
     de: 'Hanzi',
   },
+  tone_colors: {
+    en: 'Tone Colors',
+    de: '',
+  },
 };
 
 export default top_nav;

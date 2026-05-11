@@ -22,7 +22,8 @@ function DefinitionContent(props: {
   const pinyinSetting = useSelector(
     (state: RootState) => state.settings.pinyin_type,
   );
-  const palette = colorMode === 'dark' ? TONE_DARK : TONE_LIGHT;
+  const toneColors = useSelector((state: RootState) => state.settings.toneColors);
+  const palette = toneColors ? (colorMode === 'dark' ? TONE_DARK : TONE_LIGHT) : {};
 
   const pron = (c: string) => getCharPron(c, props.dictionary, pronunciationSetting, pinyinSetting);
 
