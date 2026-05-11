@@ -109,6 +109,7 @@ function SubchapterRow({
   currentBookSlug,
   onClose,
   isDark,
+  isAvailable,
 }: {
   name: string;
   bookSlug: string;
@@ -117,34 +118,43 @@ function SubchapterRow({
   currentBookSlug?: string;
   onClose: () => void;
   isDark: boolean;
+  isAvailable: boolean;
 }) {
   const isCurrent =
-    bookSlug === currentBookSlug && chapterOrder === currentChapterOrder;
+    isAvailable && bookSlug === currentBookSlug && chapterOrder === currentChapterOrder;
   const accent = isDark ? ACCENT_DARK : ACCENT_LIGHT;
 
-  return (
-    <Link href={`/reading/${bookSlug}/${chapterOrder}`} onClick={onClose}>
-      <Box
-        pl="38px"
-        pr={4}
-        py="7px"
-        borderLeft={`2px solid ${isCurrent ? accent : 'transparent'}`}
-        bg={isCurrent ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') : 'transparent'}
-        _hover={{ bg: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' }}
+  const inner = (
+    <Box
+      pl="38px"
+      pr={4}
+      py="7px"
+      borderLeft={`2px solid ${isCurrent ? accent : 'transparent'}`}
+      bg={isCurrent ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)') : 'transparent'}
+      cursor={isAvailable ? undefined : 'not-allowed'}
+      _hover={isAvailable ? { bg: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.03)' } : undefined}
+    >
+      <Text
+        fontFamily={FONT_SANS}
+        fontSize={FONT_SIZE_UI}
+        fontWeight={isCurrent ? 600 : 400}
+        color={!isAvailable ? 'borderEmphasis' : isCurrent ? 'fgPrimary' : 'fgMuted'}
+        lineHeight={1.35}
+        noOfLines={1}
       >
-        <Text
-          fontFamily={FONT_SANS}
-          fontSize={FONT_SIZE_UI}
-          fontWeight={isCurrent ? 600 : 400}
-          color={isCurrent ? 'fgPrimary' : 'fgMuted'}
-          lineHeight={1.35}
-          noOfLines={1}
-        >
-          {name}
-        </Text>
-      </Box>
-    </Link>
+        {name}
+      </Text>
+    </Box>
   );
+
+  if (isAvailable) {
+    return (
+      <Link href={`/reading/${bookSlug}/${chapterOrder}`} onClick={onClose}>
+        {inner}
+      </Link>
+    );
+  }
+  return inner;
 }
 
 function GroupHeader({
@@ -244,7 +254,7 @@ export default function TableOfContentsButton({
 
   const totalDirect =
     allChapters.filter((c) => c.book_slug).length +
-    allChapters.flatMap((c) => c.subchapters ?? []).length;
+    allChapters.flatMap((c) => c.subchapters ?? []).filter((s) => s.chapter_order <= 10).length;
 
   const currentIdx = allChapters.reduce((acc, c) => {
     if (c.book_slug === bookSlug && c.chapter_order === currentChapterOrder)
@@ -398,6 +408,7 @@ export default function TableOfContentsButton({
                             currentBookSlug={bookSlug}
                             onClose={onClose}
                             isDark={isDark}
+                            isAvailable={sub.chapter_order <= 10}
                           />
                         ))}
                     </Box>

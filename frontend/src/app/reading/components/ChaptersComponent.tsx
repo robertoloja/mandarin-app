@@ -45,24 +45,33 @@ export const Chapters = (props: {
 
                     <AccordionPanel mb="1rem">
                       <VStack alignItems="left" pl="3rem">
-                        {chapter.subchapters.map((subchapter, i) => (
-                          <Link
-                            href={`/reading/${subchapter.book_slug}/${subchapter.chapter_order}`}
-                            key={i}
-                          >
+                        {chapter.subchapters.map((subchapter, i) => {
+                          const available = subchapter.chapter_order <= 10;
+                          const text = (
                             <Text
-                              _hover={{ textDecoration: 'underline' }}
+                              _hover={available ? { textDecoration: 'underline' } : undefined}
                               color={
-                                subchapter.chapter_order ===
-                                props.currentChapterOrder
+                                !available ||
+                                subchapter.chapter_order === props.currentChapterOrder
                                   ? 'gray'
                                   : undefined
                               }
+                              cursor={available ? undefined : 'not-allowed'}
                             >
                               {subchapter.name}
                             </Text>
-                          </Link>
-                        ))}
+                          );
+                          return available ? (
+                            <Link
+                              href={`/reading/${subchapter.book_slug}/${subchapter.chapter_order}`}
+                              key={i}
+                            >
+                              {text}
+                            </Link>
+                          ) : (
+                            <div key={i}>{text}</div>
+                          );
+                        })}
                       </VStack>
                     </AccordionPanel>
                   </AccordionItem>
