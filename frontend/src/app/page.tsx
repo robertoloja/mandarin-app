@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     title: 'mandoBot — Mandarin segmentation and translation',
     description:
       'Paste any Mandarin text to get instant word-by-word segmentation, pronunciation, and translations.',
-    url: 'https://www.mandobot.com',
+    url: 'https://mandobot.com',
     type: 'website',
     images: [{ url: '/OG-image.png', width: 1200, height: 630 }],
   },
