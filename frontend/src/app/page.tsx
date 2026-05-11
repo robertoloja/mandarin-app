@@ -30,7 +30,7 @@ const jsonLd = {
     'Word-by-word pronunciation, translation, and definitions for Mandarin Chinese learners',
   applicationCategory: 'EducationApplication',
   operatingSystem: 'Web',
-  url: 'https://www.mandobot.com',
+  url: 'https://mandobot.com',
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
 };
 

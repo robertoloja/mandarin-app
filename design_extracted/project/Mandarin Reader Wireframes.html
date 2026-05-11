@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mandarin Reader · Wireframes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #f0eee9; }
+  body { font-family: 'Patrick Hand', cursive; }
+  #root { height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="wires.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "showTones": true,
+  "darkPreview": true
+}/*EDITMODE-END*/;
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const dark = t.darkPreview;
+  const showTones = t.showTones;
+
+  return (
+    <>
+      <DesignCanvas>
+        <DCSection
+          id="desktop"
+          title="Mandarin reader · wireframe directions"
+          subtitle="Six rough sketches of how segmentation + word/hanzi drill-down could feel. Click words inside any wire."
+        >
+          <DCArtboard id="w1" label="W1 · Inline ruby reader" width={1100} height={720}>
+            <Wire1Ruby dark={dark} showTones={showTones} words={SAMPLE} translation={TRANSLATION_1} />
+          </DCArtboard>
+          <DCArtboard id="w2" label="W2 · Clean reader · floating popover" width={1100} height={720}>
+            <Wire2Popover dark={dark} showTones={showTones} words={SAMPLE} translation={TRANSLATION_1} />
+          </DCArtboard>
+          <DCArtboard id="w3" label="W3 · Workbench · 3-col" width={1280} height={780}>
+            <Wire3Workbench dark={dark} showTones={showTones} words={SAMPLE} translation={TRANSLATION_1} />
+          </DCArtboard>
+          <DCArtboard id="w4" label="W4 · Sentence cards stream" width={1100} height={820}>
+            <Wire4Cards dark={dark} showTones={showTones} />
+          </DCArtboard>
+          <DCArtboard id="w6" label="W6 · Focus / distraction-free" width={1100} height={760}>
+            <Wire6Focus dark={dark} showTones={showTones} words={SAMPLE} translation={TRANSLATION_1} />
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection
+          id="mobile"
+          title="Mobile"
+          subtitle="Bottom-sheet pattern for phones."
+        >
+          <DCArtboard id="w5" label="W5 · Mobile · bottom sheet" width={420} height={820}>
+            <Wire5Mobile dark={dark} showTones={showTones} words={SAMPLE} translation={TRANSLATION_1} />
+          </DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Display">
+          <TweakToggle label="Tone color highlights" value={showTones} onChange={(v) => setTweak('showTones', v)} />
+          <TweakToggle label="Dark preview" value={dark} onChange={(v) => setTweak('darkPreview', v)} />
+        </TweakSection>
+        <div style={{ fontSize: 12, color: '#7a7264', padding: '8px 4px 0', lineHeight: 1.4 }}>
+          Click any word inside a wireframe to see the popover/sheet/inspector behaviour for that direction.
+        </div>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

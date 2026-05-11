@@ -15,6 +15,18 @@ const home_page = {
   news_items: [
     {
       heading: {
+        en: 'New Site Design',
+        de: '',
+      },
+      date: { en: 'May 11th, 2026', de: '11. Mai 2026' },
+      body: {
+        en: "MandoBot has a totally new design! Using more consistent colors and fonts throughout, we've also drastically changed the [Reading Room](/reading) to improve reading flow. Checkout the 'flow' view as well as the 'vocab card' view. \n We've also added tone colors (which you can turn off, in case you want to practice reading without them).",
+        de: '',
+      },
+      author: 'mandoBot team',
+    },
+    {
+      heading: {
         en: 'German Translations',
         de: 'Deutsche Übersetzungen',
       },

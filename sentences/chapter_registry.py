@@ -8,6 +8,7 @@ Each entry:
     chapter_order  — 0-based integer sort key
     chapter_number — Indo-Arabic numeral string ("0", "1", ... "13")
     title          — English chapter title
+    title_de       — German chapter title
 """
 
 CHAPTER_REGISTRY: dict[str, dict] = {
@@ -18,6 +19,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 0,
         "chapter_number": "0",
         "title": "Two Brothers",
+        "title_de": "Zwei Brüder",
     },
     "e8PZ8KFE5Y": {
         "book_slug": "diary-of-a-madman",
@@ -25,6 +27,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 1,
         "chapter_number": "1",
         "title": "A Very Good Moon",
+        "title_de": "Ein Sehr Guter Mond",
     },
     "IlzDKJkIWL": {
         "book_slug": "diary-of-a-madman",
@@ -32,6 +35,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 2,
         "chapter_number": "2",
         "title": "No Moonlight Whatsoever",
+        "title_de": "Kein Mondschein",
     },
     "hOu4JeH5lZ": {
         "book_slug": "diary-of-a-madman",
@@ -39,6 +43,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 3,
         "chapter_number": "3",
         "title": "Couldn't Fall Asleep",
+        "title_de": "Schlaflos",
     },
     "xTIybS2MU9": {
         "book_slug": "diary-of-a-madman",
@@ -46,6 +51,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 4,
         "chapter_number": "4",
         "title": "Sat Quietly for a While",
+        "title_de": "Innehalten",
     },
     "YlfLF2_Whw": {
         "book_slug": "diary-of-a-madman",
@@ -53,6 +59,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 5,
         "chapter_number": "5",
         "title": "A Step Back",
+        "title_de": "Ein Schritt Zurück",
     },
     "NUw5_ruh3H": {
         "book_slug": "diary-of-a-madman",
@@ -60,6 +67,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 6,
         "chapter_number": "6",
         "title": "Pitch Black",
+        "title_de": "Stockdunkel",
     },
     "9d2ulbbTOg": {
         "book_slug": "diary-of-a-madman",
@@ -67,6 +75,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 7,
         "chapter_number": "7",
         "title": "Their Methods",
+        "title_de": "Ihre Methoden",
     },
     "mHOt29iUOn": {
         "book_slug": "diary-of-a-madman",
@@ -74,6 +83,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 8,
         "chapter_number": "8",
         "title": "Somebody Came",
+        "title_de": "Jemand Kam",
     },
     "-GdH2hZ0h_": {
         "book_slug": "diary-of-a-madman",
@@ -81,6 +91,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 9,
         "chapter_number": "9",
         "title": "They Want to Eat People",
+        "title_de": "Sie Wollen Menschen Essen",
     },
     "YwexFVjfJ_": {
         "book_slug": "diary-of-a-madman",
@@ -88,6 +99,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 10,
         "chapter_number": "10",
         "title": "Early in the Morning",
+        "title_de": "Früh am Morgen",
     },
     "y1YXd7xxo2": {
         "book_slug": "diary-of-a-madman",
@@ -95,6 +107,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 11,
         "chapter_number": "11",
         "title": "The Sun Has Not Come Out",
+        "title_de": "Die Sonne Ist Nicht Hervorgekommen",
     },
     "rPqZ4_WGFo": {
         "book_slug": "diary-of-a-madman",
@@ -102,6 +115,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 12,
         "chapter_number": "12",
         "title": "I Cannot Think About It",
+        "title_de": "Ich Kann Nicht Darüber Nachdenken",
     },
     "wl2tMdK8X1": {
         "book_slug": "diary-of-a-madman",
@@ -109,6 +123,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 13,
         "chapter_number": "13",
         "title": "Perhaps...",
+        "title_de": "Vielleicht...",
     },
     # ── Romance of the Three Kingdoms (三國演義) — subchapters of chapter 一 ──
     "wSE4FONhWj": {
@@ -117,6 +132,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 0,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — Poem",
+        "title_de": "Der Eid des Pfirsichgartens — Gedicht",
     },
     "hErMG8iNOo": {
         "book_slug": "romance-of-the-three-kingdoms",
@@ -124,6 +140,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 1,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — Great Teacher",
+        "title_de": "Der Eid des Pfirsichgartens — Ein Großartiger Lehrer",
     },
     "RMY5TrW0T6": {
         "book_slug": "romance-of-the-three-kingdoms",
@@ -131,6 +148,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 2,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — Yellow Turbans",
+        "title_de": "Der Eid des Pfirsichgartens — Gelbe Turbane",
     },
     "MbGAhlo54Y": {
         "book_slug": "romance-of-the-three-kingdoms",
@@ -138,6 +156,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 3,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — Meetings",
+        "title_de": "Der Eid des Pfirsichgartens — Ein Treffen",
     },
     "Q7GnxMzcNw": {
         "book_slug": "romance-of-the-three-kingdoms",
@@ -145,6 +164,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 4,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — The Oath",
+        "title_de": "Der Eid des Pfirsichgartens — Der Eid",
     },
     "59Yb0VElht": {
         "book_slug": "romance-of-the-three-kingdoms",
@@ -152,6 +172,7 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 5,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — Liu Bei's Triumphs",
+        "title_de": "Der Eid des Pfirsichgartens — Liu Beis Triumphe",
     },
     "S6c9Ie5ZkS": {
         "book_slug": "romance-of-the-three-kingdoms",
@@ -159,5 +180,110 @@ CHAPTER_REGISTRY: dict[str, dict] = {
         "chapter_order": 6,
         "chapter_number": "1",
         "title": "Oath of the Peach Garden — Dong Zhuo's Betrayal",
+        "title_de": "Der Eid des Pfirsichgartens — Dong Zhuos Betrug",
+    },
+    "ioWkSgSIVh": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 7,
+        "chapter_number": "2",
+        "title": "Zhang Fei's Anger — Brothers in Arms",
+        "title_de": "Zhang Feis Wut — Waffenbrüder",
+    },
+    "mgAfvMfCSl": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 8,
+        "chapter_number": "2",
+        "title": "Zhang Fei's Anger — The Messenger",
+        "title_de": "Zhang Feis Wut — Der Bote",
+    },
+    "JZgEsdiGSQ": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 9,
+        "chapter_number": "2",
+        "title": "Zhang Fei's Anger — New Allies",
+        "title_de": "Zhang Feis Wut — Neue Verbündete",
+    },
+    "DmaALK8evg": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 10,
+        "chapter_number": "2",
+        "title": "Zhang Fei's Anger — Zhang Fei Strikes",
+        "title_de": "Zhang Feis Wut — Zhang Fei Schlägt Zu",
+    },
+    "GX7hwumqVd": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 11,
+        "chapter_number": "2",
+        "title": "Zhang Fei’s Anger — Corruption Deepens",
+        "title_de": "Zhang Feis Wut — Korruption Eskaliert",
+    },
+    "UFQJ0Wuini": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 12,
+        "chapter_number": "2",
+        "title": "Zhang Fei's Anger — He Jin's Gambit",
+        "title_de": "Zhang Feis Wut— He Jins Schachzug",
+    },
+    "n8lIB2iVDM": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 13,
+        "chapter_number": "2",
+        "title": "Zhang Fei's Anger — He Jin's Decision",
+        "title_de": "Zhang Feis Wut— He Jins Entscheidung",
+    },
+    "iUHX5IfCPN": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 14,
+        "chapter_number": "3",
+        "title": "Dong Zhuo — He Jin's Mistake",
+        "title_de": "Dong Zhuo — He Jins Fehltritt",
+    },
+    "rkFGneFBR2": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 15,
+        "chapter_number": "2",
+        "title": "Dong Zhuo — He Jin's Fall",
+        "title_de": "Dong Zhuo — He Jins Niedergang",
+    },
+    "lngV68DrPT": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 16,
+        "chapter_number": "3",
+        "title": "Dong Zhuo — Palace in Flames",
+        "title_de": "Dong Zhuo — Palast in Flammen",
+    },
+    "SZ65kt3ty1": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 17,
+        "chapter_number": "3",
+        "title": "Dong Zhuo — Rise of Dong Zhuo",
+        "title_de": "Dong Zhuo — Dong Zhuos Aufstieg",
+    },
+    "kn1dApJoX6": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 18,
+        "chapter_number": "3",
+        "title": "Dong Zhuo — Turning Lü Bu",
+        "title_de": "Dong Zhuo — Lü Bus Wende",
+    },
+    "FPGtYiyaGg": {
+        "book_slug": "romance-of-the-three-kingdoms",
+        "book_title": "Romance of the Three Kingdoms",
+        "chapter_order": 19,
+        "chapter_number": "3",
+        "title": "Dong Zhuo — Lü Bu Joins Dong Zhuo",
+        "title_de": "Dong Zhuo — Lü Bu Schließt Sich Dong Zhuo An",
     },
 }

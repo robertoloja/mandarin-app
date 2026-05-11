@@ -8,12 +8,12 @@ const top_nav = {
     de: 'Aussprache',
   },
   off: {
-    en: 'off',
-    de: 'aus',
+    en: 'Off',
+    de: 'Aus',
   },
   on: {
-    en: 'on',
-    de: 'an',
+    en: 'On',
+    de: 'An',
   },
   size: {
     en: 'size',
@@ -26,6 +26,42 @@ const top_nav = {
   language_options: {
     en: 'Language Options',
     de: 'Spracheinstellungen',
+  },
+  script: {
+    en: 'Script',
+    de: 'Umschrift',
+  },
+  format: {
+    en: 'Format',
+    de: 'Format',
+  },
+  reading: {
+    en: 'Reading',
+    de: 'Sie lesen',
+  },
+  chapters: {
+    en: 'Chapters',
+    de: 'Kapitel',
+  },
+  not_yet_available: {
+    en: 'Not yet available',
+    de: 'Noch nicht verfügbar',
+  },
+  flow: {
+    en: 'Flow',
+    de: 'Flow',
+  },
+  vocab_grid: {
+    en: 'Vocab grid',
+    de: 'Vokabelraster',
+  },
+  interface_language: {
+    en: 'Language',
+    de: 'Sprache',
+  },
+  characters: {
+    en: 'Hanzi',
+    de: 'Hanzi',
   },
 };
 

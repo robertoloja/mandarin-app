@@ -1,6 +1,5 @@
 'use client';
 
-import styles, { bgColor } from '@/themes';
 import { Box, VStack, Text, Center } from '@chakra-ui/react';
 import { Cinzel, Yuji_Mai } from 'next/font/google';
 import Link from 'next/link';
@@ -66,7 +65,9 @@ export default function ReadingCoverComponent({
       m={noMargin ? 0 : [1, 4]}
       mt={noMargin ? 0 : '4'}
       transition="height 0.2s ease"
-      __css={styles.darkBox.dark}
+      border="1px solid #1e282c"
+      backgroundColor="#333c40"
+      boxShadow="1px 1px 1px rgba(0, 0, 0, 0.3)"
     >
       <AttributionPopover text={attribution.text} image={attribution.image} />
 
@@ -77,7 +78,7 @@ export default function ReadingCoverComponent({
         right="0"
         height="100%"
         width={['100%', '23rem']}
-        bg={bgColor.front.dark}
+        bg="#495255"
         opacity={['100%', '97%']}
         textColor="rgb(231, 231, 230)"
         _before={{
@@ -87,7 +88,7 @@ export default function ReadingCoverComponent({
           left: '-40%',
           height: '100%',
           width: '40%',
-          bgGradient: `linear(to-l, ${bgColor.front.dark}, rgba(73,82,85, 0))`,
+          bgGradient: `linear(to-l, #495255, rgba(73,82,85, 0))`,
         }}
       >
         <Box
@@ -96,7 +97,6 @@ export default function ReadingCoverComponent({
           display="flex"
           flexDirection="column"
           justifyContent="flex-start"
-          __css={styles.lightBox.dark}
           border="none"
           shadow="none"
         >

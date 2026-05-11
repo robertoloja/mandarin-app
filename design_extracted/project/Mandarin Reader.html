@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mandarin Reader · Diary of a Madman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: var(--bg, oklch(0.18 0.01 60));
+    color: var(--text);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  #root { height: 100vh; }
+  button { font-family: inherit; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  .token:hover { background: var(--token-hover-bg) !important; }
+  .token:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .token--selected { background: var(--token-selected-bg) !important; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="passage.jsx"></script>
+<script type="text/babel" src="reader-text.jsx"></script>
+<script type="text/babel" src="reader-app.jsx"></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "dark",
+  "layout": "flow",
+  "ruby": true,
+  "translation": true,
+  "toneStyle": "char",
+  "fontScale": 1,
+  "showSidebar": true,
+  "showSaved": false
+}/*EDITMODE-END*/;
+
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [selected, setSelected] = useState(null); // {p, i, anchor, word}
+  const [savedSet, setSavedSet] = useState(() => new Set(SAVED.map((w) => w.w)));
+  const [savedList, setSavedList] = useState(SAVED);
+
+  // Apply theme variables to :root
+  useEffect(() => {
+    const vars = THEMES[t.theme] || THEMES.dark;
+    const root = document.documentElement;
+    Object.entries(vars).forEach(([k, v]) => root.style.setProperty(k, v));
+    root.dataset.theme = t.theme;
+    document.body.style.background = vars['--bg'];
+  }, [t.theme]);
+
+  // Esc to close popover
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') setSelected(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const dark = t.theme === 'dark';
+  const selectedKey = selected ? `${selected.p}.${selected.i}` : null;
+
+  const onSelectWord = (p, i, anchor) => {
+    const word = PARAGRAPHS[p][i];
+    if (selected && selected.p === p && selected.i === i) {
+      setSelected(null);
+    } else {
+      setSelected({ p, i, anchor, word });
+    }
+  };
+
+  const onSave = (word) => {
+    if (savedSet.has(word.w)) {
+      const next = new Set(savedSet); next.delete(word.w);
+      setSavedSet(next);
+      setSavedList(savedList.filter((s) => s.w !== word.w));
+    } else {
+      const next = new Set(savedSet); next.add(word.w);
+      setSavedSet(next);
+      setSavedList([...savedList, { w: word.w, py: word.py, t: word.t, gloss: word.gloss }]);
+    }
+  };
+  const onAddCard = () => {};
+
+  return (
+    <>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `${t.showSidebar ? '260px' : '0'} 1fr ${t.showSaved ? '320px' : '0'}`,
+          gridTemplateRows: '52px 1fr 44px',
+          gridTemplateAreas: `
+            "top top top"
+            "side main rail"
+            "bot bot bot"
+          `,
+          height: '100vh',
+          background: 'var(--bg)',
+          color: 'var(--text)',
+          transition: 'grid-template-columns .2s ease',
+        }}
+      >
+        <TopBar
+          ruby={t.ruby}
+          setRuby={(v) => setTweak('ruby', v)}
+          translation={t.translation}
+          setTranslation={(v) => setTweak('translation', v)}
+          theme={t.theme}
+          setTheme={(v) => setTweak('theme', v)}
+          fontScale={t.fontScale}
+          setFontScale={(v) => setTweak('fontScale', v)}
+          onToggleSidebar={() => setTweak('showSidebar', !t.showSidebar)}
+          onToggleSaved={() => setTweak('showSaved', !t.showSaved)}
+          layout={t.layout}
+          setLayout={(v) => setTweak('layout', v)}
+        />
+        <Sidebar open={t.showSidebar} currentChapter={1} onClose={() => setTweak('showSidebar', false)} />
+        <Reader
+          layout={t.layout}
+          ruby={t.ruby}
+          translation={t.translation}
+          dark={dark}
+          toneStyle={t.toneStyle}
+          fontScale={t.fontScale}
+          selectedKey={selectedKey}
+          onSelect={onSelectWord}
+          paragraphIdx={0}
+          setParagraphIdx={() => {}}
+        />
+        <SavedRail open={t.showSaved} savedWords={savedList} dark={dark} />
+        <BottomBar paragraphIdx={0} totalParas={PARAGRAPHS.length} />
+      </div>
+
+      {selected && (
+        <WordPopover
+          word={selected.word}
+          anchor={selected.anchor}
+          dark={dark}
+          onClose={() => setSelected(null)}
+          onSave={onSave}
+          saved={savedSet.has(selected.word.w)}
+          onAddCard={onAddCard}
+        />
+      )}
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection title="Theme">
+          <TweakRadio
+            label="Theme"
+            value={t.theme}
+            onChange={(v) => setTweak('theme', v)}
+            options={[{ v: 'light', label: 'Light' }, { v: 'sepia', label: 'Sepia' }, { v: 'dark', label: 'Dark' }]}
+          />
+        </TweakSection>
+        <TweakSection title="Layout">
+          <TweakRadio
+            label="Mode"
+            value={t.layout}
+            onChange={(v) => setTweak('layout', v)}
+            options={[{ v: 'flow', label: 'Flow' }, { v: 'interlinear', label: 'Inter' }, { v: 'grid', label: 'Grid' }]}
+          />
+          <TweakToggle label="Chapter rail" value={t.showSidebar} onChange={(v) => setTweak('showSidebar', v)} />
+          <TweakToggle label="Saved rail" value={t.showSaved} onChange={(v) => setTweak('showSaved', v)} />
+        </TweakSection>
+        <TweakSection title="Reading aids">
+          <TweakToggle label="Pinyin (ruby)" value={t.ruby} onChange={(v) => setTweak('ruby', v)} />
+          <TweakToggle label="Translation" value={t.translation} onChange={(v) => setTweak('translation', v)} />
+          <TweakSelect
+            label="Tone style"
+            value={t.toneStyle}
+            onChange={(v) => setTweak('toneStyle', v)}
+            options={[
+              { value: 'char', label: 'Color the character' },
+              { value: 'underline', label: 'Underline only' },
+              { value: 'both', label: 'Char + underline' },
+              { value: 'pinyin', label: 'Pinyin only' },
+              { value: 'off', label: 'Off' },
+            ]}
+          />
+          <TweakSlider label="Font size" value={t.fontScale} min={0.85} max={1.4} step={0.05} onChange={(v) => setTweak('fontScale', v)} />
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

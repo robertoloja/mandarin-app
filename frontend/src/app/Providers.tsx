@@ -3,21 +3,13 @@
 import { Suspense, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import TopNav from '@/components/TopNav/TopNavComponent';
 import { MandoBotAPI, injectStore } from '@/utils/api';
 import { logout, setUserDetails } from '@/utils/store/authSlice';
-import { accordionTheme } from './reading/components/Accordion';
+import theme from '@/theme';
 
 injectStore(store.dispatch, logout, setUserDetails);
-
-const theme = extendTheme({
-  components: { Accordion: accordionTheme },
-  config: {
-    initialColorMode: 'dark',
-    useSystemColorMode: true,
-  },
-});
 
 const UpdateUserSettings = () => {
   useEffect(() => {

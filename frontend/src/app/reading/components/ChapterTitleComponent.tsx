@@ -19,24 +19,13 @@ export const ChapterTitle = (props: {
   chapter: Chapter;
   isCurrentChapter?: boolean;
 }) => {
+  const isDisabled = props.chapter.chapter_order === undefined && !props.chapter.subchapters;
   return (
     <HStack
       py="0.5rem"
-      textColor={
-        props.isCurrentChapter
-          ? 'gray'
-          : props.chapter.chapter_order !== undefined ||
-              props.chapter.subchapters
-            ? undefined
-            : 'gray'
-      }
-      cursor={
-        props.chapter.chapter_order !== undefined || props.chapter.subchapters
-          ? 'pointer'
-          : 'not-allowed'
-      }
+      textColor={props.isCurrentChapter || isDisabled ? 'gray' : undefined}
+      cursor={isDisabled ? 'not-allowed' : 'pointer'}
     >
-      {/* List Number */}
       <Text
         fontSize={['1rem', '0.9rem']}
         className={yujiMai.className}
@@ -44,7 +33,6 @@ export const ChapterTitle = (props: {
       >
         {props.chapter.number}
       </Text>
-      {/* English Chapter Title */}
       <Text
         fontSize="1.2rem"
         className={goudy.className}
@@ -58,7 +46,7 @@ export const ChapterTitle = (props: {
             {props.chapter.title}
           </Link>
         ) : (
-          `${props.chapter.title}`
+          props.chapter.title
         )}
       </Text>
     </HStack>

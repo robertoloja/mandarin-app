@@ -4,3 +4,9 @@
   status = 200
   force = true
   signed = "API_ACCESS_TOKEN"
+
+[[redirects]]
+  from = "https://*.netlify.app/*"
+  to = "https://mandobot.com/:splat"
+  status = 301
+  force = true

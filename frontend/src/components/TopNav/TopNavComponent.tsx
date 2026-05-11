@@ -1,20 +1,18 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
   useDisclosure,
   IconButton,
-  defineStyle,
-  defineStyleConfig,
   HStack,
+  Box,
   useColorMode,
 } from '@chakra-ui/react';
 
-import { IoMoon, IoSunny, IoMenuOutline, IoHomeOutline } from 'react-icons/io5';
+import { IoMenuOutline, IoHomeOutline, IoSunny, IoSunnyOutline, IoMoon, IoMoonOutline } from 'react-icons/io5';
 
 import NavPanel from '../NavPanelComponent';
 import ShareButton from '../ShareButtonComponent';
-import LanguageMenu from './LanguageMenuComponent';
 import ErrorButton from './ErrorButtonComponent';
 import Link from 'next/link';
 import { RootState, store } from '@/utils/store/store';
@@ -25,106 +23,143 @@ import BackToTop from './BackToTopComponent';
 import TextMenuButton from './TextMenuComponent';
 import LanguagePreferenceMenuButton from './LanguagePreferenceMenuComponent';
 import TableOfContentsButton from './TableOfContentsButton';
+import ReadingModeToggle from './ReadingModeToggle';
+
+function NavDivider() {
+  return <Box w="1px" h="22px" bg="borderDefault" flexShrink={0} />;
+}
+
+function ThemeControl({ theme, onToggle }: { theme: string; onToggle: () => void }) {
+  const items = [
+    { v: 'light', filled: <IoSunny size={13} />, outline: <IoSunnyOutline size={13} /> },
+    { v: 'dark', filled: <IoMoon size={13} />, outline: <IoMoonOutline size={13} /> },
+  ];
+  return (
+    <Box
+      display="inline-flex"
+      bg="bgSubtle"
+      border="1px solid"
+      borderColor="borderDefault"
+      borderRadius="7px"
+      p="2px"
+      gap="1px"
+    >
+      {items.map((it) => {
+        const isActive = theme === it.v;
+        return (
+          <Box
+            key={it.v}
+            as="button"
+            w="26px"
+            h="22px"
+            border="none"
+            borderRadius="5px"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg={isActive ? 'bgActive' : 'transparent'}
+            color={isActive ? 'fgPrimary' : 'fgSubtle'}
+            cursor="pointer"
+            onClick={() => { if (!isActive) onToggle(); }}
+          >
+            {isActive ? it.filled : it.outline}
+          </Box>
+        );
+      })}
+    </Box>
+  );
+}
+
 
 function TopNav() {
   const pathname = usePathname();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const btnRef = useRef<HTMLButtonElement>(null);
 
-  const buttonStyle = defineStyle({
-    border: '0',
-    fontColor: 'blue',
-    background: 'white',
-  });
-
-  defineStyleConfig({
-    variants: { buttonStyle },
-  });
   const toggleThemeSetting = () => {
     store.dispatch(toggleTheme());
     toggleColorMode();
-    //TODO: Also change in the API
   };
   const theme = useSelector((state: RootState) => state.settings.theme);
+  const shareLink = useSelector((state: RootState) => state.sentence.shareLink);
+  const hasSegments = useSelector(
+    (state: RootState) => state.sentence.mandarinSentence.segments.length > 0,
+  );
   useEffect(() => {
-    if (theme == 'light' && colorMode == 'dark') toggleColorMode();
-    if (theme == 'dark' && colorMode == 'light') toggleColorMode();
+    if (theme === 'light' && colorMode === 'dark') toggleColorMode();
+    if (theme === 'dark' && colorMode === 'light') toggleColorMode();
   }, []);
 
   const iconSize = 20;
+  const iconBtnProps = {
+    bg: 'bgSubtle' as const,
+    border: '1px solid',
+    borderColor: 'borderDefault',
+    h: '30px',
+    minW: '30px',
+    _hover: { borderColor: 'borderEmphasis' },
+  };
+
   return (
     <HStack
       justifyContent="space-between"
-      boxShadow="1px 1px 1px 0 rgba(0, 0, 0, 0.3)"
-      // borderBottom="solid 1px black"
+      borderBottom="1px solid"
+      borderColor="borderDefault"
       position="sticky"
       top="0"
       zIndex="100"
       w="100%"
-      h="2.5rem"
-      backgroundColor={colorMode === 'light' ? 'white' : 'gray.800'}
+      h="52px"
+      px={4}
+      gap={2}
+      backgroundColor="bgCanvas"
     >
-      <HStack justifyContent="left">
+      <HStack gap={2} flexShrink={0}>
         <NavPanel isOpen={isOpen} onClose={onClose} />
         <IconButton
-          aria-label="open Navigation"
-          icon={<IoMenuOutline size={iconSize + 7} />}
-          ref={btnRef}
+          aria-label="Open navigation"
+          icon={<IoMenuOutline size={iconSize + 4} />}
           onClick={onOpen}
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
-          ml="0.2rem"
-          mt={0.5}
-          mb={0.5}
+          {...iconBtnProps}
         />
-
         {pathname !== '/' && (
           <Link href="/" prefetch={true}>
             <IconButton
-              aria-label="Text options"
+              aria-label="Go home"
               icon={<IoHomeOutline size={iconSize} />}
-              bg={colorMode === 'light' ? 'white' : 'gray.800'}
+              {...iconBtnProps}
             />
           </Link>
         )}
       </HStack>
 
-      <HStack justifyContent="right" w="100%">
+      <HStack gap={2} flexShrink={0} ml="auto">
         <ErrorButton iconSize={iconSize} />
-        {pathname === '/' && (
+
+        {pathname === '/' && hasSegments && (
           <>
             <BackToTop iconSize={iconSize} />
             <TextMenuButton />
-            <LanguageMenu iconSize={iconSize} />
-            <ShareButton iconSize={iconSize} />
+            {shareLink !== '' && <ShareButton iconSize={iconSize} />}
           </>
         )}
 
         {pathname.includes('/reading/') && (
           <>
+            <ReadingModeToggle />
+            <NavDivider />
             <BackToTop iconSize={iconSize} />
-            <TableOfContentsButton iconSize={iconSize} />
             <TextMenuButton />
-            <LanguageMenu iconSize={iconSize} />
           </>
         )}
 
+        <NavDivider />
         <LanguagePreferenceMenuButton iconSize={iconSize} />
+        <NavDivider />
+        <ThemeControl theme={theme} onToggle={toggleThemeSetting} />
 
-        {pathname !== '/settings' && (
-          <IconButton
-            aria-label="Change color mode"
-            icon={
-              colorMode === 'light' ? (
-                <IoMoon size={iconSize} />
-              ) : (
-                <IoSunny size={iconSize} />
-              )
-            }
-            onClick={toggleThemeSetting}
-            bg={colorMode === 'light' ? 'white' : 'gray.800'}
-            mr="2rem"
-          />
+        {pathname.includes('/reading/') && (
+          <TableOfContentsButton iconSize={iconSize} />
         )}
       </HStack>
     </HStack>

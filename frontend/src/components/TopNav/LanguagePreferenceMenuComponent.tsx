@@ -1,58 +1,78 @@
 'use client';
 
-import localization from '@/localization/main';
 import { RootState } from '@/utils/store/store';
 import {
-  Center,
+  Box,
   IconButton,
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
-  PopoverHeader,
   PopoverTrigger,
   Text,
-  useColorMode,
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import LanguagePreferencesComponent from '../LanguagePreferencesComponent';
+import localization from '@/localization/main';
+import { FONT_SANS, FONT_SIZE_MICRO, FONT_SIZE_UI } from '@/theme';
 
 export default function LanguagePreferenceMenuButton({
-  iconSize,
+  iconSize: _iconSize,
 }: {
   iconSize: number;
 }) {
-  const { colorMode } = useColorMode();
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
 
   return (
-    <Popover>
+    <Popover placement="bottom-end" offset={[0, 4]}>
       <PopoverTrigger>
         <IconButton
-          aria-label="language preference"
+          aria-label="Language preference"
           icon={
             <Text
-              fontWeight="400"
+              fontFamily={FONT_SANS}
+              fontWeight={500}
               textTransform="uppercase"
-              fontSize={iconSize}
+              fontSize={FONT_SIZE_UI}
+              letterSpacing="0.04em"
             >
               {user_language}
             </Text>
           }
-          bg={colorMode === 'light' ? 'white' : 'gray.800'}
+          bg="bgSubtle"
+          border="1px solid"
+          borderColor="borderDefault"
+          h="30px"
+          minW="30px"
+          _hover={{ borderColor: 'borderEmphasis' }}
         />
       </PopoverTrigger>
 
-      <PopoverContent bg={colorMode === 'light' ? 'white' : 'gray.700'}>
-        <PopoverArrow />
-        <PopoverHeader>
-          <Center>
-            {localization.top_nav.language_options[user_language]}
-          </Center>
-        </PopoverHeader>
-        <PopoverBody>
+      <PopoverContent
+        width="fit-content"
+        borderRadius="10px"
+        border="1px solid"
+        borderColor="borderDefault"
+        bg="bgCanvas"
+        boxShadow="lg"
+        _focus={{ outline: 'none' }}
+        px={4}
+        py={3}
+      >
+        <PopoverArrow bg="bgCanvas" />
+        <PopoverBody p={0}>
+          <Box
+            fontFamily={FONT_SANS}
+            fontSize={FONT_SIZE_MICRO}
+            textTransform="uppercase"
+            letterSpacing="0.14em"
+            color="fgSubtle"
+            mb={2}
+          >
+            {localization.top_nav.interface_language[user_language]}
+          </Box>
           <LanguagePreferencesComponent />
         </PopoverBody>
       </PopoverContent>

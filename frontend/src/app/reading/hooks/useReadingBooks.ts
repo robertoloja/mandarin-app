@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import localization from '@/localization/main';
@@ -7,6 +8,8 @@ export function useReadingBooks(): Record<string, ReadingProps> {
   const user_language = useSelector(
     (state: RootState) => state.settings.user_language,
   );
+
+  return useMemo(() => {
   const romance_loc = localization.reading_room.romance_of_the_three_kingdoms;
   const diary_loc = localization.reading_room.diary_of_a_madman;
 
@@ -24,7 +27,19 @@ export function useReadingBooks(): Record<string, ReadingProps> {
         { name: romance_loc.book_1.chapter_7[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 6 },
       ],
     },
-    { number: '二', title: romance_loc.book_2[user_language] },
+    {
+      number: '二',
+      title: romance_loc.book_2.title[user_language],
+      subchapters: [
+        { name: romance_loc.book_2.chapter_1[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 7 },
+        { name: romance_loc.book_2.chapter_2[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 8 },
+        { name: romance_loc.book_2.chapter_3[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 9 },
+        { name: romance_loc.book_2.chapter_4[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 10 },
+        { name: romance_loc.book_2.chapter_5[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 11 },
+        { name: romance_loc.book_2.chapter_6[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 12 },
+        { name: romance_loc.book_2.chapter_7[user_language], book_slug: 'romance-of-the-three-kingdoms', chapter_order: 13 },
+      ],
+    },
     { number: '三', title: romance_loc.book_3[user_language] },
     { number: '四', title: romance_loc.book_4[user_language] },
     { number: '五', title: romance_loc.book_5[user_language] },
@@ -47,6 +62,7 @@ export function useReadingBooks(): Record<string, ReadingProps> {
     mandarinTitle: '三國演義',
     titleLink: 'HiCM26DDHH',
     title: romance_loc.title[user_language],
+    author: 'Luo Guanzhong · c. 1400',
     chapters: [romance_chapters_1, romance_chapters_2, romance_chapters_3],
     background: 'romance-cover.jpg',
     attribution: { image: '', text: romance_loc.popover[user_language] },
@@ -76,6 +92,7 @@ export function useReadingBooks(): Record<string, ReadingProps> {
     mandarinTitle: '狂人日記',
     titleLink: 'oslPMkaKBS',
     title: diary_loc.title[user_language],
+    author: 'Lu Xun · 1918',
     chapters: [diary_chap1, diary_chap2, diary_chap3],
     background: 'lu-xun.jpg',
     attribution: { image: '', text: diary_loc.popover[user_language] },
@@ -85,4 +102,5 @@ export function useReadingBooks(): Record<string, ReadingProps> {
     'diary-of-a-madman': diary,
     'romance-of-the-three-kingdoms': romance,
   };
+  }, [user_language]);
 }

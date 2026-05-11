@@ -65,7 +65,15 @@ const account_settings = {
   },
   hide: {
     en: 'Hide',
-    de: 'Verbergen',
+    de: '',
+  },
+  interface: {
+    en: 'Interface',
+    de: '',
+  },
+  danger_zone: {
+    en: 'Danger Zone',
+    de: '',
   },
 };
 

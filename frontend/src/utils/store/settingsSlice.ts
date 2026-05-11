@@ -9,6 +9,7 @@ interface SettingsState {
   user_language: UserLanguage;
   definitionFontSize: number;
   pronunciationFontSize: number;
+  readingMode: 'flow' | 'grid';
 }
 
 const getInitialUserLanguage = (): UserLanguage => {
@@ -34,6 +35,7 @@ const initialState: SettingsState = {
   user_language: getInitialUserLanguage(),
   definitionFontSize: getLocalNumber('definitionFontSize', 15),
   pronunciationFontSize: getLocalNumber('pronunciationFontSize', 15),
+  readingMode: 'flow',
 };
 
 const settingsSlice = createSlice({
@@ -65,6 +67,9 @@ const settingsSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.setItem('pronunciationFontSize', String(action.payload));
       }
+    },
+    setReadingMode(state, action: PayloadAction<'flow' | 'grid'>) {
+      state.readingMode = action.payload;
     },
     setPreferences(
       state,
@@ -101,5 +106,6 @@ export const {
   setPreferences,
   setDefinitionFontSize,
   setPronunciationFontSize,
+  setReadingMode,
 } = settingsSlice.actions;
 export default settingsSlice.reducer;

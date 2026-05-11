@@ -9,7 +9,6 @@ export const NavArrows = (props: {
   setAccordionIndex: (num: number) => void;
   user_language: UserLanguage;
 }) => {
-  const user_language = props.user_language;
   return (
     <HStack textColor="rgb(231, 231, 230)">
       {props.activePage > 0 && (
@@ -26,7 +25,7 @@ export const NavArrows = (props: {
             props.setAccordionIndex(-1);
           }}
         >
-          {localization.reading_room.previous[user_language]} 上
+          {localization.reading_room.previous[props.user_language]} 上
         </Text>
       )}
       {props.activePage < props.chapters.length - 1 && (
@@ -43,7 +42,7 @@ export const NavArrows = (props: {
             props.setAccordionIndex(-1);
           }}
         >
-          下 {localization.reading_room.next[user_language]}
+          下 {localization.reading_room.next[props.user_language]}
         </Text>
       )}
     </HStack>

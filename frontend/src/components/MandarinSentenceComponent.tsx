@@ -1,48 +1,63 @@
 'use client';
 
-import { Flex } from '@chakra-ui/react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/utils/store/store';
 import Word from './WordComponent';
 import { MandarinWordType, ChineseDictionary } from '@/utils/types';
 import { UserLanguage } from '@/localization/main';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/utils/store/store';
+import { FONT_CHINESE } from '@/theme';
 
 interface MandarinSentenceProps {
   sentence: MandarinWordType[];
-  dictionary: ChineseDictionary;
+  dictionary?: ChineseDictionary;
   user_language: UserLanguage;
+  noBottomMargin?: boolean;
 }
 
 function MandarinSentence(props: MandarinSentenceProps) {
   const pronunciation = useSelector(
     (state: RootState) => state.settings.pronunciation,
   );
+  const pronunciationFontSize = useSelector(
+    (state: RootState) => state.settings.pronunciationFontSize,
+  );
   const height = useSelector(
     (state: RootState) => state.sentence.translationPanelHeight,
   );
 
+  const showRuby = pronunciationFontSize !== 0;
+  const lineHeight = showRuby ? (pronunciation === 'zhuyin' ? 4.5 : 4) : 3;
+
   return (
-    <Flex
-      align="stretch"
-      w="100%"
-      h="100%"
-      px={['0', '5%']}
-      flexWrap="wrap"
-      mb={`${height}px`}
-      overflow="hidden"
+    <div
+      style={{
+        width: '100%',
+        marginBottom: props.noBottomMargin ? 0 : `${height}px`,
+      }}
       aria-label="mandarin sentence"
     >
-      {props.sentence.map((word, index) => (
-        <Word
-          word={word}
-          pronunciation={pronunciation == 'pinyin' ? word.pinyin : word.zhuyin}
-          definitions={word.definitions[props.user_language]}
-          user_language={props.user_language}
-          dictionary={props.dictionary}
-          key={index}
-        />
-      ))}
-    </Flex>
+      <p
+        style={{
+          margin: 0,
+          textAlign: 'justify',
+          lineHeight,
+          fontFamily: FONT_CHINESE,
+        }}
+      >
+        {props.sentence.map((word, index) => (
+          <Word
+            word={word}
+            pronunciation={
+              pronunciation === 'pinyin' ? word.pinyin : word.zhuyin
+            }
+            definitions={word.definitions[props.user_language]}
+            user_language={props.user_language}
+            dictionary={props.dictionary}
+            key={index}
+          />
+        ))}
+      </p>
+    </div>
   );
 }
 

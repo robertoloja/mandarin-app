@@ -40,3 +40,13 @@ a {
     color-scheme: dark;
   }
 }
+
+.reading-token:hover {
+  background: rgba(128, 128, 128, 0.12) !important;
+}
+
+.reading-token:focus-visible {
+  outline: 2px solid oklch(0.78 0.12 70);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

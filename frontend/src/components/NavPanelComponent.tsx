@@ -2,19 +2,18 @@
 
 import React from 'react';
 import {
+  Box,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerOverlay,
-  VStack,
-  DrawerCloseButton,
   HStack,
   Text,
-  Spacer,
-  useColorMode,
+  VStack,
   useToast,
 } from '@chakra-ui/react';
 import {
+  IoCloseOutline,
   IoFolderOpenOutline,
   IoHomeOutline,
   IoLogInOutline,
@@ -22,35 +21,68 @@ import {
   IoLibraryOutline,
   IoInformationCircleOutline,
   IoBugOutline,
+  IoSettingsOutline,
 } from 'react-icons/io5';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { useRouter } from 'next/navigation';
-import SettingsButton from './SettingsButtonComponent';
 import localization from '@/localization/main';
+import { FONT_SANS, FONT_SIZE_UI } from '@/theme';
+
+function NavItem({
+  href,
+  icon,
+  label,
+  onClick,
+  external,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick?: (e: React.MouseEvent) => void;
+  external?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      prefetch={!external}
+      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    >
+      <HStack
+        px={3}
+        py="7px"
+        borderRadius="7px"
+        color="fgMuted"
+        gap={3}
+        _hover={{ bg: 'bgSubtle', color: 'fgBody' }}
+        transition="all 0.14s"
+      >
+        {icon}
+        <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_UI}>
+          {label}
+        </Text>
+      </HStack>
+    </Link>
+  );
+}
 
 function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   const toast = useToast();
   const router = useRouter();
-  const { colorMode } = useColorMode();
   const username = useSelector((state: RootState) => state.auth.username);
   const user_language = useSelector((state: RootState) => state.settings.user_language);
-  const darkTextShadow = '1px 1px rgba(50, 50, 50, 0.3)';
-  const lightTextShadow = '1px 1px rgba(50, 50, 50, 0.1)';
+  const loc = localization.nav_panel;
+  const iconSize = 16;
 
-  const handleAuthClick = (e: any) => {
+  const handleAuthClick = (e: React.MouseEvent) => {
     if (username) {
       e.preventDefault();
       MandoBotAPI.logout().then(() => {
         router.push('/');
-        toast({
-          title: 'Logged out',
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        });
+        toast({ title: 'Logged out', status: 'success', duration: 2000, isClosable: true });
         props.onClose();
       });
     } else {
@@ -59,146 +91,75 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
   };
 
   return (
-    <Drawer
-      isOpen={props.isOpen}
-      placement="left"
-      onClose={props.onClose}
-      size="xs"
-      allowPinchZoom={true}
-    >
+    <Drawer isOpen={props.isOpen} placement="left" onClose={props.onClose} size="xs" allowPinchZoom>
       <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton aria-label="close nav panel" />
-        <DrawerBody ml="-4rem">
-          <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
-            <SettingsButton onClose={props.onClose} />
+      <DrawerContent bg="bgCanvas" maxW="220px">
+        <DrawerBody px={3} py={4} display="flex" flexDirection="column">
+          <Box
+            as="button"
+            alignSelf="flex-end"
+            mb={4}
+            onClick={props.onClose}
+            color="fgSubtle"
+            _hover={{ color: 'fgMuted' }}
+            lineHeight={0}
+            aria-label="close navigation"
+          >
+            <IoCloseOutline size={20} />
+          </Box>
 
-            <Link
+          <VStack spacing={0} align="stretch">
+            {username && (
+              <NavItem
+                href="/settings"
+                icon={<IoSettingsOutline size={iconSize} />}
+                label={loc.settings[user_language]}
+                onClick={props.onClose}
+              />
+            )}
+            <NavItem
               href="/"
-              passHref
+              icon={<IoHomeOutline size={iconSize} />}
+              label={loc.home[user_language]}
               onClick={props.onClose}
-              prefetch={true}
-              aria-label="home link"
-            >
-              <HStack>
-                <IoHomeOutline size="22" />
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  {localization.nav_panel.home[user_language]}
-                </Text>
-              </HStack>
-            </Link>
-            <Link
+            />
+            <NavItem
               href="/reading"
-              passHref
+              icon={<IoLibraryOutline size={iconSize} />}
+              label={loc.reading_room[user_language]}
               onClick={props.onClose}
-              prefetch={true}
-              aria-label="reading room link"
-            >
-              <HStack>
-                <IoLibraryOutline
-                  size="22"
-                  color={colorMode === 'light' ? '#222' : '#d9d9d9'}
-                />
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  {localization.nav_panel.reading_room[user_language]}
-                </Text>
-              </HStack>
-            </Link>
-            <Link
+            />
+            <NavItem
               href="/history"
-              passHref
+              icon={<IoFolderOpenOutline size={iconSize} />}
+              label={loc.sentence_history[user_language]}
               onClick={props.onClose}
-              prefetch={true}
-              aria-label="sentence history link"
-            >
-              <HStack>
-                <IoFolderOpenOutline size="22" />
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  {localization.nav_panel.sentence_history[user_language]}
-                </Text>
-              </HStack>
-            </Link>
+            />
           </VStack>
 
-          <Spacer mt="16rem" />
+          <Box flex={1} />
 
-          <VStack spacing="2rem" marginLeft="7.4rem" alignItems="left">
-            <Link
+          <Box borderTop="1px solid" borderColor="borderDefault" my={3} />
+
+          <VStack spacing={0} align="stretch">
+            <NavItem
               href="/about"
-              passHref
+              icon={<IoInformationCircleOutline size={iconSize} />}
+              label={loc.status_about[user_language]}
               onClick={props.onClose}
-              prefetch={true}
-              aria-label="about page link"
-            >
-              <HStack>
-                <IoInformationCircleOutline size="22" />
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  {localization.nav_panel.status_about[user_language]}
-                </Text>
-              </HStack>
-            </Link>
-
-            <Link
+            />
+            <NavItem
               href="https://forms.gle/j89uiVM2xv3CeK7HA"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="bug report link"
-            >
-              <HStack>
-                <IoBugOutline size="22" />
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  {localization.nav_panel.report_bug[user_language]}
-                </Text>
-              </HStack>
-            </Link>
-
-            <Link
+              icon={<IoBugOutline size={iconSize} />}
+              label={loc.report_bug[user_language]}
+              external
+            />
+            <NavItem
               href="/auth"
-              passHref
+              icon={username ? <IoLogOutOutline size={iconSize} /> : <IoLogInOutline size={iconSize} />}
+              label={username ? loc.logout[user_language] : loc.login[user_language]}
               onClick={handleAuthClick}
-              aria-label="login page link"
-            >
-              <HStack>
-                {username ? (
-                  <IoLogOutOutline size="22" />
-                ) : (
-                  <IoLogInOutline size="22" />
-                )}
-                <Text
-                  _hover={{ textDecoration: 'underline' }}
-                  textShadow={
-                    colorMode === 'light' ? lightTextShadow : darkTextShadow
-                  }
-                >
-                  {username ? localization.nav_panel.logout[user_language] : localization.nav_panel.login[user_language]}
-                </Text>
-              </HStack>
-            </Link>
+            />
           </VStack>
         </DrawerBody>
       </DrawerContent>

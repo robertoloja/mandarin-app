@@ -16,6 +16,7 @@ export interface ReadingProps {
   mandarinTitle: string;
   titleLink: string;
   title: string;
+  author: string;
   chapters: Chapter[][];
   background: string;
   attribution: {

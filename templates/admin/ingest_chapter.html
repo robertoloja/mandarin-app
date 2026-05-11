@@ -1,0 +1,116 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Ingest Pre-segmented Chapter{% endblock %}
+
+{% block content %}
+<h1>Ingest Pre-segmented Chapter</h1>
+<p>
+  Paste space-separated Chinese tokens and the full English and German
+  translations. Definitions and pronunciation will be looked up automatically.
+  A <strong>blank line</strong> in the Chinese text becomes a paragraph break.
+</p>
+
+{% if errors %}
+  <ul class="messagelist">
+    {% for error in errors %}
+      <li class="error">{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+
+  <fieldset class="module aligned">
+    <h2>Chapter metadata</h2>
+
+    <div class="form-row">
+      <label for="id_book_slug">Book slug:</label>
+      <input id="id_book_slug" name="book_slug" type="text"
+             value="{{ book_slug }}" style="width: 20rem;"
+             placeholder="e.g. diary-of-a-madman">
+      <p class="help">URL-safe identifier for the book (no spaces).</p>
+    </div>
+
+    <div class="form-row">
+      <label for="id_book_title">Book title:</label>
+      <input id="id_book_title" name="book_title" type="text"
+             value="{{ book_title }}" style="width: 30rem;"
+             placeholder="e.g. Diary of a Madman">
+    </div>
+
+    <div class="form-row">
+      <label for="id_chapter_order">Chapter order:</label>
+      <input id="id_chapter_order" name="chapter_order" type="number"
+             value="{{ chapter_order }}" style="width: 6rem;" min="0">
+      <p class="help">0-based integer sort key within the book.</p>
+    </div>
+
+    <div class="form-row">
+      <label for="id_chapter_number">Chapter number:</label>
+      <input id="id_chapter_number" name="chapter_number" type="text"
+             value="{{ chapter_number }}" style="width: 6rem;"
+             placeholder="e.g. 14">
+      <p class="help">Display number (Arabic numeral string).</p>
+    </div>
+
+    <div class="form-row">
+      <label for="id_chapter_title">Chapter title (EN):</label>
+      <input id="id_chapter_title" name="chapter_title" type="text"
+             value="{{ chapter_title }}" style="width: 30rem;"
+             placeholder="e.g. A Dark Night">
+    </div>
+
+    <div class="form-row">
+      <label for="id_chapter_title_de">Chapter title (DE):</label>
+      <input id="id_chapter_title_de" name="chapter_title_de" type="text"
+             value="{{ chapter_title_de }}" style="width: 30rem;"
+             placeholder="e.g. Eine Dunkle Nacht">
+    </div>
+  </fieldset>
+
+  <fieldset class="module aligned">
+    <h2>Content</h2>
+
+    <div class="form-row">
+      <label for="id_segmented_text">Chinese text:</label>
+      <textarea
+        id="id_segmented_text"
+        name="segmented_text"
+        rows="20"
+        style="width: 100%; font-family: serif; font-size: 1.1rem;"
+      >{{ segmented_text }}</textarea>
+      <p class="help">
+        Space-separated tokens — one word or punctuation mark per token.
+        Leave a <strong>blank line</strong> between paragraphs.
+      </p>
+    </div>
+
+    <div class="form-row">
+      <label for="id_translation_en">English translation:</label>
+      <textarea
+        id="id_translation_en"
+        name="translation_en"
+        rows="12"
+        style="width: 100%; font-family: serif; font-size: 1rem;"
+      >{{ translation_en }}</textarea>
+    </div>
+
+    <div class="form-row">
+      <label for="id_translation_de">German translation:</label>
+      <textarea
+        id="id_translation_de"
+        name="translation_de"
+        rows="12"
+        style="width: 100%; font-family: serif; font-size: 1rem;"
+      >{{ translation_de }}</textarea>
+    </div>
+  </fieldset>
+
+  <div class="submit-row">
+    <input type="submit" value="Generate &amp; Save" class="default">
+    <a href=".." class="closelink">Cancel</a>
+  </div>
+</form>
+{% endblock %}
