@@ -29,7 +29,7 @@ const account_settings = {
   },
   tone_colors: {
     en: 'Tone Colors',
-    de: '',
+    de: 'Tonfarben',
   },
   color_theme: {
     en: 'Color Theme',
@@ -69,15 +69,15 @@ const account_settings = {
   },
   hide: {
     en: 'Hide',
-    de: '',
+    de: 'Verbergen',
   },
   interface: {
     en: 'Interface',
-    de: '',
+    de: 'Benutzeroberfläche',
   },
   danger_zone: {
     en: 'Danger Zone',
-    de: '',
+    de: 'Gefahrenzone',
   },
 };
 
