@@ -98,6 +98,29 @@ def merge(local_path: str, remote_path: str) -> None:
             placeholders = ",".join(["?"] * len(rows[0]))
             remote.executemany(f'INSERT INTO "{table}" VALUES ({placeholders})', rows)
 
+    # SKIP tables keep their remote data but may be missing new columns added by
+    # migrations that ran locally.  Apply any missing columns now so Django doesn't
+    # see schema drift after django_migrations is overwritten with local state.
+    for table in SKIP:
+        local_cols = {
+            row[1]: row
+            for row in local.execute(f"PRAGMA table_info('{table}')")
+        }
+        remote_cols = {
+            row[1]
+            for row in remote.execute(f"PRAGMA table_info('{table}')")
+        }
+        for col_name, col_info in local_cols.items():
+            if col_name in remote_cols:
+                continue
+            col_type = col_info[2]
+            default_val = col_info[4]
+            ddl = f'ALTER TABLE "{table}" ADD COLUMN "{col_name}" {col_type}'
+            if default_val is not None:
+                ddl += f" DEFAULT {default_val}"
+            remote.execute(ddl)
+            print(f"  Schema sync: added {table}.{col_name}")
+
     remote.execute("PRAGMA foreign_keys = ON")
     remote.commit()
     local.close()
