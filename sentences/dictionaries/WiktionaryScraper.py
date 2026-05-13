@@ -45,11 +45,11 @@ class WiktionaryScraper:
             num = 1
 
             while True:
-                pronunciation_header = header.find_next(
+                numbered_header = header.find_next(
                     "h3", string=f"Pronunciation {num}"
                 )
 
-                if not pronunciation_header:
+                if not numbered_header:
                     break
 
                 pronunciation = (
@@ -65,14 +65,12 @@ class WiktionaryScraper:
 
                 results[num] = {"pronunciation": numbered}
 
-                definitions_header = pronunciation_header.find_next(
+                definitions_header = numbered_header.find_next(
                     "h4", string="Definitions"
                 )
 
                 if not definitions_header:
-                    definitions_header = pronunciation_header.find_next(
-                        "h3"
-                    )  # "Noun" or "Verb" or wtv
+                    definitions_header = numbered_header.find_next("h3")
 
                 if not definitions_header:
                     return {"error": "Couldn't find definitions header"}
@@ -113,9 +111,7 @@ class WiktionaryScraper:
         )
 
         if not definitions_header:
-            definitions_header = pronunciation_header.find_next(
-                "h3"
-            )  # "Noun" or "Verb" or wtv
+            definitions_header = mandarin_pronunciation.find_next("h3")
 
         if not definitions_header:
             return {"error": "Couldn't find definitions header"}

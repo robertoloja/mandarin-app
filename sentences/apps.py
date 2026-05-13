@@ -1,7 +1,5 @@
-from asyncio import get_event_loop
 from concurrent.futures import ThreadPoolExecutor
 from django.apps import AppConfig
-from asgiref.sync import sync_to_async
 
 
 class SentencesConfig(AppConfig):
@@ -10,20 +8,21 @@ class SentencesConfig(AppConfig):
 
     def ready(self):
         super().ready()
-
-        # Initialize segmenter and translator
-
-        # Reset average response time
-
         with ThreadPoolExecutor() as exe:
-            exe.submit(self.prepare_status)
+            exe.submit(self._prepare)
 
-    def prepare_status():
+    @staticmethod
+    def _prepare():
+        # Build (or validate) the CEDict → Jieba user dictionary before the
+        # first segment call so Jieba is aware of all known vocabulary.
+        from .segmenters.JiebaSegmenter import build_cedict_user_dict
+        build_cedict_user_dict()
+
+        # Warm up Jieba and Argos, and reset the rolling response-time average.
         from .segmenters import DefaultSegmenter
-
         DefaultSegmenter.segment("好安")
-        from status.models import ServerStatus
 
+        from status.models import ServerStatus
         server_status, _ = ServerStatus.objects.get_or_create()
         server_status.mandobot_response_time = 10000
         server_status.deepl_character_limit = 500000

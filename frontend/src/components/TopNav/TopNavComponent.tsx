@@ -23,7 +23,6 @@ import BackToTop from './BackToTopComponent';
 import TextMenuButton from './TextMenuComponent';
 import LanguagePreferenceMenuButton from './LanguagePreferenceMenuComponent';
 import TableOfContentsButton from './TableOfContentsButton';
-import ReadingModeToggle from './ReadingModeToggle';
 
 function NavDivider() {
   return <Box w="1px" h="22px" bg="borderDefault" flexShrink={0} />;
@@ -146,16 +145,16 @@ function TopNav() {
 
         {pathname.includes('/reading/') && (
           <>
-            <ReadingModeToggle />
-            <NavDivider />
             <BackToTop iconSize={iconSize} />
             <TextMenuButton />
           </>
         )}
 
         <NavDivider />
-        <LanguagePreferenceMenuButton />
-        <NavDivider />
+        <Box display={['none', 'flex']} alignItems="center" gap={2}>
+          <LanguagePreferenceMenuButton />
+          <NavDivider />
+        </Box>
         <ThemeControl theme={theme} onToggle={toggleThemeSetting} />
 
         {pathname.includes('/reading/') && (

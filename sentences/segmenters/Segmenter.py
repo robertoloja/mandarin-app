@@ -17,11 +17,16 @@ from ..segmenters import JiebaSegmenter
 
 
 class Segmenter:
+
+    # ------------------------------------------------------------------ #
+    # Public entry point                                                   #
+    # ------------------------------------------------------------------ #
+
     @staticmethod
     def segment_and_translate(
         sentence: str, auth: bool = False
     ) -> SegmentationResponse:
-        sentence = sentence.replace("\u3000", "").strip()
+        sentence = sentence.replace("　", "").strip()
 
         translator_fn = DeepLTranslate.translate if auth else Translator.translate
 
@@ -35,46 +40,20 @@ class Segmenter:
             segmented = future_segmented.result()
             translations = {lang: fut.result() for lang, fut in future_translations.items()}
 
-        segmented_list: List[MandarinWordSchema] = Segmenter.add_pronunciations(
-            segmented
-        )
-        segmented_sentence, dictionary = (
-            Segmenter.add_definitions_and_create_dictionary(segmented_list)
-        )
-        mandarin_sentence: List[MandarinWordSchema] = segmented_sentence
-
-        result = SegmentationResponse(
-            translations=translations, sentence=mandarin_sentence, dictionary=dictionary
+        segmented_list: List[MandarinWordSchema] = Segmenter.add_pronunciations(segmented)
+        segmented_sentence, dictionary = Segmenter.add_definitions_and_create_dictionary(
+            segmented_list, original_sentence=sentence
         )
 
-        return result
-
-    @staticmethod
-    def most_frequent_pronunciation(hanzi5: str) -> CEDictionary:
-        """
-        When a hanzi has a 5th tone and we have to guess which regular tone
-        is most common, this function performs that logic.
-        """
-        hanzi_regular = CEDictionary.objects.filter(
-            Q(traditional=hanzi5) | Q(simplified=hanzi5)
+        return SegmentationResponse(
+            translations=translations,
+            sentence=segmented_sentence,
+            dictionary=dictionary,
         )
 
-        if hanzi_regular.count() == 0:
-            # TODO: Find this hanzi using dictionary classes and return it
-            pass
-        if hanzi_regular.count() == 1:
-            hanzi = hanzi_regular.first()
-            if hanzi is not None:
-                return hanzi
-        if hanzi_regular.count() > 1:
-            max_count = 0
-
-            for candidate in hanzi_regular:
-                count = ConstituentHanzi.objects.filter(hanzi=candidate).count()
-                if count > max_count:
-                    max_count = count
-                    most_common = candidate
-        return most_common
+    # ------------------------------------------------------------------ #
+    # Pronunciation helpers                                                #
+    # ------------------------------------------------------------------ #
 
     @staticmethod
     def add_pronunciations(segmented_sentence: List[str]) -> List[MandarinWordSchema]:
@@ -84,8 +63,6 @@ class Segmenter:
         response: List[MandarinWordSchema] = []
 
         for i in range(len(segmented_sentence)):
-            pinyin = ""
-
             if hanzi_utils.has_chinese(segmented_sentence[i]) and not is_punctuation(
                 segmented_sentence[i]
             ):
@@ -95,70 +72,54 @@ class Segmenter:
                 pinyin = [segmented_sentence[i]]
                 zhuyin = [segmented_sentence[i]]
 
-            new_word = MandarinWordSchema(
-                word=segmented_sentence[i], pinyin=pinyin, zhuyin=zhuyin, definitions={}
+            response.append(
+                MandarinWordSchema(
+                    word=segmented_sentence[i], pinyin=pinyin, zhuyin=zhuyin, definitions={}
+                )
             )
-            response += [new_word]
         return response
 
     @staticmethod
-    def try_to_concat(
-        segmented_sentence: List[MandarinWordSchema], index: int
-    ) -> List[MandarinWordSchema] | None:
+    def pinyin_to_zhuyin(pinyin: str) -> str:
+        """Convert a single-syllable pinyin string to zhuyin."""
+        if ":" not in pinyin:
+            return hanzi_utils.pinyin_to_zhuyin(pinyin)
+        umlaut = "ü"
+        number = pinyin[-1]
+        return hanzi_utils.pinyin_to_zhuyin(pinyin[:-3] + umlaut + number)
+
+    @staticmethod
+    def most_frequent_pronunciation(hanzi5: str) -> Optional[CEDictionary]:
         """
-        Try to concatenate the current word with the next, including if there is a
-        comma between them. This is specifically meant to catch 成語, which are
-        stored in the database with a comma between their two parts.
+        When a hanzi has a 5th (neutral) tone and we must guess the primary
+        tone, return the entry most commonly used as a constituent hanzi.
         """
-        if (
-            len(segmented_sentence[index:]) < 3
-            or "，" in segmented_sentence[index].word
-            or "," in segmented_sentence[index].word
-            or len(segmented_sentence[index].word) > 8
-        ):
-            # Prevent looping
-            return
+        hanzi_regular = CEDictionary.objects.filter(
+            Q(traditional=hanzi5) | Q(simplified=hanzi5)
+        )
+        count = hanzi_regular.count()
 
-        if segmented_sentence[index + 1].word in [",", "，"]:
-            compounded_word = "".join(
-                segmented_sentence[index].word + segmented_sentence[index + 2].word
-            )
+        if count == 0:
+            return None
+        if count == 1:
+            return hanzi_regular.first()
 
-            db_word = CEDictionary.objects.filter(
-                Q(traditional=compounded_word) | Q(simplified=compounded_word)
-            )
+        most_common: Optional[CEDictionary] = hanzi_regular.first()
+        max_count = 0
+        for candidate in hanzi_regular:
+            n = ConstituentHanzi.objects.filter(hanzi=candidate).count()
+            if n > max_count:
+                max_count = n
+                most_common = candidate
+        return most_common
 
-            if db_word.exists() and db_word.count() == 1:
-                pinyin: List[str] = (
-                    segmented_sentence[index].pinyin
-                    + [","]
-                    + segmented_sentence[index + 2].pinyin
-                )
-
-                zhuyin: List[str] = (
-                    segmented_sentence[index].zhuyin
-                    + [","]
-                    + segmented_sentence[index + 2].zhuyin
-                )
-
-                new_sentence_slice = MandarinWordSchema(
-                    word=compounded_word, pinyin=pinyin, zhuyin=zhuyin, definitions={}
-                )
-
-                new_sentence = (
-                    segmented_sentence[:index]
-                    + [new_sentence_slice]
-                    + segmented_sentence[index + 3 :]
-                )
-                return new_sentence
-        return
+    # ------------------------------------------------------------------ #
+    # CEDict lookup helpers                                                #
+    # ------------------------------------------------------------------ #
 
     @staticmethod
     def get_all_definitions(cedict_entry: CEDictionary) -> Dict[str, List[str]]:
-        """
-        Return definitions for all supported languages for a CEDictionary entry.
-        German falls back to English if no CEDefinition row exists.
-        """
+        """Return definitions for all supported languages; German falls back to English."""
         en_def = cedict_entry.definitions
         try:
             de_entry = CEDefinition.objects.get(cedict=cedict_entry, language='de')
@@ -168,244 +129,394 @@ class Segmenter:
         return {'en': [en_def], 'de': [de_def]}
 
     @staticmethod
-    def add_definitions_and_create_dictionary(
-        segmented_sentence: List[MandarinWordSchema],
-        dictionary: Dict[str, ChineseDictionary] = {},
-    ) -> tuple[List[MandarinWordSchema], dict[str, ChineseDictionary]]:
+    def _batch_lookup_cedict(
+        items: List[MandarinWordSchema],
+    ) -> Dict[str, List[CEDictionary]]:
         """
-        Modifies 'segmented_sentence' and returns a tuple containing
-        the sentence and a dictionary with definitions for each hanzi
-        in the sentence.
-
-        :param segmented_sentence: The list of MandarinWordSchema objects being worked on.
-        :return: A tuple containing the sentence, and the mandarin dictionary.
+        Single DB query that fetches all candidate CEDict entries for every
+        Chinese word in the sentence.  Returns a dict keyed by word text
+        (both traditional and simplified keys point to the same entries).
         """
-        for index, item in enumerate(segmented_sentence):
-            if is_punctuation(item.word) or not hanzi_utils.has_chinese(item.word):
-                item.definitions = {'en': [], 'de': []}
-                continue
+        words = {
+            item.word
+            for item in items
+            if hanzi_utils.has_chinese(item.word) and not is_punctuation(item.word)
+        }
+        if not words:
+            return {}
 
-            if item.definitions != {}:
-                continue
+        q = Q()
+        for word in words:
+            q |= Q(traditional=word) | Q(simplified=word)
 
-            if "ü" in " ".join(item.pinyin):
-                pinyin_to_search = " ".join(item.pinyin).replace("ü", "u:")
+        by_word: Dict[str, List[CEDictionary]] = {}
+        for entry in CEDictionary.objects.filter(q):
+            for key in {entry.traditional, entry.simplified}:
+                by_word.setdefault(key, []).append(entry)
+        return by_word
+
+    @staticmethod
+    def _cedict_entries_for_item(
+        item: MandarinWordSchema,
+        batch: Dict[str, List[CEDictionary]],
+    ) -> List[CEDictionary]:
+        """
+        Filter the batch result to entries whose pronunciation matches
+        this item's pinyin and whose word_length matches.
+        """
+        pinyin_str = " ".join(item.pinyin).replace("ü", "u:")
+        candidates = batch.get(item.word, [])
+        return [
+            e for e in candidates
+            if e.pronunciation.lower() == pinyin_str.lower()
+            and e.word_length == len(item.word)
+        ]
+
+    # ------------------------------------------------------------------ #
+    # Dictionary population helpers                                        #
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _apply_cedict_entries(
+        item: MandarinWordSchema,
+        entries: List[CEDictionary],
+        dictionary: Dict[str, ChineseDictionary],
+    ) -> None:
+        """Populate item.definitions and the hanzi-level dictionary from CEDict entries."""
+        for entry in entries:
+            all_defs = Segmenter.get_all_definitions(entry)
+            item.definitions = {
+                lang: item.definitions.get(lang, []) + all_defs[lang]
+                for lang in all_defs
+            }
+            constituent_hanzi = entry.get_hanzi()
+
+            if constituent_hanzi:
+                for single_hanzi in constituent_hanzi:
+                    the_hanzi = (
+                        single_hanzi.traditional
+                        if item.word == entry.traditional
+                        else single_hanzi.simplified
+                    )
+                    hanzi_all_defs = Segmenter.get_all_definitions(single_hanzi)
+                    dictionary[the_hanzi] = ChineseDictionary(
+                        en=hanzi_all_defs['en'],
+                        de=hanzi_all_defs['de'],
+                        pinyin=[single_hanzi.pronunciation.replace("u:", "ü")],
+                        zhuyin=[Segmenter.pinyin_to_zhuyin(single_hanzi.pronunciation)],
+                    )
             else:
-                pinyin_to_search = " ".join(item.pinyin)
+                for idx, hanzi_char in enumerate(item.word):
+                    the_hanzi, db_hanzi = Segmenter.attempt_to_get_hanzi(
+                        hanzi_char, item, idx, entry
+                    )
+                    if db_hanzi is None:
+                        continue
+                    hanzi_all_defs = Segmenter.get_all_definitions(db_hanzi)
+                    dictionary[the_hanzi] = ChineseDictionary(
+                        en=hanzi_all_defs['en'],
+                        de=hanzi_all_defs['de'],
+                        pinyin=[db_hanzi.pronunciation.replace("u:", "ü")],
+                        zhuyin=[Segmenter.pinyin_to_zhuyin(db_hanzi.pronunciation)],
+                    )
 
-            db_result = CEDictionary.objects.filter(
-                Q(traditional=item.word) | Q(simplified=item.word),
-                pronunciation__iexact=pinyin_to_search,
-                word_length=len(item.word),
+    @staticmethod
+    def _add_char_to_dictionary(
+        char: str,
+        pinyin: str,
+        dictionary: Dict[str, ChineseDictionary],
+    ) -> None:
+        """Look up a single character and add it to the hanzi dictionary."""
+        pinyin_search = pinyin.replace("ü", "u:")
+        db_hanzi = CEDictionary.objects.filter(
+            Q(traditional=char) | Q(simplified=char),
+            pronunciation__iexact=pinyin_search,
+            word_length=1,
+        )
+        if not db_hanzi.exists():
+            db_hanzi = CEDictionary.objects.filter(
+                Q(traditional=char) | Q(simplified=char),
+                pronunciation__startswith=pinyin_search[:-1],
+                word_length=1,
+            )
+        entry = db_hanzi.first() if db_hanzi.exists() else None
+        if entry is not None:
+            all_defs = Segmenter.get_all_definitions(entry)
+            dictionary[char] = ChineseDictionary(
+                en=all_defs['en'],
+                de=all_defs['de'],
+                pinyin=[entry.pronunciation.replace("u:", "ü")],
+                zhuyin=[Segmenter.pinyin_to_zhuyin(entry.pronunciation)],
             )
 
-            if not db_result.exists():
-                concat_attempt = Segmenter.try_to_concat(segmented_sentence, index)
-                if concat_attempt:
-                    return Segmenter.add_definitions_and_create_dictionary(
-                        concat_attempt, dictionary
+    # ------------------------------------------------------------------ #
+    # Fallback chain helpers                                               #
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def try_to_concat(
+        segmented_sentence: List[MandarinWordSchema], index: int
+    ) -> Optional[List[MandarinWordSchema]]:
+        """
+        Try to merge the current word with the next across a comma, catching
+        成語 stored in CEDict as two halves joined by '，'.
+        """
+        if (
+            len(segmented_sentence[index:]) < 3
+            or "，" in segmented_sentence[index].word
+            or "," in segmented_sentence[index].word
+            or len(segmented_sentence[index].word) > 8
+        ):
+            return None
+
+        if segmented_sentence[index + 1].word in [",", "，"]:
+            compounded_word = (
+                segmented_sentence[index].word + segmented_sentence[index + 2].word
+            )
+            db_word = CEDictionary.objects.filter(
+                Q(traditional=compounded_word) | Q(simplified=compounded_word)
+            )
+            if db_word.exists() and db_word.count() == 1:
+                pinyin = (
+                    segmented_sentence[index].pinyin
+                    + [","]
+                    + segmented_sentence[index + 2].pinyin
+                )
+                zhuyin = (
+                    segmented_sentence[index].zhuyin
+                    + [","]
+                    + segmented_sentence[index + 2].zhuyin
+                )
+                merged = MandarinWordSchema(
+                    word=compounded_word, pinyin=pinyin, zhuyin=zhuyin, definitions={}
+                )
+                return (
+                    segmented_sentence[:index]
+                    + [merged]
+                    + segmented_sentence[index + 3:]
+                )
+        return None
+
+    @staticmethod
+    def _resplit_into_chars(item: MandarinWordSchema) -> List[MandarinWordSchema]:
+        """
+        Decompose a multi-character token into individual-character tokens.
+        Used when Jieba produces a word that is not in CEDict or Wiktionary,
+        which is a strong signal of a segmentation error.
+        """
+        result = []
+        for j, char in enumerate(item.word):
+            pinyin_j = item.pinyin[j] if j < len(item.pinyin) else char
+            zhuyin_j = item.zhuyin[j] if j < len(item.zhuyin) else char
+            result.append(
+                MandarinWordSchema(
+                    word=char, pinyin=[pinyin_j], zhuyin=[zhuyin_j], definitions={}
+                )
+            )
+        return result
+
+    @staticmethod
+    def _apply_wiktionary(
+        item: MandarinWordSchema,
+        dictionary: Dict[str, ChineseDictionary],
+    ) -> bool:
+        """
+        Try Wiktionary for the word.  On success, creates CEDict entries
+        (is_machine_translated=False) and populates item.definitions.
+        Returns True if definitions were found.
+        """
+        wiki_definitions = WiktionaryScraper().get_definitions(item.word)
+        if not wiki_definitions or "error" in wiki_definitions:
+            return False
+
+        for key in wiki_definitions:
+            pronunciation_str = " ".join(wiki_definitions[key]["pronunciation"])
+            new_cedict = CEDictionary.objects.filter(
+                traditional=item.word,
+                simplified=item.word,
+                pronunciation=pronunciation_str,
+            )
+            if not new_cedict.exists():
+                new_cedict_obj = CEDictionary.objects.create(
+                    traditional=item.word,
+                    simplified=item.word,
+                    pronunciation=pronunciation_str,
+                    definitions=wiki_definitions[key]["definition"],
+                    is_machine_translated=False,
+                )
+            elif new_cedict.count() > 1:
+                new_cedict_obj = (
+                    new_cedict
+                    .filter(definitions=" / ".join([wiki_definitions[key]["definition"]]))
+                    .first()
+                )
+            else:
+                new_cedict_obj = new_cedict.first()
+
+            if new_cedict_obj is None:
+                continue
+
+            if len(item.word) > 1:
+                for i, char in enumerate(item.word):
+                    wiki_pinyin = wiki_definitions[key]["pronunciation"][i]
+                    h = CEDictionary.objects.filter(
+                        pronunciation=wiki_pinyin, traditional=char
                     )
+                    if h.count() == 0:
+                        h = CEDictionary.objects.filter(
+                            pronunciation__startswith=wiki_pinyin[:-1]
+                        ).first()
+                    elif h.count() > 1:
+                        h = Segmenter.most_frequent_pronunciation(char)
+                    else:
+                        h = h.first()
 
-                wikitionary = WiktionaryScraper()
-                wiki_definitions = wikitionary.get_definitions(item.word)
-
-                if wiki_definitions and "error" not in wiki_definitions:
-                    for key in wiki_definitions:
-                        new_cedictionary = CEDictionary.objects.filter(
-                            traditional=item.word,
-                            simplified=item.word,
-                            pronunciation=" ".join(
-                                wiki_definitions[key]["pronunciation"]
-                            ),
+                    if h:
+                        ConstituentHanzi.objects.get_or_create(
+                            word=new_cedict_obj, hanzi=h, order=i
                         )
 
-                        if not new_cedictionary.exists():
-                            new_cedictionary = CEDictionary.objects.create(
-                                traditional=item.word,
-                                simplified=item.word,
-                                pronunciation=" ".join(
-                                    wiki_definitions[key]["pronunciation"]
-                                ),
-                                definitions=wiki_definitions[key]["definition"],
-                            )
+        db_result = list(CEDictionary.objects.filter(
+            Q(traditional=item.word) | Q(simplified=item.word)
+        ))
+        if db_result:
+            Segmenter._apply_cedict_entries(item, db_result, dictionary)
+        return bool(item.definitions.get('en'))
 
-                        elif new_cedictionary.count() > 1:
-                            new_cedictionary = new_cedictionary.filter(
-                                definitions=" / ".join(
-                                    [wiki_definitions[key]["definition"]]
-                                )
-                            ).first()
+    @staticmethod
+    def _apply_mt_fallback(
+        item: MandarinWordSchema,
+        original_sentence: str,
+        dictionary: Dict[str, ChineseDictionary],
+    ) -> None:
+        """
+        Last-resort: translate the word in context via DeepL (never Argos).
+        Saves results to CEDict tagged as is_machine_translated=True so the
+        dictionary can be audited and cleaned up separately.
+        """
+        mt_defs: Dict[str, List[str]] = {}
+        for lang in SUPPORTED_LANGUAGES:
+            result = DeepLTranslate.translate_word_in_context(
+                item.word, original_sentence, lang
+            )
+            mt_defs[lang] = [result] if result else []
 
-                        else:
-                            new_cedictionary = new_cedictionary.first()
+        item.definitions = mt_defs
 
-                        if len(item.word) > 1:
-                            for i in range(len(item.word)):
-                                wiki_pronunciation = wiki_definitions[key][
-                                    "pronunciation"
-                                ][i]
-                                h = CEDictionary.objects.filter(
-                                    pronunciation=wiki_pronunciation,
-                                    traditional=item.word[i],
-                                )
-                                if h.count() == 0:
-                                    h = CEDictionary.objects.filter(
-                                        pronunciation__startswith=wiki_pronunciation[
-                                            :-1
-                                        ]
-                                    ).first()
+        if any(mt_defs.values()):
+            en_def = (mt_defs.get('en') or mt_defs.get('de') or [''])[0]
+            pronunciation_str = " ".join(item.pinyin).replace("ü", "u:")
+            CEDictionary.objects.get_or_create(
+                traditional=item.word,
+                simplified=item.word,
+                pronunciation=pronunciation_str,
+                defaults={
+                    'definitions': en_def,
+                    'is_machine_translated': True,
+                },
+            )
 
-                                elif h.count() > 1:
-                                    h = Segmenter.most_frequent_pronunciation(
-                                        item.word[i]
-                                    )
-                                else:
-                                    h = h.first()
+        for j, char in enumerate(item.word):
+            pinyin_j = item.pinyin[j] if j < len(item.pinyin) else char
+            Segmenter._add_char_to_dictionary(char, pinyin_j, dictionary)
 
-                                ConstituentHanzi.objects.get_or_create(
-                                    word=new_cedictionary, hanzi=h, order=i
-                                )
+    # ------------------------------------------------------------------ #
+    # Main definition-building loop                                        #
+    # ------------------------------------------------------------------ #
 
-                    db_result = CEDictionary.objects.filter(
-                        Q(traditional=item.word) | Q(simplified=item.word),
-                    )
-                else:
-                    # TODO: Try to segment again before machine translating
-                    machine_translation = Translator.translate(item.word)
-                    item.definitions = {'en': [machine_translation], 'de': [machine_translation]}
+    @staticmethod
+    def add_definitions_and_create_dictionary(
+        segmented_sentence: List[MandarinWordSchema],
+        original_sentence: str = "",
+        dictionary: Optional[Dict[str, ChineseDictionary]] = None,
+    ) -> Tuple[List[MandarinWordSchema], Dict[str, ChineseDictionary]]:
+        if dictionary is None:
+            dictionary = {}
 
-                    for index, single_hanzi in enumerate(item.word):
-                        pinyin = item.pinyin[index]
+        # One DB round-trip for all known words in the sentence.
+        batch = Segmenter._batch_lookup_cedict(segmented_sentence)
 
-                        db_hanzi = CEDictionary.objects.filter(
-                            Q(traditional=single_hanzi) | Q(simplified=single_hanzi),
-                            pronunciation__iexact=pinyin,
-                            word_length=1,
-                        )
+        i = 0
+        while i < len(segmented_sentence):
+            item = segmented_sentence[i]
 
-                        if not db_hanzi.exists():
-                            db_hanzi = CEDictionary.objects.filter(
-                                Q(traditional=single_hanzi)
-                                | Q(simplified=single_hanzi),
-                                pronunciation__startswith=pinyin[:-1],
-                                word_length=1,
-                            )
+            if is_punctuation(item.word) or not hanzi_utils.has_chinese(item.word):
+                item.definitions = {'en': [], 'de': []}
+                i += 1
+                continue
 
-                        if db_hanzi.exists():
-                            all_defs = Segmenter.get_all_definitions(db_hanzi.first())
-                        else:
-                            mt = Translator.translate(single_hanzi)
-                            all_defs = {'en': [mt], 'de': [mt]}
+            if item.definitions:
+                i += 1
+                continue
 
-                        dictionary[single_hanzi] = ChineseDictionary(
-                            en=all_defs['en'],
-                            de=all_defs['de'],
-                            pinyin=[pinyin.replace("u:", "ü")],
-                            zhuyin=[
-                                Segmenter.pinyin_to_zhuyin(zhuyin)
-                                for zhuyin in db_hanzi.values_list(
-                                    "pronunciation", flat=True
-                                )
-                            ],
-                        )
+            # ── Step 1: exact CEDict match ─────────────────────────────
+            entries = Segmenter._cedict_entries_for_item(item, batch)
+            if entries:
+                Segmenter._apply_cedict_entries(item, entries, dictionary)
+                i += 1
+                continue
 
-            for entry in db_result:
-                all_defs = Segmenter.get_all_definitions(entry)
-                item.definitions = {
-                    'en': item.definitions.get('en', []) + all_defs['en'],
-                    'de': item.definitions.get('de', []) + all_defs['de'],
-                }
-                constituent_hanzi = entry.get_hanzi()
+            # ── Step 2: try_to_concat (catches 成語 split by commas) ───
+            concat_result = Segmenter.try_to_concat(segmented_sentence, i)
+            if concat_result is not None:
+                return Segmenter.add_definitions_and_create_dictionary(
+                    concat_result, original_sentence, dictionary
+                )
 
-                if constituent_hanzi:
-                    for single_hanzi in constituent_hanzi:
-                        if item.word == entry.traditional:
-                            the_hanzi = single_hanzi.traditional
-                        else:
-                            the_hanzi = single_hanzi.simplified
+            # ── Step 3: Wiktionary ────────────────────────────────────
+            if Segmenter._apply_wiktionary(item, dictionary):
+                i += 1
+                continue
 
-                        hanzi_all_defs = Segmenter.get_all_definitions(single_hanzi)
-                        dictionary[the_hanzi] = ChineseDictionary(
-                            en=hanzi_all_defs['en'],
-                            de=hanzi_all_defs['de'],
-                            pinyin=[single_hanzi.pronunciation.replace("u:", "ü")],
-                            zhuyin=[
-                                Segmenter.pinyin_to_zhuyin(single_hanzi.pronunciation)
-                            ],
-                        )
-                else:
-                    for index, hanzi in enumerate(item.word):
-                        the_hanzi, db_hanzi = Segmenter.attempt_to_get_hanzi(
-                            hanzi, item, index, entry
-                        )
-                        hanzi_all_defs = Segmenter.get_all_definitions(db_hanzi)
-                        dictionary[the_hanzi] = ChineseDictionary(
-                            en=hanzi_all_defs['en'],
-                            de=hanzi_all_defs['de'],
-                            pinyin=[db_hanzi.pronunciation.replace("u:", "ü")],
-                            zhuyin=[Segmenter.pinyin_to_zhuyin(db_hanzi.pronunciation)],
-                        )
+            # ── Step 4: re-split multi-char token into characters ─────
+            # A multi-char word unknown to CEDict and Wiktionary is almost
+            # certainly a Jieba segmentation error.  Per-character lookup
+            # recovers meaningful vocabulary for the learner.
+            if len(item.word) > 1:
+                char_items = Segmenter._resplit_into_chars(item)
+                segmented_sentence = (
+                    segmented_sentence[:i]
+                    + char_items
+                    + segmented_sentence[i + 1:]
+                )
+                # Refresh batch to cover the new single-char items.
+                batch = Segmenter._batch_lookup_cedict(segmented_sentence)
+                # Don't advance i — reprocess from position i (now a single char).
+                continue
+
+            # ── Step 5: contextual DeepL MT (single char only here) ───
+            Segmenter._apply_mt_fallback(item, original_sentence, dictionary)
+            i += 1
+
         return (segmented_sentence, dictionary)
+
+    # ------------------------------------------------------------------ #
+    # Legacy helper (used by _apply_cedict_entries)                       #
+    # ------------------------------------------------------------------ #
 
     @staticmethod
     def attempt_to_get_hanzi(
         hanzi: str, item: MandarinWordSchema, index: int, entry: CEDictionary
-    ) -> Tuple[str, CEDictionary]:
-        if "ü" in item.pinyin[index]:
-            pinyin_to_search = item.pinyin[index].replace("ü", "u:")
-        else:
-            pinyin_to_search = item.pinyin[index]
+    ) -> Tuple[str, Optional[CEDictionary]]:
+        pinyin_search = (
+            item.pinyin[index].replace("ü", "u:")
+            if index < len(item.pinyin)
+            else item.pinyin[0].replace("ü", "u:")
+        )
 
-        if item.word == entry.traditional:
-            db_hanzi = CEDictionary.objects.filter(
-                traditional=hanzi, pronunciation=pinyin_to_search
-            )
-        else:
-            db_hanzi = CEDictionary.objects.filter(
-                simplified=hanzi, pronunciation=pinyin_to_search
-            )
-        if not db_hanzi.exists():
-            if item.word == entry.traditional:
-                db_hanzi = CEDictionary.objects.filter(
-                    traditional=hanzi, pronunciation__iexact=pinyin_to_search
-                )
-            else:
-                db_hanzi = CEDictionary.objects.filter(
-                    simplified=hanzi, pronunciation__iexact=pinyin_to_search
-                )
-        if not db_hanzi.exists():
-            if item.word == entry.traditional:
-                db_hanzi = CEDictionary.objects.filter(
-                    traditional=hanzi,
-                    pronunciation=pinyin_to_search[:-1],
-                )
-            else:
-                db_hanzi = CEDictionary.objects.filter(
-                    simplified=hanzi,
-                    pronunciation=pinyin_to_search[:-1],
-                )
-        if not db_hanzi.exists():
-            if item.word == entry.traditional:
-                db_hanzi = CEDictionary.objects.filter(traditional=hanzi)
-            else:
-                db_hanzi = CEDictionary.objects.filter(simplified=hanzi)
+        use_traditional = item.word == entry.traditional
+        field = "traditional" if use_traditional else "simplified"
 
-        if item.word == entry.traditional:
-            the_hanzi = db_hanzi.first().traditional
-            # likely a bug? should check for multiple results
-        else:
-            the_hanzi = (
-                db_hanzi.first().simplified
-            )  # likely a bug? should check for multiple results
-        return the_hanzi, db_hanzi.first()
+        for lookup in (
+            {field: hanzi, "pronunciation": pinyin_search},
+            {field: hanzi, "pronunciation__iexact": pinyin_search},
+            {field: hanzi, "pronunciation": pinyin_search[:-1]},
+            {field: hanzi},
+        ):
+            qs = CEDictionary.objects.filter(**lookup)
+            first = qs.first()
+            if first is not None:
+                the_hanzi = first.traditional if use_traditional else first.simplified
+                return the_hanzi, first
 
-    @staticmethod
-    def pinyin_to_zhuyin(pinyin: str) -> str:
-        """Only works for single hanzi"""
-        if ":" not in pinyin:
-            return hanzi_utils.pinyin_to_zhuyin(pinyin)
-
-        umlaut = "ü"
-        number = pinyin[-1]
-        result = hanzi_utils.pinyin_to_zhuyin(pinyin[:-3] + umlaut + number)
-        return result
+        return hanzi, None

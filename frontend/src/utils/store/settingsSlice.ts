@@ -9,7 +9,6 @@ interface SettingsState {
   user_language: UserLanguage;
   definitionFontSize: number;
   pronunciationFontSize: number;
-  readingMode: 'flow' | 'grid';
   toneColors: boolean;
   rubySizePx: number;
 }
@@ -37,7 +36,6 @@ const initialState: SettingsState = {
   user_language: getInitialUserLanguage(),
   definitionFontSize: getLocalNumber('definitionFontSize', 15),
   pronunciationFontSize: getLocalNumber('pronunciationFontSize', 10),
-  readingMode: 'flow',
   toneColors: getLocalNumber('toneColors', 1) !== 0,
   rubySizePx: getLocalNumber('rubySizePx', 10),
 };
@@ -71,9 +69,6 @@ const settingsSlice = createSlice({
       if (typeof window !== 'undefined') {
         localStorage.setItem('pronunciationFontSize', String(action.payload));
       }
-    },
-    setReadingMode(state, action: PayloadAction<'flow' | 'grid'>) {
-      state.readingMode = action.payload;
     },
     setToneColors(state, action: PayloadAction<boolean>) {
       state.toneColors = action.payload;
@@ -125,7 +120,6 @@ export const {
   setPreferences,
   setDefinitionFontSize,
   setPronunciationFontSize,
-  setReadingMode,
   setToneColors,
   setRubySize,
 } = settingsSlice.actions;
