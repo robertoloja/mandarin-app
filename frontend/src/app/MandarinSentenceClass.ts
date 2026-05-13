@@ -1,4 +1,5 @@
 import { updateLoading } from '@/utils/store/loadingSlice';
+import { setError } from '@/utils/store/errorSlice';
 import { store } from '@/utils/store/store';
 import {
   appendToMandarinDictionary,
@@ -88,47 +89,57 @@ export class MandarinSentenceClass {
       );
 
       (async () => {
-        for (let i = 0; i < promises.length; i++) {
-          await promises[i];
-          this.appendToStore(orderedBatches[i]);
-          this.segments = [...this.segments, ...orderedBatches[i].sentence];
-          for (const [lang, text] of Object.entries(orderedBatches[i].translations)) {
-            this.translations[lang] =
-              (this.translations[lang] ? this.translations[lang] + ' ' : '') + text;
+        try {
+          for (let i = 0; i < promises.length; i++) {
+            await promises[i];
+            this.appendToStore(orderedBatches[i]);
+            this.segments = [...this.segments, ...orderedBatches[i].sentence];
+            for (const [lang, text] of Object.entries(orderedBatches[i].translations)) {
+              this.translations[lang] =
+                (this.translations[lang] ? this.translations[lang] + ' ' : '') + text;
+            }
+            this.dictionary = { ...this.dictionary, ...orderedBatches[i].dictionary };
+            this.updateLoading(Math.floor(((i + 1) / promises.length) * 100));
           }
-          this.dictionary = { ...this.dictionary, ...orderedBatches[i].dictionary };
-          this.updateLoading(Math.floor(((i + 1) / promises.length) * 100));
+          // Share only after all batches are merged into this.segments/dictionary/translations
+          const response = await MandoBotAPI.share({
+            sentence: this.segments,
+            dictionary: this.dictionary,
+            translations: this.translations,
+          });
+          this.shareURL = response;
+          this.finish();
+        } catch (e: any) {
+          this.updateLoading(100);
+          store.dispatch(setError(e?.response?.data?.detail ?? 'Server error. Please try again.'));
         }
-        // Share only after all batches are merged into this.segments/dictionary/translations
-        const response = await MandoBotAPI.share({
-          sentence: this.segments,
-          dictionary: this.dictionary,
-          translations: this.translations,
-        });
-        this.shareURL = response;
-        this.finish();
       })();
     } else {
-      const response = await MandoBotAPI.segment(this.mandarin);
-      this.segments = response.sentence;
-      this.dictionary = response.dictionary;
-      this.translations = response.translations;
+      try {
+        const response = await MandoBotAPI.segment(this.mandarin);
+        this.segments = response.sentence;
+        this.dictionary = response.dictionary;
+        this.translations = response.translations;
 
-      if (process.env.NODE_ENV === 'development') {
-        for (const hanzi of this.mandarin) {
-          if (!Object.keys(this.dictionary).includes(hanzi)) {
-            console.log(hanzi);
+        if (process.env.NODE_ENV === 'development') {
+          for (const hanzi of this.mandarin) {
+            if (!Object.keys(this.dictionary).includes(hanzi)) {
+              console.log(hanzi);
+            }
           }
         }
-      }
 
-      const shareResponse = await MandoBotAPI.share({
-        translations: this.translations,
-        sentence: this.segments,
-        dictionary: this.dictionary,
-      });
-      this.shareURL = shareResponse;
-      this.finish();
+        const shareResponse = await MandoBotAPI.share({
+          translations: this.translations,
+          sentence: this.segments,
+          dictionary: this.dictionary,
+        });
+        this.shareURL = shareResponse;
+        this.finish();
+      } catch (e: any) {
+        this.updateLoading(100);
+        store.dispatch(setError(e?.response?.data?.detail ?? 'Server error. Please try again.'));
+      }
     }
   }
 
