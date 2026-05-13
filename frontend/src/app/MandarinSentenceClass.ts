@@ -101,18 +101,25 @@ export class MandarinSentenceClass {
             this.dictionary = { ...this.dictionary, ...orderedBatches[i].dictionary };
             this.updateLoading(Math.floor(((i + 1) / promises.length) * 100));
           }
-          // Share only after all batches are merged into this.segments/dictionary/translations
+        } catch (e: any) {
+          this.updateLoading(100);
+          store.dispatch(setError(e?.response?.data?.detail ?? 'Server error. Please try again.'));
+          return;
+        }
+
+        // Share only after all batches are merged into this.segments/dictionary/translations.
+        // Share failures are non-critical: results are already displayed.
+        try {
           const response = await MandoBotAPI.share({
             sentence: this.segments,
             dictionary: this.dictionary,
             translations: this.translations,
           });
           this.shareURL = response;
-          this.finish();
-        } catch (e: any) {
-          this.updateLoading(100);
-          store.dispatch(setError(e?.response?.data?.detail ?? 'Server error. Please try again.'));
+        } catch {
+          // Share failure is non-critical — silently ignore.
         }
+        this.finish();
       })();
     } else {
       try {
@@ -128,18 +135,23 @@ export class MandarinSentenceClass {
             }
           }
         }
+      } catch (e: any) {
+        this.updateLoading(100);
+        store.dispatch(setError(e?.response?.data?.detail ?? 'Server error. Please try again.'));
+        return;
+      }
 
+      try {
         const shareResponse = await MandoBotAPI.share({
           translations: this.translations,
           sentence: this.segments,
           dictionary: this.dictionary,
         });
         this.shareURL = shareResponse;
-        this.finish();
-      } catch (e: any) {
-        this.updateLoading(100);
-        store.dispatch(setError(e?.response?.data?.detail ?? 'Server error. Please try again.'));
+      } catch {
+        // Share failure is non-critical — silently ignore.
       }
+      this.finish();
     }
   }
 
