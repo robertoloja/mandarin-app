@@ -47,14 +47,6 @@ const top_nav = {
     en: 'Not yet available',
     de: 'Noch nicht verfügbar',
   },
-  flow: {
-    en: 'Flow',
-    de: 'Flow',
-  },
-  vocab_grid: {
-    en: 'Vocab grid',
-    de: 'Vokabelraster',
-  },
   interface_language: {
     en: 'Language',
     de: 'Sprache',

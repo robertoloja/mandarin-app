@@ -7,13 +7,12 @@ import { Box, Flex, Spinner, Text } from '@chakra-ui/react';
 import { IoChevronBackOutline, IoChevronForwardOutline } from 'react-icons/io5';
 import Link from 'next/link';
 import MandarinSentence from '@/components/MandarinSentenceComponent';
-import VocabGrid from '@/components/VocabGridComponent';
 import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { MandarinWordType } from '@/utils/types';
 import localization from '@/localization/main';
 import { useReadingBooks } from '@/app/reading/hooks/useReadingBooks';
-import { FONT_SANS, FONT_SERIF, FONT_SIZE_LABEL, FONT_SIZE_SMALL, FONT_SIZE_UI, FONT_SIZE_BODY, FONT_SIZE_PROSE, FONT_SIZE_SUBHEAD, FONT_SIZE_HANZI_SM } from '@/theme';
+import { FONT_SANS, FONT_SERIF, FONT_SIZE_LABEL, FONT_SIZE_UI, FONT_SIZE_BODY, FONT_SIZE_SUBHEAD, FONT_SIZE_HANZI_SM } from '@/theme';
 
 function ChapterNavLink({
   nav,
@@ -32,14 +31,17 @@ function ChapterNavLink({
         alignItems="center"
         gap={2}
         color="fgMuted"
-        _hover={{ color: 'fgPrimary' }}
-        transition="color 0.14s"
+        py={3}
+        px={2}
+        borderRadius={6}
+        _hover={{ color: 'fgPrimary', bg: 'bgSubtle' }}
+        transition="all 0.14s"
       >
-        {direction === 'prev' && <IoChevronBackOutline size={18} />}
+        {direction === 'prev' && <IoChevronBackOutline size={20} />}
         <Text fontFamily={FONT_SANS} fontSize={FONT_SIZE_BODY}>
           {label}
         </Text>
-        {direction === 'next' && <IoChevronForwardOutline size={18} />}
+        {direction === 'next' && <IoChevronForwardOutline size={20} />}
       </Box>
     </Link>
   );
@@ -56,9 +58,6 @@ export default function ChapterPageClient({
   );
   const [data, setData] = useState(initialData);
   const [loading, setLoading] = useState(!initialData);
-  const readingMode = useSelector(
-    (state: RootState) => state.settings.readingMode,
-  );
 
   useEffect(() => {
     if (!data && params.book_slug && params.chapter_order) {
@@ -190,78 +189,37 @@ export default function ChapterPageClient({
           </Box>
 
           {/* Chinese text — per paragraph, with matched translations */}
-          {readingMode === 'flow' ? (
-            <Box>
-              {paragraphs.map((para, i) => (
-                <Box key={i}>
-                  <MandarinSentence
-                    user_language={user_language}
-                    sentence={para}
-                    dictionary={data.dictionary}
-                    noBottomMargin
-                  />
-                  {translationParagraphs[i] && (
-                    <Box
-                      mt={3}
-                      mb={6}
-                      pl={4}
-                      borderLeftWidth={2}
-                      borderLeftColor="borderEmphasis"
-                    >
-                      <Text
-                        fontFamily={FONT_SERIF}
-                        fontStyle="italic"
-                        fontSize={FONT_SIZE_SUBHEAD}
-                        lineHeight={1.65}
-                        color="fgMuted"
-                      >
-                        {translationParagraphs[i]}
-                      </Text>
-                    </Box>
-                  )}
-                </Box>
-              ))}
-            </Box>
-          ) : (
-            <Box>
-              <Text
-                fontSize={FONT_SIZE_SMALL}
-                color="fgSubtle"
-                mb={4}
-                fontFamily={FONT_SANS}
-                fontStyle="italic"
-              >
-                {loc.vocab_grid_description[user_language]}
-              </Text>
-              {paragraphs.map((para, i) => (
-                <Box
-                  key={i}
-                  mb={6}
-                  pb={5}
-                  borderBottomWidth={i < paragraphs.length - 1 ? 1 : 0}
-                  borderBottomColor="borderDefault"
-                >
-                  <VocabGrid
-                    sentence={para}
-                    dictionary={data.dictionary}
-                    user_language={user_language}
-                  />
-                  {translationParagraphs[i] && (
+          <Box>
+            {paragraphs.map((para, i) => (
+              <Box key={i}>
+                <MandarinSentence
+                  user_language={user_language}
+                  sentence={para}
+                  dictionary={data.dictionary}
+                  noBottomMargin
+                />
+                {translationParagraphs[i] && (
+                  <Box
+                    mt={3}
+                    mb={6}
+                    pl={4}
+                    borderLeftWidth={2}
+                    borderLeftColor="borderEmphasis"
+                  >
                     <Text
-                      mt={3}
                       fontFamily={FONT_SERIF}
                       fontStyle="italic"
-                      fontSize={FONT_SIZE_PROSE}
-                      lineHeight={1.55}
+                      fontSize={FONT_SIZE_SUBHEAD}
+                      lineHeight={1.65}
                       color="fgMuted"
                     >
                       {translationParagraphs[i]}
                     </Text>
-                  )}
-                </Box>
-              ))}
-            </Box>
-          )}
+                  </Box>
+                )}
+              </Box>
+            ))}
+          </Box>
 
           {/* Chapter navigation */}
           <Box

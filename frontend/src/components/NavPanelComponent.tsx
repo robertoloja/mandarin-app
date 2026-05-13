@@ -29,7 +29,8 @@ import { RootState } from '@/utils/store/store';
 import { MandoBotAPI } from '@/utils/api';
 import { useRouter } from 'next/navigation';
 import localization from '@/localization/main';
-import { FONT_SANS, FONT_SIZE_UI } from '@/theme';
+import { FONT_SANS, FONT_SIZE_MICRO, FONT_SIZE_UI } from '@/theme';
+import LanguagePreferencesComponent from './LanguagePreferencesComponent';
 
 function NavItem({
   href,
@@ -138,6 +139,22 @@ function NavPanel(props: { isOpen: boolean; onClose: () => void }) {
           </VStack>
 
           <Box flex={1} />
+
+          <Box display={['flex', 'none']} flexDirection="column" gap={2} borderTop="1px solid" borderColor="borderDefault" pt={3} mb={3}>
+            <Text
+              fontFamily={FONT_SANS}
+              fontSize={FONT_SIZE_MICRO}
+              textTransform="uppercase"
+              letterSpacing="0.14em"
+              color="fgSubtle"
+              px={3}
+            >
+              {localization.top_nav.interface_language[user_language]}
+            </Text>
+            <Box px={3}>
+              <LanguagePreferencesComponent />
+            </Box>
+          </Box>
 
           <Box borderTop="1px solid" borderColor="borderDefault" my={3} />
 

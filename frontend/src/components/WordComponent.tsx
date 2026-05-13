@@ -73,7 +73,7 @@ function Word(props: {
   const rubyColor = colorMode === 'dark' ? RUBY_COLOR_DARK : RUBY_COLOR_LIGHT;
 
   return (
-    <Popover placement="bottom" isLazy lazyBehavior="unmount">
+    <Popover placement="auto" isLazy lazyBehavior="unmount">
       <PopoverTrigger>
         <Box
           as="span"
@@ -141,7 +141,8 @@ function Word(props: {
         </Box>
       </PopoverTrigger>
       <PopoverContent
-        width="360px"
+        maxW="360px"
+        w="calc(100vw - 32px)"
         borderRadius="10px"
         zIndex={200}
         _focus={{ outline: 'none' }}
