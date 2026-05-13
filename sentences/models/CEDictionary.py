@@ -13,6 +13,7 @@ class CEDictionary(models.Model):
     word_length: int = models.PositiveIntegerField(editable=False)
     pronunciation: str = models.TextField(validators=[is_pinyin])
     definitions: str = models.TextField()
+    is_machine_translated: bool = models.BooleanField(default=False)
     hanzi = models.ManyToManyField(
         "self",
         through="ConstituentHanzi",
