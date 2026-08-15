@@ -20,6 +20,8 @@ from status.models import ServerStatus
 from sentences.models import SentenceHistory
 from sentences.models.ReadingRoomChapter import ReadingRoomChapter
 from .schemas import (
+    CaptchaPassSchema,
+    CaptchaSolutionSchema,
     ChineseDictionary,
     MandarinWordSchema,
     SegmentationResponse,
@@ -27,6 +29,7 @@ from .schemas import (
     ReadingRoomChapterSchema,
     APIError,
 )
+from . import captcha
 
 logger = logging.getLogger(__name__)
 api = NinjaAPI(
@@ -57,7 +60,31 @@ emptyResponse = SegmentationResponse(
 
 
 @api.post(
-    "/segment", response={200: SegmentationResponse}, throttle=[UserRateThrottle("2/s")]
+    "/captcha/verify",
+    response={200: CaptchaPassSchema, 403: APIError},
+    throttle=[UserRateThrottle("2/s")],
+)
+def verify_captcha(request, payload: CaptchaSolutionSchema):
+    """
+    Exchanges a Friendly Captcha solution for a short-lived pass that admits an
+    anonymous client to /segment.
+
+    Fails open: if Friendly Captcha is unreachable or misconfigured, a pass is
+    still issued and the failure logged, so an outage on their side does not
+    take the site down. Only a solution they positively reject is refused.
+    """
+    if captcha.solution_is_refused(payload.solution):
+        return 403, APIError(error="Captcha verification failed")
+
+    return 200, CaptchaPassSchema(
+        captcha_pass=captcha.issue_pass(), expires_in=captcha.PASS_TTL_SECONDS
+    )
+
+
+@api.post(
+    "/segment",
+    response={200: SegmentationResponse, 428: APIError},
+    throttle=[UserRateThrottle("2/s")],
 )
 def segment(request, data: str) -> APISegmentationSuccessResponse:
     """
@@ -66,6 +93,11 @@ def segment(request, data: str) -> APISegmentationSuccessResponse:
     response also includes a dictionary containing every hanzi in the input sentence,
     as well as a machine translation of the entire sentence in all supported languages.
     """
+    if captcha.request_needs_pass(request) and not captcha.request_has_valid_pass(
+        request
+    ):
+        return 428, APIError(error="Captcha pass required")
+
     timer = Timer()
     timer.start()
 

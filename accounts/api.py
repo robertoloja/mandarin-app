@@ -29,7 +29,10 @@ from mandoBot.schemas import (
     UserPreferencesSchema,
 )
 from mandoBot.settings import DEBUG
+from mandoBot import captcha
 from .models import MandoBotUser, PaidButUnregistered, ResetPasswordRequest
+
+CAPTCHA_FAILED = APIError(error="Captcha verification failed")
 
 if TYPE_CHECKING:
     User: type[MandoBotUser]
@@ -91,15 +94,22 @@ def reset_password(
 
 
 @router.post(
-    "/reset_password_request", response={200: SuccessResponseSchema, 404: APIError}
+    "/reset_password_request",
+    response={200: SuccessResponseSchema, 403: APIError, 404: APIError},
 )
 def reset_password_request(
-    request, username: Form[str]
+    request, username: Form[str], captcha_solution: Form[str] = ""
 ) -> APISuccessResponse | APIErrorResponse:
     """
     Hit by client when clicking on "forgot password" link. Creates a ResetPasswordRequest
     for the given e-mail, if matching user exists.
+
+    Captcha-gated: this endpoint mails whatever address it is handed, so an
+    unprotected version is an e-mail amplifier.
     """
+    if captcha.solution_is_refused(captcha_solution):
+        return 403, CAPTCHA_FAILED
+
     try:
         user = User.objects.get(username=username)
         entry = ResetPasswordRequest(user=user)
@@ -141,6 +151,11 @@ def change_password(
 def login_endpoint(
     request, payload: Form[UserSchema]
 ) -> APIUserSuccessResponse | APIErrorResponse:
+    # Checked before authenticate(), so a rejected solution cannot be used to
+    # probe whether a username/password pair was correct.
+    if captcha.solution_is_refused(payload.captcha_solution):
+        return 403, CAPTCHA_FAILED
+
     user = authenticate(username=payload.username, password=payload.password)
 
     if user is not None:
@@ -191,6 +206,7 @@ def register_id(request, register_id: str) -> Tuple[int, str] | APIErrorResponse
         201: SuccessResponseSchema,
         409: APIError,
         404: APIError,
+        403: APIError,
         400: APIPasswordError,
     },
 )
@@ -202,6 +218,9 @@ def register(
     create an account. In DEBUG or during testing, does not check for
     PaidButUnregistered object.
     """
+    if captcha.solution_is_refused(payload.captcha_solution):
+        return 403, CAPTCHA_FAILED
+
     try:
         validate_password(payload.password)
 

@@ -25,6 +25,7 @@ dragonmapper==0.3.0; python_version >= '3.9'
 emoji==2.15.0; python_version >= '3.8'
 filelock==3.29.0; python_version >= '3.10'
 flatbuffers==25.12.19
+friendly-captcha-client==0.2.1; python_version >= '3.8'
 fsspec==2026.3.0; python_version >= '3.10'
 gunicorn==25.3.0; python_version >= '3.10'
 h11==0.16.0; python_version >= '3.8'

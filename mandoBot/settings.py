@@ -1,9 +1,12 @@
 import os
 import sys
 from pathlib import Path
+from corsheaders.defaults import default_headers
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+TESTING = "test" in sys.argv
 
 if "test" in sys.argv:
     DATABASES = DATABASES = {
@@ -18,6 +21,22 @@ load_dotenv()
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 API_ACCESS_TOKEN = os.getenv("API_ACCESS_TOKEN")
 DEBUG = os.getenv("DJANGO_DEBUG") == "True"
+
+# Friendly Captcha. The sitekey is public and also baked into the frontend
+# build; the API key is secret and must never leave the backend.
+FRIENDLY_CAPTCHA_SITEKEY = os.getenv("FRIENDLY_CAPTCHA_SITEKEY", "")
+FRIENDLY_CAPTCHA_API_KEY = os.getenv("FRIENDLY_CAPTCHA_API_KEY", "")
+# The SDK's own shorthand: "global", "eu", or a full base URL.
+FRIENDLY_CAPTCHA_ENDPOINT = os.getenv("FRIENDLY_CAPTCHA_ENDPOINT", "global")
+# Master switch; flip it off in production to roll back.
+#
+# Always off under test, even when the developer has it switched on in their
+# .env: tests that want it on turn it on themselves with override_settings, and
+# the rest must not start demanding captcha passes just because a real key
+# happens to be configured on this machine.
+FRIENDLY_CAPTCHA_ENABLED = (
+    os.getenv("FRIENDLY_CAPTCHA_ENABLED") == "True" and not TESTING
+)
 
 LOGGING = {
     "version": 1,
@@ -50,6 +69,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+# django-cors-headers only permits a default set of request headers, which does
+# not include the captcha pass. In production the Netlify proxy makes the call
+# same-origin, so this matters for cross-origin local development.
+CORS_ALLOW_HEADERS = (*default_headers, "x-captcha-pass")
 
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
