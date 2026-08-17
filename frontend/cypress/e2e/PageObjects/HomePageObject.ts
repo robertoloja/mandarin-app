@@ -3,7 +3,9 @@ export class HomePage {
     cy.visit('/');
   }
   static sentenceInputBar() {
-    return cy.get('input[name="sentence-input"]');
+    // Matches by name only: the field is a <textarea>, and was an <input>
+    // before the redesign.
+    return cy.get('[name="sentence-input"]');
   }
   static form() {
     return cy.get('form');

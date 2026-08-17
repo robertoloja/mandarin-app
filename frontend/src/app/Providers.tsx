@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from '../utils/store/store';
 import { ChakraProvider } from '@chakra-ui/react';
 import TopNav from '@/components/TopNav/TopNavComponent';
+import CaptchaWidgetComponent from '@/components/CaptchaWidgetComponent';
 import { MandoBotAPI, injectStore } from '@/utils/api';
 import { logout, setUserDetails } from '@/utils/store/authSlice';
 import theme from '@/theme';
@@ -27,6 +28,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <UpdateUserSettings />
         <TopNav />
         <Suspense>{children}</Suspense>
+        <CaptchaWidgetComponent />
       </ChakraProvider>
     </Provider>
   );

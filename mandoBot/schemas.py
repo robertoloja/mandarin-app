@@ -13,6 +13,7 @@ class ServerStatusSchema(ModelSchema):
 class UserSchema(ModelSchema):
     username: str
     password: str
+    captcha_solution: str = ""
 
     class Meta:
         model = MandoBotUser
@@ -64,10 +65,24 @@ class APIPasswordError(Schema):
     error: List[str]
 
 
+class CaptchaSolutionSchema(Schema):
+    """The proof of work produced by the Friendly Captcha widget."""
+
+    solution: str
+
+
+class CaptchaPassSchema(Schema):
+    """A time-boxed pass admitting an anonymous client to /segment."""
+
+    captcha_pass: str
+    expires_in: int
+
+
 class RegisterSchema(Schema):
     username: str
     email: str
     password: str
+    captcha_solution: str = ""
 
 
 class SuccessResponseSchema(Schema):
