@@ -58,6 +58,17 @@ const theme = extendTheme({
       fgMuted:   { default: 'gray.500', _dark: 'gray.400' },
       fgSubtle:  { default: 'gray.400', _dark: 'gray.500' },
       fgLink:    { default: 'blue.600', _dark: 'blue.300' },
+      // Syntax highlighting. Defined here so code blocks sit inside the same
+      // palette as everything else, and so light/dark switches in CSS rather
+      // than in React - the markup is identical in both modes.
+      codeFg:          { default: 'gray.800',   _dark: 'gray.100' },
+      codeComment:     { default: 'gray.500',   _dark: 'gray.500' },
+      codeKeyword:     { default: 'purple.600', _dark: 'purple.300' },
+      codeString:      { default: 'green.700',  _dark: 'green.300' },
+      codeNumber:      { default: 'orange.600', _dark: 'orange.300' },
+      codeFunction:    { default: 'blue.600',   _dark: 'blue.300' },
+      codeClass:       { default: 'teal.600',   _dark: 'teal.300' },
+      codePunctuation: { default: 'gray.500',   _dark: 'gray.400' },
     },
   },
   components: { Accordion: accordionTheme },
