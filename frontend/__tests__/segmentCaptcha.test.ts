@@ -153,6 +153,45 @@ describe('MandoBotAPI.segment captcha pass handling', () => {
     expect(segmentAttempts).toBe(1);
   });
 
+  it('exchanges one solution for one pass when batches segment concurrently', async () => {
+    routePost({});
+    const MandoBotAPI = await loadApi();
+
+    await Promise.all([
+      MandoBotAPI.segment('你好。'),
+      MandoBotAPI.segment('上海。'),
+      MandoBotAPI.segment('再見。'),
+    ]);
+
+    const verifyCalls = post.mock.calls.filter(([url]) =>
+      String(url).includes('/captcha/verify'),
+    );
+    expect(verifyCalls).toHaveLength(1);
+  });
+
+  it('sends the one shared pass on every concurrent batch', async () => {
+    let issued = 0;
+    post.mockImplementation((url: string) => {
+      if (url.includes('/captcha/verify')) {
+        issued += 1;
+        return Promise.resolve(passResponse(`pass-${issued}`));
+      }
+      return Promise.resolve(segmentResponse());
+    });
+    const MandoBotAPI = await loadApi();
+
+    await Promise.all([
+      MandoBotAPI.segment('你好。'),
+      MandoBotAPI.segment('上海。'),
+      MandoBotAPI.segment('再見。'),
+    ]);
+
+    const passesSent = post.mock.calls
+      .filter(([url]) => !String(url).includes('/captcha/verify'))
+      .map(([, , config]) => config?.headers?.['X-Captcha-Pass']);
+    expect(passesSent).toEqual(['pass-1', 'pass-1', 'pass-1']);
+  });
+
   it('still sends the request when the widget cannot produce a solution', async () => {
     solveCaptcha.mockResolvedValue(null);
     routePost({});
