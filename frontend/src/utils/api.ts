@@ -105,6 +105,16 @@ const CAPTCHA_PASS_REQUIRED = 428;
 const PASS_REFRESH_MARGIN_MS = 30_000;
 
 let captchaPass: { value: string; expiresAt: number } | null = null;
+/**
+ * The acquisition currently under way, if any. A sentence is segmented one
+ * request per sentence and those go out together, so without this every batch
+ * in a cold page load would start its own exchange. They would share a single
+ * solve - solveCaptcha hands concurrent callers the same promise - and then
+ * spend that one solution on a verification each. Friendly Captcha solutions
+ * are single-use, so only the first would be accepted and the rest would come
+ * back 403, having also spent the endpoint's rate limit getting there.
+ */
+let passInFlight: Promise<string | null> | null = null;
 
 export function clearCaptchaPass() {
   captchaPass = null;
@@ -114,7 +124,15 @@ async function getCaptchaPass(): Promise<string | null> {
   if (captchaPass && Date.now() < captchaPass.expiresAt) {
     return captchaPass.value;
   }
+  if (passInFlight) return passInFlight;
 
+  passInFlight = acquireCaptchaPass().finally(() => {
+    passInFlight = null;
+  });
+  return passInFlight;
+}
+
+async function acquireCaptchaPass(): Promise<string | null> {
   const solution = await solveCaptcha();
   // No widget, or it could not solve. Send the request anyway and let the
   // backend decide - it may have the captcha switched off entirely.
